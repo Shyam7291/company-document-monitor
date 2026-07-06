@@ -5,7 +5,7 @@ const BG_IMAGE = `https://wsrv.nl/?url=${encodeURIComponent(ORIGINAL_BG_IMAGE)}&
 const GLASS_CARD_IMAGE = "https://cdn.jsdelivr.net/gh/Shyam7291/company-document-monitor@main/32454-removebg-preview.png";
 const BRAND_ORANGE = "#f59e0b";
 
-export default function BuyerHomeFullyScalableMobileSystem() {
+export default function BuyerHomeResponsivePhoneShellFinal() {
   const buyerName = "Shyam";
   const [activeIndex, setActiveIndex] = useState(0);
   const [rotation, setRotation] = useState(0);
@@ -44,7 +44,7 @@ export default function BuyerHomeFullyScalableMobileSystem() {
 
     setTimeout(() => {
       setActiveIndex(nextIndex);
-    }, 420);
+    }, 430);
 
     setTimeout(() => {
       setContentHidden(false);
@@ -53,16 +53,17 @@ export default function BuyerHomeFullyScalableMobileSystem() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setContentHidden(true);
-      setRotation((current) => current + 180);
+      setActiveIndex((current) => {
+        const nextIndex = (current + 1) % features.length;
+        setContentHidden(true);
+        setRotation((rotationValue) => rotationValue + 180);
 
-      setTimeout(() => {
-        setActiveIndex((current) => (current + 1) % features.length);
-      }, 420);
+        setTimeout(() => {
+          setContentHidden(false);
+        }, 560);
 
-      setTimeout(() => {
-        setContentHidden(false);
-      }, 560);
+        return nextIndex;
+      });
     }, 3000);
 
     return () => clearInterval(timer);
@@ -207,24 +208,16 @@ body,
   overflow: hidden;
 }
 
-/*
-  Mobile-first phone shell:
-  - Small target: 360 x 780
-  - Large target: up to 430px wide
-  - Height-constrained screens reduce the phone width also
-  - Everything inside uses container units: cqw/cqh
-*/
 .phone {
-  width: min(430px, calc(100vw - 16px), calc((100dvh - 16px) * 360 / 780));
-  aspect-ratio: 360 / 780;
+  width: clamp(360px, min(94vw, 52dvh), 430px);
+  aspect-ratio: 390 / 760;
   max-height: calc(100dvh - 16px);
   background: #050505;
-  border-radius: 8cqw;
+  border-radius: clamp(26px, 8vw, 34px);
   overflow: hidden;
   display: grid;
   grid-template-rows: 58% 29% 13%;
-  box-shadow: 0 7cqw 18cqw rgba(0, 0, 0, .28);
-  container-type: size;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .28);
 }
 
 .hero {
@@ -232,7 +225,7 @@ body,
   height: 100%;
   overflow: hidden;
   color: white;
-  padding: 3.6cqw 5cqw 2cqw;
+  padding: 3.7% 5.1% 2%;
   background: #111;
 }
 
@@ -242,8 +235,8 @@ body,
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 47%;
-  transform: scale(1.12);
+  object-position: center 46%;
+  transform: scale(1.10);
   z-index: 0;
 }
 
@@ -251,7 +244,7 @@ body,
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(to bottom, rgba(0,0,0,.14), rgba(0,0,0,.02) 42%, rgba(0,0,0,.13) 74%);
+  background: linear-gradient(to bottom, rgba(0,0,0,.14), rgba(0,0,0,.02) 42%, rgba(0,0,0,.13) 72%);
   pointer-events: none;
 }
 
@@ -269,12 +262,12 @@ body,
 .activeGlow {
   position: absolute;
   left: 50%;
-  top: 53%;
-  width: 54cqw;
-  height: 28cqh;
+  top: 52%;
+  width: 53%;
+  height: 43%;
   transform: translateX(-50%);
   border-radius: 50%;
-  filter: blur(8cqw);
+  filter: blur(36px);
   opacity: .24;
   z-index: 2;
   background: ${BRAND_ORANGE};
@@ -295,35 +288,35 @@ body,
 }
 
 .topNav button {
-  width: 8.8cqw;
-  height: 8.8cqw;
+  width: clamp(30px, 8.7vw, 36px);
+  height: clamp(30px, 8.7vw, 36px);
   border: 0;
   border-radius: 999px;
   background: rgba(0, 0, 0, .50);
   color: white;
-  font-size: 5.2cqw;
+  font-size: clamp(18px, 5vw, 21px);
   font-weight: 950;
 }
 
 .intro {
-  margin-top: 3cqw;
-  margin-left: 2cqw;
-  text-shadow: 0 1cqw 3cqw rgba(0, 0, 0, .75);
+  margin-top: 3%;
+  margin-left: 2%;
+  text-shadow: 0 4px 14px rgba(0, 0, 0, .75);
 }
 
 .intro h1 {
   margin: 0;
   color: #fde68a;
-  font-size: 7.2cqw;
+  font-size: clamp(20px, 7.2vw, 30px);
   line-height: 1;
   font-weight: 950;
 }
 
 .intro p {
-  margin: 3cqw 0 0;
+  margin: 3% 0 0;
   color: white;
-  font-size: 4.55cqw;
-  line-height: 1.12;
+  font-size: clamp(14px, 4.6vw, 22px);
+  line-height: 1.13;
   font-weight: 950;
 }
 
@@ -334,15 +327,15 @@ body,
   top: 39%;
   bottom: 8%;
   height: auto;
-  perspective: 280cqw;
+  perspective: 1100px;
   z-index: 5;
 }
 
 .singleFeatureCard {
   position: absolute;
   left: 50%;
-  top: 3%;
-  width: 45cqw;
+  top: 2%;
+  width: clamp(150px, 45%, 188px);
   aspect-ratio: 205 / 240;
   color: white;
   text-align: center;
@@ -366,7 +359,7 @@ body,
   height: 100%;
   object-fit: contain;
   z-index: 1;
-  filter: drop-shadow(0 4.5cqw 6cqw rgba(0,0,0,.24));
+  filter: drop-shadow(0 18px 24px rgba(0,0,0,.24));
 }
 
 .cardContent {
@@ -389,45 +382,45 @@ body,
 }
 
 .featureIcon {
-  width: 12.2cqw;
-  height: 12.2cqw;
-  border-radius: 4.2cqw;
+  width: clamp(36px, 11.5vw, 49px);
+  height: clamp(36px, 11.5vw, 49px);
+  border-radius: clamp(13px, 4vw, 17px);
   color: #111827;
   background: ${BRAND_ORANGE};
-  box-shadow: 0 0 5cqw ${BRAND_ORANGE};
+  box-shadow: 0 0 20px ${BRAND_ORANGE};
   display: grid;
   place-items: center;
-  font-size: 5.5cqw;
+  font-size: clamp(17px, 5.3vw, 22px);
   font-weight: 950;
 }
 
 .stars {
   margin-top: 6%;
-  font-size: 2.7cqw;
-  letter-spacing: .45cqw;
+  font-size: clamp(8px, 2.7vw, 10px);
+  letter-spacing: 2px;
   color: ${BRAND_ORANGE};
 }
 
 .cardContent h2 {
   margin: 6% 0 0;
-  font-size: 4.35cqw;
+  font-size: clamp(13px, 4.4vw, 17px);
   line-height: 1.12;
   font-weight: 950;
-  text-shadow: 0 1cqw 3cqw rgba(0,0,0,.55);
+  text-shadow: 0 4px 12px rgba(0,0,0,.55);
 }
 
 .cardContent p {
   margin: 5% 0 0;
   color: #fff7ed;
-  font-size: 2.45cqw;
+  font-size: clamp(7.5px, 2.5vw, 9.2px);
   line-height: 1.18;
   font-weight: 750;
-  text-shadow: 0 .8cqw 2.5cqw rgba(0,0,0,.65);
+  text-shadow: 0 3px 9px rgba(0,0,0,.65);
 }
 
 .cardContent button {
-  width: 7.5cqw;
-  height: 7.5cqw;
+  width: clamp(24px, 7vw, 30px);
+  height: clamp(24px, 7vw, 30px);
   margin-top: 7%;
   border: 0;
   border-radius: 999px;
@@ -440,11 +433,11 @@ body,
   position: absolute;
   left: 50%;
   bottom: 15%;
-  width: 45cqw;
-  height: 6.4cqh;
+  width: clamp(145px, 43%, 185px);
+  height: clamp(42px, 12%, 54px);
   border-radius: 50%;
-  border: .5cqw solid ${BRAND_ORANGE};
-  box-shadow: 0 0 5.5cqw ${BRAND_ORANGE};
+  border: 2px solid ${BRAND_ORANGE};
+  box-shadow: 0 0 22px ${BRAND_ORANGE};
   transform: translateX(-50%) rotateX(68deg);
 }
 
@@ -452,11 +445,11 @@ body,
   position: absolute;
   left: 50%;
   bottom: 0;
-  width: 48cqw;
+  width: clamp(150px, 45%, 192px);
   height: 17%;
   border-radius: 50%;
   background: rgba(0,0,0,.36);
-  filter: blur(1cqw);
+  filter: blur(4px);
   transform: translateX(-50%);
 }
 
@@ -467,20 +460,20 @@ body,
   bottom: 2.5%;
   display: flex;
   justify-content: center;
-  gap: 2cqw;
+  gap: 8px;
   z-index: 6;
 }
 
 .dot {
-  width: 2cqw;
-  height: 2cqw;
+  width: clamp(7px, 2vw, 8px);
+  height: clamp(7px, 2vw, 8px);
   border-radius: 999px;
   border: 0;
   background: rgba(255,255,255,.76);
 }
 
 .dot.active {
-  width: 3cqw;
+  width: clamp(10px, 2.8vw, 11px);
   background: ${BRAND_ORANGE};
 }
 
@@ -492,8 +485,7 @@ body,
 
 .place {
   width: 100%;
-  height: 23%;
-  min-height: 0;
+  height: clamp(46px, 23%, 56px);
   border: 0;
   border-radius: 999px;
   background: linear-gradient(135deg, #f59e0b, #f97316);
@@ -502,13 +494,13 @@ body,
   justify-content: space-between;
   align-items: center;
   padding: 0 6% 0 11%;
-  font-size: 4.7cqw;
+  font-size: clamp(15px, 4.7vw, 18px);
   font-weight: 950;
-  box-shadow: 0 4.5cqw 8.5cqw rgba(245,158,11,.28);
+  box-shadow: 0 18px 34px rgba(245,158,11,.28);
 }
 
 .place.hover {
-  transform: translateY(-.8cqw) scale(1.012);
+  transform: translateY(-3px) scale(1.012);
 }
 
 .quickGrid {
@@ -522,24 +514,22 @@ body,
 .quick {
   min-height: 0;
   height: 100%;
-  padding: 9%;
-  border-radius: 4.7cqw;
+  padding: 10%;
+  border-radius: 18px;
   border: 1px solid rgba(255,255,255,.10);
   background: linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
   color: white;
   text-align: left;
-  overflow: hidden;
 }
 
 .quick.hover {
-  transform: translateY(-.8cqw);
+  transform: translateY(-3px);
   background: rgba(245,158,11,.12);
 }
 
 .quick h3 {
   margin: 0;
-  font-size: 3.65cqw;
-  line-height: 1.1;
+  font-size: clamp(12px, 3.6vw, 14px);
   font-weight: 950;
 }
 
@@ -548,17 +538,16 @@ body,
   display: block;
   margin-top: 6%;
   color: #d6d3d1;
-  font-size: 2.55cqw;
-  line-height: 1.18;
+  font-size: clamp(8px, 2.6vw, 10px);
+  line-height: 1.22;
   font-weight: 750;
 }
 
 .quick em {
   display: block;
-  margin-top: 8%;
+  margin-top: 9%;
   color: ${BRAND_ORANGE};
-  font-size: 3.25cqw;
-  line-height: 1.1;
+  font-size: clamp(11px, 3.3vw, 13px);
   font-weight: 950;
   font-style: normal;
 }
@@ -571,21 +560,21 @@ body,
   margin: 0 6% 3%;
   padding: 2% 3%;
   background: rgba(16,16,16,.92);
-  border-radius: 5cqw;
+  border-radius: 20px;
   border: 1px solid rgba(255,255,255,.08);
 }
 
 .bottomNav button {
   min-height: 0;
   border: 0;
-  border-radius: 4cqw;
+  border-radius: 16px;
   background: transparent;
   color: #a8a29e;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: .4cqw;
+  gap: 2px;
   font-weight: 900;
 }
 
@@ -594,11 +583,11 @@ body,
 }
 
 .bottomNav span {
-  font-size: 4.1cqw;
+  font-size: clamp(14px, 4vw, 17px);
 }
 
 .bottomNav b {
-  font-size: 2.8cqw;
+  font-size: clamp(9px, 2.7vw, 11px);
 }
 
 @keyframes floatCard {
@@ -606,7 +595,7 @@ body,
     transform: translateX(-50%) translateY(0);
   }
   50% {
-    transform: translateX(-50%) translateY(-1.3cqw);
+    transform: translateX(-50%) translateY(-5px);
   }
 }
 
