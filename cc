@@ -1,11 +1,39 @@
 import React, { useEffect, useMemo, useState } from "react";
 
-const ORIGINAL_BG_IMAGE = "https://raw.githubusercontent.com/Shyam7291/company-document-monitor/main/you_acn_only_generate_the_sa.png";
-const BG_IMAGE = `https://wsrv.nl/?url=${encodeURIComponent(ORIGINAL_BG_IMAGE)}&output=png&w=820&h=980&fit=cover`;
-const GLASS_CARD_IMAGE = "https://cdn.jsdelivr.net/gh/Shyam7291/company-document-monitor@main/32454-removebg-preview.png";
+const SHOW_DEVICE_LAB = false;
+
+const ORIGINAL_BG_IMAGE =
+  "https://raw.githubusercontent.com/Shyam7291/company-document-monitor/main/you_acn_only_generate_the_sa.png";
+
+const BG_IMAGE = `https://wsrv.nl/?url=${encodeURIComponent(
+  ORIGINAL_BG_IMAGE
+)}&output=png&w=820&h=980&fit=cover`;
+
+const GLASS_CARD_IMAGE =
+  "https://cdn.jsdelivr.net/gh/Shyam7291/company-document-monitor@main/32454-removebg-preview.png";
+
 const BRAND_ORANGE = "#f59e0b";
 
-export default function BuyerHomeResponsivePhoneShellFinal() {
+const DEVICES = [
+  { name: "iPhone SE", w: 375, h: 667 },
+  { name: "iPhone 12 Mini", w: 360, h: 780 },
+  { name: "iPhone 13 Mini", w: 375, h: 812 },
+  { name: "iPhone 12", w: 390, h: 844 },
+  { name: "iPhone 13", w: 390, h: 844 },
+  { name: "iPhone 14", w: 390, h: 844 },
+  { name: "iPhone 14 Pro", w: 393, h: 852 },
+  { name: "iPhone 14 Pro Max", w: 430, h: 932 },
+  { name: "iPhone 15", w: 393, h: 852 },
+  { name: "iPhone 15 Pro", w: 393, h: 852 },
+  { name: "iPhone 15 Pro Max", w: 430, h: 932 },
+  { name: "Galaxy S22", w: 360, h: 780 },
+  { name: "Galaxy S23", w: 360, h: 780 },
+  { name: "Galaxy S24", w: 412, h: 915 },
+  { name: "Galaxy S25 Ultra", w: 412, h: 891 },
+  { name: "Android Large", w: 430, h: 932 },
+];
+
+function BuyerHomeScreen({ labMode = false }) {
   const buyerName = "Shyam";
   const [activeIndex, setActiveIndex] = useState(0);
   const [rotation, setRotation] = useState(0);
@@ -44,7 +72,7 @@ export default function BuyerHomeResponsivePhoneShellFinal() {
 
     setTimeout(() => {
       setActiveIndex(nextIndex);
-    }, 430);
+    }, 420);
 
     setTimeout(() => {
       setContentHidden(false);
@@ -53,17 +81,16 @@ export default function BuyerHomeResponsivePhoneShellFinal() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setActiveIndex((current) => {
-        const nextIndex = (current + 1) % features.length;
-        setContentHidden(true);
-        setRotation((rotationValue) => rotationValue + 180);
+      setContentHidden(true);
+      setRotation((current) => current + 180);
 
-        setTimeout(() => {
-          setContentHidden(false);
-        }, 560);
+      setTimeout(() => {
+        setActiveIndex((current) => (current + 1) % features.length);
+      }, 420);
 
-        return nextIndex;
-      });
+      setTimeout(() => {
+        setContentHidden(false);
+      }, 560);
     }, 3000);
 
     return () => clearInterval(timer);
@@ -72,112 +99,175 @@ export default function BuyerHomeResponsivePhoneShellFinal() {
   const active = features[activeIndex];
 
   return (
-    <div className="page">
-      <style>{css}</style>
+    <div className={labMode ? "phone labPhone" : "phone"}>
+      <section className="hero">
+      {React.createElement("img", {
+  className: "heroBg",
+  src: BG_IMAGE,
+  alt: "Quarry background",
+})}
+        <div className="heroShade" />
+        <div className="bottomBlend" />
+        <div className="activeGlow" />
 
-      <div className="phone">
-        <section className="hero">
-          <img className="heroBg" src={BG_IMAGE} alt="Quarry background" />
-          <div className="heroShade" />
-          <div className="bottomBlend" />
-          <div className="activeGlow" />
+        <nav className="topNav">
+          <button>≡</button>
+          <button>●</button>
+        </nav>
 
-          <nav className="topNav">
-            <button>≡</button>
-            <button>●</button>
-          </nav>
+        <div className="intro">
+          <h1>Hey {buyerName} 👋</h1>
+          <p>
+            Ready to order
+            <br />
+            good quality stone today?
+          </p>
+        </div>
 
-          <div className="intro">
-            <h1>Hey {buyerName} 👋</h1>
-            <p>
-              Ready to order
-              <br />
-              good quality stone today?
-            </p>
-          </div>
+        <div className="featureWrap">
+          <div className="platform" />
+          <div className="ring" />
 
-          <div className="featureWrap">
-            <div className="platform" />
-            <div className="ring" />
+          <article className="singleFeatureCard">
+            <div
+              className="glassSpinLayer"
+              style={{ transform: `rotateY(${rotation}deg)` }}
+            >
+              {React.createElement("img", {
+  className: "glassCardImage",
+  src: GLASS_CARD_IMAGE,
+  alt: "Glass feature card",
+})}
+            </div>
 
-            <article className="singleFeatureCard">
-              <div className="glassSpinLayer" style={{ transform: `rotateY(${rotation}deg)` }}>
-                <img className="glassCardImage" src={GLASS_CARD_IMAGE} alt="Glass feature card" />
-              </div>
+            <div className={contentHidden ? "cardContent hidden" : "cardContent"}>
+              <div className="featureIcon">{active.icon}</div>
+              <div className="stars">★★★★★</div>
+              <h2>{active.title}</h2>
+              <p>{active.subtitle}</p>
+              <button>➜</button>
+            </div>
+          </article>
+        </div>
 
-              <div className={contentHidden ? "cardContent hidden" : "cardContent"}>
-                <div className="featureIcon">{active.icon}</div>
-                <div className="stars">★★★★★</div>
-                <h2>{active.title}</h2>
-                <p>{active.subtitle}</p>
-                <button>➜</button>
-              </div>
-            </article>
-          </div>
+        <div className="dots">
+          {features.map((feature, index) => (
+            <button
+              key={feature.title}
+              onClick={() => {
+                if (index !== activeIndex) rotateToFeature(index);
+              }}
+              className={index === activeIndex ? "dot active" : "dot"}
+            />
+          ))}
+        </div>
+      </section>
 
-          <div className="dots">
-            {features.map((feature, index) => (
-              <button
-                key={feature.title}
-                onClick={() => {
-                  if (index !== activeIndex) rotateToFeature(index);
-                }}
-                className={index === activeIndex ? "dot active" : "dot"}
-              />
-            ))}
-          </div>
-        </section>
+      <section className="actions">
+        <button
+          className={hovered === "place" ? "place hover" : "place"}
+          onMouseEnter={() => setHovered("place")}
+          onMouseLeave={() => setHovered(null)}
+        >
+          <span>Place New Order</span>
+          <b>➜</b>
+        </button>
 
-        <section className="actions">
+        <div className="quickGrid">
           <button
-            className={hovered === "place" ? "place hover" : "place"}
-            onMouseEnter={() => setHovered("place")}
+            className={hovered === "active" ? "quick hover" : "quick"}
+            onMouseEnter={() => setHovered("active")}
             onMouseLeave={() => setHovered(null)}
           >
-            <span>Place New Order</span>
-            <b>➜</b>
+            <h3>Active Order</h3>
+            <p>40mm Crushed Stone</p>
+            <small>32 tons</small>
+            <em>Track →</em>
           </button>
 
-          <div className="quickGrid">
-            <button
-              className={hovered === "active" ? "quick hover" : "quick"}
-              onMouseEnter={() => setHovered("active")}
-              onMouseLeave={() => setHovered(null)}
-            >
-              <h3>Active Order</h3>
-              <p>40mm Crushed Stone</p>
-              <small>32 tons</small>
-              <em>Track →</em>
-            </button>
+          <button
+            className={hovered === "repeat" ? "quick hover" : "quick"}
+            onMouseEnter={() => setHovered("repeat")}
+            onMouseLeave={() => setHovered(null)}
+          >
+            <h3>Last Order</h3>
+            <p>20mm Stone</p>
+            <small>2 trucks • 20 tons</small>
+            <em>Repeat →</em>
+          </button>
+        </div>
+      </section>
 
-            <button
-              className={hovered === "repeat" ? "quick hover" : "quick"}
-              onMouseEnter={() => setHovered("repeat")}
-              onMouseLeave={() => setHovered(null)}
+      <nav className="bottomNav">
+        <button className="active">
+          <span>🏠</span>
+          <b>Home</b>
+        </button>
+        <button>
+          <span>📦</span>
+          <b>My Orders</b>
+        </button>
+        <button>
+          <span>👤</span>
+          <b>Profile</b>
+        </button>
+      </nav>
+    </div>
+  );
+}
+
+function DeviceLab() {
+  const zoom = 0.45;
+
+  return (
+    <div className="deviceLabPage">
+      <style>{css}</style>
+
+      <header className="labHeader">
+        <h1>StoneRate Device Fit Lab</h1>
+        <p>Preview the screen across multiple phone sizes.</p>
+      </header>
+
+      <div className="deviceGrid">
+        {DEVICES.map((device) => (
+          <div
+            className="deviceShell"
+            key={device.name}
+            style={{
+              width: device.w * zoom,
+              height: device.h * zoom + 44,
+            }}
+          >
+            <div className="deviceName">
+              {device.name} — {device.w}×{device.h}
+            </div>
+
+            <div
+              className="deviceViewport"
+              style={{
+                width: device.w,
+                height: device.h,
+                transform: `scale(${zoom})`,
+              }}
             >
-              <h3>Last Order</h3>
-              <p>20mm Stone</p>
-              <small>2 trucks • 20 tons</small>
-              <em>Repeat →</em>
-            </button>
+              <BuyerHomeScreen labMode />
+            </div>
           </div>
-        </section>
-
-        <nav className="bottomNav">
-          <button className="active">
-            <span>🏠</span>
-            <b>Home</b>
-          </button>
-          <button>
-            <span>📦</span>
-            <b>My Orders</b>
-          </button>
-          <button>
-            <span>👤</span>
-            <b>Profile</b>
-          </button>
-        </nav>
+        ))}
       </div>
+    </div>
+  );
+}
+
+export default function App() {
+  if (SHOW_DEVICE_LAB) {
+    return <DeviceLab />;
+  }
+
+  return (
+    <div className="page">
+      <style>{css}</style>
+      <BuyerHomeScreen />
     </div>
   );
 }
@@ -208,16 +298,29 @@ body,
   overflow: hidden;
 }
 
+/*
+  Base target: 360 x 780
+  Max target: 430 x 932
+*/
 .phone {
-  width: clamp(360px, min(94vw, 52dvh), 430px);
-  aspect-ratio: 390 / 760;
+  width: min(430px, calc(100vw - 16px), calc((100dvh - 16px) * 360 / 780));
+  aspect-ratio: 360 / 780;
   max-height: calc(100dvh - 16px);
   background: #050505;
-  border-radius: clamp(26px, 8vw, 34px);
+  border-radius: 8cqw;
   overflow: hidden;
   display: grid;
   grid-template-rows: 58% 29% 13%;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, .28);
+  box-shadow: 0 7cqw 18cqw rgba(0, 0, 0, .28);
+  container-type: size;
+}
+
+.labPhone {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .hero {
@@ -225,7 +328,7 @@ body,
   height: 100%;
   overflow: hidden;
   color: white;
-  padding: 3.7% 5.1% 2%;
+  padding: 3.6cqw 5cqw 2cqw;
   background: #111;
 }
 
@@ -235,8 +338,8 @@ body,
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 46%;
-  transform: scale(1.10);
+  object-position: center 47%;
+  transform: scale(1.0);
   z-index: 0;
 }
 
@@ -244,7 +347,12 @@ body,
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(to bottom, rgba(0,0,0,.14), rgba(0,0,0,.02) 42%, rgba(0,0,0,.13) 72%);
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,.14),
+    rgba(0,0,0,.02) 42%,
+    rgba(0,0,0,.13) 74%
+  );
   pointer-events: none;
 }
 
@@ -262,15 +370,15 @@ body,
 .activeGlow {
   position: absolute;
   left: 50%;
-  top: 52%;
-  width: 53%;
-  height: 43%;
+  top: 53%;
+  width: 48cqw;
+  height: 24cqh;
   transform: translateX(-50%);
   border-radius: 50%;
-  filter: blur(36px);
+  filter: blur(7cqw);
   opacity: .24;
   z-index: 2;
-  background: ${BRAND_ORANGE};
+  background: #f59e0b;
   animation: pulse 3s ease-in-out infinite;
 }
 
@@ -288,35 +396,35 @@ body,
 }
 
 .topNav button {
-  width: clamp(30px, 8.7vw, 36px);
-  height: clamp(30px, 8.7vw, 36px);
+  width: 8.8cqw;
+  height: 8.8cqw;
   border: 0;
   border-radius: 999px;
   background: rgba(0, 0, 0, .50);
   color: white;
-  font-size: clamp(18px, 5vw, 21px);
+  font-size: 5.2cqw;
   font-weight: 950;
 }
 
 .intro {
-  margin-top: 3%;
-  margin-left: 2%;
-  text-shadow: 0 4px 14px rgba(0, 0, 0, .75);
+  margin-top: 3cqw;
+  margin-left: 2cqw;
+  text-shadow: 0 1cqw 3cqw rgba(0, 0, 0, .75);
 }
 
 .intro h1 {
   margin: 0;
   color: #fde68a;
-  font-size: clamp(20px, 7.2vw, 30px);
+  font-size: 7.2cqw;
   line-height: 1;
   font-weight: 950;
 }
 
 .intro p {
-  margin: 3% 0 0;
+  margin: 3cqw 0 0;
   color: white;
-  font-size: clamp(14px, 4.6vw, 22px);
-  line-height: 1.13;
+  font-size: 4.55cqw;
+  line-height: 1.12;
   font-weight: 950;
 }
 
@@ -324,19 +432,23 @@ body,
   position: absolute;
   left: 0;
   right: 0;
-  top: 39%;
+  top: 40%;
   bottom: 8%;
   height: auto;
-  perspective: 1100px;
+  perspective: 280cqw;
   z-index: 5;
 }
 
+/*
+  Main fix: smaller glass card.
+  If card still feels big, reduce width from 34cqw to 32cqw.
+*/
 .singleFeatureCard {
   position: absolute;
   left: 50%;
-  top: 2%;
-  width: clamp(150px, 45%, 188px);
-  aspect-ratio: 205 / 240;
+  top: -20%;
+  width: clamp(1px, 70cqw, 250px);
+  aspect-ratio: 120 / 120;
   color: white;
   text-align: center;
   transform: translateX(-50%);
@@ -359,14 +471,14 @@ body,
   height: 100%;
   object-fit: contain;
   z-index: 1;
-  filter: drop-shadow(0 18px 24px rgba(0,0,0,.24));
+  filter: drop-shadow(0 3.5cqw 5cqw rgba(0,0,0,.24));
 }
 
 .cardContent {
   position: absolute;
   left: 50%;
-  top: 20%;
-  width: 64%;
+  top: 18%;
+  width: 68%;
   transform: translateX(-50%);
   z-index: 2;
   display: flex;
@@ -381,51 +493,55 @@ body,
   transform: translateX(-50%) scale(.96);
 }
 
+/*
+  Text/icon are now smaller.
+*/
 .featureIcon {
-  width: clamp(36px, 11.5vw, 49px);
-  height: clamp(36px, 11.5vw, 49px);
-  border-radius: clamp(13px, 4vw, 17px);
+  width: 10cqw;
+  height: 10cqw;
+  border-radius: 5.8cqw;
   color: #111827;
-  background: ${BRAND_ORANGE};
-  box-shadow: 0 0 20px ${BRAND_ORANGE};
+  background: #f59e0b;
+  box-shadow: 0 0 7cqw #f59e0b;
   display: grid;
   place-items: center;
-  font-size: clamp(17px, 5.3vw, 22px);
+  font-size: 6.8cqw;
   font-weight: 950;
 }
 
 .stars {
-  margin-top: 6%;
-  font-size: clamp(8px, 2.7vw, 10px);
-  letter-spacing: 2px;
-  color: ${BRAND_ORANGE};
+  margin-top: 4cqw;
+  font-size: 4cqw;
+  letter-spacing: .7cqw;
+  color: #f59e0b;
 }
 
 .cardContent h2 {
-  margin: 6% 0 0;
-  font-size: clamp(13px, 4.4vw, 17px);
-  line-height: 1.12;
+  margin: 1cqw 0 0;
+  font-size: 4.5cqw;
+  line-height: 1.08;
   font-weight: 950;
-  text-shadow: 0 4px 12px rgba(0,0,0,.55);
+  text-shadow: 0 1.5cqw 4cqw rgba(0,0,0,.55);
 }
 
 .cardContent p {
-  margin: 5% 0 0;
+  margin: 3cqw 0 0;
   color: #fff7ed;
-  font-size: clamp(7.5px, 2.5vw, 9.2px);
-  line-height: 1.18;
+  font-size: 3.4cqw;
+  line-height: 1.16;
   font-weight: 750;
-  text-shadow: 0 3px 9px rgba(0,0,0,.65);
+  text-shadow: 0 1.2cqw 3.2cqw rgba(0,0,0,.65);
 }
 
 .cardContent button {
-  width: clamp(24px, 7vw, 30px);
-  height: clamp(24px, 7vw, 30px);
-  margin-top: 7%;
+  width: 12cqw;
+  height: 12cqw;
+  margin-top: 3.8cqw;
   border: 0;
   border-radius: 999px;
   color: white;
-  background: ${BRAND_ORANGE};
+  background: #f59e0b;
+  font-size: 5.8cqw;
   font-weight: 950;
 }
 
@@ -433,11 +549,11 @@ body,
   position: absolute;
   left: 50%;
   bottom: 15%;
-  width: clamp(145px, 43%, 185px);
-  height: clamp(42px, 12%, 54px);
+  width: 36cqw;
+  height: 5.6cqh;
   border-radius: 50%;
-  border: 2px solid ${BRAND_ORANGE};
-  box-shadow: 0 0 22px ${BRAND_ORANGE};
+  border: .45cqw solid #f59e0b;
+  box-shadow: 0 0 4.8cqw #f59e0b;
   transform: translateX(-50%) rotateX(68deg);
 }
 
@@ -445,11 +561,11 @@ body,
   position: absolute;
   left: 50%;
   bottom: 0;
-  width: clamp(150px, 45%, 192px);
-  height: 17%;
+  width: 39cqw;
+  height: 15%;
   border-radius: 50%;
   background: rgba(0,0,0,.36);
-  filter: blur(4px);
+  filter: blur(.8cqw);
   transform: translateX(-50%);
 }
 
@@ -460,21 +576,21 @@ body,
   bottom: 2.5%;
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 2cqw;
   z-index: 6;
 }
 
 .dot {
-  width: clamp(7px, 2vw, 8px);
-  height: clamp(7px, 2vw, 8px);
+  width: 2cqw;
+  height: 2cqw;
   border-radius: 999px;
   border: 0;
   background: rgba(255,255,255,.76);
 }
 
 .dot.active {
-  width: clamp(10px, 2.8vw, 11px);
-  background: ${BRAND_ORANGE};
+  width: 3cqw;
+  background: #f59e0b;
 }
 
 .actions {
@@ -485,7 +601,8 @@ body,
 
 .place {
   width: 100%;
-  height: clamp(46px, 23%, 56px);
+  height: 23%;
+  min-height: 0;
   border: 0;
   border-radius: 999px;
   background: linear-gradient(135deg, #f59e0b, #f97316);
@@ -494,13 +611,13 @@ body,
   justify-content: space-between;
   align-items: center;
   padding: 0 6% 0 11%;
-  font-size: clamp(15px, 4.7vw, 18px);
+  font-size: 4.7cqw;
   font-weight: 950;
-  box-shadow: 0 18px 34px rgba(245,158,11,.28);
+  box-shadow: 0 4.5cqw 8.5cqw rgba(245,158,11,.28);
 }
 
 .place.hover {
-  transform: translateY(-3px) scale(1.012);
+  transform: translateY(-.8cqw) scale(1.012);
 }
 
 .quickGrid {
@@ -514,22 +631,24 @@ body,
 .quick {
   min-height: 0;
   height: 100%;
-  padding: 10%;
-  border-radius: 18px;
+  padding: 9%;
+  border-radius: 4.7cqw;
   border: 1px solid rgba(255,255,255,.10);
   background: linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
   color: white;
   text-align: left;
+  overflow: hidden;
 }
 
 .quick.hover {
-  transform: translateY(-3px);
+  transform: translateY(-.8cqw);
   background: rgba(245,158,11,.12);
 }
 
 .quick h3 {
   margin: 0;
-  font-size: clamp(12px, 3.6vw, 14px);
+  font-size: 3.65cqw;
+  line-height: 1.1;
   font-weight: 950;
 }
 
@@ -538,16 +657,17 @@ body,
   display: block;
   margin-top: 6%;
   color: #d6d3d1;
-  font-size: clamp(8px, 2.6vw, 10px);
-  line-height: 1.22;
+  font-size: 2.55cqw;
+  line-height: 1.18;
   font-weight: 750;
 }
 
 .quick em {
   display: block;
-  margin-top: 9%;
-  color: ${BRAND_ORANGE};
-  font-size: clamp(11px, 3.3vw, 13px);
+  margin-top: 8%;
+  color: #f59e0b;
+  font-size: 3.25cqw;
+  line-height: 1.1;
   font-weight: 950;
   font-style: normal;
 }
@@ -560,34 +680,89 @@ body,
   margin: 0 6% 3%;
   padding: 2% 3%;
   background: rgba(16,16,16,.92);
-  border-radius: 20px;
+  border-radius: 5cqw;
   border: 1px solid rgba(255,255,255,.08);
 }
 
 .bottomNav button {
   min-height: 0;
   border: 0;
-  border-radius: 16px;
+  border-radius: 4cqw;
   background: transparent;
   color: #a8a29e;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: .4cqw;
   font-weight: 900;
 }
 
 .bottomNav button.active {
-  color: ${BRAND_ORANGE};
+  color: #f59e0b;
 }
 
 .bottomNav span {
-  font-size: clamp(14px, 4vw, 17px);
+  font-size: 4.1cqw;
 }
 
 .bottomNav b {
-  font-size: clamp(9px, 2.7vw, 11px);
+  font-size: 2.8cqw;
+}
+
+.deviceLabPage {
+  width: 100%;
+  min-height: 100vh;
+  background: #111827;
+  color: white;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  overflow: auto;
+}
+
+.labHeader {
+  margin-bottom: 18px;
+}
+
+.labHeader h1 {
+  margin: 0;
+  font-size: 26px;
+}
+
+.labHeader p {
+  margin: 8px 0 0;
+  color: #d1d5db;
+}
+
+.deviceGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.deviceShell {
+  position: relative;
+  background: #020617;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.deviceName {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fde68a;
+  background: rgba(0,0,0,.7);
+}
+
+.deviceViewport {
+  transform-origin: top left;
+  background: #050505;
 }
 
 @keyframes floatCard {
@@ -595,7 +770,7 @@ body,
     transform: translateX(-50%) translateY(0);
   }
   50% {
-    transform: translateX(-50%) translateY(-5px);
+    transform: translateX(-50%) translateY(-1.3cqw);
   }
 }
 
