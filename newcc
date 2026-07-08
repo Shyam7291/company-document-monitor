@@ -847,3 +847,114 @@ button {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+index.js
+
+import React, { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+
+import App from './App';
+import "./style.css";
+
+const rootElement = document.getElementById('root');
+const root = createRoot(rootElement);
+
+root.render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+style.css
+
+@import "tailwindcss";
+
+@source "../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
+
+h1,
+p {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package
+{
+  "name": "react-heroui-responsive",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "@heroui/react": "3.2.2",
+    "framer-motion": "12.42.2",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-scripts": "5.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "devDependencies": {}
+}
+
+
+
+
