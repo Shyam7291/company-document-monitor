@@ -1,69 +1,71 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { HeroUIProvider, Button, Card, CardBody } from "@heroui/react";
 
 const SHOW_DEVICE_LAB = false;
 
 const ORIGINAL_BG_IMAGE =
   "https://raw.githubusercontent.com/Shyam7291/company-document-monitor/main/you_acn_only_generate_the_sa.png";
 
-const BG_IMAGE = `https://wsrv.nl/?url=${encodeURIComponent(
-  ORIGINAL_BG_IMAGE
-)}&output=png&w=820&h=980&fit=cover`;
+  const BG_IMAGE = `https://wsrv.nl/?url=${encodeURIComponent(
+    ORIGINAL_BG_IMAGE
+  )}&output=png&w=820&h=980&fit=cover`;
 
 const GLASS_CARD_IMAGE =
   "https://cdn.jsdelivr.net/gh/Shyam7291/company-document-monitor@main/32454-removebg-preview.png";
 
-  const DEVICES = [
-    { name: "iPhone SE", w: 375, h: 667 },
-    { name: "iPhone 12 Mini", w: 360, h: 780 },
-    { name: "iPhone 13 Mini", w: 375, h: 812 },
-    { name: "iPhone 12", w: 390, h: 844 },
-    { name: "iPhone 13", w: 390, h: 844 },
-    { name: "iPhone 14", w: 390, h: 844 },
-    { name: "iPhone 14 Pro", w: 393, h: 852 },
-    { name: "iPhone 14 Pro Max", w: 430, h: 932 },
-    { name: "iPhone 15", w: 393, h: 852 },
-    { name: "iPhone 15 Pro", w: 393, h: 852 },
-    { name: "iPhone 15 Pro Max", w: 430, h: 932 },
-    { name: "Galaxy S22", w: 360, h: 780 },
-    { name: "Galaxy S23", w: 360, h: 780 },
-    { name: "Galaxy S24", w: 412, h: 915 },
-    { name: "Galaxy S25 Ultra", w: 412, h: 891 },
-    { name: "Android Large", w: 430, h: 932 },
-  ];
-  
-  function BuyerHomeScreen({ labMode = false }) {
-    const buyerName = "Shyam";
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [rotation, setRotation] = useState(0);
-    const [contentHidden, setContentHidden] = useState(false);
-    const [hovered, setHovered] = useState(null);
-  
-    const features = useMemo(
-      () => [
-        {
-          title: "Best Rate",
-          subtitle: "Comparison support from 1K+ sellers",
-          icon: "🪨",
-        },
-        {
-          title: "Pure Quality",
-          subtitle: "No mixing. Quality checked material",
-          icon: "🛡️",
-        },
-        {
-          title: "Zero Brokerage",
-          subtitle: "0% brokerage. No heavy middleman cost",
-          icon: "0%",
-        },
-        {
-          title: "Easy Transport",
-          subtitle: "Transport as per your availability",
-          icon: "🚚",
-        },
-      ],
-      []
-    );
+const BRAND_ORANGE = "#f59e0b";
+
+const DEVICES = [
+  { name: "iPhone SE", w: 375, h: 667 },
+  { name: "iPhone 12 Mini", w: 360, h: 780 },
+  { name: "iPhone 13 Mini", w: 375, h: 812 },
+  { name: "iPhone 12", w: 390, h: 844 },
+  { name: "iPhone 13", w: 390, h: 844 },
+  { name: "iPhone 14", w: 390, h: 844 },
+  { name: "iPhone 14 Pro", w: 393, h: 852 },
+  { name: "iPhone 14 Pro Max", w: 430, h: 932 },
+  { name: "iPhone 15", w: 393, h: 852 },
+  { name: "iPhone 15 Pro", w: 393, h: 852 },
+  { name: "iPhone 15 Pro Max", w: 430, h: 932 },
+  { name: "Galaxy S22", w: 360, h: 780 },
+  { name: "Galaxy S23", w: 360, h: 780 },
+  { name: "Galaxy S24", w: 412, h: 915 },
+  { name: "Galaxy S25 Ultra", w: 412, h: 891 },
+  { name: "Android Large", w: 430, h: 932 },
+];
+
+function BuyerHomeScreen({ labMode = false }) {
+  const buyerName = "Shyam";
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [rotation, setRotation] = useState(0);
+  const [contentHidden, setContentHidden] = useState(false);
+  const [hovered, setHovered] = useState(null);
+
+  const features = useMemo(
+    () => [
+      {
+        title: "Best Rate",
+        subtitle: "Comparison support from 1K+ sellers",
+        icon: "🪨",
+      },
+      {
+        title: "Pure Quality",
+        subtitle: "No mixing. Quality checked material",
+        icon: "🛡️",
+      },
+      {
+        title: "Zero Brokerage",
+        subtitle: "0% brokerage. No heavy middleman cost",
+        icon: "0%",
+      },
+      {
+        title: "Easy Transport",
+        subtitle: "Transport as per your availability",
+        icon: "🚚",
+      },
+    ],
+    []
+  );
+
   const rotateToFeature = (nextIndex) => {
     setContentHidden(true);
     setRotation((current) => current + 180);
@@ -99,20 +101,18 @@ const GLASS_CARD_IMAGE =
   return (
     <div className={labMode ? "phone labPhone" : "phone"}>
       <section className="hero">
-        {BG_IMAGE}
-
+      {React.createElement("img", {
+  className: "heroBg",
+  src: BG_IMAGE,
+  alt: "Quarry background",
+})}
         <div className="heroShade" />
         <div className="bottomBlend" />
         <div className="activeGlow" />
 
         <nav className="topNav">
-          <Button isIconOnly radius="full" variant="flat" className="navIcon">
-            ≡
-          </Button>
-
-          <Button isIconOnly radius="full" variant="flat" className="navIcon">
-            ●
-          </Button>
+          <button>≡</button>
+          <button>●</button>
         </nav>
 
         <div className="intro">
@@ -133,7 +133,11 @@ const GLASS_CARD_IMAGE =
               className="glassSpinLayer"
               style={{ transform: `rotateY(${rotation}deg)` }}
             >
-              {GLASS_CARD_IMAGE}
+              {React.createElement("img", {
+  className: "glassCardImage",
+  src: GLASS_CARD_IMAGE,
+  alt: "Glass feature card",
+})}
             </div>
 
             <div className={contentHidden ? "cardContent hidden" : "cardContent"}>
@@ -141,10 +145,7 @@ const GLASS_CARD_IMAGE =
               <div className="stars">★★★★★</div>
               <h2>{active.title}</h2>
               <p>{active.subtitle}</p>
-
-              <Button isIconOnly radius="full" className="cardArrow">
-                ➜
-              </Button>
+              <button>➜</button>
             </div>
           </article>
         </div>
@@ -157,71 +158,59 @@ const GLASS_CARD_IMAGE =
                 if (index !== activeIndex) rotateToFeature(index);
               }}
               className={index === activeIndex ? "dot active" : "dot"}
-              aria-label={`Show ${feature.title}`}
             />
           ))}
         </div>
       </section>
 
       <section className="actions">
-        <Button
-          radius="full"
+        <button
           className={hovered === "place" ? "place hover" : "place"}
           onMouseEnter={() => setHovered("place")}
           onMouseLeave={() => setHovered(null)}
         >
           <span>Place New Order</span>
           <b>➜</b>
-        </Button>
+        </button>
 
         <div className="quickGrid">
-          <Card
-            isPressable
-            shadow="none"
+          <button
             className={hovered === "active" ? "quick hover" : "quick"}
             onMouseEnter={() => setHovered("active")}
             onMouseLeave={() => setHovered(null)}
           >
-            <CardBody className="quickBody">
-              <h3>Active Order</h3>
-              <p>40mm Crushed Stone</p>
-              <small>32 tons</small>
-              <em>Track →</em>
-            </CardBody>
-          </Card>
+            <h3>Active Order</h3>
+            <p>40mm Crushed Stone</p>
+            <small>32 tons</small>
+            <em>Track →</em>
+          </button>
 
-          <Card
-            isPressable
-            shadow="none"
+          <button
             className={hovered === "repeat" ? "quick hover" : "quick"}
             onMouseEnter={() => setHovered("repeat")}
             onMouseLeave={() => setHovered(null)}
           >
-            <CardBody className="quickBody">
-              <h3>Last Order</h3>
-              <p>20mm Stone</p>
-              <small>2 trucks • 20 tons</small>
-              <em>Repeat →</em>
-            </CardBody>
-          </Card>
+            <h3>Last Order</h3>
+            <p>20mm Stone</p>
+            <small>2 trucks • 20 tons</small>
+            <em>Repeat →</em>
+          </button>
         </div>
       </section>
 
       <nav className="bottomNav">
-        <Button variant="light" className="bottomBtn active">
+        <button className="active">
           <span>🏠</span>
           <b>Home</b>
-        </Button>
-
-        <Button variant="light" className="bottomBtn">
+        </button>
+        <button>
           <span>📦</span>
           <b>My Orders</b>
-        </Button>
-
-        <Button variant="light" className="bottomBtn">
+        </button>
+        <button>
           <span>👤</span>
           <b>Profile</b>
-        </Button>
+        </button>
       </nav>
     </div>
   );
@@ -271,17 +260,15 @@ function DeviceLab() {
 }
 
 export default function App() {
+  if (SHOW_DEVICE_LAB) {
+    return <DeviceLab />;
+  }
+
   return (
-    <HeroUIProvider>
-      {SHOW_DEVICE_LAB ? (
-        <DeviceLab />
-      ) : (
-        <div className="page">
-          <style>{css}</style>
-          <BuyerHomeScreen />
-        </div>
-      )}
-    </HeroUIProvider>
+    <div className="page">
+      <style>{css}</style>
+      <BuyerHomeScreen />
+    </div>
   );
 }
 
@@ -298,34 +285,53 @@ body,
   min-height: 100%;
 }
 
-button {
-  font-family: inherit;
-}
-
 .page {
-  width: 100%;
+  width: 100vw;
   height: 100dvh;
   min-height: 100dvh;
-  background: #f4f1ea;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 8px;
+  background: #050505;
+  display: block;
+  margin: 0;
+  padding: 0;
   font-family: Arial, sans-serif;
   overflow: hidden;
 }
 
+/*
+  Base target: 360 x 780
+  Max target: 430 x 932
+*/
 .phone {
-  width: min(430px, calc(100vw - 16px), calc((100dvh - 16px) * 360 / 780));
-  aspect-ratio: 360 / 780;
-  max-height: calc(100dvh - 16px);
+  width: 100vw;
+  height: 100dvh;
+  min-width: 0;
+  min-height: 0;
+  max-width: none;
+  max-height: none;
+  aspect-ratio: auto;
   background: #050505;
-  border-radius: 8cqw;
+  border-radius: 0;
   overflow: hidden;
   display: grid;
   grid-template-rows: 58% 29% 13%;
-  box-shadow: 0 7cqw 18cqw rgba(0, 0, 0, .28);
+  box-shadow: none;
   container-type: size;
+}
+@media (min-width: 700px) {
+  .page {
+    background: #f4f1ea;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+  }
+
+  .phone {
+    width: 390px;
+    height: 844px;
+    border-radius: 32px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.28);
+  }
 }
 
 .labPhone {
@@ -341,7 +347,10 @@ button {
   height: 100%;
   overflow: hidden;
   color: white;
-  padding: 3.6cqw 5cqw 2cqw;
+  padding:
+    calc(env(safe-area-inset-top, 0px) + 3.6cqw)
+    5cqw
+    2cqw;
   background: #111;
 }
 
@@ -408,10 +417,11 @@ button {
   justify-content: space-between;
 }
 
-.navIcon {
+.topNav button {
   width: 8.8cqw;
   height: 8.8cqw;
-  min-width: 8.8cqw;
+  border: 0;
+  border-radius: 999px;
   background: rgba(0, 0, 0, .50);
   color: white;
   font-size: 5.2cqw;
@@ -451,6 +461,10 @@ button {
   z-index: 5;
 }
 
+/*
+  Main fix: smaller glass card.
+  If card still feels big, reduce width from 34cqw to 32cqw.
+*/
 .singleFeatureCard {
   position: absolute;
   left: 50%;
@@ -501,6 +515,9 @@ button {
   transform: translateX(-50%) scale(.96);
 }
 
+/*
+  Text/icon are now smaller.
+*/
 .featureIcon {
   width: 10cqw;
   height: 10cqw;
@@ -538,11 +555,12 @@ button {
   text-shadow: 0 1.2cqw 3.2cqw rgba(0,0,0,.65);
 }
 
-.cardArrow {
+.cardContent button {
   width: 12cqw;
   height: 12cqw;
-  min-width: 12cqw;
   margin-top: 3.8cqw;
+  border: 0;
+  border-radius: 999px;
   color: white;
   background: #f59e0b;
   font-size: 5.8cqw;
@@ -590,7 +608,6 @@ button {
   border-radius: 999px;
   border: 0;
   background: rgba(255,255,255,.76);
-  padding: 0;
 }
 
 .dot.active {
@@ -608,7 +625,6 @@ button {
   width: 100%;
   height: 23%;
   min-height: 0;
-  min-width: 0;
   border: 0;
   border-radius: 999px;
   background: linear-gradient(135deg, #f59e0b, #f97316);
@@ -620,11 +636,6 @@ button {
   font-size: 4.7cqw;
   font-weight: 950;
   box-shadow: 0 4.5cqw 8.5cqw rgba(245,158,11,.28);
-}
-
-.place > span {
-  flex: 1;
-  text-align: left;
 }
 
 .place.hover {
@@ -642,21 +653,13 @@ button {
 .quick {
   min-height: 0;
   height: 100%;
-  padding: 0;
+  padding: 9%;
   border-radius: 4.7cqw;
   border: 1px solid rgba(255,255,255,.10);
   background: linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
   color: white;
   text-align: left;
   overflow: hidden;
-}
-
-.quickBody {
-  height: 100%;
-  padding: 9%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
 }
 
 .quick.hover {
@@ -692,21 +695,23 @@ button {
 }
 
 .bottomNav {
-  height: 100%;
+  height: calc(100% - env(safe-area-inset-bottom, 0px));
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2%;
-  margin: 0 6% 3%;
+  margin:
+    0
+    6%
+    calc(env(safe-area-inset-bottom, 0px) + 3%);
   padding: 2% 3%;
   background: rgba(16,16,16,.92);
   border-radius: 5cqw;
   border: 1px solid rgba(255,255,255,.08);
 }
 
-.bottomBtn {
+.bottomNav button {
   min-height: 0;
-  height: 100%;
-  min-width: 0;
+  border: 0;
   border-radius: 4cqw;
   background: transparent;
   color: #a8a29e;
@@ -718,7 +723,7 @@ button {
   font-weight: 900;
 }
 
-.bottomBtn.active {
+.bottomNav button.active {
   color: #f59e0b;
 }
 
@@ -785,40 +790,6 @@ button {
   background: #050505;
 }
 
-@container (max-width: 380px) {
-  .singleFeatureCard {
-    width: 64cqw;
-    top: -14%;
-  }
-
-  .intro h1 {
-    font-size: 6.7cqw;
-  }
-
-  .intro p {
-    font-size: 4.2cqw;
-  }
-
-  .quick h3 {
-    font-size: 3.35cqw;
-  }
-
-  .quick p,
-  .quick small {
-    font-size: 2.35cqw;
-  }
-}
-
-@container (min-width: 410px) {
-  .singleFeatureCard {
-    width: 68cqw;
-  }
-
-  .featureWrap {
-    top: 39%;
-  }
-}
-
 @keyframes floatCard {
   0%, 100% {
     transform: translateX(-50%) translateY(0);
@@ -839,122 +810,3 @@ button {
   }
 }
 `;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-index.js
-
-import React, { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-
-import App from './App';
-import "./style.css";
-
-const rootElement = document.getElementById('root');
-const root = createRoot(rootElement);
-
-root.render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-style.css
-
-@import "tailwindcss";
-
-@source "../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
-
-h1,
-p {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-package
-{
-  "name": "react-heroui-responsive",
-  "version": "0.0.0",
-  "private": true,
-  "dependencies": {
-    "@heroui/react": "3.2.2",
-    "framer-motion": "12.42.2",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "react-scripts": "5.0.1"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
-  },
-  "devDependencies": {}
-}
-
-
-
-
