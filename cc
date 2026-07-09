@@ -1,3 +1,4 @@
+import ViewportSize from "./ViewportSize.jsx";
 import React, { useEffect, useMemo, useState } from "react";
 
 const SHOW_DEVICE_LAB = false;
@@ -101,11 +102,12 @@ function BuyerHomeScreen({ labMode = false }) {
   return (
     <div className={labMode ? "phone labPhone" : "phone"}>
       <section className="hero">
-      {React.createElement("img", {
-  className: "heroBg",
-  src: BG_IMAGE,
-  alt: "Quarry background",
-})}
+        {React.createElement("img", {
+          className: "heroBg",
+          src: BG_IMAGE,
+          alt: "Quarry background",
+        })}
+
         <div className="heroShade" />
         <div className="bottomBlend" />
         <div className="activeGlow" />
@@ -134,19 +136,22 @@ function BuyerHomeScreen({ labMode = false }) {
               style={{ transform: `rotateY(${rotation}deg)` }}
             >
               {React.createElement("img", {
-  className: "glassCardImage",
-  src: GLASS_CARD_IMAGE,
-  alt: "Glass feature card",
-})}
+                className: "glassCardImage",
+                src: GLASS_CARD_IMAGE,
+                alt: "Glass feature card",
+              })}
             </div>
 
-            <div className={contentHidden ? "cardContent hidden" : "cardContent"}>
+            <div
+              className={contentHidden ? "cardContent hidden" : "cardContent"}
+            >
               <div className="featureIcon">{active.icon}</div>
               <div className="stars">★★★★★</div>
               <h2>{active.title}</h2>
               <p>{active.subtitle}</p>
-              <button>➜</button>
             </div>
+
+            <button className="featureArrow">➜</button>
           </article>
         </div>
 
@@ -267,6 +272,10 @@ export default function App() {
   return (
     <div className="page">
       <style>{css}</style>
+
+      {/* Uncomment only when you want to check viewport size */}
+      {/* <ViewportSize /> */}
+
       <BuyerHomeScreen />
     </div>
   );
@@ -286,33 +295,49 @@ body,
 }
 
 .page {
-  width: 100%;
+  width: 100vw;
   height: 100dvh;
   min-height: 100dvh;
-  background: #f4f1ea;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 8px;
+  background: #050505;
+  display: block;
+  margin: 0;
+  padding: 0;
   font-family: Arial, sans-serif;
   overflow: hidden;
 }
 
-/*
-  Base target: 360 x 780
-  Max target: 430 x 932
-*/
 .phone {
-  width: min(430px, calc(100vw - 16px), calc((100dvh - 16px) * 360 / 780));
-  aspect-ratio: 360 / 780;
-  max-height: calc(100dvh - 16px);
+  width: 100vw;
+  height: 100dvh;
+  min-width: 0;
+  min-height: 0;
+  max-width: none;
+  max-height: none;
+  aspect-ratio: auto;
   background: #050505;
-  border-radius: 8cqw;
+  border-radius: 0;
   overflow: hidden;
   display: grid;
-  grid-template-rows: 58% 29% 13%;
-  box-shadow: 0 7cqw 18cqw rgba(0, 0, 0, .28);
+  grid-template-rows: 56% 31% 13%;
+  box-shadow: none;
   container-type: size;
+}
+
+@media (min-width: 700px) {
+  .page {
+    background: #f4f1ea;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+  }
+
+  .phone {
+    width: 390px;
+    height: 844px;
+    border-radius: 32px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.28);
+  }
 }
 
 .labPhone {
@@ -328,7 +353,10 @@ body,
   height: 100%;
   overflow: hidden;
   color: white;
-  padding: 3.6cqw 5cqw 2cqw;
+  padding:
+    calc(env(safe-area-inset-top, 0px) + 3.6cqw)
+    5cqw
+    2cqw;
   background: #111;
 }
 
@@ -338,8 +366,9 @@ body,
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 47%;
-  transform: scale(1.0);
+  object-position: center center;
+  transform: translateY(-2%) scale(1.12);
+  transform-origin: center center;
   z-index: 0;
 }
 
@@ -439,20 +468,17 @@ body,
   z-index: 5;
 }
 
-/*
-  Main fix: smaller glass card.
-  If card still feels big, reduce width from 34cqw to 32cqw.
-*/
 .singleFeatureCard {
   position: absolute;
   left: 50%;
-  top: -20%;
+  top: -13%;
   width: clamp(1px, 70cqw, 250px);
   aspect-ratio: 120 / 120;
   color: white;
   text-align: center;
   transform: translateX(-50%);
   animation: floatCard 3.8s ease-in-out infinite;
+  overflow: visible;
 }
 
 .glassSpinLayer {
@@ -460,7 +486,7 @@ body,
   inset: 0;
   transform-style: preserve-3d;
   transform-origin: center center;
-  transition: transform 900ms cubic-bezier(.32,.72,.22,1);
+  transition: transform 1500ms cubic-bezier(.32,.72,.22,1);
   will-change: transform;
 }
 
@@ -477,14 +503,16 @@ body,
 .cardContent {
   position: absolute;
   left: 50%;
-  top: 18%;
-  width: 68%;
+  top: 17%;
+  width: 58%;
+  max-height: 68%;
   transform: translateX(-50%);
   z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
   opacity: 1;
+  overflow: hidden;
   transition: opacity 150ms ease, transform 150ms ease;
 }
 
@@ -493,9 +521,6 @@ body,
   transform: translateX(-50%) scale(.96);
 }
 
-/*
-  Text/icon are now smaller.
-*/
 .featureIcon {
   width: 10cqw;
   height: 10cqw;
@@ -530,27 +555,40 @@ body,
   font-size: 3.4cqw;
   line-height: 1.16;
   font-weight: 750;
+  text-align: center;
   text-shadow: 0 1.2cqw 3.2cqw rgba(0,0,0,.65);
 }
 
-.cardContent button {
+.featureArrow {
+  position: absolute;
+  left: 50%;
+  bottom: -5.1cqw;
   width: 12cqw;
   height: 12cqw;
-  margin-top: 3.8cqw;
+  transform: translateX(-50%);
   border: 0;
   border-radius: 999px;
-  color: white;
+  color: #ffffff;
   background: #f59e0b;
   font-size: 5.8cqw;
   font-weight: 950;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  padding: 0;
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  box-shadow: 0 1.5cqw 4cqw rgba(245,158,11,.45);
 }
 
 .ring {
   position: absolute;
   left: 50%;
-  bottom: 15%;
-  width: 36cqw;
-  height: 5.6cqh;
+  bottom: 3%;
+  width: 46cqw;
+  height: 8.6cqh;
   border-radius: 50%;
   border: .45cqw solid #f59e0b;
   box-shadow: 0 0 4.8cqw #f59e0b;
@@ -595,8 +633,9 @@ body,
 
 .actions {
   height: 100%;
-  padding: 4% 6% 0;
+  padding: 4% 5% 0;
   background: #050505;
+  overflow: hidden;
 }
 
 .place {
@@ -622,62 +661,83 @@ body,
 
 .quickGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4%;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(8px, 3cqw, 14px);
   margin-top: 4%;
-  height: 54%;
+  height: 58%;
+  min-height: 0;
 }
 
 .quick {
+  min-width: 0;
   min-height: 0;
   height: 100%;
-  padding: 9%;
-  border-radius: 4.7cqw;
-  border: 1px solid rgba(255,255,255,.10);
-  background: linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
-  color: white;
+  padding: clamp(7px, 3.2cqw, 12px);
+  border-radius: clamp(14px, 4.7cqw, 20px);
+  border: 1px solid rgba(255,255,255,.12);
+  background:
+    radial-gradient(circle at top left, rgba(255,255,255,.13), transparent 42%),
+    linear-gradient(145deg, #1b1b1b 0%, #0b0b0b 100%);
+  color: #ffffff;
   text-align: left;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
 }
 
 .quick.hover {
   transform: translateY(-.8cqw);
-  background: rgba(245,158,11,.12);
+  background:
+    radial-gradient(circle at top left, rgba(245,158,11,.18), transparent 42%),
+    linear-gradient(145deg, #1c1710 0%, #0b0b0b 100%);
 }
 
 .quick h3 {
   margin: 0;
-  font-size: 3.65cqw;
-  line-height: 1.1;
+  color: #f59e0b;
+  font-size: clamp(10px, 3.5cqw, 14px);
+  line-height: 1.05;
   font-weight: 950;
+  white-space: normal;
+  overflow: hidden;
 }
 
 .quick p,
 .quick small {
   display: block;
-  margin-top: 6%;
-  color: #d6d3d1;
-  font-size: 2.55cqw;
-  line-height: 1.18;
+  margin-top: clamp(2px, 1.2cqw, 5px);
+  color: #e7e5e4;
+  font-size: clamp(8px, 2.45cqw, 11px);
+  line-height: 1.08;
   font-weight: 750;
+  overflow-wrap: break-word;
 }
 
 .quick em {
   display: block;
-  margin-top: 8%;
+  margin-top: auto;
+  padding-top: clamp(2px, 1.2cqw, 5px);
   color: #f59e0b;
-  font-size: 3.25cqw;
-  line-height: 1.1;
+  font-size: clamp(8px, 2.8cqw, 12px);
+  line-height: 1;
   font-weight: 950;
   font-style: normal;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .bottomNav {
-  height: 100%;
+  height: calc(100% - env(safe-area-inset-bottom, 0px));
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2%;
-  margin: 0 6% 3%;
+  margin:
+    0
+    6%
+    calc(env(safe-area-inset-bottom, 0px) + 3%);
   padding: 2% 3%;
   background: rgba(16,16,16,.92);
   border-radius: 5cqw;
