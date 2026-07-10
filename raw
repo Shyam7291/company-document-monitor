@@ -1,0 +1,92 @@
+Create a premium mobile app UI concept for a construction-material ordering app called StoneRate. The screen should be the “Place New Order” page for a buyer ordering crushed stone.
+
+Design style:
+- Dark amber/orange theme inspired by stone mines, quarry lighting, and premium 3D glass UI.
+- Background should feel like a modern mining/construction marketplace: dark brown/black gradient, subtle stone texture, warm orange glow, soft depth, no real photos unless stylized.
+- Use glassmorphism cards, 3D-style panels, glowing orange highlights, soft shadows, rounded corners.
+- The tone should match a premium mobile app, not a basic form.
+- Portrait mobile screen, realistic app layout, full-screen smartphone UI.
+- No real brand logos, no copied screenshot elements, no watermark.
+
+Main screen content:
+1. Top header:
+   - Left side: menu hamburger icon.
+   - Center/left text: “Place New Order”.
+   - Small subtitle: “Choose material and quantity”.
+   - Right side: small notification/profile circular icon.
+   - Header should feel clean and premium.
+
+2. Buyer greeting/status area:
+   - Small badge: “NEW REQUEST”.
+   - Main heading: “What stone do you need today?”
+   - Subtext: “Select material, quantity, trucks and delivery site.”
+
+3. Material selection section:
+   - A large glass card titled “Select Material”.
+   - Show selectable material chips/cards:
+     - 20mm Stone
+     - 40mm Stone
+     - Dust
+     - M-Sand
+   - One material should be highlighted with orange glow.
+   - Use small stone/rock icons or abstract material icons.
+
+4. Quantity section:
+   - Glass panel/card titled “Quantity”.
+   - Show tons input visually:
+     - “40 tons”
+     - plus and minus circular buttons.
+   - Include a small helper text: “Approx. quantity required”.
+   - Make this area look interactive and premium.
+
+5. Truck section:
+   - Glass card titled “Truck Requirement”.
+   - Show:
+     - “2 Trucks”
+     - “20 tons each”
+   - Include plus/minus controls or stepper style.
+   - Add a small 3D truck icon or minimal truck glyph.
+
+6. Delivery location section:
+   - Glass card titled “Delivery Site”.
+   - Show example location:
+     - “Site Location”
+     - “Bengaluru East”
+   - Include map pin icon and “Change” button.
+   - Should feel like the buyer can select saved address.
+
+7. Date/time section:
+   - Small glass pill or card:
+     - “Required by”
+     - “Tomorrow, 10 AM”
+   - Calendar/time icon.
+
+8. Notes section:
+   - Compact field:
+     - “Add note for supplier”
+   - Keep it minimal; should not dominate the page.
+
+9. Bottom action area:
+   - Large orange primary button:
+     - “Submit Rate Request”
+   - Secondary small text below:
+     - “We’ll check the best available rate and notify you.”
+   - Button should have strong orange glow and premium rounded style.
+
+Visual hierarchy:
+- Form should not look boring; it should look like a 3D guided ordering flow.
+- Use layered glass cards with subtle depth.
+- Use orange accent consistently.
+- Keep readability high.
+- Make the page feel like a real mobile app screen, not a website.
+- No excessive text.
+- Avoid clutter; use clean spacing.
+
+Composition:
+- Portrait phone screen.
+- Top header, main content scrollable feel, fixed bottom CTA area.
+- Use modern fintech/marketplace app visual quality.
+- Dark background with warm orange glow.
+- White text, amber highlights, grey secondary text.
+- All cards should have rounded corners, soft blur, and depth.
+- The final image should show only this one page: “Place New Order”.
