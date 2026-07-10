@@ -845,3 +845,976 @@ body,
   }
 }
 `;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+orderpage
+import React, { useEffect, useMemo, useState } from "react";
+
+export default function App() {
+  const viewport = useViewport();
+  const styles = useMemo(
+    () => createStyles(viewport),
+    [viewport.width, viewport.height]
+  );
+
+  const vehicles = [
+    { id: "truck12", name: "12 Tyre Truck", capacity: 10, tag: "Small site" },
+    { id: "truck14", name: "14 Tyre Truck", capacity: 16, tag: "Popular" },
+    { id: "truck18", name: "18 Tyre Truck", capacity: 22, tag: "Bulk order" },
+    { id: "hyva", name: "Hyva", capacity: 18, tag: "Fast delivery" },
+  ];
+
+  const materials = [
+    "20mm Crushed Stone",
+    "40mm Crushed Stone",
+    "GSB",
+    "M-Sand",
+    "Stone Dust",
+  ];
+
+  const emptyVehicleQty = {
+    truck12: 0,
+    truck14: 0,
+    truck18: 0,
+    hyva: 0,
+  };
+
+  const [selectedMaterial, setSelectedMaterial] = useState(
+    "20mm Crushed Stone"
+  );
+
+  const [ordersByMaterial, setOrdersByMaterial] = useState({
+    "20mm Crushed Stone": { ...emptyVehicleQty },
+    "40mm Crushed Stone": { ...emptyVehicleQty },
+    GSB: { ...emptyVehicleQty },
+    "M-Sand": { ...emptyVehicleQty },
+    "Stone Dust": { ...emptyVehicleQty },
+  });
+
+  const [arrivalDate, setArrivalDate] = useState("2026-07-05");
+  const [contact, setContact] = useState("");
+  const [notes, setNotes] = useState(
+    "Please arrange best rate from nearby sellers."
+  );
+
+  const currentMaterialQty = ordersByMaterial[selectedMaterial];
+
+  const addVehicle = (vehicleId) => {
+    setOrdersByMaterial((previousOrders) => ({
+      ...previousOrders,
+      [selectedMaterial]: {
+        ...previousOrders[selectedMaterial],
+        [vehicleId]: previousOrders[selectedMaterial][vehicleId] + 1,
+      },
+    }));
+  };
+
+  const removeVehicle = (vehicleId) => {
+    setOrdersByMaterial((previousOrders) => ({
+      ...previousOrders,
+      [selectedMaterial]: {
+        ...previousOrders[selectedMaterial],
+        [vehicleId]: Math.max(0, previousOrders[selectedMaterial][vehicleId] - 1),
+      },
+    }));
+  };
+
+  const getMaterialTons = (materialName) => {
+    const materialQty = ordersByMaterial[materialName];
+
+    return vehicles.reduce(
+      (sum, vehicle) => sum + materialQty[vehicle.id] * vehicle.capacity,
+      0
+    );
+  };
+
+  const materialSummary = useMemo(() => {
+    return materials
+      .map((materialName) => ({
+        materialName,
+        tons: getMaterialTons(materialName),
+        vehicles: vehicles.reduce(
+          (sum, vehicle) =>
+            sum + ordersByMaterial[materialName][vehicle.id],
+          0
+        ),
+      }))
+      .filter((item) => item.tons > 0);
+  }, [ordersByMaterial]);
+
+  const totalTons = useMemo(() => {
+    return materialSummary.reduce((sum, item) => sum + item.tons, 0);
+  }, [materialSummary]);
+
+  const totalVehicles = useMemo(() => {
+    return materialSummary.reduce((sum, item) => sum + item.vehicles, 0);
+  }, [materialSummary]);
+
+  return (
+    <div style={styles.page}>
+      <div style={styles.phone}>
+        <div style={styles.header}>
+          <p style={styles.eyebrow}>BEST RATE ORDER</p>
+
+          <div style={styles.headerRow}>
+            <div style={{ minWidth: 0 }}>
+              <h1 style={styles.title}>
+                Crushed Stone
+                <br />
+                Booking
+              </h1>
+            </div>
+
+            <div style={styles.truckIcon}>🚚</div>
+          </div>
+
+          <div style={styles.trustGrid}>
+            <div style={styles.trustBox}>
+              <b style={styles.trustValue}>24h</b>
+              <span style={styles.trustText}>Rate check</span>
+            </div>
+
+            <div style={styles.trustBox}>
+              <b style={styles.trustValue}>Verified</b>
+              <span style={styles.trustText}>Sellers</span>
+            </div>
+
+            <div style={styles.trustBox}>
+              <b style={styles.trustValue}>Fast</b>
+              <span style={styles.trustText}>Dispatch</span>
+            </div>
+          </div>
+        </div>
+
+        <div style={styles.content}>
+          <div style={styles.card}>
+            <div style={styles.labelRow}>
+              <label style={styles.label}>📦 Material</label>
+              <span style={styles.badge}>Saved separately</span>
+            </div>
+
+            <select
+              style={styles.input}
+              value={selectedMaterial}
+              onChange={(event) => setSelectedMaterial(event.target.value)}
+            >
+              {materials.map((materialName) => (
+                <option key={materialName}>{materialName}</option>
+              ))}
+            </select>
+
+            <p style={styles.helperText}>
+              Select one material, add vehicles, then switch material. Previous
+              material quantity will stay saved.
+            </p>
+          </div>
+
+          <div style={styles.sectionHeader}>
+            <h2 style={styles.sectionTitle}>🚚 Select Vehicle</h2>
+            <span style={styles.smallText}>For {selectedMaterial}</span>
+          </div>
+
+          <div style={styles.vehicleGrid}>
+            {vehicles.map((vehicle) => {
+              const qty = currentMaterialQty[vehicle.id];
+              const active = qty > 0;
+
+              return (
+                <div
+                  key={vehicle.id}
+                  style={{
+                    ...styles.vehicleCard,
+                    ...(active ? styles.vehicleCardActive : {}),
+                  }}
+                >
+                  {active && <div style={styles.check}>✓</div>}
+
+                  <div
+                    onClick={() => addVehicle(vehicle.id)}
+                    style={styles.vehicleInfo}
+                  >
+                    <b style={styles.vehicleName}>{vehicle.name}</b>
+                    <span style={styles.vehicleCapacity}>
+                      {vehicle.capacity} ton / vehicle
+                    </span>
+                    <span style={styles.tag}>{vehicle.tag}</span>
+                  </div>
+
+                  {active ? (
+                    <div style={styles.qtyBox}>
+                      <button
+                        style={styles.qtyBtn}
+                        onClick={() => removeVehicle(vehicle.id)}
+                      >
+                        −
+                      </button>
+
+                      <div style={styles.qtyCenter}>
+                        <b style={styles.qtyNumber}>{qty}</b>
+                        <span style={styles.qtyText}>vehicles</span>
+                      </div>
+
+                      <button
+                        style={{ ...styles.qtyBtn, ...styles.plusBtn }}
+                        onClick={() => addVehicle(vehicle.id)}
+                      >
+                        +
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      style={styles.addBtn}
+                      onClick={() => addVehicle(vehicle.id)}
+                    >
+                      + Add Vehicle
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={styles.quantityCard}>
+            <div>
+              <p style={styles.quantityLabel}>Total Estimated Quantity</p>
+
+              <div style={styles.tonsRow}>
+                <b style={styles.tons}>{totalTons}</b>
+                <span style={styles.tonsText}>tons</span>
+              </div>
+            </div>
+
+            <div style={styles.rupee}>₹</div>
+
+            <div style={styles.totalVehicleText}>
+              {totalVehicles > 0
+                ? `${totalVehicles} total vehicle${
+                    totalVehicles === 1 ? "" : "s"
+                  } selected`
+                : "Select material and vehicles to calculate total tons"}
+            </div>
+
+            {materialSummary.length > 0 && (
+              <div style={styles.materialSummaryBox}>
+                {materialSummary.map((item) => (
+                  <div
+                    key={item.materialName}
+                    style={styles.materialSummaryRow}
+                  >
+                    <span style={styles.summaryMaterialName}>
+                      {item.materialName.replace(" Crushed Stone", "")}
+                    </span>
+                    <b>{item.tons} ton</b>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div style={styles.card}>
+            <div style={styles.field}>
+              <label style={styles.label}>📅 Date of Arrival</label>
+              <input
+                type="date"
+                style={styles.input}
+                value={arrivalDate}
+                onChange={(event) => setArrivalDate(event.target.value)}
+              />
+            </div>
+
+            <div style={styles.field}>
+              <label style={styles.label}>Buyer Contact Number</label>
+              <input
+                style={styles.input}
+                value={contact}
+                onChange={(event) => setContact(event.target.value)}
+                placeholder="Enter mobile number"
+              />
+            </div>
+
+            <div style={styles.field}>
+              <label style={styles.label}>Order Notes</label>
+              <textarea
+                style={styles.textarea}
+                value={notes}
+                onChange={(event) => setNotes(event.target.value)}
+              />
+            </div>
+          </div>
+
+          <div style={styles.infoBox}>
+            <div style={styles.infoIcon}>✓</div>
+
+            <div style={{ minWidth: 0 }}>
+              <b style={styles.infoTitle}>How this works</b>
+              <p style={styles.infoText}>
+                Buyer can add different vehicles for each material. Full vehicle
+                breakdown will appear on the confirmation page.
+              </p>
+            </div>
+          </div>
+
+          <button
+            style={{
+              ...styles.continueBtn,
+              opacity: totalVehicles === 0 ? 0.5 : 1,
+            }}
+            disabled={totalVehicles === 0}
+          >
+            Continue to Confirmation →
+          </button>
+
+          <p style={styles.footer}>
+            Final order request is submitted after confirmation.
+          </p>
+        </div>
+
+        <nav style={styles.bottomTabs}>
+          <button style={{ ...styles.tabBtn, ...styles.tabBtnActive }}>
+            <span style={styles.tabIcon}>🏠</span>
+            <b style={styles.tabText}>Home</b>
+          </button>
+
+          <button style={styles.tabBtn}>
+            <span style={styles.tabIcon}>📦</span>
+            <b style={styles.tabText}>My Orders</b>
+          </button>
+
+          <button style={styles.tabBtn}>
+            <span style={styles.tabIcon}>👤</span>
+            <b style={styles.tabText}>Profile</b>
+          </button>
+        </nav>
+      </div>
+    </div>
+  );
+}
+
+function useViewport() {
+  const [viewport, setViewport] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 390,
+    height: typeof window !== "undefined" ? window.innerHeight : 844,
+  });
+
+  useEffect(() => {
+    const update = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    update();
+    window.addEventListener("resize", update);
+
+    return () => {
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  return viewport;
+}
+
+function createStyles(viewport) {
+  const vw = viewport.width || 390;
+  const vh = viewport.height || 844;
+
+  const isDesktop = vw >= 700;
+  const phoneW = isDesktop ? 390 : vw;
+  const phoneH = isDesktop ? 844 : vh;
+
+  const scale = Math.max(
+    0.72,
+    Math.min(1, Math.min(phoneW / 390, phoneH / 844))
+  );
+
+  const narrow = phoneW < 360;
+  const veryNarrow = phoneW < 220;
+  const short = phoneH < 700;
+
+  const px = (value) => Math.round(value * scale);
+
+  return {
+    page: {
+      width: "100vw",
+      height: "100dvh",
+      minHeight: "100dvh",
+      background: isDesktop ? "#f4f1ea" : "#ffffff",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: isDesktop ? "center" : "stretch",
+      padding: isDesktop ? 16 : 0,
+      fontFamily: "Arial, sans-serif",
+      overflow: "hidden",
+      boxSizing: "border-box",
+    },
+
+    phone: {
+      width: isDesktop ? 390 : "100vw",
+      height: isDesktop ? 844 : "100dvh",
+      maxWidth: isDesktop ? 430 : "none",
+      background: "#ffffff",
+      borderRadius: isDesktop ? 32 : 0,
+      overflow: "hidden",
+      boxShadow: isDesktop ? "0 25px 60px rgba(0,0,0,0.18)" : "none",
+      boxSizing: "border-box",
+      display: "flex",
+      flexDirection: "column",
+    },
+
+    header: {
+      background: "linear-gradient(135deg, #09090b, #292524, #92400e)",
+      color: "white",
+      padding: px(short ? 18 : 22),
+      flexShrink: 0,
+      zIndex: 20,
+      boxShadow: "0 8px 22px rgba(0,0,0,0.16)",
+    },
+
+    eyebrow: {
+      fontSize: px(11),
+      letterSpacing: narrow ? 2 : 3,
+      color: "#fde68a",
+      fontWeight: 700,
+      margin: 0,
+    },
+
+    headerRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: px(10),
+    },
+
+    title: {
+      fontSize: px(short ? 30 : 34),
+      lineHeight: 1.1,
+      margin: `${px(10)}px 0 0`,
+      fontWeight: 900,
+      letterSpacing: -0.6,
+    },
+
+    truckIcon: {
+      fontSize: px(32),
+      background: "rgba(255,255,255,0.15)",
+      padding: px(14),
+      borderRadius: px(24),
+      flexShrink: 0,
+    },
+
+    trustGrid: {
+      display: "grid",
+      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+      gap: px(8),
+      marginTop: px(20),
+    },
+
+    trustBox: {
+      background: "rgba(255,255,255,0.13)",
+      borderRadius: px(18),
+      padding: px(10),
+      fontSize: px(12),
+      display: "flex",
+      flexDirection: "column",
+      gap: px(4),
+      minWidth: 0,
+      overflow: "hidden",
+    },
+
+    trustValue: {
+      fontSize: px(narrow ? 10 : 12),
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    trustText: {
+      fontSize: px(narrow ? 9 : 11),
+      color: "#e7e5e4",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    content: {
+      flex: 1,
+      overflowY: "auto",
+      overflowX: "hidden",
+      WebkitOverflowScrolling: "touch",
+      padding: px(narrow ? 14 : 20),
+      paddingBottom: px(18),
+      borderRadius: `${px(28)}px ${px(28)}px 0 0`,
+      marginTop: px(-10),
+      background: "white",
+      boxSizing: "border-box",
+    },
+
+    card: {
+      background: "#fafaf9",
+      borderRadius: px(24),
+      padding: px(narrow ? 13 : 16),
+      marginBottom: px(18),
+      boxSizing: "border-box",
+    },
+
+    labelRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: px(8),
+      marginBottom: px(10),
+    },
+
+    label: {
+      fontSize: px(14),
+      fontWeight: 800,
+      display: "block",
+      marginBottom: px(8),
+    },
+
+    badge: {
+      background: "#fef3c7",
+      color: "#92400e",
+      padding: `${px(5)}px ${px(10)}px`,
+      borderRadius: 999,
+      fontSize: px(10),
+      fontWeight: 800,
+      whiteSpace: "nowrap",
+      flexShrink: 0,
+    },
+
+    helperText: {
+      margin: `${px(10)}px 0 0`,
+      color: "#78716c",
+      fontSize: px(12),
+      lineHeight: 1.4,
+    },
+
+    input: {
+      width: "100%",
+      height: px(46),
+      padding: `0 ${px(13)}px`,
+      borderRadius: px(16),
+      border: "1px solid #e7e5e4",
+      fontSize: px(14),
+      boxSizing: "border-box",
+      background: "white",
+      color: "#111827",
+      outline: "none",
+    },
+
+    sectionHeader: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      gap: px(8),
+      marginBottom: px(12),
+    },
+
+    sectionTitle: {
+      fontSize: px(16),
+      fontWeight: 900,
+      margin: 0,
+      whiteSpace: "nowrap",
+    },
+
+    smallText: {
+      fontSize: px(11),
+      color: "#64748b",
+      textAlign: "right",
+      lineHeight: 1.25,
+      maxWidth: "50%",
+    },
+
+    vehicleGrid: {
+      display: "grid",
+      gridTemplateColumns: veryNarrow
+        ? "1fr"
+        : "repeat(2, minmax(0, 1fr))",
+      gap: px(narrow ? 6 : 8),
+      marginBottom: px(16),
+    },
+
+    vehicleCard: {
+      position: "relative",
+      background: "white",
+      border: "1px solid #e7e5e4",
+      borderRadius: px(18),
+      padding: px(narrow ? 8 : 10),
+      boxShadow: "0 8px 20px rgba(0,0,0,0.04)",
+      minWidth: 0,
+      overflow: "hidden",
+      boxSizing: "border-box",
+    },
+
+    vehicleCardActive: {
+      borderColor: "#b45309",
+      background: "linear-gradient(135deg, #fffbeb, #f5f5f4)",
+    },
+
+    check: {
+      position: "absolute",
+      right: px(10),
+      top: px(10),
+      background: "#b45309",
+      color: "white",
+      width: px(22),
+      height: px(22),
+      borderRadius: "50%",
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(13),
+      fontWeight: 900,
+      zIndex: 2,
+    },
+
+    vehicleInfo: {
+      cursor: "pointer",
+      minWidth: 0,
+    },
+
+    vehicleName: {
+      display: "block",
+      fontSize: px(narrow ? 10 : 12),
+      paddingRight: px(22),
+      lineHeight: 1.15,
+      minHeight: px(narrow ? 24 : 28),
+    },
+
+    vehicleCapacity: {
+      display: "block",
+      marginTop: px(3),
+      color: "#64748b",
+      fontSize: px(narrow ? 9 : 10),
+      lineHeight: 1.2,
+    },
+
+    tag: {
+      display: "inline-block",
+      marginTop: px(narrow ? 8 : 10),
+      background: "#111827",
+      color: "white",
+      padding: `${px(4)}px ${px(7)}px`,
+      borderRadius: 999,
+      fontSize: px(narrow ? 8 : 9),
+      fontWeight: 800,
+      maxWidth: "100%",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    addBtn: {
+      width: "100%",
+      marginTop: px(10),
+      minHeight: px(narrow ? 28 : 30),
+      border: 0,
+      borderRadius: px(12),
+      background: "#1c1917",
+      color: "white",
+      fontSize: px(narrow ? 10 : 11),
+      fontWeight: 800,
+      cursor: "pointer",
+      padding: `0 ${px(4)}px`,
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    qtyBox: {
+      marginTop: px(12),
+      padding: px(7),
+      borderRadius: px(16),
+      background: "white",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: px(5),
+    },
+
+    qtyBtn: {
+      width: px(30),
+      height: px(30),
+      border: 0,
+      borderRadius: px(12),
+      background: "#f5f5f4",
+      fontWeight: 900,
+      fontSize: px(18),
+      cursor: "pointer",
+      flexShrink: 0,
+    },
+
+    plusBtn: {
+      background: "#d97706",
+      color: "white",
+    },
+
+    qtyCenter: {
+      textAlign: "center",
+      minWidth: 0,
+    },
+
+    qtyNumber: {
+      display: "block",
+      fontSize: px(18),
+      lineHeight: 1,
+    },
+
+    qtyText: {
+      fontSize: px(9),
+      color: "#64748b",
+    },
+
+    quantityCard: {
+      position: "relative",
+      background: "linear-gradient(135deg, #020617, #292524)",
+      color: "white",
+      borderRadius: px(26),
+      padding: px(narrow ? 16 : 20),
+      marginBottom: px(18),
+      boxShadow: "0 16px 35px rgba(0,0,0,0.18)",
+      overflow: "hidden",
+    },
+
+    quantityLabel: {
+      color: "#d6d3d1",
+      fontSize: px(13),
+      margin: 0,
+      paddingRight: px(58),
+    },
+
+    tonsRow: {
+      display: "flex",
+      alignItems: "flex-end",
+      gap: px(8),
+      marginTop: px(4),
+    },
+
+    tons: {
+      fontSize: px(narrow ? 44 : 52),
+      lineHeight: 1,
+    },
+
+    tonsText: {
+      marginBottom: px(6),
+      color: "#d6d3d1",
+      fontWeight: 700,
+      fontSize: px(13),
+    },
+
+    rupee: {
+      position: "absolute",
+      right: px(18),
+      top: px(18),
+      width: px(44),
+      height: px(44),
+      borderRadius: px(16),
+      background: "rgba(255,255,255,0.12)",
+      color: "#fbbf24",
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(24),
+      fontWeight: 900,
+    },
+
+    totalVehicleText: {
+      marginTop: px(14),
+      background: "rgba(255,255,255,0.1)",
+      padding: px(12),
+      borderRadius: px(16),
+      fontSize: px(12),
+      color: "#e7e5e4",
+      lineHeight: 1.35,
+    },
+
+    materialSummaryBox: {
+      marginTop: px(12),
+      padding: px(12),
+      borderRadius: px(16),
+      background: "rgba(255,255,255,0.08)",
+    },
+
+    materialSummaryRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      gap: px(10),
+      fontSize: px(13),
+      padding: `${px(6)}px 0`,
+      borderBottom: "1px solid rgba(255,255,255,0.08)",
+    },
+
+    summaryMaterialName: {
+      minWidth: 0,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+    },
+
+    field: {
+      marginBottom: px(16),
+    },
+
+    textarea: {
+      width: "100%",
+      minHeight: px(90),
+      padding: px(13),
+      borderRadius: px(16),
+      border: "1px solid #e7e5e4",
+      fontSize: px(14),
+      boxSizing: "border-box",
+      resize: "vertical",
+      outline: "none",
+      fontFamily: "Arial, sans-serif",
+    },
+
+    infoBox: {
+      display: "flex",
+      gap: px(12),
+      background: "#fffbeb",
+      borderRadius: px(24),
+      padding: px(16),
+      marginBottom: px(18),
+      boxSizing: "border-box",
+    },
+
+    infoIcon: {
+      width: px(36),
+      height: px(36),
+      borderRadius: px(14),
+      background: "#d97706",
+      color: "white",
+      display: "grid",
+      placeItems: "center",
+      fontWeight: 900,
+      flexShrink: 0,
+    },
+
+    infoTitle: {
+      fontSize: px(14),
+    },
+
+    infoText: {
+      fontSize: px(12),
+      color: "#57534e",
+      lineHeight: 1.5,
+      margin: `${px(5)}px 0 0`,
+    },
+
+    continueBtn: {
+      width: "100%",
+      minHeight: px(56),
+      border: 0,
+      borderRadius: px(24),
+      background: "linear-gradient(135deg, #020617, #92400e)",
+      color: "white",
+      fontSize: px(16),
+      fontWeight: 900,
+      cursor: "pointer",
+      padding: `0 ${px(12)}px`,
+    },
+
+    footer: {
+      textAlign: "center",
+      color: "#64748b",
+      fontSize: px(12),
+      marginTop: px(14),
+      marginBottom: px(8),
+    },
+
+    bottomTabs: {
+      flexShrink: 0,
+      height: px(72),
+      margin: `0 ${px(14)}px ${px(10)}px`,
+      padding: `${px(8)}px ${px(10)}px`,
+      borderRadius: px(24),
+      background: "rgba(16,16,16,0.96)",
+      border: "1px solid rgba(255,255,255,0.08)",
+      display: "grid",
+      gridTemplateColumns: "repeat(3, 1fr)",
+      gap: px(6),
+      boxShadow: "0 -10px 28px rgba(0,0,0,0.18)",
+    },
+
+    tabBtn: {
+      border: 0,
+      borderRadius: px(18),
+      background: "transparent",
+      color: "#a8a29e",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: px(3),
+      fontWeight: 900,
+      cursor: "pointer",
+      minWidth: 0,
+    },
+
+    tabBtnActive: {
+      color: "#f59e0b",
+    },
+
+    tabIcon: {
+      fontSize: px(18),
+      lineHeight: 1,
+    },
+
+    tabText: {
+      fontSize: px(10),
+      lineHeight: 1,
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+  };
+}
