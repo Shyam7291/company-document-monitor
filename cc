@@ -3417,28 +3417,47 @@ export default function App() {
         </section>
 
         <nav style={styles.bottomNav}>
-          {["Home", "Orders", "Profile"].map((item) => (
-            <button
-              type="button"
-              key={item}
-              onClick={() => setActiveNav(item)}
-              style={{
-                ...styles.navButton,
-                ...(activeNav === item ? styles.navButtonActive : {}),
-              }}
-            >
-              <span style={styles.navIcon}>
-                {item === "Home"
-                  ? "⌂"
-                  : item === "Orders"
-                  ? "▣"
-                  : "●"}
-              </span>
+  {[
+    { name: "Home", icon: "⌂" },
+    { name: "Orders", icon: "▣" },
+    { name: "Profile", icon: "●" },
+  ].map((item) => {
+    const active = activeNav === item.name;
 
-              <b>{item}</b>
-            </button>
-          ))}
-        </nav>
+    return (
+      <button
+        type="button"
+        key={item.name}
+        onClick={() => setActiveNav(item.name)}
+        style={{
+          ...styles.navButton,
+          ...(active ? styles.navButtonActive : {}),
+        }}
+      >
+        {active && <span style={styles.activeIndicator} />}
+
+        <span
+          style={{
+            ...styles.navIconBox,
+            ...(active ? styles.navIconBoxActive : {}),
+          }}
+        >
+          <span style={styles.navIcon}>{item.icon}</span>
+        </span>
+
+        <span
+          style={{
+            ...styles.navLabel,
+            ...(active ? styles.navLabelActive : {}),
+          }}
+        >
+          {item.name}
+        </span>
+      </button>
+    );
+  })}
+</nav>
+
       </main>
     </div>
   );
@@ -4680,34 +4699,32 @@ function createStyles(viewport) {
 
     bottomNav: {
       position: "absolute",
-
       left: 0,
       right: 0,
       bottom: 0,
-
-      height: navHeight,
       zIndex: 40,
-
+    
+      minHeight: navHeight,
+    
       display: "grid",
-      gridTemplateColumns:
-        "repeat(3, 1fr)",
-
-      gap: ms(4),
-
-      padding:
-        `${ms(4)}px ${ms(8)}px calc(env(safe-area-inset-bottom, 0px) + ${ms(4)}px)`,
-
-      borderTop:
-        "1px solid rgba(255,255,255,.08)",
-
-      borderRadius: 0,
-
-      background: "#1c1917",
-
+      gridTemplateColumns: "repeat(3, 1fr)",
+      alignItems: "stretch",
+    
+      padding: `${ms(5)}px ${ms(8)}px calc(env(safe-area-inset-bottom, 0px) + ${ms(
+        5
+      )}px)`,
+    
+      borderTop: "1px solid rgba(251,191,36,.20)",
+    
+      background:
+        "radial-gradient(circle at 50% 0%, rgba(245,158,11,.16), transparent 46%), linear-gradient(135deg, #21140d 0%, #352013 52%, #4b250d 100%)",
+    
       boxShadow:
-        "0 -10px 26px rgba(0,0,0,.20)",
+        "0 -14px 34px rgba(28,15,7,.30), inset 0 1px 0 rgba(255,255,255,.07)",
+    
+      backdropFilter: "blur(18px)",
     },
-
+    
     navButton: {
       minHeight: 0,
 
@@ -4793,6 +4810,7 @@ body {
   -webkit-text-size-adjust: 100%;
 }
 `;
+
 
 
 
