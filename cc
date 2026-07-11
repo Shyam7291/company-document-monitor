@@ -897,16 +897,16 @@ body,
 
 
 
-orderpage
 import React, { useEffect, useMemo, useState } from "react";
-
+const HEADER_BG_IMAGE =
+  "https://cdn.jsdelivr.net/gh/Shyam7291/company-document-monitor@main/Designer (1).png";
 export default function App() {
   const viewport = useViewport();
   const styles = useMemo(
     () => createStyles(viewport),
     [viewport.width, viewport.height]
   );
-
+  
   const vehicles = [
     { id: "truck12", name: "12 Tyre Truck", capacity: 10, tag: "Small site" },
     { id: "truck14", name: "14 Tyre Truck", capacity: 16, tag: "Popular" },
@@ -1015,7 +1015,7 @@ export default function App() {
               </h1>
             </div>
 
-            <div style={styles.truckIcon}>🚚</div>
+            
           </div>
 
           <div style={styles.trustGrid}>
@@ -1313,12 +1313,38 @@ function createStyles(viewport) {
     },
 
     header: {
-      background: "linear-gradient(135deg, #09090b, #292524, #92400e)",
+      position: "relative",
       color: "white",
-      padding: px(short ? 18 : 22),
-      flexShrink: 0,
-      zIndex: 20,
-      boxShadow: "0 8px 22px rgba(0,0,0,0.16)",
+    
+      padding:
+        "clamp(13px, 3.8vw, 22px) clamp(12px, 4vw, 20px) clamp(13px, 4.2vw, 24px)",
+    
+        backgroundImage: HEADER_BG_IMAGE
+        ? `linear-gradient(
+            135deg,
+            rgba(8, 7, 6, 0.38),
+            rgba(28, 25, 23, 0.30) 52%,
+            rgba(120, 53, 15, 0.22)
+          ),
+          url("${HEADER_BG_IMAGE}")`
+        : `radial-gradient(
+            circle at 88% 8%,
+            rgba(245, 158, 11, 0.38),
+            transparent 32%
+          ),
+          linear-gradient(
+            135deg,
+            #080706,
+            #1c1917 52%,
+            #78350f
+          )`,
+    
+      backgroundSize: "cover",
+      backgroundPosition: "center 45%",
+      backgroundRepeat: "no-repeat",
+    
+      overflow: "hidden",
+      boxSizing: "border-box",
     },
 
     eyebrow: {
