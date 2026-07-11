@@ -2131,6 +2131,39 @@ export default function App() {
             <b style={styles.primaryArrow}>›</b>
           </button>
         </footer>
+        {submitted && (
+  <div style={styles.popupOverlay}>
+    <div style={styles.popupCard}>
+      <div style={styles.popupGlow} />
+
+      <div style={styles.greenTick}>✓</div>
+
+      <h2 style={styles.popupTitle}>
+        Order Raised for
+        <br />
+        Rate Enquiry
+      </h2>
+
+      <p style={styles.popupText}>
+        Your order request has been submitted successfully. StoneRate will
+        check the best available rate and notify you once the rate is ready.
+      </p>
+
+      <div style={styles.popupStatus}>
+        <span style={styles.popupStatusDot} />
+        Waiting for rate confirmation
+      </div>
+
+      <button
+        type="button"
+        style={styles.popupButton}
+        onClick={() => setSubmitted(false)}
+      >
+        Done
+      </button>
+    </div>
+  </div>
+)}
       </main>
     </div>
   );
@@ -2229,6 +2262,127 @@ function createStyles(viewport) {
     footerHint: { display: "flex", alignItems: "center", justifyContent: "center", gap: ms(5), marginBottom: ms(7), color: "#78716c", fontSize: ms(7.8), fontWeight: 700 },
     primaryButton: { position: "relative", width: "100%", minHeight: ms(52), display: "flex", alignItems: "center", justifyContent: "center", gap: ms(8), border: 0, borderRadius: ms(21), background: "linear-gradient(135deg, #f59e0b, #ea580c)", color: "white", fontSize: ms(11.7), fontWeight: 950, boxShadow: "0 15px 30px rgba(234,88,12,.3)", cursor: "pointer" },
     primaryIcon: { width: ms(26), height: ms(26), display: "grid", placeItems: "center", borderRadius: ms(9), background: "rgba(255,255,255,.18)" },
+    popupOverlay: {
+      position: "absolute",
+      inset: 0,
+      zIndex: 100,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: ms(18),
+      background: "rgba(2, 6, 23, 0.72)",
+      backdropFilter: "blur(8px)",
+    },
+    
+    popupCard: {
+      position: "relative",
+      width: "100%",
+      maxWidth: ms(280),
+      overflow: "hidden",
+      padding: `${ms(25)}px ${ms(18)}px ${ms(18)}px`,
+      border: "1px solid rgba(255,255,255,0.18)",
+      borderRadius: ms(26),
+      background:
+        "linear-gradient(145deg, rgba(255,255,255,0.98), rgba(240,253,244,0.97))",
+      boxShadow:
+        "0 30px 80px rgba(0,0,0,0.38), 0 0 45px rgba(34,197,94,0.16)",
+      textAlign: "center",
+    },
+    
+    popupGlow: {
+      position: "absolute",
+      left: "50%",
+      top: ms(-65),
+      width: ms(170),
+      height: ms(130),
+      borderRadius: "50%",
+      background: "rgba(34,197,94,0.20)",
+      filter: `blur(${ms(28)}px)`,
+      transform: "translateX(-50%)",
+      pointerEvents: "none",
+    },
+    
+    greenTick: {
+      position: "relative",
+      zIndex: 2,
+      width: ms(62),
+      height: ms(62),
+      margin: "0 auto",
+      display: "grid",
+      placeItems: "center",
+      border: `${ms(5)}px solid #dcfce7`,
+      borderRadius: "50%",
+      background: "linear-gradient(135deg, #22c55e, #15803d)",
+      color: "white",
+      fontSize: ms(30),
+      fontWeight: 950,
+      boxShadow:
+        "0 14px 30px rgba(34,197,94,0.30), 0 0 0 7px rgba(34,197,94,0.08)",
+    },
+    
+    popupTitle: {
+      position: "relative",
+      zIndex: 2,
+      margin: `${ms(18)}px 0 0`,
+      color: "#111827",
+      fontSize: ms(20),
+      lineHeight: 1.06,
+      fontWeight: 950,
+      letterSpacing: -0.5,
+    },
+    
+    popupText: {
+      position: "relative",
+      zIndex: 2,
+      margin: `${ms(11)}px auto 0`,
+      maxWidth: ms(235),
+      color: "#57534e",
+      fontSize: ms(9.2),
+      lineHeight: 1.45,
+      fontWeight: 650,
+    },
+    
+    popupStatus: {
+      position: "relative",
+      zIndex: 2,
+      width: "fit-content",
+      margin: `${ms(14)}px auto 0`,
+      padding: `${ms(7)}px ${ms(11)}px`,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(6),
+      border: "1px solid #bbf7d0",
+      borderRadius: 999,
+      background: "#f0fdf4",
+      color: "#166534",
+      fontSize: ms(8.5),
+      fontWeight: 900,
+    },
+    
+    popupStatusDot: {
+      width: ms(7),
+      height: ms(7),
+      borderRadius: "50%",
+      background: "#22c55e",
+      boxShadow: "0 0 0 4px rgba(34,197,94,0.12)",
+    },
+    
+    popupButton: {
+      position: "relative",
+      zIndex: 2,
+      width: "100%",
+      minHeight: ms(44),
+      marginTop: ms(17),
+      border: 0,
+      borderRadius: ms(17),
+      background: "linear-gradient(135deg, #22c55e, #15803d)",
+      color: "white",
+      fontSize: ms(11),
+      fontWeight: 950,
+      cursor: "pointer",
+      boxShadow: "0 12px 24px rgba(34,197,94,0.24)",
+    },
     primaryArrow: { position: "absolute", right: ms(17), fontSize: ms(24), fontWeight: 400 },
   };
 }
