@@ -2393,3 +2393,659 @@ html, body, #root { margin: 0; width: 100%; height: 100%; min-height: 100%; back
 button, input, select, textarea { font: inherit; }
 body { -webkit-text-size-adjust: 100%; }
 `;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+rate status page
+import React, { useEffect, useMemo, useRef, useState } from "react";
+
+const BASE_W = 206;
+const BASE_H = 445;
+const HEADER_BG_IMAGE = ""; // Add quarry/mining image URL here.
+
+function useViewport() {
+  const [viewport, setViewport] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 390,
+    height: typeof window !== "undefined" ? window.innerHeight : 844,
+  });
+
+  useEffect(() => {
+    const update = () => setViewport({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("orientationchange", update);
+
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("orientationchange", update);
+    };
+  }, []);
+
+  return viewport;
+}
+
+export default function App() {
+  const viewport = useViewport();
+  const styles = useMemo(
+    () => createStyles(viewport),
+    [viewport.width, viewport.height]
+  );
+
+  // pending | accepted | rejected
+  const [decision, setDecision] = useState("pending");
+  const [showRejectPopup, setShowRejectPopup] = useState(false);
+  const [showAcceptPopup, setShowAcceptPopup] = useState(false);
+  const trackerRef = useRef(null);
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const trackerElement = trackerRef.current;
+  
+      if (!trackerElement) return;
+  
+      trackerElement.scrollTo({
+        left: trackerElement.scrollWidth - trackerElement.clientWidth,
+        behavior: "smooth",
+      });
+    }, 350);
+  
+    return () => window.clearTimeout(timer);
+  }, []);
+  const orderItems = [
+    { product: "20mm Crushed Stone", vehicles: 2, quantity: 20 },
+    { product: "40mm Crushed Stone", vehicles: 1, quantity: 10 },
+  ];
+
+  const totalVehicles = orderItems.reduce((sum, item) => sum + item.vehicles, 0);
+  const totalTons = orderItems.reduce((sum, item) => sum + item.quantity, 0);
+
+  const finalStatus =
+    decision === "accepted"
+      ? { label: "Accepted", color: "green", symbol: "✓" }
+      : decision === "rejected"
+      ? { label: "Rejected", color: "red", symbol: "×" }
+      : { label: "Waiting for your confirmation", color: "orange", symbol: "" };
+
+  const acceptRate = () => {
+    setDecision("accepted");
+    setShowAcceptPopup(true);
+  };
+
+  const rejectRate = () => {
+    setDecision("rejected");
+    setShowRejectPopup(false);
+  };
+
+  return (
+    <div style={styles.page}>
+      <style>{globalCss}</style>
+
+      <main style={styles.phone}>
+        <div style={styles.scrollArea}>
+          <header style={styles.header}>
+            <div style={styles.headerShade} />
+            <div style={styles.headerGrid} />
+
+            <div style={styles.topBar}>
+              <button style={styles.backButton}>‹</button>
+              <div style={styles.requestBadge}>RATE REQUEST</div>
+              <button style={styles.helpButton}>Help</button>
+            </div>
+
+            <div style={styles.heroRow}>
+              <div style={{ minWidth: 0 }}>
+                <p style={styles.eyebrow}>REQUEST ID: SR-260705-01</p>
+                <h1 style={styles.title}>Your Best Rate<br />Is Ready</h1>
+                <p style={styles.heroText}>
+                  Review the quote and accept or reject the seller rate.
+                </p>
+              </div>
+              <div style={styles.rateIcon}>₹</div>
+            </div>
+          </header>
+
+          <section style={styles.content}>
+            <article style={styles.trackerCard}>
+              <p style={styles.trackerHeading}>Rate request status</p>
+
+              <div ref={trackerRef} style={styles.trackerViewport}>
+
+                <div style={styles.tracker}>
+                  <StatusStep
+                    styles={styles}
+                    label="Request submitted"
+                    state="done"
+                  />
+                  <StatusConnector styles={styles} state="done" />
+
+                  <StatusStep
+                    styles={styles}
+                    label="Checking with sellers"
+                    state="done"
+                  />
+                  <StatusConnector styles={styles} state="done" />
+
+                  <StatusStep
+                    styles={styles}
+                    label="Best rate provided"
+                    state="done"
+                  />
+                  <StatusConnector
+                    styles={styles}
+                    state={finalStatus.color}
+                  />
+
+                  <StatusStep
+                    styles={styles}
+                    label={finalStatus.label}
+                    state={finalStatus.color}
+                    symbol={finalStatus.symbol}
+                    wide
+                  />
+                </div>
+              </div>
+            </article>
+
+            <div style={styles.rateNotice}>
+              <div style={styles.noticeIcon}>✓</div>
+              <div style={{ minWidth: 0 }}>
+                <b style={styles.noticeTitle}>
+                  Best rate provided
+                </b>
+                <p style={styles.noticeText}>
+                  The quote is waiting for your confirmation.
+                </p>
+              </div>
+            </div>
+
+            <div style={styles.sectionHeading}>
+              <div>
+                <p style={styles.sectionEyebrow}>QUOTE DETAILS</p>
+                <h2 style={styles.sectionTitle}>Rate summary</h2>
+              </div>
+              <div style={styles.validPill}>Valid today</div>
+            </div>
+
+            <article style={styles.quoteCard}>
+              <div style={styles.quoteGlow} />
+              <div style={styles.quoteTopRow}>
+                <div>
+                  <p style={styles.quoteLabel}>Best available rate</p>
+                  <div style={styles.quoteValueRow}>
+                    <span style={styles.rupeeSymbol}>₹</span>
+                    <b style={styles.quoteValue}>1,280</b>
+                    <span style={styles.perTon}>/ ton</span>
+                  </div>
+                </div>
+                <div style={styles.bestRateBadge}>BEST RATE</div>
+              </div>
+
+              <div style={styles.quoteMetaGrid}>
+                <div style={styles.quoteMetaItem}>
+                  <span>Total quantity</span>
+                  <b>{totalTons} tons</b>
+                </div>
+                <div style={styles.quoteMetaItem}>
+                  <span>Vehicles</span>
+                  <b>{totalVehicles} vehicles</b>
+                </div>
+                <div style={styles.quoteMetaItem}>
+                  <span>Transport</span>
+                  <b>Included</b>
+                </div>
+              </div>
+
+              <div style={styles.estimatedRow}>
+                <span>Estimated material value</span>
+                <b>₹38,400</b>
+              </div>
+            </article>
+
+            <article style={styles.tableCard}>
+              <div style={styles.tableHeader}>
+                <span>Product</span>
+                <span>Vehicle</span>
+                <span>Qty.</span>
+              </div>
+
+              {orderItems.map((item, index) => (
+                <React.Fragment key={item.product}>
+                  {index > 0 && <div style={styles.tableDivider} />}
+                  <div style={styles.tableRow}>
+                    <div style={styles.productCell}>
+                      <span style={styles.productIcon}>🪨</span>
+                      <b>{item.product}</b>
+                    </div>
+                    <div style={styles.vehicleCell}>
+                      <span>🚚</span>
+                      <b>{item.vehicles}</b>
+                      <small>{item.vehicles === 1 ? "vehicle" : "vehicles"}</small>
+                    </div>
+                    <div style={styles.qtyCell}>
+                      <b>{item.quantity}</b>
+                      <span>tons</span>
+                    </div>
+                  </div>
+                </React.Fragment>
+              ))}
+            </article>
+
+            <article style={styles.deliveryCard}>
+              <div style={styles.deliveryIcon}>📅</div>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <span style={styles.detailLabel}>Expected delivery</span>
+                <b style={styles.deliveryDate}>05 July 2026</b>
+              </div>
+              <div style={styles.deliveryStatus}>Scheduled</div>
+            </article>
+
+            {decision === "accepted" && (
+              <div style={styles.acceptedCard}>
+                <div style={styles.acceptedIcon}>✓</div>
+                <div>
+                  <b>Rate accepted</b>
+                  <p>Continue to the supplier-details page to review and confirm the seller.</p>
+                </div>
+              </div>
+            )}
+
+            {decision === "rejected" && (
+              <div style={styles.rejectedCard}>
+                <div style={styles.rejectedIcon}>×</div>
+                <div>
+                  <b>Rate rejected</b>
+                  <p>This quote will not be used to place the order.</p>
+                </div>
+              </div>
+            )}
+
+            <div style={styles.bottomSpacer} />
+          </section>
+        </div>
+
+        <footer style={styles.fixedFooter}>
+          {decision === "pending" && (
+            <>
+              <div style={styles.footerHint}>
+                <span>🛡️</span>
+                <span>Choose whether to accept or reject this rate</span>
+              </div>
+              <div style={styles.footerButtons}>
+                <button
+                  type="button"
+                  onClick={() => setShowRejectPopup(true)}
+                  style={styles.rejectButton}
+                >
+                  <span>×</span>
+                  Reject Rate
+                </button>
+                <button
+                  type="button"
+                  onClick={acceptRate}
+                  style={styles.acceptButton}
+                >
+                  <span>✓</span>
+                  Accept Rate
+                </button>
+              </div>
+            </>
+          )}
+
+          {decision === "accepted" && (
+            <>
+              <div style={styles.footerHintGreen}>
+                <span>✓</span>
+                <span>Rate accepted successfully</span>
+              </div>
+              <button type="button" style={styles.nextPageButton}>
+                Continue to Supplier Details
+                <b>›</b>
+              </button>
+            </>
+          )}
+
+          {decision === "rejected" && (
+            <>
+              <div style={styles.footerHintRed}>
+                <span>×</span>
+                <span>This rate has been rejected</span>
+              </div>
+              <button type="button" style={styles.rejectedOnlyButton} disabled>
+                Rate Rejected
+              </button>
+            </>
+          )}
+        </footer>
+
+        {showRejectPopup && (
+          <div style={styles.popupOverlay}>
+            <div style={styles.rejectPopup}>
+              <div style={styles.warningIcon}>!</div>
+              <h2 style={styles.popupTitle}>Reject this rate?</h2>
+              <p style={styles.popupText}>
+                The quote will be marked as rejected and will not be used to place this order.
+              </p>
+              <div style={styles.popupButtons}>
+                <button
+                  type="button"
+                  onClick={() => setShowRejectPopup(false)}
+                  style={styles.cancelButton}
+                >
+                  Keep Rate
+                </button>
+                <button
+                  type="button"
+                  onClick={rejectRate}
+                  style={styles.confirmRejectButton}
+                >
+                  Yes, Reject
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showAcceptPopup && (
+          <div style={styles.popupOverlay}>
+            <div style={styles.acceptPopup}>
+              <div style={styles.popupGlow} />
+              <div style={styles.greenTick}>✓</div>
+              <h2 style={styles.popupTitle}>Rate Accepted</h2>
+              <p style={styles.popupText}>
+                The best rate has been accepted. Supplier details can now be reviewed on the next page.
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowAcceptPopup(false)}
+                style={styles.doneButton}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
+
+function StatusStep({ styles, label, state, symbol, wide }) {
+  const circleStyle =
+    state === "done" || state === "green"
+      ? styles.statusCircleGreen
+      : state === "red"
+      ? styles.statusCircleRed
+      : styles.statusCircleOrange;
+
+  const labelStyle =
+    state === "done" || state === "green"
+      ? styles.statusLabelGreen
+      : state === "red"
+      ? styles.statusLabelRed
+      : styles.statusLabelOrange;
+
+  return (
+    <div style={{ ...styles.statusStep, ...(wide ? styles.statusStepWide : {}) }}>
+      <div style={{ ...styles.statusCircle, ...circleStyle }}>
+        {state === "done" ? "✓" : symbol}
+      </div>
+      <span style={{ ...styles.statusLabel, ...labelStyle }}>{label}</span>
+    </div>
+  );
+}
+
+function StatusConnector({ styles, state }) {
+  const color =
+    state === "done" || state === "green"
+      ? "#22c55e"
+      : state === "red"
+      ? "linear-gradient(to right, #22c55e, #ef4444)"
+      : "linear-gradient(to right, #22c55e, #f59e0b)";
+
+  return <div style={{ ...styles.statusConnector, background: color }} />;
+}
+
+function createStyles(viewport) {
+  const vw = viewport.width || 390;
+  const vh = viewport.height || 844;
+  const isDesktop = vw >= 700;
+  const appW = isDesktop ? 390 : vw;
+  const appH = isDesktop ? 844 : vh;
+  const rawScale = Math.min(appW / BASE_W, appH / BASE_H);
+  const scale = Math.max(0.86, Math.min(2.05, rawScale));
+  const ms = (value, factor = 0.55) =>
+    Math.round(value + (value * scale - value) * factor);
+  const tiny = appW <= 230;
+  const short = appH <= 620;
+
+  return {
+    page: {
+      width: "100vw", height: "100dvh", minHeight: "100dvh",
+      display: "flex", justifyContent: "center", alignItems: isDesktop ? "center" : "stretch",
+      margin: 0, padding: isDesktop ? 10 : 0, overflow: "hidden",
+      background: isDesktop ? "#f4f1ea" : "#0b0907", fontFamily: "Arial, sans-serif",
+    },
+    phone: {
+      position: "relative", width: isDesktop ? 390 : "100vw", height: isDesktop ? 844 : "100dvh",
+      overflow: "hidden", background: "#f6f4ef", borderRadius: isDesktop ? 30 : 0,
+      boxShadow: isDesktop ? "0 25px 70px rgba(0,0,0,.25)" : "none",
+    },
+    scrollArea: { width: "100%", height: "100%", overflowY: "auto", overflowX: "hidden",
+    scrollBehavior: "smooth",
+  WebkitOverflowScrolling: "touch" },
+    
+header: {
+  position: "sticky",
+  top: 0,
+  zIndex: 40,
+ padding: `${ms(short ? 8 : 11)}px ${ms(tiny ? 10 : 13)}px ${ms(12)}px`,
+      overflow: "hidden", color: "white",
+      backgroundImage: HEADER_BG_IMAGE
+        ? `linear-gradient(135deg, rgba(5,4,3,.58), rgba(28,25,23,.46) 55%, rgba(120,53,15,.34)), url("${HEADER_BG_IMAGE}")`
+        : "radial-gradient(circle at 84% 10%, rgba(245,158,11,.45), transparent 30%), linear-gradient(135deg, #080706, #1c1917 54%, #78350f)",
+      backgroundSize: "cover", backgroundPosition: "center 42%", backgroundRepeat: "no-repeat",
+    },
+    headerShade: { position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,.02), rgba(0,0,0,.32))", pointerEvents: "none" },
+    headerGrid: { position: "absolute", inset: 0, opacity: .24, pointerEvents: "none", backgroundImage: "linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px)", backgroundSize: `${ms(30)}px ${ms(30)}px` },
+    topBar: { position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "space-between", gap: ms(8) },
+    backButton: { width: ms(32), height: ms(32), display: "grid", placeItems: "center", border: "1px solid rgba(255,255,255,.18)", borderRadius: ms(12), background: "rgba(255,255,255,.11)", color: "white", fontSize: ms(23), cursor: "pointer" },
+    requestBadge: { padding: `${ms(5)}px ${ms(10)}px`, borderRadius: 999, border: "1px solid rgba(245,158,11,.45)", background: "rgba(245,158,11,.17)", color: "#fde68a", fontSize: ms(7.7), letterSpacing: ms(1.2), fontWeight: 950 },
+    helpButton: { minWidth: ms(43), height: ms(30), padding: `0 ${ms(9)}px`, border: "1px solid rgba(255,255,255,.18)", borderRadius: 999, background: "rgba(255,255,255,.11)", color: "white", fontSize: ms(9), fontWeight: 900, cursor: "pointer" },
+    heroRow: { position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "space-between", gap: ms(12), marginTop: ms(14) },
+    eyebrow: { margin: 0, color: "#fde68a", fontSize: ms(7.1), letterSpacing: ms(1.25), fontWeight: 950 },
+    title: { margin: `${ms(6)}px 0 0`, fontSize: ms(short ? 23 : 28), lineHeight: 1.02, letterSpacing: -.7, fontWeight: 950 },
+    heroText: { maxWidth: ms(220), margin: `${ms(8)}px 0 0`, color: "#e7e5e4", fontSize: ms(8.7), lineHeight: 1.35, fontWeight: 650 },
+    rateIcon: { width: ms(51), height: ms(51), display: "grid", placeItems: "center", borderRadius: ms(20), background: "linear-gradient(135deg, #f59e0b, #ea580c)", color: "white", fontSize: ms(27), fontWeight: 950, boxShadow: "0 15px 30px rgba(234,88,12,.32)", flexShrink: 0 },
+    content: { padding: `${ms(13)}px ${ms(tiny ? 9 : 13)}px 0`, color: "#111827", background: "linear-gradient(180deg, #fff, #f6f4ef 58%, #efede8)" },
+    trackerCard: { padding: `${ms(12)}px ${ms(8)}px ${ms(10)}px`, border: "1px solid #e7e5e4", borderRadius: ms(20), background: "white", boxShadow: "0 10px 24px rgba(0,0,0,.05)" },
+    trackerHeading: { margin: `0 0 ${ms(11)}px`, textAlign: "center", fontSize: ms(11), fontWeight: 950 },
+    trackerViewport: { width: "100%", overflowX: "auto", overflowY: "hidden", scrollbarWidth: "none", paddingBottom: ms(3) },
+    tracker: { minWidth: ms(455), display: "flex", alignItems: "flex-start", justifyContent: "center" },
+    statusStep: { width: ms(86), display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0, textAlign: "center" },
+    statusStepWide: { width: ms(112) },
+    statusCircle: { width: ms(25), height: ms(25), display: "grid", placeItems: "center", borderRadius: "50%", fontSize: ms(10), fontWeight: 950 },
+    statusCircleGreen: { background: "#22c55e", color: "white", boxShadow: "0 6px 14px rgba(34,197,94,.22)" },
+    statusCircleOrange: { background: "#f59e0b", color: "white", boxShadow: "0 6px 14px rgba(245,158,11,.24)" },
+    statusCircleRed: { background: "#ef4444", color: "white", boxShadow: "0 6px 14px rgba(239,68,68,.22)" },
+    statusLabel: { marginTop: ms(6), fontSize: ms(7), lineHeight: 1.16, fontWeight: 850 },
+    statusLabelGreen: { color: "#166534" },
+    statusLabelOrange: { color: "#92400e" },
+    statusLabelRed: { color: "#b91c1c" },
+    statusConnector: { width: ms(22), height: ms(4), marginTop: ms(10.5), borderRadius: 999, flexShrink: 0 },
+    rateNotice: { display: "flex", gap: ms(10), marginTop: ms(11), padding: ms(12), border: "1px solid #fde68a", borderRadius: ms(19), background: "linear-gradient(135deg, #fffbeb, #fef3c7)", boxShadow: "0 10px 22px rgba(146,64,14,.08)" },
+    noticeIcon: { width: ms(36), height: ms(36), display: "grid", placeItems: "center", borderRadius: ms(14), background: "#22c55e", color: "white", fontSize: ms(18), fontWeight: 950, flexShrink: 0 },
+    noticeTitle: { color: "#78350f", fontSize: ms(10.1) },
+    noticeText: { margin: `${ms(4)}px 0 0`, color: "#92400e", fontSize: ms(8.1), lineHeight: 1.35, fontWeight: 650 },
+    sectionHeading: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: ms(9), marginTop: ms(16), marginBottom: ms(9) },
+    sectionEyebrow: { margin: 0, color: "#b45309", fontSize: ms(7.3), letterSpacing: ms(1.15), fontWeight: 950 },
+    sectionTitle: { margin: `${ms(3)}px 0 0`, fontSize: ms(15), fontWeight: 950 },
+    validPill: { padding: `${ms(5)}px ${ms(8)}px`, borderRadius: 999, background: "#ecfdf5", color: "#15803d", fontSize: ms(7.7), fontWeight: 950 },
+    quoteCard: { position: "relative", overflow: "hidden", padding: ms(15), borderRadius: ms(22), background: "linear-gradient(135deg, #020617, #292524)", color: "white", boxShadow: "0 17px 36px rgba(0,0,0,.18)" },
+    quoteGlow: { position: "absolute", right: ms(-30), top: ms(-35), width: ms(105), height: ms(105), borderRadius: "50%", background: "rgba(245,158,11,.25)", filter: `blur(${ms(20)}px)` },
+    quoteTopRow: { position: "relative", zIndex: 2, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: ms(10) },
+    quoteLabel: { margin: 0, color: "#d6d3d1", fontSize: ms(9.3) },
+    quoteValueRow: { display: "flex", alignItems: "flex-end", gap: ms(3), marginTop: ms(5) },
+    rupeeSymbol: { marginBottom: ms(4), color: "#fbbf24", fontSize: ms(18), fontWeight: 950 },
+    quoteValue: { fontSize: ms(38), lineHeight: 1 },
+    perTon: { marginBottom: ms(4), color: "#d6d3d1", fontSize: ms(9.5), fontWeight: 800 },
+    bestRateBadge: { padding: `${ms(6)}px ${ms(9)}px`, border: "1px solid rgba(245,158,11,.35)", borderRadius: 999, background: "rgba(245,158,11,.16)", color: "#fde68a", fontSize: ms(7.6), fontWeight: 950 },
+    quoteMetaGrid: { position: "relative", zIndex: 2, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: ms(7), marginTop: ms(13) },
+    quoteMetaItem: { display: "flex", flexDirection: "column", gap: ms(3), minWidth: 0, padding: ms(8), borderRadius: ms(13), background: "rgba(255,255,255,.08)", color: "#d6d3d1", fontSize: ms(7.2) },
+    estimatedRow: { position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "space-between", gap: ms(8), marginTop: ms(10), padding: ms(9), borderRadius: ms(12), background: "rgba(255,255,255,.1)", color: "#e7e5e4", fontSize: ms(8.4) },
+    tableCard: { marginTop: ms(12), overflow: "hidden", border: "1px solid #e7e5e4", borderRadius: ms(20), background: "rgba(255,255,255,.96)", boxShadow: "0 10px 24px rgba(0,0,0,.055)" },
+    tableHeader: { display: "grid", gridTemplateColumns: "1.55fr .85fr .65fr", gap: ms(6), padding: `${ms(9)}px ${ms(11)}px`, background: "#1c1917", color: "#fde68a", fontSize: ms(7.5), fontWeight: 950 },
+    tableRow: { display: "grid", gridTemplateColumns: "1.55fr .85fr .65fr", alignItems: "center", gap: ms(6), padding: `${ms(11)}px`, fontSize: ms(8.5) },
+    productCell: { display: "flex", alignItems: "center", gap: ms(7), minWidth: 0, lineHeight: 1.15 },
+    productIcon: { width: ms(27), height: ms(27), display: "grid", placeItems: "center", borderRadius: ms(10), background: "#fef3c7", flexShrink: 0 },
+    vehicleCell: { display: "grid", gridTemplateColumns: "auto auto", justifyContent: "start", columnGap: ms(3), minWidth: 0 },
+    qtyCell: { display: "flex", flexDirection: "column", alignItems: "flex-end", gap: ms(1), color: "#92400e" },
+    tableDivider: { height: 1, margin: `0 ${ms(11)}px`, background: "#eeeae6" },
+    deliveryCard: { display: "flex", alignItems: "center", gap: ms(9), marginTop: ms(12), padding: ms(12), border: "1px solid #e7e5e4", borderRadius: ms(20), background: "white", boxShadow: "0 10px 24px rgba(0,0,0,.05)" },
+    deliveryIcon: { width: ms(38), height: ms(38), display: "grid", placeItems: "center", borderRadius: ms(14), background: "#fffbeb", fontSize: ms(19), flexShrink: 0 },
+    detailLabel: { display: "block", color: "#78716c", fontSize: ms(7.8) },
+    deliveryDate: { display: "block", marginTop: ms(3), fontSize: ms(11.2) },
+    deliveryStatus: { padding: `${ms(5)}px ${ms(8)}px`, borderRadius: 999, background: "#ecfdf5", color: "#15803d", fontSize: ms(7.6), fontWeight: 950 },
+    acceptedCard: { display: "flex", gap: ms(9), marginTop: ms(12), padding: ms(12), border: "1px solid #bbf7d0", borderRadius: ms(18), background: "#f0fdf4", color: "#166534", fontSize: ms(8.4), lineHeight: 1.35 },
+    acceptedIcon: { width: ms(30), height: ms(30), display: "grid", placeItems: "center", borderRadius: ms(11), background: "#22c55e", color: "white", fontWeight: 950, flexShrink: 0 },
+    rejectedCard: { display: "flex", gap: ms(9), marginTop: ms(12), padding: ms(12), border: "1px solid #fecaca", borderRadius: ms(18), background: "#fff7f7", color: "#991b1b", fontSize: ms(8.4), lineHeight: 1.35 },
+    rejectedIcon: { width: ms(30), height: ms(30), display: "grid", placeItems: "center", borderRadius: ms(11), background: "#ef4444", color: "white", fontWeight: 950, flexShrink: 0 },
+    bottomSpacer: { height: ms(128) },
+    fixedFooter: { position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 30, padding: `${ms(8)}px ${ms(13)}px calc(env(safe-area-inset-bottom, 0px) + ${ms(10)}px)`, background: "linear-gradient(to top, #f6f4ef 76%, rgba(246,244,239,.98) 90%, rgba(246,244,239,.82))", borderTop: "1px solid rgba(120,113,108,.12)", boxShadow: "0 -12px 30px rgba(0,0,0,.10)" },
+    footerHint: { display: "flex", alignItems: "center", justifyContent: "center", gap: ms(5), marginBottom: ms(7), color: "#78716c", fontSize: ms(7.8), fontWeight: 700 },
+    footerHintGreen: { display: "flex", alignItems: "center", justifyContent: "center", gap: ms(5), marginBottom: ms(7), color: "#15803d", fontSize: ms(8), fontWeight: 900 },
+    footerHintRed: { display: "flex", alignItems: "center", justifyContent: "center", gap: ms(5), marginBottom: ms(7), color: "#b91c1c", fontSize: ms(8), fontWeight: 900 },
+    footerButtons: { display: "grid", gridTemplateColumns: "1fr 1.18fr", gap: ms(8) },
+    rejectButton: { minHeight: ms(48), display: "flex", alignItems: "center", justifyContent: "center", gap: ms(6), border: "1px solid #fecaca", borderRadius: ms(18), background: "#fff7f7", color: "#b91c1c", fontSize: ms(9.3), fontWeight: 950, cursor: "pointer" },
+    acceptButton: { minHeight: ms(48), display: "flex", alignItems: "center", justifyContent: "center", gap: ms(6), border: 0, borderRadius: ms(18), background: "linear-gradient(135deg, #22c55e, #15803d)", color: "white", fontSize: ms(9.3), fontWeight: 950, boxShadow: "0 12px 24px rgba(34,197,94,.22)", cursor: "pointer" },
+    nextPageButton: { position: "relative", width: "100%", minHeight: ms(48), border: 0, borderRadius: ms(18), background: "linear-gradient(135deg, #22c55e, #15803d)", color: "white", fontSize: ms(10), fontWeight: 950, boxShadow: "0 12px 24px rgba(34,197,94,.22)", cursor: "pointer" },
+    rejectedOnlyButton: { width: "100%", minHeight: ms(48), border: 0, borderRadius: ms(18), background: "#ef4444", color: "white", fontSize: ms(10), fontWeight: 950, boxShadow: "0 12px 24px rgba(239,68,68,.20)" },
+    popupOverlay: { position: "absolute", inset: 0, zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: ms(18), background: "rgba(2,6,23,.72)", backdropFilter: "blur(8px)" },
+    rejectPopup: { width: "100%", maxWidth: ms(280), padding: `${ms(23)}px ${ms(18)}px ${ms(18)}px`, borderRadius: ms(25), border: "1px solid #fecaca", background: "white", textAlign: "center", boxShadow: "0 30px 80px rgba(0,0,0,.38)" },
+    acceptPopup: { position: "relative", width: "100%", maxWidth: ms(280), overflow: "hidden", padding: `${ms(25)}px ${ms(18)}px ${ms(18)}px`, borderRadius: ms(25), border: "1px solid #bbf7d0", background: "linear-gradient(145deg, white, #f0fdf4)", textAlign: "center", boxShadow: "0 30px 80px rgba(0,0,0,.38)" },
+    warningIcon: { width: ms(58), height: ms(58), margin: "0 auto", display: "grid", placeItems: "center", borderRadius: "50%", background: "#fee2e2", color: "#dc2626", fontSize: ms(29), fontWeight: 950, boxShadow: "0 0 0 7px rgba(239,68,68,.08)" },
+    popupGlow: { position: "absolute", left: "50%", top: ms(-65), width: ms(170), height: ms(130), borderRadius: "50%", background: "rgba(34,197,94,.20)", filter: `blur(${ms(28)}px)`, transform: "translateX(-50%)" },
+    greenTick: { position: "relative", zIndex: 2, width: ms(62), height: ms(62), margin: "0 auto", display: "grid", placeItems: "center", border: `${ms(5)}px solid #dcfce7`, borderRadius: "50%", background: "linear-gradient(135deg, #22c55e, #15803d)", color: "white", fontSize: ms(30), fontWeight: 950 },
+    popupTitle: { margin: `${ms(17)}px 0 0`, color: "#111827", fontSize: ms(19), lineHeight: 1.06, fontWeight: 950 },
+    popupText: { margin: `${ms(10)}px auto 0`, maxWidth: ms(235), color: "#57534e", fontSize: ms(9), lineHeight: 1.45, fontWeight: 650 },
+    popupButtons: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: ms(8), marginTop: ms(17) },
+    cancelButton: { minHeight: ms(42), border: "1px solid #e7e5e4", borderRadius: ms(16), background: "#fafaf9", color: "#44403c", fontSize: ms(9), fontWeight: 900, cursor: "pointer" },
+    confirmRejectButton: { minHeight: ms(42), border: 0, borderRadius: ms(16), background: "#ef4444", color: "white", fontSize: ms(9), fontWeight: 950, cursor: "pointer" },
+    doneButton: { position: "relative", zIndex: 2, width: "100%", minHeight: ms(44), marginTop: ms(17), border: 0, borderRadius: ms(17), background: "linear-gradient(135deg, #22c55e, #15803d)", color: "white", fontSize: ms(10.5), fontWeight: 950, cursor: "pointer" },
+  };
+}
+
+const globalCss = `
+* { box-sizing: border-box; }
+html, body, #root { margin: 0; width: 100%; height: 100%; min-height: 100%; background: #0b0907; overflow: hidden; }
+button, input, select, textarea { font: inherit; }
+body { -webkit-text-size-adjust: 100%; }
+`;
+
+
+
+
+
+
