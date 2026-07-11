@@ -1844,3 +1844,398 @@ function createStyles(viewport) {
     },
   };
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+oder confirmation
+import React, { useEffect, useMemo, useState } from "react";
+
+const BASE_W = 206;
+const BASE_H = 445;
+const HEADER_BG_IMAGE = ""; // Add your quarry/mining image URL here.
+
+function useViewport() {
+  const [viewport, setViewport] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 390,
+    height: typeof window !== "undefined" ? window.innerHeight : 844,
+  });
+
+  useEffect(() => {
+    const update = () =>
+      setViewport({ width: window.innerWidth, height: window.innerHeight });
+
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("orientationchange", update);
+
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("orientationchange", update);
+    };
+  }, []);
+
+  return viewport;
+}
+
+export default function App() {
+  const viewport = useViewport();
+  const styles = useMemo(
+    () => createStyles(viewport),
+    [viewport.width, viewport.height]
+  );
+
+  const [confirmed, setConfirmed] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const orderItems = [
+    { product: "20mm Crushed Stone", vehicles: 2, quantity: 20 },
+    { product: "40mm Crushed Stone", vehicles: 1, quantity: 10 },
+  ];
+
+  const totalVehicles = orderItems.reduce(
+    (sum, item) => sum + item.vehicles,
+    0
+  );
+  const totalTons = orderItems.reduce(
+    (sum, item) => sum + item.quantity,
+    0
+  );
+
+  const handleSubmit = () => {
+    if (!confirmed) return;
+    setSubmitted(true);
+  };
+
+  return (
+    <div style={styles.page}>
+      <style>{globalCss}</style>
+
+      <main style={styles.phone}>
+        <div style={styles.scrollArea}>
+          <section style={styles.header}>
+            <div style={styles.headerShade} />
+            <div style={styles.headerGrid} />
+
+            <div style={styles.topBar}>
+              <button type="button" style={styles.backButton} aria-label="Go back">
+                ‹
+              </button>
+              <div style={styles.stepBadge}>FINAL REVIEW</div>
+              <button type="button" style={styles.editHeaderButton}>
+                Edit
+              </button>
+            </div>
+
+            <div style={styles.heroRow}>
+              <div style={{ minWidth: 0 }}>
+                <p style={styles.eyebrow}>ORDER CONFIRMATION</p>
+                <h1 style={styles.title}>Review Your<br />Stone Request</h1>
+                <p style={styles.heroSubtext}>
+                  Check the product, vehicle quantity and delivery date before
+                  raising the rate enquiry.
+                </p>
+              </div>
+              <div style={styles.heroIcon}>✓</div>
+            </div>
+
+            <div style={styles.summaryStrip}>
+              <div style={styles.summaryItem}><b>2</b><span>Products</span></div>
+              <div style={styles.summaryDivider} />
+              <div style={styles.summaryItem}><b>{totalVehicles}</b><span>Vehicles</span></div>
+              <div style={styles.summaryDivider} />
+              <div style={styles.summaryItem}><b>{totalTons}t</b><span>Total qty.</span></div>
+            </div>
+          </section>
+
+          <section style={styles.content}>
+            <div style={styles.noticeCard}>
+              <div style={styles.noticeIcon}>₹</div>
+              <div style={{ minWidth: 0 }}>
+                <b style={styles.noticeTitle}>Rate enquiry only</b>
+                <p style={styles.noticeText}>
+                  No payment is required now. StoneRate will check the best
+                  available rate and contact you for approval.
+                </p>
+              </div>
+            </div>
+
+            <div style={styles.sectionTitleRow}>
+              <div>
+                <p style={styles.sectionEyebrow}>ORDER INFORMATION</p>
+                <h2 style={styles.sectionTitle}>Order summary</h2>
+              </div>
+              <button type="button" style={styles.editOrderButton}>Edit order</button>
+            </div>
+
+            <article style={styles.tableCard}>
+              <div style={styles.tableHeader}>
+                <span>Product</span>
+                <span>Vehicle</span>
+                <span>Qty.</span>
+              </div>
+
+              {orderItems.map((item, index) => (
+                <div key={item.product}>
+                  {index > 0 && <div style={styles.tableDivider} />}
+                  <div style={styles.tableRow}>
+                    <div style={styles.productCell}>
+                      <span style={styles.productIcon}>🪨</span>
+                      <b>{item.product}</b>
+                    </div>
+                    <div style={styles.vehicleCell}>
+                      <span style={styles.smallTruck}>🚚</span>
+                      <b>{item.vehicles}</b>
+                      <span>{item.vehicles === 1 ? "vehicle" : "vehicles"}</span>
+                    </div>
+                    <div style={styles.qtyCell}>
+                      <b>{item.quantity}</b>
+                      <span>tons</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              <div style={styles.tableTotalRow}>
+                <b>Total</b>
+                <span>{totalVehicles} vehicles</span>
+                <strong>{totalTons} tons</strong>
+              </div>
+            </article>
+
+            <article style={styles.deliveryCard}>
+              <div style={styles.calendarIcon}>📅</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={styles.detailLabel}>Expected delivery date</p>
+                <h3 style={styles.deliveryDate}>05 July 2026</h3>
+                <span style={styles.deliveryCaption}>
+                  Delivery timing will be reconfirmed after rate approval.
+                </span>
+              </div>
+              <button type="button" style={styles.changeButton}>Change</button>
+            </article>
+
+            <article style={styles.processCard}>
+              <p style={styles.processTitle}>What happens next?</p>
+              <div style={styles.processSteps}>
+                <div style={styles.processStep}>
+                  <div style={styles.processNumber}>1</div>
+                  <div><b>Enquiry submitted</b><span>Your requirement reaches StoneRate.</span></div>
+                </div>
+                <div style={styles.processLine} />
+                <div style={styles.processStep}>
+                  <div style={styles.processNumber}>2</div>
+                  <div><b>Best rate checked</b><span>Nearby verified sellers are contacted.</span></div>
+                </div>
+                <div style={styles.processLine} />
+                <div style={styles.processStep}>
+                  <div style={styles.processNumber}>3</div>
+                  <div><b>You confirm the rate</b><span>The request becomes an active order afterward.</span></div>
+                </div>
+              </div>
+            </article>
+
+            <button
+              type="button"
+              style={styles.agreementCard}
+              onClick={() => setConfirmed((value) => !value)}
+            >
+              <span style={{ ...styles.checkbox, ...(confirmed ? styles.checkboxActive : {}) }}>
+                {confirmed ? "✓" : ""}
+              </span>
+              <span style={styles.agreementText}>
+                I confirm that the product, vehicle quantity and expected
+                delivery date shown above are correct.
+              </span>
+            </button>
+
+            {submitted && (
+              <div style={styles.successCard}>
+                <div style={styles.successIcon}>✓</div>
+                <div>
+                  <b>Rate enquiry raised successfully</b>
+                  <p>The request is waiting for rate confirmation. You will be notified when the best rate is ready.</p>
+                </div>
+              </div>
+            )}
+
+            <div style={styles.bottomSpacer} />
+          </section>
+        </div>
+
+        <footer style={styles.fixedFooter}>
+          <div style={styles.footerHint}>
+            <span>🛡️</span>
+            <span>No payment is collected at this stage</span>
+          </div>
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={!confirmed || submitted}
+            style={{
+              ...styles.primaryButton,
+              opacity: confirmed && !submitted ? 1 : 0.52,
+            }}
+          >
+            <span style={styles.primaryIcon}>✦</span>
+            <span>{submitted ? "Enquiry Submitted" : "Place Order & Raise Enquiry"}</span>
+            <b style={styles.primaryArrow}>›</b>
+          </button>
+        </footer>
+      </main>
+    </div>
+  );
+}
+
+function createStyles(viewport) {
+  const vw = viewport.width || 390;
+  const vh = viewport.height || 844;
+  const isDesktop = vw >= 700;
+  const appW = isDesktop ? 390 : vw;
+  const appH = isDesktop ? 844 : vh;
+  const rawScale = Math.min(appW / BASE_W, appH / BASE_H);
+  const scale = Math.max(0.86, Math.min(2.05, rawScale));
+  const ms = (value, factor = 0.55) => Math.round(value + (value * scale - value) * factor);
+  const tiny = appW <= 230;
+  const short = appH <= 620;
+
+  return {
+    page: {
+      width: "100vw", height: "100dvh", minHeight: "100dvh",
+      display: "flex", justifyContent: "center", alignItems: isDesktop ? "center" : "stretch",
+      margin: 0, padding: isDesktop ? 10 : 0, overflow: "hidden",
+      background: isDesktop ? "#f4f1ea" : "#0b0907", fontFamily: "Arial, sans-serif",
+      boxSizing: "border-box",
+    },
+    phone: {
+      position: "relative", width: isDesktop ? 390 : "100vw", height: isDesktop ? 844 : "100dvh",
+      overflow: "hidden", background: "#f6f4ef", borderRadius: isDesktop ? 30 : 0,
+      boxShadow: isDesktop ? "0 25px 70px rgba(0,0,0,.25)" : "none", boxSizing: "border-box",
+    },
+    scrollArea: {
+      width: "100%", height: "100%", overflowY: "auto", overflowX: "hidden",
+      WebkitOverflowScrolling: "touch", boxSizing: "border-box",
+    },
+    header: {
+      position: "relative", padding: `${ms(short ? 12 : 16)}px ${ms(tiny ? 11 : 15)}px ${ms(19)}px`,
+      overflow: "hidden", color: "white", boxSizing: "border-box",
+      backgroundImage: HEADER_BG_IMAGE
+        ? `linear-gradient(135deg, rgba(5,4,3,.55), rgba(28,25,23,.46) 55%, rgba(120,53,15,.35)), url("${HEADER_BG_IMAGE}")`
+        : "radial-gradient(circle at 84% 10%, rgba(245,158,11,.45), transparent 30%), linear-gradient(135deg, #080706, #1c1917 54%, #78350f)",
+      backgroundSize: "cover", backgroundPosition: "center 42%", backgroundRepeat: "no-repeat",
+    },
+    headerShade: { position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,.02), rgba(0,0,0,.3))", pointerEvents: "none" },
+    headerGrid: { position: "absolute", inset: 0, opacity: 0.24, pointerEvents: "none", backgroundImage: "linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px)", backgroundSize: `${ms(30)}px ${ms(30)}px` },
+    topBar: { position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "space-between", gap: ms(8) },
+    backButton: { width: ms(32), height: ms(32), display: "grid", placeItems: "center", border: "1px solid rgba(255,255,255,.18)", borderRadius: ms(12), background: "rgba(255,255,255,.11)", color: "white", fontSize: ms(23), lineHeight: 1, cursor: "pointer" },
+    stepBadge: { padding: `${ms(5)}px ${ms(10)}px`, borderRadius: 999, border: "1px solid rgba(245,158,11,.45)", background: "rgba(245,158,11,.17)", color: "#fde68a", fontSize: ms(7.7), letterSpacing: ms(1.2), fontWeight: 950 },
+    editHeaderButton: { minWidth: ms(43), height: ms(30), padding: `0 ${ms(9)}px`, border: "1px solid rgba(255,255,255,.18)", borderRadius: 999, background: "rgba(255,255,255,.11)", color: "white", fontSize: ms(9), fontWeight: 900, cursor: "pointer" },
+    heroRow: { position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "space-between", gap: ms(12), marginTop: ms(14) },
+    eyebrow: { margin: 0, color: "#fde68a", fontSize: ms(7.2), letterSpacing: ms(1.7), fontWeight: 950 },
+    title: { margin: `${ms(6)}px 0 0`, fontSize: ms(short ? 23 : 28), lineHeight: 1.02, letterSpacing: -0.7, fontWeight: 950 },
+    heroSubtext: { maxWidth: ms(220), margin: `${ms(8)}px 0 0`, color: "#e7e5e4", fontSize: ms(8.7), lineHeight: 1.35, fontWeight: 650 },
+    heroIcon: { width: ms(51), height: ms(51), display: "grid", placeItems: "center", borderRadius: ms(20), background: "linear-gradient(135deg, #f59e0b, #ea580c)", boxShadow: "0 15px 30px rgba(234,88,12,.32)", fontSize: ms(25), fontWeight: 950, flexShrink: 0 },
+    summaryStrip: { position: "relative", zIndex: 2, display: "grid", gridTemplateColumns: "1fr auto 1fr auto 1fr", alignItems: "center", marginTop: ms(15), padding: ms(8), border: "1px solid rgba(255,255,255,.13)", borderRadius: ms(16), background: "rgba(255,255,255,.12)", backdropFilter: "blur(10px)" },
+    summaryItem: { display: "flex", flexDirection: "column", alignItems: "center", gap: ms(2), minWidth: 0, fontSize: ms(7.7), textAlign: "center" },
+    summaryDivider: { width: 1, height: ms(27), background: "rgba(255,255,255,.17)" },
+    content: { padding: `${ms(13)}px ${ms(tiny ? 9 : 13)}px 0`, color: "#111827", background: "linear-gradient(180deg, #fff, #f6f4ef 58%, #efede8)", boxSizing: "border-box" },
+    noticeCard: { display: "flex", gap: ms(10), padding: ms(12), border: "1px solid #fde68a", borderRadius: ms(19), background: "linear-gradient(135deg, #fffbeb, #fef3c7)", boxShadow: "0 10px 22px rgba(146,64,14,.08)" },
+    noticeIcon: { width: ms(36), height: ms(36), display: "grid", placeItems: "center", borderRadius: ms(14), background: "#f59e0b", color: "white", fontSize: ms(18), fontWeight: 950, flexShrink: 0 },
+    noticeTitle: { color: "#78350f", fontSize: ms(10.5) },
+    noticeText: { margin: `${ms(4)}px 0 0`, color: "#92400e", fontSize: ms(8.2), lineHeight: 1.35, fontWeight: 650 },
+    sectionTitleRow: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: ms(9), marginTop: ms(16), marginBottom: ms(9) },
+    sectionEyebrow: { margin: 0, color: "#b45309", fontSize: ms(7.3), letterSpacing: ms(1.15), fontWeight: 950 },
+    sectionTitle: { margin: `${ms(3)}px 0 0`, fontSize: ms(15), fontWeight: 950 },
+    editOrderButton: { padding: 0, border: 0, background: "transparent", color: "#b45309", fontSize: ms(8.7), fontWeight: 900, cursor: "pointer", whiteSpace: "nowrap" },
+    tableCard: { overflow: "hidden", border: "1px solid #e7e5e4", borderRadius: ms(20), background: "rgba(255,255,255,.96)", boxShadow: "0 10px 24px rgba(0,0,0,.055)" },
+    tableHeader: { display: "grid", gridTemplateColumns: "1.55fr .85fr .65fr", gap: ms(6), padding: `${ms(9)}px ${ms(11)}px`, background: "#1c1917", color: "#fde68a", fontSize: ms(7.5), letterSpacing: ms(.6), fontWeight: 950 },
+    tableRow: { display: "grid", gridTemplateColumns: "1.55fr .85fr .65fr", alignItems: "center", gap: ms(6), padding: `${ms(11)}px`, fontSize: ms(8.6) },
+    productCell: { display: "flex", alignItems: "center", gap: ms(7), minWidth: 0, lineHeight: 1.15 },
+    productIcon: { width: ms(27), height: ms(27), display: "grid", placeItems: "center", borderRadius: ms(10), background: "#fef3c7", flexShrink: 0 },
+    vehicleCell: { display: "grid", gridTemplateColumns: "auto auto", justifyContent: "start", alignItems: "center", columnGap: ms(3), minWidth: 0 },
+    smallTruck: { gridRow: "1 / span 2", marginRight: ms(2), fontSize: ms(13) },
+    qtyCell: { display: "flex", flexDirection: "column", alignItems: "flex-end", gap: ms(1), color: "#92400e" },
+    tableDivider: { height: 1, margin: `0 ${ms(11)}px`, background: "#eeeae6" },
+    tableTotalRow: { display: "grid", gridTemplateColumns: "1.55fr .85fr .65fr", gap: ms(6), padding: `${ms(9)}px ${ms(11)}px`, background: "#fffbeb", color: "#78350f", fontSize: ms(8.2), alignItems: "center" },
+    deliveryCard: { display: "flex", alignItems: "center", gap: ms(9), marginTop: ms(12), padding: ms(12), border: "1px solid #e7e5e4", borderRadius: ms(20), background: "white", boxShadow: "0 10px 24px rgba(0,0,0,.05)" },
+    calendarIcon: { width: ms(38), height: ms(38), display: "grid", placeItems: "center", borderRadius: ms(14), background: "#fffbeb", fontSize: ms(19), flexShrink: 0 },
+    detailLabel: { margin: 0, color: "#78716c", fontSize: ms(7.8) },
+    deliveryDate: { margin: `${ms(3)}px 0 0`, fontSize: ms(11.3), fontWeight: 950 },
+    deliveryCaption: { display: "block", marginTop: ms(3), color: "#78716c", fontSize: ms(7.2), lineHeight: 1.25 },
+    changeButton: { padding: `${ms(5)}px ${ms(8)}px`, border: "1px solid #fde68a", borderRadius: 999, background: "#fffbeb", color: "#b45309", fontSize: ms(7.8), fontWeight: 900, cursor: "pointer" },
+    processCard: { marginTop: ms(12), padding: ms(13), border: "1px solid #e7e5e4", borderRadius: ms(20), background: "rgba(255,255,255,.88)" },
+    processTitle: { margin: 0, fontSize: ms(11), fontWeight: 950 },
+    processSteps: { marginTop: ms(10) },
+    processStep: { display: "flex", alignItems: "flex-start", gap: ms(9), fontSize: ms(8.3) },
+    processNumber: { width: ms(22), height: ms(22), display: "grid", placeItems: "center", borderRadius: ms(8), background: "#f59e0b", color: "white", fontSize: ms(9), fontWeight: 950, flexShrink: 0 },
+    processLine: { width: 2, height: ms(10), marginLeft: ms(10), background: "#fde68a" },
+    agreementCard: { width: "100%", display: "flex", alignItems: "flex-start", gap: ms(9), marginTop: ms(12), padding: ms(11), border: "1px solid #fde68a", borderRadius: ms(17), background: "#fffbeb", textAlign: "left", cursor: "pointer" },
+    checkbox: { width: ms(21), height: ms(21), display: "grid", placeItems: "center", border: "2px solid #d97706", borderRadius: ms(7), background: "white", color: "white", fontSize: ms(11), fontWeight: 950, flexShrink: 0 },
+    checkboxActive: { background: "#d97706" },
+    agreementText: { color: "#78350f", fontSize: ms(8.4), lineHeight: 1.35, fontWeight: 750 },
+    successCard: { display: "flex", gap: ms(9), marginTop: ms(12), padding: ms(12), border: "1px solid #bbf7d0", borderRadius: ms(18), background: "#f0fdf4", color: "#166534", fontSize: ms(8.5), lineHeight: 1.35 },
+    successIcon: { width: ms(30), height: ms(30), display: "grid", placeItems: "center", borderRadius: ms(11), background: "#22c55e", color: "white", fontWeight: 950, flexShrink: 0 },
+    bottomSpacer: { height: ms(116) },
+    fixedFooter: { position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 30, padding: `${ms(8)}px ${ms(13)}px calc(env(safe-area-inset-bottom, 0px) + ${ms(10)}px)`, background: "linear-gradient(to top, #f6f4ef 76%, rgba(246,244,239,.98) 90%, rgba(246,244,239,.82))", borderTop: "1px solid rgba(120,113,108,.12)", boxShadow: "0 -12px 30px rgba(0,0,0,.10)" },
+    footerHint: { display: "flex", alignItems: "center", justifyContent: "center", gap: ms(5), marginBottom: ms(7), color: "#78716c", fontSize: ms(7.8), fontWeight: 700 },
+    primaryButton: { position: "relative", width: "100%", minHeight: ms(52), display: "flex", alignItems: "center", justifyContent: "center", gap: ms(8), border: 0, borderRadius: ms(21), background: "linear-gradient(135deg, #f59e0b, #ea580c)", color: "white", fontSize: ms(11.7), fontWeight: 950, boxShadow: "0 15px 30px rgba(234,88,12,.3)", cursor: "pointer" },
+    primaryIcon: { width: ms(26), height: ms(26), display: "grid", placeItems: "center", borderRadius: ms(9), background: "rgba(255,255,255,.18)" },
+    primaryArrow: { position: "absolute", right: ms(17), fontSize: ms(24), fontWeight: 400 },
+  };
+}
+
+const globalCss = `
+* { box-sizing: border-box; }
+html, body, #root { margin: 0; width: 100%; height: 100%; min-height: 100%; background: #0b0907; overflow: hidden; }
+button, input, select, textarea { font: inherit; }
+body { -webkit-text-size-adjust: 100%; }
+`;
