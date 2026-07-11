@@ -3049,3 +3049,1753 @@ body { -webkit-text-size-adjust: 100%; }
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+recent order 
+import React, { useEffect, useMemo, useState } from "react";
+
+const BASE_W = 206;
+const BASE_H = 445;
+const HEADER_BG_IMAGE = "";
+
+function useViewport() {
+  const [viewport, setViewport] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 390,
+    height: typeof window !== "undefined" ? window.innerHeight : 844,
+  });
+
+  useEffect(() => {
+    const update = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    update();
+
+    window.addEventListener("resize", update);
+    window.addEventListener("orientationchange", update);
+
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("orientationchange", update);
+    };
+  }, []);
+
+  return viewport;
+}
+
+const ORDERS = [
+  {
+    id: "SR-260711-04",
+    type: "rate",
+    title: "20mm + 40mm Crushed Stone",
+    subtitle: "30 tons • 3 vehicles",
+    date: "11 Jul 2026",
+    value: "₹1,280 / ton",
+    status: "Best rate ready",
+    tone: "active",
+    progress: 3,
+    stages: ["Submitted", "Checking", "Rate ready", "Confirm"],
+  },
+  {
+    id: "SR-260709-02",
+    type: "delivery",
+    title: "40mm Crushed Stone",
+    subtitle: "22 tons • 1 vehicle",
+    date: "09 Jul 2026",
+    value: "Order confirmed",
+    status: "In route",
+    tone: "active",
+    progress: 3,
+    stages: ["Ordered", "Dispatched", "In route", "Delivered"],
+  },
+  {
+    id: "SR-260707-01",
+    type: "rate",
+    title: "M-Sand",
+    subtitle: "18 tons • 1 vehicle",
+    date: "07 Jul 2026",
+    value: "₹1,050 / ton",
+    status: "Rejected",
+    tone: "rejected",
+    progress: 4,
+    stages: ["Submitted", "Checking", "Rate ready", "Rejected"],
+  },
+];
+
+export default function App() {
+  const viewport = useViewport();
+
+  const styles = useMemo(
+    () => createStyles(viewport),
+    [viewport.width, viewport.height]
+  );
+
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState("All");
+  const [showSort, setShowSort] = useState(false);
+  const [sortOrder, setSortOrder] = useState("Newest first");
+  const [activeNav, setActiveNav] = useState("Orders");
+
+  const filters = [
+    "All",
+    "Rate requests",
+    "Delivery orders",
+    "Pending",
+    "Rejected",
+  ];
+
+  const filteredOrders = useMemo(() => {
+    const search = query.trim().toLowerCase();
+
+    let result = ORDERS.filter((order) => {
+      const searchMatch =
+        !search ||
+        order.id.toLowerCase().includes(search) ||
+        order.title.toLowerCase().includes(search);
+
+      const filterMatch =
+        filter === "All" ||
+        (filter === "Rate requests" && order.type === "rate") ||
+        (filter === "Delivery orders" && order.type === "delivery") ||
+        (filter === "Pending" && order.tone === "active") ||
+        (filter === "Rejected" && order.tone === "rejected");
+
+      return searchMatch && filterMatch;
+    });
+
+    if (sortOrder === "Oldest first") {
+      result = [...result].reverse();
+    }
+
+    if (sortOrder === "Rejected first") {
+      result = [...result].sort((a, b) => {
+        if (a.tone === b.tone) return 0;
+        return a.tone === "rejected" ? -1 : 1;
+      });
+    }
+
+    return result;
+  }, [query, filter, sortOrder]);
+
+  const totalOrders = ORDERS.length;
+
+  const totalRateRequests = ORDERS.filter(
+    (order) => order.type === "rate"
+  ).length;
+
+  const totalInRoute = ORDERS.filter(
+    (order) => order.status === "In route"
+  ).length;
+
+  return (
+    <div style={styles.page}>
+      <style>{globalCss}</style>
+
+      <main style={styles.phone}>
+        <header style={styles.fixedControls}>
+          <div style={styles.combinedControlsCard}>
+            <div style={styles.searchShell}>
+              <button
+                type="button"
+                style={styles.backButton}
+                aria-label="Go back"
+                onClick={() => window.history.back()}
+              >
+                ‹
+              </button>
+
+              <label style={styles.searchBox}>
+                <span style={styles.searchIcon}>⌕</span>
+
+                <div style={styles.searchTextArea}>
+                  <span style={styles.searchLabel}>SEARCH ORDERS</span>
+
+                  <input
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    placeholder="Order ID or material"
+                    style={styles.searchInput}
+                  />
+                </div>
+
+                {query && (
+                  <button
+                    type="button"
+                    onClick={() => setQuery("")}
+                    style={styles.clearButton}
+                    aria-label="Clear search"
+                  >
+                    ×
+                  </button>
+                )}
+              </label>
+
+              <button
+                type="button"
+                onClick={() => setShowSort((value) => !value)}
+                style={{
+                  ...styles.sortButton,
+                  ...(showSort ? styles.sortButtonActive : {}),
+                }}
+                aria-label="Sort orders"
+              >
+                <span style={styles.sortIcon}>⇅</span>
+              </button>
+            </div>
+
+            <div className="filter-scroll" style={styles.filterScroller}>
+              {filters.map((item) => (
+                <button
+                  type="button"
+                  key={item}
+                  onClick={() => setFilter(item)}
+                  style={{
+                    ...styles.filterChip,
+                    ...(filter === item ? styles.filterChipActive : {}),
+                  }}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+
+            {showSort && (
+              <div style={styles.sortPanel}>
+                <span style={styles.sortLabel}>SORT ORDERS</span>
+
+                {[
+                  "Newest first",
+                  "Oldest first",
+                  "Rejected first",
+                ].map((option) => (
+                  <button
+                    type="button"
+                    key={option}
+                    onClick={() => {
+                      setSortOrder(option);
+                      setShowSort(false);
+                    }}
+                    style={{
+                      ...styles.sortOption,
+                      ...(sortOrder === option
+                        ? styles.sortOptionActive
+                        : {}),
+                    }}
+                  >
+                    <span>{option}</span>
+
+                    {sortOrder === option && <b>✓</b>}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </header>
+
+        <section
+          className="orders-scroll-area"
+          style={styles.ordersScrollArea}
+        >
+          <section style={styles.hero}>
+            <div style={styles.heroShade} />
+            <div style={styles.heroGrid} />
+
+            <div style={styles.heroContent}>
+              <p style={styles.eyebrow}>ORDER CENTRE</p>
+
+              <h1 style={styles.title}>Recent Orders</h1>
+
+              <p style={styles.heroText}>
+                Track rate requests, deliveries and rejected quotes.
+              </p>
+            </div>
+
+            <div style={styles.orderSummaryTable}>
+              <div style={styles.orderSummaryCell}>
+                <b>{totalOrders}</b>
+                <span>Total orders</span>
+              </div>
+
+              <div style={styles.orderSummaryDivider} />
+
+              <div style={styles.orderSummaryCell}>
+                <b>{totalRateRequests}</b>
+                <span>Rate requests</span>
+              </div>
+
+              <div style={styles.orderSummaryDivider} />
+
+              <div style={styles.orderSummaryCell}>
+                <b>{totalInRoute}</b>
+                <span>In route</span>
+              </div>
+            </div>
+          </section>
+
+          <div style={styles.activityArea}>
+            <div style={styles.resultsHeader}>
+              <div>
+                <p style={styles.resultsEyebrow}>RECENT ACTIVITY</p>
+
+                <h2 style={styles.resultsTitle}>
+                  {filteredOrders.length}{" "}
+                  {filteredOrders.length === 1 ? "order" : "orders"}
+                </h2>
+              </div>
+
+              <span style={styles.sortText}>{sortOrder}</span>
+            </div>
+
+            <div style={styles.orderStack}>
+              {filteredOrders.map((order) => (
+                <OrderCard
+                  key={order.id}
+                  order={order}
+                  styles={styles}
+                />
+              ))}
+
+              {filteredOrders.length === 0 && (
+                <div style={styles.emptyCard}>
+                  <div style={styles.emptyIcon}>⌕</div>
+
+                  <b>No matching orders</b>
+
+                  <p>Try another order ID, material name or filter.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        <nav style={styles.bottomNav}>
+          {["Home", "Orders", "Profile"].map((item) => (
+            <button
+              type="button"
+              key={item}
+              onClick={() => setActiveNav(item)}
+              style={{
+                ...styles.navButton,
+                ...(activeNav === item ? styles.navButtonActive : {}),
+              }}
+            >
+              <span style={styles.navIcon}>
+                {item === "Home"
+                  ? "⌂"
+                  : item === "Orders"
+                  ? "▣"
+                  : "●"}
+              </span>
+
+              <b>{item}</b>
+            </button>
+          ))}
+        </nav>
+      </main>
+    </div>
+  );
+}
+
+function OrderCard({ order, styles }) {
+  const rejected = order.tone === "rejected";
+  const delivery = order.type === "delivery";
+
+  return (
+    <article
+      style={{
+        ...styles.orderCard,
+        ...(rejected ? styles.orderCardRejected : {}),
+      }}
+    >
+      <div
+        style={{
+          ...styles.cardGlow,
+          background: rejected
+            ? "rgba(239,68,68,.16)"
+            : delivery
+            ? "rgba(59,130,246,.14)"
+            : "rgba(34,197,94,.14)",
+        }}
+      />
+
+      <div
+        style={{
+          ...styles.cardAccent,
+          background: rejected
+            ? "linear-gradient(to bottom, #ef4444, #991b1b)"
+            : delivery
+            ? "linear-gradient(to bottom, #38bdf8, #1d4ed8)"
+            : "linear-gradient(to bottom, #22c55e, #15803d)",
+        }}
+      />
+
+      <div style={styles.orderTopRow}>
+        <div
+          style={{
+            ...styles.orderTypeIcon,
+            ...(delivery ? styles.deliveryTypeIcon : {}),
+            ...(rejected ? styles.rejectedTypeIcon : {}),
+          }}
+        >
+          {delivery ? "🚚" : "₹"}
+        </div>
+
+        <div style={styles.orderMainContent}>
+          <div style={styles.orderMetaLine}>
+            <span style={styles.orderId}>{order.id}</span>
+
+            <div
+              style={{
+                ...styles.statusPill,
+                ...(rejected
+                  ? styles.statusPillRejected
+                  : delivery
+                  ? styles.statusPillDelivery
+                  : styles.statusPillActive),
+              }}
+            >
+              <span
+                style={{
+                  ...styles.statusDot,
+                  background: rejected
+                    ? "#ef4444"
+                    : delivery
+                    ? "#38bdf8"
+                    : "#22c55e",
+                }}
+              />
+
+              <span style={styles.statusText}>{order.status}</span>
+            </div>
+          </div>
+
+          <h3 style={styles.orderTitle}>{order.title}</h3>
+
+          <p style={styles.orderSubtitle}>{order.subtitle}</p>
+        </div>
+      </div>
+
+      <div style={styles.orderInfoGrid}>
+        <div style={styles.infoCell}>
+          <span>Request date</span>
+          <b>{order.date}</b>
+        </div>
+
+        <div style={styles.infoCell}>
+          <span>{delivery ? "Current state" : "Quoted rate"}</span>
+          <b>{order.value}</b>
+        </div>
+      </div>
+
+      <div style={styles.cardProgressArea}>
+        <p style={styles.progressCaption}>
+          {delivery ? "DELIVERY PROGRESS" : "RATE REQUEST PROGRESS"}
+        </p>
+
+        <div
+          className="progress-scroll"
+          style={styles.progressScroller}
+        >
+          <div style={styles.miniTracker}>
+            {order.stages.map((stage, index) => {
+              const completed = index < order.progress;
+              const current = index === order.progress - 1;
+
+              const finalRejected =
+                rejected && index === order.stages.length - 1;
+
+              return (
+                <React.Fragment key={stage}>
+                  <div style={styles.miniStep}>
+                    <div
+                      style={{
+                        ...styles.miniCircle,
+
+                        background: finalRejected
+                          ? "#ef4444"
+                          : completed
+                          ? delivery
+                            ? "#38bdf8"
+                            : "#22c55e"
+                          : "#e7e5e4",
+
+                        color: completed ? "white" : "#a8a29e",
+
+                        boxShadow: current
+                          ? finalRejected
+                            ? "0 0 0 4px rgba(239,68,68,.12)"
+                            : delivery
+                            ? "0 0 0 4px rgba(56,189,248,.12)"
+                            : "0 0 0 4px rgba(34,197,94,.12)"
+                          : "none",
+                      }}
+                    >
+                      {finalRejected ? "×" : completed ? "✓" : ""}
+                    </div>
+
+                    <span
+                      style={{
+                        ...styles.miniLabel,
+
+                        color: finalRejected
+                          ? "#b91c1c"
+                          : completed
+                          ? delivery
+                            ? "#0369a1"
+                            : "#166534"
+                          : "#a8a29e",
+
+                        fontWeight: current ? 950 : 750,
+                      }}
+                    >
+                      {stage}
+                    </span>
+                  </div>
+
+                  {index < order.stages.length - 1 && (
+                    <div
+                      style={{
+                        ...styles.miniConnector,
+
+                        background:
+                          index < order.progress - 1
+                            ? delivery
+                              ? "#38bdf8"
+                              : "#22c55e"
+                            : finalRejected
+                            ? "linear-gradient(to right, #22c55e, #ef4444)"
+                            : "#e7e5e4",
+                      }}
+                    />
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      <div style={styles.orderFooter}>
+        <span
+          style={{
+            ...styles.orderTypeLabel,
+            color: rejected
+              ? "#b91c1c"
+              : delivery
+              ? "#0369a1"
+              : "#15803d",
+          }}
+        >
+          {delivery
+            ? "Delivery order"
+            : rejected
+            ? "Rejected rate request"
+            : "Active rate request"}
+        </span>
+
+        <button
+          type="button"
+          style={{
+            ...styles.viewButton,
+            ...(rejected ? styles.viewButtonRejected : {}),
+            ...(delivery ? styles.viewButtonDelivery : {}),
+          }}
+        >
+          View details <b>›</b>
+        </button>
+      </div>
+    </article>
+  );
+}
+
+function createStyles(viewport) {
+  const vw = viewport.width || 390;
+  const vh = viewport.height || 844;
+
+  const isDesktop = vw >= 700;
+
+  const appW = isDesktop ? 390 : vw;
+  const appH = isDesktop ? 844 : vh;
+
+  const rawScale = Math.min(appW / BASE_W, appH / BASE_H);
+  const scale = Math.max(0.86, Math.min(2.05, rawScale));
+
+  const ms = (value, factor = 0.55) =>
+    Math.round(value + (value * scale - value) * factor);
+
+  const tiny = appW <= 230;
+  const short = appH <= 620;
+
+  const navHeight = ms(58);
+  const controlsHeight = ms(short ? 103 : 113);
+  const heroHeight = ms(short ? 122 : 142);
+
+  const themedSurface = HEADER_BG_IMAGE
+    ? `linear-gradient(
+        180deg,
+        rgba(8,7,6,.78) 0%,
+        rgba(28,25,23,.72) 48%,
+        rgba(95,37,8,.68) 100%
+      ),
+      url("${HEADER_BG_IMAGE}")`
+    : `radial-gradient(
+        circle at 88% 7%,
+        rgba(245,158,11,.34),
+        transparent 34%
+      ),
+      linear-gradient(
+        180deg,
+        #080706 0%,
+        #171310 46%,
+        #371707 72%,
+        #5f2508 100%
+      )`;
+
+  return {
+    page: {
+      width: "100vw",
+      height: "100dvh",
+      minHeight: "100dvh",
+
+      display: "flex",
+      justifyContent: "center",
+      alignItems: isDesktop ? "center" : "stretch",
+
+      margin: 0,
+      padding: isDesktop ? 10 : 0,
+      overflow: "hidden",
+
+      background: isDesktop ? "#f4f1ea" : "#0b0907",
+      fontFamily: "Arial, sans-serif",
+    },
+
+    phone: {
+      position: "relative",
+
+      width: isDesktop ? 390 : "100vw",
+      height: isDesktop ? 844 : "100dvh",
+
+      overflow: "hidden",
+
+      backgroundColor: "#080706",
+      backgroundImage: themedSurface,
+      backgroundSize: "cover",
+      backgroundPosition: "center top",
+      backgroundRepeat: "no-repeat",
+
+      borderRadius: isDesktop ? 30 : 0,
+
+      boxShadow: isDesktop
+        ? "0 25px 70px rgba(0,0,0,.25)"
+        : "none",
+    },
+
+    fixedControls: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: 0,
+      zIndex: 40,
+
+      height: controlsHeight,
+      padding: `${ms(6)}px ${ms(tiny ? 2 : 4)}px`,
+
+      overflow: "visible",
+      color: "white",
+
+      background:
+        "radial-gradient(circle at 88% 0%, rgba(245,158,11,.28), transparent 34%), linear-gradient(180deg, #080706 0%, #171310 52%, #3f1b08 100%)",
+
+      borderBottom: "1px solid rgba(245,158,11,.18)",
+      boxShadow: "0 12px 28px rgba(28,25,23,.24)",
+    },
+
+    combinedControlsCard: {
+      position: "relative",
+
+      width: "100%",
+      height: "100%",
+
+      padding: `${ms(6)}px ${ms(6)}px ${ms(5)}px`,
+
+      border: "1px solid rgba(255,255,255,.12)",
+      borderRadius: ms(20),
+
+      background:
+        "linear-gradient(145deg, rgba(255,255,255,.095), rgba(255,255,255,.035))",
+
+      boxShadow:
+        "inset 0 1px 0 rgba(255,255,255,.12), 0 10px 24px rgba(0,0,0,.14)",
+
+      backdropFilter: "blur(14px)",
+    },
+
+    searchShell: {
+      display: "grid",
+      gridTemplateColumns: "auto minmax(0, 1fr) auto",
+      gap: ms(6),
+      alignItems: "stretch",
+    },
+
+    backButton: {
+      width: ms(42),
+      minHeight: ms(42),
+
+      display: "grid",
+      placeItems: "center",
+
+      padding: 0,
+
+      border: "1px solid rgba(255,255,255,.16)",
+      borderRadius: ms(15),
+
+      background: "rgba(255,255,255,.09)",
+      color: "white",
+
+      fontSize: ms(24),
+      lineHeight: 1,
+      fontWeight: 700,
+
+      boxShadow: "inset 0 1px 0 rgba(255,255,255,.14)",
+      backdropFilter: "blur(12px)",
+
+      cursor: "pointer",
+    },
+
+    searchBox: {
+      position: "relative",
+
+      minWidth: 0,
+      minHeight: ms(42),
+
+      display: "flex",
+      alignItems: "center",
+
+      gap: ms(8),
+      padding: `0 ${ms(9)}px`,
+
+      overflow: "hidden",
+
+      border: "1px solid rgba(255,255,255,.16)",
+      borderRadius: ms(15),
+
+      background: "rgba(255,255,255,.09)",
+
+      boxShadow: "inset 0 1px 0 rgba(255,255,255,.14)",
+      backdropFilter: "blur(12px)",
+    },
+
+    searchIcon: {
+      width: ms(28),
+      height: ms(28),
+
+      display: "grid",
+      placeItems: "center",
+
+      flexShrink: 0,
+
+      borderRadius: ms(10),
+
+      background: "rgba(245,158,11,.16)",
+      color: "#fbbf24",
+
+      fontSize: ms(18),
+      fontWeight: 950,
+
+      boxShadow:
+        "inset 0 0 0 1px rgba(245,158,11,.22)",
+    },
+
+    searchTextArea: {
+      minWidth: 0,
+      flex: 1,
+
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+
+      gap: ms(1),
+    },
+
+    searchLabel: {
+      color: "#fde68a",
+
+      fontSize: ms(5.7),
+      letterSpacing: ms(.65),
+      lineHeight: 1,
+      fontWeight: 950,
+    },
+
+    searchInput: {
+      width: "100%",
+      minWidth: 0,
+
+      padding: 0,
+      border: 0,
+      outline: 0,
+
+      background: "transparent",
+
+      color: "white",
+      caretColor: "#f59e0b",
+
+      fontSize: ms(8.5),
+      lineHeight: 1.2,
+      fontWeight: 800,
+    },
+
+    clearButton: {
+      width: ms(22),
+      height: ms(22),
+
+      display: "grid",
+      placeItems: "center",
+
+      flexShrink: 0,
+
+      padding: 0,
+      border: 0,
+      borderRadius: "50%",
+
+      background: "rgba(255,255,255,.14)",
+      color: "white",
+
+      fontSize: ms(13),
+      fontWeight: 900,
+
+      cursor: "pointer",
+    },
+
+    sortButton: {
+      position: "relative",
+
+      width: ms(42),
+      minHeight: ms(42),
+
+      display: "grid",
+      placeItems: "center",
+
+      border: "1px solid rgba(245,158,11,.38)",
+      borderRadius: ms(15),
+
+      background:
+        "linear-gradient(145deg, #f59e0b, #ea580c)",
+
+      color: "white",
+
+      boxShadow:
+        "0 10px 22px rgba(234,88,12,.30), inset 0 1px 0 rgba(255,255,255,.25)",
+
+      cursor: "pointer",
+    },
+
+    sortButtonActive: {
+      transform: "scale(.96)",
+
+      boxShadow:
+        "0 6px 15px rgba(234,88,12,.26), inset 0 0 0 2px rgba(255,255,255,.18)",
+    },
+
+    sortIcon: {
+      fontSize: ms(19),
+      lineHeight: 1,
+      fontWeight: 950,
+    },
+
+    filterScroller: {
+      width: "100%",
+
+      display: "flex",
+      alignItems: "center",
+
+      gap: ms(6),
+      marginTop: ms(6),
+
+      padding: `0 ${ms(1)}px ${ms(2)}px`,
+
+      overflowX: "auto",
+      overflowY: "hidden",
+
+      scrollbarWidth: "none",
+      msOverflowStyle: "none",
+      scrollSnapType: "x proximity",
+    },
+
+    filterChip: {
+      flexShrink: 0,
+
+      minHeight: ms(30),
+      padding: `0 ${ms(10)}px`,
+
+      border: "1px solid rgba(255,255,255,.14)",
+      borderRadius: 999,
+
+      background: "rgba(255,255,255,.08)",
+      color: "#e7e5e4",
+
+      fontSize: ms(7.7),
+      fontWeight: 900,
+
+      backdropFilter: "blur(10px)",
+
+      cursor: "pointer",
+      scrollSnapAlign: "start",
+    },
+
+    filterChipActive: {
+      borderColor: "#f59e0b",
+
+      background:
+        "linear-gradient(135deg, #f59e0b, #ea580c)",
+
+      color: "white",
+
+      boxShadow:
+        "0 8px 18px rgba(245,158,11,.24)",
+    },
+
+    sortPanel: {
+      position: "absolute",
+
+      top: `calc(100% + ${ms(6)}px)`,
+      left: ms(5),
+      right: ms(5),
+
+      zIndex: 80,
+
+      padding: ms(9),
+
+      border: "1px solid rgba(245,158,11,.22)",
+      borderRadius: ms(17),
+
+      background: "rgba(28,25,23,.98)",
+      color: "white",
+
+      boxShadow: "0 18px 38px rgba(0,0,0,.32)",
+      backdropFilter: "blur(16px)",
+    },
+
+    sortLabel: {
+      display: "block",
+      marginBottom: ms(6),
+
+      color: "#fde68a",
+
+      fontSize: ms(7.3),
+      letterSpacing: ms(.7),
+      fontWeight: 950,
+    },
+
+    sortOption: {
+      width: "100%",
+      minHeight: ms(33),
+
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+
+      padding: `0 ${ms(9)}px`,
+
+      border: 0,
+      borderRadius: ms(11),
+
+      background: "transparent",
+      color: "#e7e5e4",
+
+      fontSize: ms(8.5),
+      fontWeight: 800,
+
+      cursor: "pointer",
+    },
+
+    sortOptionActive: {
+      background: "rgba(245,158,11,.16)",
+      color: "#fbbf24",
+    },
+
+    ordersScrollArea: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+
+      top: controlsHeight,
+      bottom: navHeight,
+
+      overflowY: "auto",
+      overflowX: "hidden",
+
+      scrollbarWidth: "none",
+      msOverflowStyle: "none",
+
+      padding: 0,
+
+      background: "transparent",
+
+      WebkitOverflowScrolling: "touch",
+      scrollBehavior: "smooth",
+    },
+
+    hero: {
+      position: "relative",
+
+      minHeight: heroHeight,
+      margin: 0,
+
+      padding: `${ms(14)}px ${ms(tiny ? 12 : 16)}px ${ms(13)}px`,
+
+      overflow: "hidden",
+
+      color: "white",
+      borderRadius: 0,
+
+      background:
+        "radial-gradient(circle at 85% 10%, rgba(251,191,36,.30), transparent 35%), linear-gradient(135deg, #17100b 0%, #3f2414 55%, #92400e 100%)",
+
+      borderBottom:
+        "1px solid rgba(245,158,11,.14)",
+
+      boxShadow:
+        "0 14px 30px rgba(28,25,23,.16)",
+    },
+
+    heroShade: {
+      position: "absolute",
+      inset: 0,
+
+      background:
+        "linear-gradient(to bottom, rgba(0,0,0,.02), rgba(0,0,0,.10))",
+
+      pointerEvents: "none",
+    },
+
+    heroGrid: {
+      position: "absolute",
+      inset: 0,
+
+      opacity: .24,
+      pointerEvents: "none",
+
+      backgroundImage:
+        "linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px)",
+
+      backgroundSize: `${ms(30)}px ${ms(30)}px`,
+    },
+
+    heroContent: {
+      position: "relative",
+      zIndex: 2,
+    },
+
+    eyebrow: {
+      margin: 0,
+
+      color: "#fde68a",
+
+      fontSize: ms(6.8),
+      letterSpacing: ms(1.35),
+      fontWeight: 950,
+    },
+
+    title: {
+      margin: `${ms(4)}px 0 0`,
+
+      fontSize: ms(short ? 23 : 27),
+      lineHeight: 1,
+      fontWeight: 950,
+      letterSpacing: -.6,
+    },
+
+    heroText: {
+      maxWidth: ms(250),
+
+      margin: `${ms(5)}px 0 0`,
+
+      color: "#e7e5e4",
+
+      fontSize: ms(7.5),
+      lineHeight: 1.25,
+      fontWeight: 650,
+    },
+
+    orderSummaryTable: {
+      position: "relative",
+      zIndex: 2,
+
+      display: "grid",
+      gridTemplateColumns:
+        "1fr auto 1fr auto 1fr",
+
+      alignItems: "stretch",
+
+      marginTop: ms(13),
+      padding: ms(8),
+
+      border:
+        "1px solid rgba(255,255,255,.15)",
+
+      borderRadius: ms(16),
+
+      background: "rgba(255,255,255,.11)",
+      backdropFilter: "blur(12px)",
+    },
+
+    orderSummaryCell: {
+      minWidth: 0,
+
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+
+      gap: ms(2),
+
+      color: "white",
+      textAlign: "center",
+
+      fontSize: ms(7),
+    },
+
+    orderSummaryDivider: {
+      width: 1,
+      minHeight: ms(28),
+
+      background:
+        "rgba(255,255,255,.18)",
+    },
+
+    activityArea: {
+      minHeight: "100%",
+
+      padding: `${ms(14)}px 0 ${ms(14)}px`,
+
+      background:
+        "linear-gradient(180deg, #f9f8f5 0%, #f6f4ef 48%, #efede8 100%)",
+    },
+
+    resultsHeader: {
+      display: "flex",
+      alignItems: "flex-end",
+      justifyContent: "space-between",
+
+      gap: ms(8),
+
+      margin: `0 ${ms(tiny ? 9 : 13)}px ${ms(10)}px`,
+    },
+
+    resultsEyebrow: {
+      margin: 0,
+
+      color: "#b45309",
+
+      fontSize: ms(7.1),
+      letterSpacing: ms(1.1),
+      fontWeight: 950,
+    },
+
+    resultsTitle: {
+      margin: `${ms(3)}px 0 0`,
+
+      fontSize: ms(14),
+      fontWeight: 950,
+    },
+
+    sortText: {
+      color: "#78716c",
+
+      fontSize: ms(7.5),
+      fontWeight: 750,
+    },
+
+    orderStack: {
+      display: "grid",
+
+      gap: ms(12),
+      padding: `0 ${ms(tiny ? 9 : 13)}px`,
+    },
+
+    orderCard: {
+      position: "relative",
+      overflow: "hidden",
+
+      padding: ms(13),
+
+      border:
+        "1px solid rgba(231,229,228,.9)",
+
+      borderRadius: ms(23),
+
+      background:
+        "linear-gradient(145deg, rgba(255,255,255,.99), rgba(250,250,249,.96))",
+
+      boxShadow:
+        "0 16px 34px rgba(28,25,23,.09), inset 0 1px 0 white",
+    },
+
+    orderCardRejected: {
+      borderColor: "#fecaca",
+
+      background:
+        "linear-gradient(145deg, #fff, #fff7f7)",
+    },
+
+    cardGlow: {
+      position: "absolute",
+
+      right: ms(-28),
+      top: ms(-34),
+
+      width: ms(105),
+      height: ms(105),
+
+      borderRadius: "50%",
+
+      filter: `blur(${ms(24)}px)`,
+      pointerEvents: "none",
+    },
+
+    cardAccent: {
+      position: "absolute",
+
+      left: 0,
+      top: ms(15),
+      bottom: ms(15),
+
+      width: ms(4),
+
+      borderRadius:
+        "0 999px 999px 0",
+    },
+
+    orderTopRow: {
+      position: "relative",
+      zIndex: 2,
+
+      display: "grid",
+
+      gridTemplateColumns:
+        `${ms(tiny ? 34 : 39)}px minmax(0, 1fr)`,
+
+      alignItems: "start",
+
+      gap: ms(tiny ? 7 : 9),
+
+      width: "100%",
+    },
+
+    orderMainContent: {
+      minWidth: 0,
+      width: "100%",
+    },
+
+    orderMetaLine: {
+      width: "100%",
+      minWidth: 0,
+
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+
+      gap: ms(5),
+    },
+
+    orderTypeIcon: {
+      width: ms(tiny ? 34 : 39),
+      height: ms(tiny ? 34 : 39),
+
+      display: "grid",
+      placeItems: "center",
+
+      borderRadius: ms(15),
+
+      background:
+        "linear-gradient(145deg, #fffbeb, #fef3c7)",
+
+      color: "#b45309",
+
+      fontSize: ms(tiny ? 16 : 19),
+      fontWeight: 950,
+
+      boxShadow:
+        "0 8px 18px rgba(180,83,9,.10)",
+
+      flexShrink: 0,
+    },
+
+    deliveryTypeIcon: {
+      background:
+        "linear-gradient(145deg, #eff6ff, #dbeafe)",
+
+      color: "#0369a1",
+    },
+
+    rejectedTypeIcon: {
+      background:
+        "linear-gradient(145deg, #fff7f7, #fee2e2)",
+
+      color: "#b91c1c",
+    },
+
+    orderId: {
+      minWidth: 0,
+
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+
+      color: "#a8a29e",
+
+      fontSize: ms(6.9),
+      letterSpacing: ms(.6),
+      fontWeight: 900,
+    },
+
+    orderTitle: {
+      width: "100%",
+
+      margin: `${ms(5)}px 0 0`,
+
+      color: "#111827",
+
+      fontSize: ms(tiny ? 9.8 : 10.8),
+      lineHeight: 1.08,
+      fontWeight: 950,
+
+      letterSpacing: tiny ? -0.25 : -0.15,
+
+      overflowWrap: "normal",
+      wordBreak: "normal",
+    },
+
+    orderSubtitle: {
+      margin: `${ms(4)}px 0 0`,
+
+      color: "#78716c",
+
+      fontSize: ms(7.7),
+      lineHeight: 1.2,
+      fontWeight: 700,
+    },
+
+    statusPill: {
+      position: "relative",
+      zIndex: 2,
+
+      minWidth: 0,
+      maxWidth: tiny ? ms(92) : ms(120),
+      minHeight: ms(23),
+
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+
+      gap: ms(4),
+
+      padding:
+        `${ms(4)}px ${ms(tiny ? 6 : 8)}px`,
+
+      borderRadius: 999,
+
+      fontSize: ms(tiny ? 6.3 : 7),
+      lineHeight: 1,
+      fontWeight: 950,
+
+      whiteSpace: "nowrap",
+      flexShrink: 1,
+    },
+
+    statusText: {
+      minWidth: 0,
+
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+    },
+
+    statusPillActive: {
+      background: "#ecfdf5",
+      color: "#15803d",
+    },
+
+    statusPillDelivery: {
+      background: "#eff6ff",
+      color: "#0369a1",
+    },
+
+    statusPillRejected: {
+      background: "#fee2e2",
+      color: "#b91c1c",
+    },
+
+    statusDot: {
+      width: ms(6),
+      height: ms(6),
+
+      flexShrink: 0,
+
+      borderRadius: "50%",
+
+      boxShadow:
+        "0 0 0 3px rgba(34,197,94,.10)",
+    },
+
+    orderInfoGrid: {
+      position: "relative",
+      zIndex: 2,
+
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+
+      gap: ms(7),
+      marginTop: ms(10),
+    },
+
+    infoCell: {
+      display: "flex",
+      flexDirection: "column",
+
+      gap: ms(3),
+      padding: ms(8),
+
+      border: "1px solid #eeeae6",
+      borderRadius: ms(13),
+
+      background:
+        "rgba(250,250,249,.86)",
+
+      color: "#78716c",
+
+      fontSize: ms(7.1),
+    },
+
+    cardProgressArea: {
+      position: "relative",
+      zIndex: 2,
+
+      margin:
+        `${ms(11)}px ${ms(-4)}px 0`,
+
+      padding:
+        `${ms(9)}px ${ms(4)}px ${ms(4)}px`,
+
+      borderTop: "1px solid #eeeae6",
+    },
+
+    progressCaption: {
+      margin: `0 0 ${ms(8)}px`,
+
+      color: "#a8a29e",
+
+      fontSize: ms(6.6),
+      letterSpacing: ms(.8),
+      fontWeight: 950,
+    },
+
+    progressScroller: {
+      overflowX: "auto",
+      overflowY: "hidden",
+
+      scrollbarWidth: "none",
+      msOverflowStyle: "none",
+
+      paddingBottom: ms(2),
+    },
+
+    miniTracker: {
+      minWidth: ms(350),
+
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "center",
+    },
+
+    miniStep: {
+      width: ms(72),
+
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+
+      flexShrink: 0,
+
+      textAlign: "center",
+    },
+
+    miniCircle: {
+      width: ms(20),
+      height: ms(20),
+
+      display: "grid",
+      placeItems: "center",
+
+      borderRadius: "50%",
+
+      fontSize: ms(8),
+      fontWeight: 950,
+    },
+
+    miniLabel: {
+      marginTop: ms(5),
+
+      fontSize: ms(6.4),
+      lineHeight: 1.15,
+    },
+
+    miniConnector: {
+      width: ms(20),
+      height: ms(3),
+
+      marginTop: ms(8.5),
+
+      borderRadius: 999,
+      flexShrink: 0,
+    },
+
+    orderFooter: {
+      position: "relative",
+      zIndex: 2,
+
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+
+      gap: ms(8),
+      marginTop: ms(10),
+    },
+
+    orderTypeLabel: {
+      fontSize: ms(7.2),
+      fontWeight: 900,
+    },
+
+    viewButton: {
+      minHeight: ms(32),
+
+      padding: `0 ${ms(11)}px`,
+
+      border: 0,
+      borderRadius: 999,
+
+      background:
+        "linear-gradient(135deg, #1c1917, #44403c)",
+
+      color: "white",
+
+      fontSize: ms(8),
+      fontWeight: 950,
+
+      boxShadow:
+        "0 8px 16px rgba(28,25,23,.16)",
+
+      cursor: "pointer",
+    },
+
+    viewButtonDelivery: {
+      background:
+        "linear-gradient(135deg, #0284c7, #1d4ed8)",
+    },
+
+    viewButtonRejected: {
+      background:
+        "linear-gradient(135deg, #ef4444, #b91c1c)",
+    },
+
+    emptyCard: {
+      padding: ms(24),
+
+      border: "1px dashed #d6d3d1",
+      borderRadius: ms(20),
+
+      background: "rgba(255,255,255,.7)",
+
+      textAlign: "center",
+      color: "#57534e",
+
+      fontSize: ms(9),
+    },
+
+    emptyIcon: {
+      width: ms(42),
+      height: ms(42),
+
+      margin: `0 auto ${ms(8)}px`,
+
+      display: "grid",
+      placeItems: "center",
+
+      borderRadius: ms(15),
+
+      background: "#fffbeb",
+      color: "#b45309",
+
+      fontSize: ms(22),
+    },
+
+    bottomNav: {
+      position: "absolute",
+
+      left: 0,
+      right: 0,
+      bottom: 0,
+
+      height: navHeight,
+      zIndex: 40,
+
+      display: "grid",
+      gridTemplateColumns:
+        "repeat(3, 1fr)",
+
+      gap: ms(4),
+
+      padding:
+        `${ms(4)}px ${ms(8)}px calc(env(safe-area-inset-bottom, 0px) + ${ms(4)}px)`,
+
+      borderTop:
+        "1px solid rgba(255,255,255,.08)",
+
+      borderRadius: 0,
+
+      background: "#1c1917",
+
+      boxShadow:
+        "0 -10px 26px rgba(0,0,0,.20)",
+    },
+
+    navButton: {
+      minHeight: 0,
+
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+
+      gap: ms(1),
+
+      border: 0,
+      borderRadius: ms(12),
+
+      background: "transparent",
+      color: "#a8a29e",
+
+      fontSize: ms(7.2),
+
+      cursor: "pointer",
+    },
+
+    navButtonActive: {
+      background:
+        "rgba(245,158,11,.14)",
+
+      color: "#f59e0b",
+
+      boxShadow:
+        "inset 0 0 0 1px rgba(245,158,11,.18)",
+    },
+
+    navIcon: {
+      fontSize: ms(15),
+      lineHeight: 1,
+    },
+  };
+}
+
+const globalCss = `
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  background: #0b0907;
+  overflow: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+input::placeholder {
+  color: rgba(255,255,255,.62);
+  opacity: 1;
+}
+
+.orders-scroll-area,
+.filter-scroll,
+.progress-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.orders-scroll-area::-webkit-scrollbar,
+.filter-scroll::-webkit-scrollbar,
+.progress-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+body {
+  -webkit-text-size-adjust: 100%;
+}
+`;
+
+
+
+
+
+
