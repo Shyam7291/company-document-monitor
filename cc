@@ -6512,10 +6512,33 @@ function useAppStyles() {
   return useContext(StylesContext);
 }
 
+const EMPTY_FORM = {
+  name: "",
+  shopName: "",
+  contactNumber: "",
+  alternateContactNumber: "",
+  aadhaarNumber: "",
+  address: "",
+  transporterAgencyName: "",
+  plantName: "",
+  plantAddress: "",
+};
+
 export default function SignupRoleCardsSlideFormPageWithValidation() {
   const [selectedRole, setSelectedRole] = useState(null);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedFrequency, setSelectedFrequency] = useState("");
+  const [selectedProduction, setSelectedProduction] = useState("");
+
+  const [hoveredRole, setHoveredRole] = useState(null);
+  const [hoveredCategory, setHoveredCategory] = useState(null);
+  const [hoveredFrequency, setHoveredFrequency] = useState(null);
+  const [hoveredProduction, setHoveredProduction] = useState(null);
+
+  const [formData, setFormData] = useState(EMPTY_FORM);
 
   const viewport = useViewport();
+
   const styles = useMemo(
     () => createStyles(viewport, selectedRole),
     [viewport.width, viewport.height, selectedRole]
@@ -6530,6 +6553,7 @@ export default function SignupRoleCardsSlideFormPageWithValidation() {
   ];
 
   const truckFrequencyOptions = ["1-5", "5-10", "10-20", "More than 20"];
+
   const productionOptions = [
     "10-20 ton",
     "20-40 ton",
@@ -6537,28 +6561,20 @@ export default function SignupRoleCardsSlideFormPageWithValidation() {
     "More than 60 ton",
   ];
 
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedFrequency, setSelectedFrequency] = useState("");
-  const [selectedProduction, setSelectedProduction] = useState("");
-  const [hoveredRole, setHoveredRole] = useState(null);
-  const [hoveredCategory, setHoveredCategory] = useState(null);
-  const [hoveredFrequency, setHoveredFrequency] = useState(null);
-  const [hoveredProduction, setHoveredProduction] = useState(null);
-
-  const [formData, setFormData] = useState({
-    name: "",
-    shopName: "",
-    contactNumber: "",
-    alternateContactNumber: "",
-    aadhaarNumber: "",
-    address: "",
-    transporterAgencyName: "",
-    plantName: "",
-    plantAddress: "",
-  });
-
+  /*
+   * IMPORTANT FIX:
+   * [field] updates the property passed to this function.
+   *
+   * For example:
+   * updateField("name", "Shyam")
+   *
+   * updates formData.name.
+   */
   const updateField = (field, value) => {
-    setFormData((previous) => ({ ...previous, value }));
+    setFormData((previous) => ({
+      ...previous,
+      [field]: value,
+    }));
   };
 
   const resetFormByRole = (role) => {
@@ -6566,17 +6582,7 @@ export default function SignupRoleCardsSlideFormPageWithValidation() {
     setSelectedCategories([]);
     setSelectedFrequency("");
     setSelectedProduction("");
-    setFormData({
-      name: "",
-      shopName: "",
-      contactNumber: "",
-      alternateContactNumber: "",
-      aadhaarNumber: "",
-      address: "",
-      transporterAgencyName: "",
-      plantName: "",
-      plantAddress: "",
-    });
+    setFormData({ ...EMPTY_FORM });
   };
 
   const toggleCategory = (category) => {
@@ -6662,6 +6668,22 @@ export default function SignupRoleCardsSlideFormPageWithValidation() {
     formData,
   ]);
 
+  const handleSubmit = () => {
+    if (!isFormComplete) return;
+
+    const submissionData = {
+      role: selectedRole,
+      categories: selectedCategories,
+      truckFrequency:
+        selectedRole === "transporter" ? selectedFrequency : "",
+      dailyProduction:
+        selectedRole === "seller" ? selectedProduction : "",
+      ...formData,
+    };
+
+    console.log("Registration data:", submissionData);
+  };
+
   return (
     <StylesContext.Provider value={styles}>
       <div style={styles.page}>
@@ -6675,6 +6697,7 @@ export default function SignupRoleCardsSlideFormPageWithValidation() {
             <nav style={styles.nav}>
               <div style={styles.brandWrap}>
                 <div style={styles.logo3d}>🪨</div>
+
                 <div style={{ minWidth: 0 }}>
                   <p style={styles.brandName}>StoneRate</p>
                   <p style={styles.brandSub}>Create your account</p>
@@ -6688,9 +6711,12 @@ export default function SignupRoleCardsSlideFormPageWithValidation() {
 
             <div style={styles.headerText}>
               <div style={styles.heroBadge}>SIGN UP</div>
+
               <h1 style={styles.title}>Who are you?</h1>
+
               <p style={styles.subtitle}>
-                Choose your account type. The form will change based on your role.
+                Choose your account type. The form will change based on your
+                role.
               </p>
             </div>
 
@@ -6702,7 +6728,7 @@ export default function SignupRoleCardsSlideFormPageWithValidation() {
               {Object.entries(roleConfig).map(([role, config]) => (
                 <RoleCard
                   key={role}
-                  compact={!!selectedRole}
+                  compact={Boolean(selectedRole)}
                   label={config.label}
                   description={config.description}
                   icon={config.icon}
@@ -6717,84 +6743,97 @@ export default function SignupRoleCardsSlideFormPageWithValidation() {
             </div>
           </section>
 
+          {/*
+           * The form section is a flex column.
+           *
+           * formScrollArea:
+           *  - scrolls independently
+           *
+           * bottomPanel:
+           *  - flexShrink: 0
+           *  - always remains at the bottom
+           */}
           <section style={styles.formSection}>
-            {selectedRole && (
-              <div style={styles.formCard}>
-                <div style={styles.formHeader}>
-                  <div style={{ minWidth: 0 }}>
-                    <p
+            <div style={styles.formScrollArea}>
+              {selectedRole && activeRole && (
+                <div style={styles.formCard}>
+                  <div style={styles.formHeader}>
+                    <div style={{ minWidth: 0 }}>
+                      <p
+                        style={{
+                          ...styles.formKicker,
+                          color: activeRole.color,
+                        }}
+                      >
+                        {activeRole.kicker}
+                      </p>
+
+                      <h2 style={styles.formTitle}>{activeRole.title}</h2>
+                    </div>
+
+                    <div
                       style={{
-                        ...styles.formKicker,
-                        color: activeRole.color,
+                        ...styles.roleIconBadge,
+                        background: activeRole.color,
                       }}
                     >
-                      {activeRole.kicker}
-                    </p>
-
-                    <h2 style={styles.formTitle}>{activeRole.title}</h2>
+                      {activeRole.icon}
+                    </div>
                   </div>
 
-                  <div
-                    style={{
-                      ...styles.roleIconBadge,
-                      background: activeRole.color,
-                    }}
-                  >
-                    {activeRole.icon}
-                  </div>
+                  {selectedRole === "buyer" && (
+                    <BuyerForm
+                      formData={formData}
+                      updateField={updateField}
+                      productCategories={productCategories}
+                      selectedCategories={selectedCategories}
+                      toggleCategory={toggleCategory}
+                      hoveredCategory={hoveredCategory}
+                      setHoveredCategory={setHoveredCategory}
+                    />
+                  )}
+
+                  {selectedRole === "transporter" && (
+                    <TransporterForm
+                      formData={formData}
+                      updateField={updateField}
+                      productCategories={productCategories}
+                      selectedCategories={selectedCategories}
+                      toggleCategory={toggleCategory}
+                      truckFrequencyOptions={truckFrequencyOptions}
+                      selectedFrequency={selectedFrequency}
+                      setSelectedFrequency={setSelectedFrequency}
+                      hoveredCategory={hoveredCategory}
+                      setHoveredCategory={setHoveredCategory}
+                      hoveredFrequency={hoveredFrequency}
+                      setHoveredFrequency={setHoveredFrequency}
+                    />
+                  )}
+
+                  {selectedRole === "seller" && (
+                    <SellerForm
+                      formData={formData}
+                      updateField={updateField}
+                      productCategories={productCategories}
+                      selectedCategories={selectedCategories}
+                      toggleCategory={toggleCategory}
+                      productionOptions={productionOptions}
+                      selectedProduction={selectedProduction}
+                      setSelectedProduction={setSelectedProduction}
+                      hoveredCategory={hoveredCategory}
+                      setHoveredCategory={setHoveredCategory}
+                      hoveredProduction={hoveredProduction}
+                      setHoveredProduction={setHoveredProduction}
+                    />
+                  )}
                 </div>
-
-                {selectedRole === "buyer" && (
-                  <BuyerForm
-                    formData={formData}
-                    updateField={updateField}
-                    productCategories={productCategories}
-                    selectedCategories={selectedCategories}
-                    toggleCategory={toggleCategory}
-                    hoveredCategory={hoveredCategory}
-                    setHoveredCategory={setHoveredCategory}
-                  />
-                )}
-
-                {selectedRole === "transporter" && (
-                  <TransporterForm
-                    formData={formData}
-                    updateField={updateField}
-                    productCategories={productCategories}
-                    selectedCategories={selectedCategories}
-                    toggleCategory={toggleCategory}
-                    truckFrequencyOptions={truckFrequencyOptions}
-                    selectedFrequency={selectedFrequency}
-                    setSelectedFrequency={setSelectedFrequency}
-                    hoveredCategory={hoveredCategory}
-                    setHoveredCategory={setHoveredCategory}
-                    hoveredFrequency={hoveredFrequency}
-                    setHoveredFrequency={setHoveredFrequency}
-                  />
-                )}
-
-                {selectedRole === "seller" && (
-                  <SellerForm
-                    formData={formData}
-                    updateField={updateField}
-                    productCategories={productCategories}
-                    selectedCategories={selectedCategories}
-                    toggleCategory={toggleCategory}
-                    productionOptions={productionOptions}
-                    selectedProduction={selectedProduction}
-                    setSelectedProduction={setSelectedProduction}
-                    hoveredCategory={hoveredCategory}
-                    setHoveredCategory={setHoveredCategory}
-                    hoveredProduction={hoveredProduction}
-                    setHoveredProduction={setHoveredProduction}
-                  />
-                )}
-              </div>
-            )}
+              )}
+            </div>
 
             <div style={styles.bottomPanel}>
               <div style={styles.privacyNote}>
                 <span style={styles.lockIcon}>🔒</span>
+
                 <p style={styles.privacyText}>
                   Sensitive details should be verified and stored securely.
                 </p>
@@ -6803,6 +6842,7 @@ export default function SignupRoleCardsSlideFormPageWithValidation() {
               <button
                 type="button"
                 disabled={!isFormComplete}
+                onClick={handleSubmit}
                 style={{
                   ...styles.submitBtn,
                   ...(isFormComplete
@@ -6910,44 +6950,69 @@ function BuyerForm({
   return (
     <div style={styles.formFields}>
       <Input
+        id="buyer-name"
         label="Name"
         value={formData.name}
         onChange={(value) => updateField("name", value)}
         placeholder="Enter full name"
+        autoComplete="name"
       />
 
       <Input
+        id="buyer-shop-name"
         label="Shop Name"
         value={formData.shopName}
         onChange={(value) => updateField("shopName", value)}
         placeholder="Enter shop/company name"
+        autoComplete="organization"
       />
 
       <Input
+        id="buyer-contact-number"
         label="Contact Number"
         value={formData.contactNumber}
-        onChange={(value) => updateField("contactNumber", value)}
+        onChange={(value) =>
+          updateField(
+            "contactNumber",
+            value.replace(/\D/g, "").slice(0, 10)
+          )
+        }
         placeholder="Enter mobile number"
         inputMode="numeric"
+        maxLength={10}
+        autoComplete="tel"
       />
 
       <Input
+        id="buyer-alternate-contact"
         label="Alternate Contact Number"
         value={formData.alternateContactNumber}
-        onChange={(value) => updateField("alternateContactNumber", value)}
+        onChange={(value) =>
+          updateField(
+            "alternateContactNumber",
+            value.replace(/\D/g, "").slice(0, 10)
+          )
+        }
         placeholder="Enter alternate mobile number"
         inputMode="numeric"
+        maxLength={10}
+        autoComplete="tel"
       />
 
       <Input
+        id="buyer-aadhaar-number"
         label="Aadhaar Number"
         value={formData.aadhaarNumber}
         onChange={(value) =>
-          updateField("aadhaarNumber", value.replace(/\D/g, ""))
+          updateField(
+            "aadhaarNumber",
+            value.replace(/\D/g, "").slice(0, 12)
+          )
         }
         placeholder="Enter 12 digit Aadhaar number"
         inputMode="numeric"
         maxLength={12}
+        autoComplete="off"
       />
 
       <CategorySelect
@@ -6960,10 +7025,12 @@ function BuyerForm({
       />
 
       <TextArea
+        id="buyer-address"
         label="Address"
         value={formData.address}
         onChange={(value) => updateField("address", value)}
         placeholder="Enter complete address"
+        autoComplete="street-address"
       />
     </div>
   );
@@ -6988,28 +7055,37 @@ function TransporterForm({
   return (
     <div style={styles.formFields}>
       <Input
+        id="transporter-name"
         label="Name"
         value={formData.name}
         onChange={(value) => updateField("name", value)}
         placeholder="Enter full name"
+        autoComplete="name"
       />
 
       <Input
+        id="transporter-agency-name"
         label="Transporter Agency Name"
         value={formData.transporterAgencyName}
         onChange={(value) => updateField("transporterAgencyName", value)}
         placeholder="Enter agency name"
+        autoComplete="organization"
       />
 
       <Input
+        id="transporter-aadhaar-number"
         label="Aadhaar Number"
         value={formData.aadhaarNumber}
         onChange={(value) =>
-          updateField("aadhaarNumber", value.replace(/\D/g, ""))
+          updateField(
+            "aadhaarNumber",
+            value.replace(/\D/g, "").slice(0, 12)
+          )
         }
         placeholder="Enter 12 digit Aadhaar number"
         inputMode="numeric"
         maxLength={12}
+        autoComplete="off"
       />
 
       <CategorySelect
@@ -7032,10 +7108,12 @@ function TransporterForm({
       />
 
       <TextArea
+        id="transporter-address"
         label="Address"
         value={formData.address}
         onChange={(value) => updateField("address", value)}
         placeholder="Enter complete address"
+        autoComplete="street-address"
       />
     </div>
   );
@@ -7060,28 +7138,37 @@ function SellerForm({
   return (
     <div style={styles.formFields}>
       <Input
+        id="seller-name"
         label="Name"
         value={formData.name}
         onChange={(value) => updateField("name", value)}
         placeholder="Enter full name"
+        autoComplete="name"
       />
 
       <Input
+        id="seller-plant-name"
         label="Plant Name"
         value={formData.plantName}
         onChange={(value) => updateField("plantName", value)}
         placeholder="Enter plant name"
+        autoComplete="organization"
       />
 
       <Input
+        id="seller-aadhaar-number"
         label="Aadhaar Number"
         value={formData.aadhaarNumber}
         onChange={(value) =>
-          updateField("aadhaarNumber", value.replace(/\D/g, ""))
+          updateField(
+            "aadhaarNumber",
+            value.replace(/\D/g, "").slice(0, 12)
+          )
         }
         placeholder="Enter 12 digit Aadhaar number"
         inputMode="numeric"
         maxLength={12}
+        autoComplete="off"
       />
 
       <CategorySelect
@@ -7094,7 +7181,7 @@ function SellerForm({
       />
 
       <OptionSelect
-        title="How much tons do you produce daily?"
+        title="How many tons do you produce daily?"
         options={productionOptions}
         selectedOption={selectedProduction}
         setSelectedOption={setSelectedProduction}
@@ -7104,10 +7191,12 @@ function SellerForm({
       />
 
       <TextArea
+        id="seller-plant-address"
         label="Plant Address"
         value={formData.plantAddress}
         onChange={(value) => updateField("plantAddress", value)}
         placeholder="Enter complete plant address"
+        autoComplete="street-address"
       />
     </div>
   );
@@ -7124,8 +7213,8 @@ function CategorySelect({
   const styles = useAppStyles();
 
   return (
-    <div>
-      <label style={styles.label}>{title}</label>
+    <div style={styles.fieldWrapper}>
+      <p style={styles.label}>{title}</p>
 
       <div style={styles.categoryGrid}>
         {productCategories.map((category) => {
@@ -7136,6 +7225,7 @@ function CategorySelect({
             <button
               type="button"
               key={category}
+              aria-pressed={active}
               onClick={() => toggleCategory(category)}
               onMouseEnter={() => setHoveredCategory(category)}
               onMouseLeave={() => setHoveredCategory(null)}
@@ -7171,8 +7261,8 @@ function OptionSelect({
   const styles = useAppStyles();
 
   return (
-    <div>
-      <label style={styles.label}>{title}</label>
+    <div style={styles.fieldWrapper}>
+      <p style={styles.label}>{title}</p>
 
       <div style={styles.frequencyGrid}>
         {options.map((option) => {
@@ -7183,6 +7273,7 @@ function OptionSelect({
             <button
               type="button"
               key={option}
+              aria-pressed={active}
               onClick={() => setSelectedOption(option)}
               onMouseEnter={() => setHoveredOption(option)}
               onMouseLeave={() => setHoveredOption(null)}
@@ -7211,24 +7302,39 @@ function OptionSelect({
   );
 }
 
-function Input({ label, placeholder, inputMode, maxLength, value, onChange }) {
+function Input({
+  id,
+  label,
+  placeholder,
+  inputMode,
+  maxLength,
+  value,
+  onChange,
+  autoComplete = "off",
+}) {
   const styles = useAppStyles();
   const [focused, setFocused] = useState(false);
 
   return (
-    <div>
-      <label style={styles.label}>{label}</label>
+    <div style={styles.fieldWrapper}>
+      <label htmlFor={id} style={styles.label}>
+        {label}
+      </label>
 
       <input
+        id={id}
+        name={id}
+        type="text"
         style={{
           ...styles.input,
           ...(focused ? styles.inputFocused : {}),
         }}
-        value={value}
+        value={value ?? ""}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         inputMode={inputMode}
         maxLength={maxLength}
+        autoComplete={autoComplete}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
       />
@@ -7236,22 +7342,34 @@ function Input({ label, placeholder, inputMode, maxLength, value, onChange }) {
   );
 }
 
-function TextArea({ label, placeholder, value, onChange }) {
+function TextArea({
+  id,
+  label,
+  placeholder,
+  value,
+  onChange,
+  autoComplete = "off",
+}) {
   const styles = useAppStyles();
   const [focused, setFocused] = useState(false);
 
   return (
-    <div>
-      <label style={styles.label}>{label}</label>
+    <div style={styles.fieldWrapper}>
+      <label htmlFor={id} style={styles.label}>
+        {label}
+      </label>
 
       <textarea
+        id={id}
+        name={id}
         style={{
           ...styles.textarea,
           ...(focused ? styles.inputFocused : {}),
         }}
-        value={value}
+        value={value ?? ""}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
+        autoComplete={autoComplete}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
       />
@@ -7274,10 +7392,13 @@ function useViewport() {
     };
 
     update();
+
     window.addEventListener("resize", update);
+    window.visualViewport?.addEventListener("resize", update);
 
     return () => {
       window.removeEventListener("resize", update);
+      window.visualViewport?.removeEventListener("resize", update);
     };
   }, []);
 
@@ -7304,6 +7425,8 @@ function createStyles(viewport, selectedRole) {
 
   const px = (value) => Math.round(value * scale);
 
+  const horizontalPadding = px(narrow ? 14 : 18);
+
   return {
     page: {
       width: "100vw",
@@ -7320,9 +7443,11 @@ function createStyles(viewport, selectedRole) {
     },
 
     phone: {
+      position: "relative",
       width: isDesktop ? 390 : "100vw",
       height: isDesktop ? 844 : "100dvh",
       maxWidth: isDesktop ? 430 : "none",
+      minHeight: 0,
       background: "#ffffff",
       borderRadius: isDesktop ? 36 : 0,
       overflow: "hidden",
@@ -7330,6 +7455,7 @@ function createStyles(viewport, selectedRole) {
       display: "flex",
       flexDirection: "column",
       boxSizing: "border-box",
+      isolation: "isolate",
     },
 
     hero: {
@@ -7337,9 +7463,9 @@ function createStyles(viewport, selectedRole) {
       minHeight: selectedRole
         ? px(veryShort ? 245 : short ? 285 : 330)
         : px(veryShort ? 455 : short ? 500 : 560),
-      padding: `${px(short ? 18 : 22)}px ${px(narrow ? 16 : 20)}px ${px(
-        selectedRole ? 22 : 30
-      )}px`,
+      padding: `${px(short ? 18 : 22)}px ${px(
+        narrow ? 16 : 20
+      )}px ${px(selectedRole ? 22 : 30)}px`,
       color: "white",
       background:
         "radial-gradient(circle at 20% 8%, rgba(245,158,11,0.38), transparent 28%), linear-gradient(145deg, #020617 0%, #1c1917 52%, #92400e 100%)",
@@ -7358,6 +7484,7 @@ function createStyles(viewport, selectedRole) {
       borderRadius: "50%",
       background: "rgba(251,191,36,0.25)",
       filter: `blur(${px(38)}px)`,
+      pointerEvents: "none",
     },
 
     bgOrbTwo: {
@@ -7369,6 +7496,7 @@ function createStyles(viewport, selectedRole) {
       borderRadius: "50%",
       background: "rgba(255,255,255,0.11)",
       filter: `blur(${px(46)}px)`,
+      pointerEvents: "none",
     },
 
     bgOrbThree: {
@@ -7380,6 +7508,7 @@ function createStyles(viewport, selectedRole) {
       borderRadius: "50%",
       background: "rgba(34,197,94,0.16)",
       filter: `blur(${px(42)}px)`,
+      pointerEvents: "none",
     },
 
     gridOverlay: {
@@ -7389,6 +7518,8 @@ function createStyles(viewport, selectedRole) {
         "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
       backgroundSize: `${px(34)}px ${px(34)}px`,
       maskImage: "linear-gradient(to bottom, black, transparent 82%)",
+      WebkitMaskImage: "linear-gradient(to bottom, black, transparent 82%)",
+      pointerEvents: "none",
     },
 
     nav: {
@@ -7516,6 +7647,7 @@ function createStyles(viewport, selectedRole) {
         "linear-gradient(145deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08))",
       color: "white",
       backdropFilter: "blur(12px)",
+      WebkitBackdropFilter: "blur(12px)",
       cursor: "pointer",
       transition: "all 260ms ease",
       display: "flex",
@@ -7535,6 +7667,7 @@ function createStyles(viewport, selectedRole) {
         "linear-gradient(145deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08))",
       color: "white",
       backdropFilter: "blur(12px)",
+      WebkitBackdropFilter: "blur(12px)",
       cursor: "pointer",
       transition: "all 260ms ease",
       display: "flex",
@@ -7618,28 +7751,55 @@ function createStyles(viewport, selectedRole) {
       flexShrink: 0,
     },
 
+    /*
+     * Bottom-sheet container.
+     * It takes all remaining phone height.
+     */
     formSection: {
+      position: "relative",
+      zIndex: 5,
       flex: 1,
+      minHeight: 0,
+      marginTop: px(-28),
+      background: "#ffffff",
+      borderRadius: `${px(32)}px ${px(32)}px 0 0`,
+      display: "flex",
+      flexDirection: "column",
+      overflow: "hidden",
+      boxSizing: "border-box",
+      padding: `0 ${horizontalPadding}px`,
+    },
+
+    /*
+     * Only this section scrolls.
+     * The bottom panel is outside this element.
+     */
+    formScrollArea: {
+      position: "relative",
+      zIndex: 1,
+      flex: 1,
+      minHeight: 0,
       overflowY: "auto",
       overflowX: "hidden",
       WebkitOverflowScrolling: "touch",
-      marginTop: px(-28),
-      position: "relative",
-      zIndex: 5,
-      padding: `0 ${px(narrow ? 14 : 18)}px ${px(22)}px`,
-      background: "white",
-      borderRadius: `${px(32)}px ${px(32)}px 0 0`,
+      overscrollBehavior: "contain",
+      scrollbarGutter: "stable",
+      paddingTop: px(16),
+      paddingBottom: px(14),
       boxSizing: "border-box",
+      pointerEvents: "auto",
     },
 
     formCard: {
+      position: "relative",
+      zIndex: 2,
       padding: px(narrow ? 14 : 16),
       borderRadius: px(30),
       background: "#fafaf9",
       border: "1px solid #eee7df",
       boxShadow: "0 16px 34px rgba(0,0,0,0.08)",
-      marginBottom: px(14),
       boxSizing: "border-box",
+      pointerEvents: "auto",
     },
 
     formHeader: {
@@ -7678,14 +7838,23 @@ function createStyles(viewport, selectedRole) {
     },
 
     formFields: {
+      position: "relative",
+      zIndex: 2,
       display: "flex",
       flexDirection: "column",
       gap: px(14),
+      pointerEvents: "auto",
+    },
+
+    fieldWrapper: {
+      position: "relative",
+      zIndex: 2,
+      pointerEvents: "auto",
     },
 
     label: {
       display: "block",
-      marginBottom: px(7),
+      margin: `0 0 ${px(7)}px`,
       color: "#1c1917",
       fontSize: px(13),
       fontWeight: 900,
@@ -7693,6 +7862,9 @@ function createStyles(viewport, selectedRole) {
     },
 
     input: {
+      position: "relative",
+      zIndex: 3,
+      display: "block",
       width: "100%",
       height: px(48),
       border: "1px solid #e7e5e4",
@@ -7701,19 +7873,26 @@ function createStyles(viewport, selectedRole) {
       fontSize: px(13),
       fontWeight: 650,
       outline: "none",
-      background: "white",
+      background: "#ffffff",
       color: "#1c1917",
+      WebkitTextFillColor: "#1c1917",
       boxSizing: "border-box",
-      transition: "all 220ms ease",
+      transition: "border-color 220ms ease, box-shadow 220ms ease",
+      pointerEvents: "auto",
+      touchAction: "manipulation",
+      userSelect: "text",
+      WebkitUserSelect: "text",
     },
 
     inputFocused: {
       borderColor: "#f59e0b",
       boxShadow: "0 0 0 4px rgba(245,158,11,0.15)",
-      transform: "translateY(-1px)",
     },
 
     textarea: {
+      position: "relative",
+      zIndex: 3,
+      display: "block",
       width: "100%",
       minHeight: px(88),
       border: "1px solid #e7e5e4",
@@ -7722,12 +7901,17 @@ function createStyles(viewport, selectedRole) {
       fontSize: px(13),
       fontWeight: 650,
       outline: "none",
-      background: "white",
+      background: "#ffffff",
       color: "#1c1917",
+      WebkitTextFillColor: "#1c1917",
       boxSizing: "border-box",
       resize: "vertical",
-      transition: "all 220ms ease",
+      transition: "border-color 220ms ease, box-shadow 220ms ease",
       fontFamily: "Arial, sans-serif",
+      pointerEvents: "auto",
+      touchAction: "manipulation",
+      userSelect: "text",
+      WebkitUserSelect: "text",
     },
 
     categoryGrid: {
@@ -7752,6 +7936,7 @@ function createStyles(viewport, selectedRole) {
       padding: `0 ${px(8)}px`,
       overflow: "hidden",
       textOverflow: "ellipsis",
+      pointerEvents: "auto",
     },
 
     categoryChipActive: {
@@ -7784,6 +7969,7 @@ function createStyles(viewport, selectedRole) {
       whiteSpace: "nowrap",
       overflow: "hidden",
       textOverflow: "ellipsis",
+      pointerEvents: "auto",
     },
 
     frequencyChipActive: {
@@ -7791,13 +7977,29 @@ function createStyles(viewport, selectedRole) {
       boxShadow: "0 12px 22px rgba(0,0,0,0.14)",
     },
 
+    /*
+     * This panel always stays attached to the bottom of the phone.
+     * It does not scroll with the form fields.
+     */
     bottomPanel: {
-      padding: px(14),
-      borderRadius: px(30),
+      position: "relative",
+      zIndex: 20,
+      flexShrink: 0,
+      width: `calc(100% + ${horizontalPadding * 2}px)`,
+      marginLeft: -horizontalPadding,
+      marginRight: -horizontalPadding,
+      marginTop: "auto",
+      padding: `${px(14)}px ${horizontalPadding}px`,
+      paddingBottom: `calc(${px(
+        14
+      )}px + env(safe-area-inset-bottom, 0px))`,
+      borderRadius: `${px(30)}px ${px(30)}px 0 0`,
       background: "#fafaf9",
       border: "1px solid #eee7df",
-      boxShadow: "0 16px 34px rgba(0,0,0,0.08)",
+      borderBottom: 0,
+      boxShadow: "0 -12px 34px rgba(0,0,0,0.10)",
       boxSizing: "border-box",
+      pointerEvents: "auto",
     },
 
     privacyNote: {
@@ -7833,7 +8035,7 @@ function createStyles(viewport, selectedRole) {
     submitBtn: {
       width: "100%",
       height: px(58),
-      marginTop: px(24),
+      marginTop: px(16),
       border: 0,
       borderRadius: px(28),
       color: "white",
@@ -7858,7 +8060,7 @@ function createStyles(viewport, selectedRole) {
     },
 
     signInText: {
-      margin: `${px(22)}px 0 0`,
+      margin: `${px(14)}px 0 0`,
       textAlign: "center",
       color: "#78716c",
       fontSize: px(13),
@@ -7866,6 +8068,3 @@ function createStyles(viewport, selectedRole) {
     },
   };
 }
-
-
-
