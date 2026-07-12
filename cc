@@ -8068,3 +8068,902 @@ function createStyles(viewport, selectedRole) {
     },
   };
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+signin
+import React, { useMemo, useState } from "react";
+
+export default function FinalSignInOTPPageWithChangeMobileNumber() {
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpVisible, setOtpVisible] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
+  const [hoveredButton, setHoveredButton] = useState(null);
+
+  const isMobileValid = mobileNumber.length === 10;
+  const isOtpValid = otp.length === 6;
+  const isNumberLocked = otpVisible;
+
+  const formattedNumber = useMemo(() => {
+    if (!mobileNumber) return "+91 XXXXX XXXXX";
+    return `+91 ${mobileNumber.slice(0, 5)} ${mobileNumber.slice(5, 10)}`;
+  }, [mobileNumber]);
+
+  const handleMobileChange = (value) => {
+    if (isNumberLocked) return;
+
+    const digitsOnly = value.replace(/\D/g, "").slice(0, 10);
+    setMobileNumber(digitsOnly);
+    setOtp("");
+    setOtpVisible(false);
+  };
+
+  const handleOtpChange = (value) => {
+    const digitsOnly = value.replace(/\D/g, "").slice(0, 6);
+    setOtp(digitsOnly);
+  };
+
+  const handleNext = () => {
+    if (isMobileValid) {
+      setOtpVisible(true);
+      setFocusedField("otp");
+    }
+  };
+
+  const handleChangeNumber = () => {
+    setOtpVisible(false);
+    setOtp("");
+    setFocusedField("mobile");
+  };
+
+  return (
+    <div style={styles.page}>
+      <div style={styles.phone}>
+        <section style={styles.hero}>
+          <div style={styles.glowOne} />
+          <div style={styles.glowTwo} />
+          <div style={styles.gridOverlay} />
+
+          <nav style={styles.nav}>
+            <div style={styles.brandWrap}>
+              <div style={styles.logo}>🪨</div>
+              <div>
+                <p style={styles.brandName}>StoneRate</p>
+                <p style={styles.brandSub}>Secure OTP Login</p>
+              </div>
+            </div>
+
+            <button style={styles.backBtn}>Back</button>
+          </nav>
+
+          <div style={styles.heroText}>
+            <p style={styles.kicker}>SIGN IN</p>
+            <h1 style={styles.title}>Verify your mobile number</h1>
+            <p style={styles.subtitle}>
+              Enter your number to receive OTP and continue to your account.
+            </p>
+          </div>
+
+          <div style={styles.visualStage}>
+            <div style={styles.orbitOne} />
+            <div style={styles.orbitTwo} />
+
+            <div
+              style={{
+                ...styles.loginCard3d,
+                ...(isMobileValid ? styles.loginCardReady : {}),
+              }}
+            >
+              <div style={styles.topHandle} />
+
+              <div style={styles.cardHeaderRow}>
+                <div
+                  style={{
+                    ...styles.lockBox,
+                    background: isMobileValid ? "#22c55e" : "#f59e0b",
+                  }}
+                >
+                  {isNumberLocked ? "🔒" : isMobileValid ? "✅" : "🔐"}
+                </div>
+
+                <div style={styles.statusPill}>
+                  {isNumberLocked ? "Locked" : isMobileValid ? "Ready" : "Waiting"}
+                </div>
+              </div>
+
+              <div style={styles.numberPanel}>
+                <p style={styles.panelLabel}>Mobile Number</p>
+                <p style={styles.panelNumber}>{formattedNumber}</p>
+              </div>
+
+              <div style={styles.readyPanel}>
+                <span
+                  style={{
+                    ...styles.statusDot,
+                    background: isMobileValid ? "#22c55e" : "#f59e0b",
+                  }}
+                />
+
+                <div>
+                  <p style={styles.readyTitle}>
+                    {isMobileValid ? "Ready for OTP" : "Enter 10 digits"}
+                  </p>
+                  <p style={styles.readySub}>
+                    {otpVisible ? "Mobile number locked" : "OTP appears after Next"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{
+                ...styles.floatBadgeTop,
+                color: isMobileValid ? "#15803d" : "#92400e",
+              }}
+            >
+              +91 India
+            </div>
+
+            <div
+              style={{
+                ...styles.floatBadgeLeft,
+                borderColor: isMobileValid ? "#22c55e" : "#f59e0b",
+              }}
+            >
+              OTP Login
+            </div>
+
+            <div
+              style={{
+                ...styles.floatIcon,
+                background: isMobileValid ? "#22c55e" : "#f59e0b",
+              }}
+            >
+              📲
+            </div>
+          </div>
+        </section>
+
+        <section style={styles.formSection}>
+          <div style={styles.formCard}>
+            <div style={styles.formTitleRow}>
+              <div>
+                <p style={styles.formKicker}>MOBILE VERIFICATION</p>
+                <h2 style={styles.formTitle}>Sign In</h2>
+              </div>
+
+              <div
+                style={{
+                  ...styles.formIcon,
+                  background: isMobileValid ? "#22c55e" : "#1c1917",
+                }}
+              >
+                {isNumberLocked ? "🔒" : isMobileValid ? "✓" : "🔐"}
+              </div>
+            </div>
+
+            <div style={styles.fieldBlock}>
+              <label style={styles.label}>Mobile Number</label>
+
+              <div
+                style={{
+                  ...styles.mobileWrap,
+                  ...(focusedField === "mobile" ? styles.fieldFocused : {}),
+                  ...(isNumberLocked ? styles.mobileWrapLocked : {}),
+                }}
+              >
+                <div
+                  style={{
+                    ...styles.prefix,
+                    ...(isNumberLocked ? styles.prefixLocked : {}),
+                  }}
+                >
+                  +91
+                </div>
+
+                <input
+                  value={mobileNumber}
+                  onChange={(event) => handleMobileChange(event.target.value)}
+                  onFocus={() => setFocusedField("mobile")}
+                  onBlur={() => setFocusedField(null)}
+                  placeholder="10 digit number"
+                  inputMode="numeric"
+                  maxLength={10}
+                  disabled={isNumberLocked}
+                  style={{
+                    ...styles.mobileInput,
+                    ...(isNumberLocked ? styles.mobileInputLocked : {}),
+                  }}
+                />
+
+                <div
+                  style={{
+                    ...styles.inputStatus,
+                    background: isMobileValid ? "#22c55e" : "#e7e5e4",
+                  }}
+                >
+                  {isNumberLocked ? "🔒" : isMobileValid ? "✓" : mobileNumber.length}
+                </div>
+              </div>
+
+              <div style={styles.mobileHelperRow}>
+                <p style={styles.helper}>
+                  {isNumberLocked
+                    ? "Mobile number is locked for OTP verification."
+                    : "Required format: +91 followed by exactly 10 numeric digits."}
+                </p>
+
+                {isNumberLocked && (
+                  <button onClick={handleChangeNumber} style={styles.changeNumberBtn}>
+                    Change mobile number
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {otpVisible && (
+              <div style={styles.otpSection}>
+                <div style={styles.otpTopRow}>
+                  <div>
+                    <label style={styles.label}>OTP Verification</label>
+                    <p style={styles.otpHint}>OTP sent to {formattedNumber}</p>
+                  </div>
+
+                  <button style={styles.resendBtn}>Resend</button>
+                </div>
+
+                <input
+                  value={otp}
+                  onChange={(event) => handleOtpChange(event.target.value)}
+                  onFocus={() => setFocusedField("otp")}
+                  onBlur={() => setFocusedField(null)}
+                  placeholder="••••••"
+                  inputMode="numeric"
+                  maxLength={6}
+                  style={{
+                    ...styles.otpInput,
+                    ...(focusedField === "otp" ? styles.otpFocused : {}),
+                  }}
+                />
+
+                <div style={styles.otpDotRow}>
+                  {[0, 1, 2, 3, 4, 5].map((index) => (
+                    <span
+                      key={index}
+                      style={{
+                        ...styles.otpDot,
+                        background: otp.length > index ? "#22c55e" : "#e7e5e4",
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div style={styles.securityNote}>
+              <div style={styles.noteIcon}>🔒</div>
+              <p style={styles.noteText}>
+                Your account is protected with secure one-time password verification.
+              </p>
+            </div>
+
+            {!otpVisible ? (
+              <button
+                disabled={!isMobileValid}
+                onClick={handleNext}
+                onMouseEnter={() => setHoveredButton("next")}
+                onMouseLeave={() => setHoveredButton(null)}
+                style={{
+                  ...styles.primaryBtn,
+                  ...(isMobileValid ? styles.primaryActive : styles.primaryDisabled),
+                  transform:
+                    hoveredButton === "next" && isMobileValid
+                      ? "translateY(-3px) scale(1.015)"
+                      : "none",
+                }}
+              >
+                Next
+              </button>
+            ) : (
+              <button
+                disabled={!isOtpValid}
+                onMouseEnter={() => setHoveredButton("verify")}
+                onMouseLeave={() => setHoveredButton(null)}
+                style={{
+                  ...styles.primaryBtn,
+                  ...(isOtpValid ? styles.primaryActive : styles.primaryDisabled),
+                  transform:
+                    hoveredButton === "verify" && isOtpValid
+                      ? "translateY(-3px) scale(1.015)"
+                      : "none",
+                }}
+              >
+                Verify & Sign In
+              </button>
+            )}
+
+            <p style={styles.createText}>
+              New to StoneRate? <b>Create Account</b>
+            </p>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+const styles = {
+  page: {
+    minHeight: "100vh",
+    background: "#f4f1ea",
+    display: "flex",
+    justifyContent: "center",
+    padding: 16,
+    fontFamily: "Arial, sans-serif",
+  },
+  phone: {
+    width: "100%",
+    maxWidth: 430,
+    background: "#ffffff",
+    borderRadius: 36,
+    overflow: "hidden",
+    boxShadow: "0 30px 80px rgba(0,0,0,0.25)",
+  },
+  hero: {
+    position: "relative",
+    minHeight: 565,
+    padding: "22px 20px 28px",
+    color: "white",
+    background:
+      "radial-gradient(circle at 20% 8%, rgba(245,158,11,0.38), transparent 28%), linear-gradient(145deg, #020617 0%, #1c1917 52%, #92400e 100%)",
+    overflow: "hidden",
+  },
+  glowOne: {
+    position: "absolute",
+    top: -80,
+    right: -80,
+    width: 230,
+    height: 230,
+    borderRadius: "50%",
+    background: "rgba(251,191,36,0.25)",
+    filter: "blur(38px)",
+  },
+  glowTwo: {
+    position: "absolute",
+    bottom: 70,
+    left: -95,
+    width: 225,
+    height: 225,
+    borderRadius: "50%",
+    background: "rgba(34,197,94,0.14)",
+    filter: "blur(44px)",
+  },
+  gridOverlay: {
+    position: "absolute",
+    inset: 0,
+    backgroundImage:
+      "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
+    backgroundSize: "34px 34px",
+    maskImage: "linear-gradient(to bottom, black, transparent 82%)",
+  },
+  nav: {
+    position: "relative",
+    zIndex: 3,
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  brandWrap: {
+    display: "flex",
+    alignItems: "center",
+    gap: 12,
+  },
+  logo: {
+    width: 50,
+    height: 50,
+    borderRadius: 19,
+    background: "linear-gradient(145deg, rgba(255,255,255,0.24), rgba(255,255,255,0.08))",
+    display: "grid",
+    placeItems: "center",
+    fontSize: 24,
+    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3), 0 14px 26px rgba(0,0,0,0.25)",
+  },
+  brandName: {
+    margin: 0,
+    fontSize: 18,
+    fontWeight: 950,
+  },
+  brandSub: {
+    margin: "3px 0 0",
+    color: "#d6d3d1",
+    fontSize: 10,
+    fontWeight: 700,
+  },
+  backBtn: {
+    border: "1px solid rgba(255,255,255,0.2)",
+    borderRadius: 999,
+    background: "rgba(255,255,255,0.1)",
+    color: "white",
+    padding: "9px 14px",
+    fontSize: 12,
+    fontWeight: 900,
+    cursor: "pointer",
+  },
+  heroText: {
+    position: "relative",
+    zIndex: 3,
+    marginTop: 30,
+    textAlign: "center",
+  },
+  kicker: {
+    display: "inline-block",
+    margin: 0,
+    padding: "7px 12px",
+    borderRadius: 999,
+    background: "rgba(245,158,11,0.16)",
+    border: "1px solid rgba(245,158,11,0.35)",
+    color: "#fde68a",
+    fontSize: 10,
+    letterSpacing: 1.8,
+    fontWeight: 950,
+  },
+  title: {
+    margin: "14px 0 0",
+    fontSize: 37,
+    lineHeight: 1.05,
+    fontWeight: 950,
+    letterSpacing: -1,
+  },
+  subtitle: {
+    margin: "12px auto 0",
+    maxWidth: 330,
+    color: "#e7e5e4",
+    fontSize: 13,
+    lineHeight: 1.5,
+    fontWeight: 600,
+  },
+  visualStage: {
+    position: "relative",
+    zIndex: 3,
+    height: 290,
+    marginTop: 18,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    perspective: 1100,
+  },
+  orbitOne: {
+    position: "absolute",
+    width: 350,
+    height: 190,
+    borderRadius: "50%",
+    border: "1px solid rgba(255,255,255,0.16)",
+    transform: "rotateX(66deg) rotateZ(-12deg)",
+  },
+  orbitTwo: {
+    position: "absolute",
+    width: 250,
+    height: 235,
+    borderRadius: "50%",
+    border: "1px solid rgba(245,158,11,0.33)",
+    transform: "rotateX(64deg) rotateZ(12deg)",
+  },
+  loginCard3d: {
+    position: "relative",
+    width: 258,
+    minHeight: 255,
+    borderRadius: 36,
+    background: "linear-gradient(145deg, rgba(255,255,255,0.30), rgba(255,255,255,0.08))",
+    border: "2px solid rgba(255,255,255,0.25)",
+    backdropFilter: "blur(14px)",
+    transform: "rotateX(8deg) rotateY(-9deg) rotateZ(1deg)",
+    boxShadow: "0 30px 60px rgba(245,158,11,0.22)",
+    padding: 18,
+    transition: "all 320ms ease",
+  },
+  loginCardReady: {
+    border: "2px solid #22c55e",
+    boxShadow: "0 34px 72px rgba(34,197,94,0.38)",
+    background: "linear-gradient(145deg, rgba(34,197,94,0.22), rgba(255,255,255,0.09))",
+  },
+  topHandle: {
+    width: 75,
+    height: 8,
+    borderRadius: 999,
+    background: "rgba(255,255,255,0.62)",
+    marginBottom: 17,
+  },
+  cardHeaderRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  lockBox: {
+    width: 62,
+    height: 62,
+    borderRadius: 23,
+    color: "#111827",
+    display: "grid",
+    placeItems: "center",
+    fontSize: 29,
+    boxShadow: "0 16px 28px rgba(0,0,0,0.25)",
+    transition: "all 280ms ease",
+  },
+  statusPill: {
+    padding: "8px 11px",
+    borderRadius: 999,
+    background: "rgba(255,255,255,0.16)",
+    color: "white",
+    fontSize: 11,
+    fontWeight: 900,
+  },
+  numberPanel: {
+    marginTop: 16,
+    padding: 14,
+    borderRadius: 21,
+    background: "rgba(0,0,0,0.24)",
+    minWidth: 0,
+  },
+  panelLabel: {
+    margin: 0,
+    color: "#d6d3d1",
+    fontSize: 10,
+    fontWeight: 850,
+  },
+  panelNumber: {
+    margin: "7px 0 0",
+    color: "white",
+    fontSize: 17,
+    fontWeight: 950,
+    whiteSpace: "nowrap",
+    letterSpacing: -0.2,
+  },
+  readyPanel: {
+    marginTop: 12,
+    display: "flex",
+    gap: 10,
+    alignItems: "center",
+    padding: 12,
+    borderRadius: 20,
+    background: "rgba(255,255,255,0.18)",
+  },
+  statusDot: {
+    width: 13,
+    height: 13,
+    borderRadius: "50%",
+    flexShrink: 0,
+  },
+  readyTitle: {
+    margin: 0,
+    color: "white",
+    fontSize: 13,
+    fontWeight: 950,
+  },
+  readySub: {
+    margin: "4px 0 0",
+    color: "#e7e5e4",
+    fontSize: 10,
+    fontWeight: 700,
+  },
+  floatBadgeTop: {
+    position: "absolute",
+    top: 25,
+    right: 10,
+    zIndex: 5,
+    padding: "10px 13px",
+    borderRadius: 19,
+    background: "rgba(255,255,255,0.94)",
+    fontSize: 12,
+    fontWeight: 950,
+    boxShadow: "0 16px 30px rgba(0,0,0,0.25)",
+  },
+  floatBadgeLeft: {
+    position: "absolute",
+    bottom: 32,
+    left: 10,
+    zIndex: 5,
+    padding: "10px 13px",
+    borderRadius: 19,
+    background: "rgba(255,255,255,0.92)",
+    border: "2px solid #f59e0b",
+    color: "#1c1917",
+    fontSize: 12,
+    fontWeight: 950,
+    boxShadow: "0 16px 30px rgba(0,0,0,0.24)",
+  },
+  floatIcon: {
+    position: "absolute",
+    bottom: 73,
+    right: 16,
+    zIndex: 5,
+    width: 58,
+    height: 58,
+    borderRadius: 22,
+    display: "grid",
+    placeItems: "center",
+    fontSize: 29,
+    boxShadow: "0 18px 32px rgba(0,0,0,0.28)",
+    transition: "all 280ms ease",
+  },
+  formSection: {
+    marginTop: -28,
+    position: "relative",
+    zIndex: 5,
+    padding: "0 18px 24px",
+    background: "white",
+    borderRadius: "32px 32px 0 0",
+  },
+  formCard: {
+    padding: 16,
+    borderRadius: 30,
+    background: "#fafaf9",
+    border: "1px solid #eee7df",
+    boxShadow: "0 16px 34px rgba(0,0,0,0.08)",
+  },
+  formTitleRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  formKicker: {
+    margin: 0,
+    color: "#b45309",
+    fontSize: 10,
+    letterSpacing: 1.7,
+    fontWeight: 950,
+  },
+  formTitle: {
+    margin: "5px 0 0",
+    color: "#1c1917",
+    fontSize: 23,
+    fontWeight: 950,
+  },
+  formIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 18,
+    color: "white",
+    display: "grid",
+    placeItems: "center",
+    fontSize: 23,
+    boxShadow: "0 14px 24px rgba(0,0,0,0.18)",
+  },
+  fieldBlock: {
+    marginTop: 4,
+  },
+  label: {
+    display: "block",
+    marginBottom: 8,
+    color: "#1c1917",
+    fontSize: 13,
+    fontWeight: 900,
+  },
+  mobileWrap: {
+    display: "flex",
+    alignItems: "center",
+    gap: 9,
+    height: 54,
+    border: "1px solid #e7e5e4",
+    borderRadius: 20,
+    padding: "0 10px",
+    background: "white",
+    boxSizing: "border-box",
+    transition: "all 220ms ease",
+  },
+  mobileWrapLocked: {
+    borderColor: "#bbf7d0",
+    background: "#f0fdf4",
+  },
+  fieldFocused: {
+    borderColor: "#f59e0b",
+    boxShadow: "0 0 0 4px rgba(245,158,11,0.15)",
+    transform: "translateY(-1px)",
+  },
+  prefix: {
+    height: 36,
+    minWidth: 52,
+    borderRadius: 14,
+    background: "#1c1917",
+    color: "white",
+    display: "grid",
+    placeItems: "center",
+    fontSize: 13,
+    fontWeight: 950,
+  },
+  prefixLocked: {
+    background: "#166534",
+  },
+  mobileInput: {
+    flex: 1,
+    height: "100%",
+    border: 0,
+    outline: "none",
+    background: "transparent",
+    fontSize: 14,
+    fontWeight: 800,
+    color: "#1c1917",
+    minWidth: 0,
+  },
+  mobileInputLocked: {
+    color: "#166534",
+  },
+  inputStatus: {
+    width: 34,
+    height: 34,
+    borderRadius: 13,
+    color: "white",
+    display: "grid",
+    placeItems: "center",
+    fontSize: 12,
+    fontWeight: 950,
+  },
+  mobileHelperRow: {
+    marginTop: 8,
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
+  },
+  helper: {
+    margin: 0,
+    color: "#78716c",
+    fontSize: 11,
+    lineHeight: 1.35,
+    fontWeight: 700,
+  },
+  changeNumberBtn: {
+    alignSelf: "flex-start",
+    border: 0,
+    borderRadius: 999,
+    background: "#dcfce7",
+    color: "#166534",
+    padding: "8px 11px",
+    fontSize: 11,
+    fontWeight: 950,
+    cursor: "pointer",
+  },
+  otpSection: {
+    marginTop: 17,
+    padding: 14,
+    borderRadius: 24,
+    background: "#f0fdf4",
+    border: "1px solid #bbf7d0",
+  },
+  otpTopRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    gap: 12,
+  },
+  otpHint: {
+    margin: "-3px 0 0",
+    color: "#15803d",
+    fontSize: 11,
+    fontWeight: 750,
+  },
+  resendBtn: {
+    border: 0,
+    borderRadius: 999,
+    background: "#166534",
+    color: "white",
+    padding: "8px 11px",
+    fontSize: 11,
+    fontWeight: 900,
+    cursor: "pointer",
+  },
+  otpInput: {
+    width: "100%",
+    height: 52,
+    marginTop: 12,
+    border: "1px solid #bbf7d0",
+    borderRadius: 18,
+    padding: "0 14px",
+    fontSize: 18,
+    fontWeight: 950,
+    letterSpacing: 7,
+    outline: "none",
+    background: "white",
+    color: "#1c1917",
+    boxSizing: "border-box",
+    transition: "all 220ms ease",
+  },
+  otpFocused: {
+    borderColor: "#22c55e",
+    boxShadow: "0 0 0 4px rgba(34,197,94,0.14)",
+  },
+  otpDotRow: {
+    display: "flex",
+    justifyContent: "center",
+    gap: 8,
+    marginTop: 12,
+  },
+  otpDot: {
+    width: 8,
+    height: 8,
+    borderRadius: "50%",
+  },
+  securityNote: {
+    marginTop: 17,
+    padding: 12,
+    borderRadius: 22,
+    background: "#fffbeb",
+    border: "1px solid #fde68a",
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+  },
+  noteIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 16,
+    background: "#1c1917",
+    color: "white",
+    display: "grid",
+    placeItems: "center",
+    flexShrink: 0,
+    fontSize: 20,
+  },
+  noteText: {
+    margin: 0,
+    color: "#78716c",
+    fontSize: 12,
+    lineHeight: 1.35,
+    fontWeight: 800,
+  },
+  primaryBtn: {
+    width: "100%",
+    height: 58,
+    marginTop: 22,
+    border: 0,
+    borderRadius: 28,
+    color: "white",
+    fontSize: 18,
+    fontWeight: 950,
+    transition: "all 260ms ease",
+  },
+  primaryDisabled: {
+    background: "linear-gradient(135deg, rgba(2,6,23,0.38), rgba(146,64,14,0.38))",
+    opacity: 0.55,
+    boxShadow: "none",
+    cursor: "not-allowed",
+  },
+  primaryActive: {
+    background: "linear-gradient(135deg, #020617, #92400e)",
+    opacity: 1,
+    boxShadow: "0 18px 38px rgba(146,64,14,0.28)",
+    cursor: "pointer",
+  },
+  createText: {
+    margin: "20px 0 0",
+    textAlign: "center",
+    color: "#78716c",
+    fontSize: 13,
+    fontWeight: 850,
+  },
+};
