@@ -8097,9 +8097,16 @@ function createStyles(viewport, selectedRole) {
 
 
 signin
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 export default function FinalSignInOTPPageWithChangeMobileNumber() {
+  const viewport = useViewport();
+
+  const styles = useMemo(
+    () => createStyles(viewport),
+    [viewport.width, viewport.height]
+  );
+
   const [mobileNumber, setMobileNumber] = useState("");
   const [otp, setOtp] = useState("");
   const [otpVisible, setOtpVisible] = useState(false);
@@ -8111,14 +8118,20 @@ export default function FinalSignInOTPPageWithChangeMobileNumber() {
   const isNumberLocked = otpVisible;
 
   const formattedNumber = useMemo(() => {
-    if (!mobileNumber) return "+91 XXXXX XXXXX";
+    if (!mobileNumber) {
+      return "+91 XXXXX XXXXX";
+    }
+
     return `+91 ${mobileNumber.slice(0, 5)} ${mobileNumber.slice(5, 10)}`;
   }, [mobileNumber]);
 
   const handleMobileChange = (value) => {
-    if (isNumberLocked) return;
+    if (isNumberLocked) {
+      return;
+    }
 
     const digitsOnly = value.replace(/\D/g, "").slice(0, 10);
+
     setMobileNumber(digitsOnly);
     setOtp("");
     setOtpVisible(false);
@@ -8153,18 +8166,23 @@ export default function FinalSignInOTPPageWithChangeMobileNumber() {
           <nav style={styles.nav}>
             <div style={styles.brandWrap}>
               <div style={styles.logo}>🪨</div>
-              <div>
+
+              <div style={styles.brandText}>
                 <p style={styles.brandName}>StoneRate</p>
                 <p style={styles.brandSub}>Secure OTP Login</p>
               </div>
             </div>
 
-            <button style={styles.backBtn}>Back</button>
+            <button type="button" style={styles.backBtn}>
+              Back
+            </button>
           </nav>
 
           <div style={styles.heroText}>
             <p style={styles.kicker}>SIGN IN</p>
+
             <h1 style={styles.title}>Verify your mobile number</h1>
+
             <p style={styles.subtitle}>
               Enter your number to receive OTP and continue to your account.
             </p>
@@ -8193,7 +8211,11 @@ export default function FinalSignInOTPPageWithChangeMobileNumber() {
                 </div>
 
                 <div style={styles.statusPill}>
-                  {isNumberLocked ? "Locked" : isMobileValid ? "Ready" : "Waiting"}
+                  {isNumberLocked
+                    ? "Locked"
+                    : isMobileValid
+                    ? "Ready"
+                    : "Waiting"}
                 </div>
               </div>
 
@@ -8210,12 +8232,15 @@ export default function FinalSignInOTPPageWithChangeMobileNumber() {
                   }}
                 />
 
-                <div>
+                <div style={styles.readyText}>
                   <p style={styles.readyTitle}>
                     {isMobileValid ? "Ready for OTP" : "Enter 10 digits"}
                   </p>
+
                   <p style={styles.readySub}>
-                    {otpVisible ? "Mobile number locked" : "OTP appears after Next"}
+                    {otpVisible
+                      ? "Mobile number locked"
+                      : "OTP appears after Next"}
                   </p>
                 </div>
               </div>
@@ -8253,7 +8278,7 @@ export default function FinalSignInOTPPageWithChangeMobileNumber() {
         <section style={styles.formSection}>
           <div style={styles.formCard}>
             <div style={styles.formTitleRow}>
-              <div>
+              <div style={styles.formHeadingText}>
                 <p style={styles.formKicker}>MOBILE VERIFICATION</p>
                 <h2 style={styles.formTitle}>Sign In</h2>
               </div>
@@ -8274,8 +8299,12 @@ export default function FinalSignInOTPPageWithChangeMobileNumber() {
               <div
                 style={{
                   ...styles.mobileWrap,
-                  ...(focusedField === "mobile" ? styles.fieldFocused : {}),
-                  ...(isNumberLocked ? styles.mobileWrapLocked : {}),
+                  ...(focusedField === "mobile"
+                    ? styles.fieldFocused
+                    : {}),
+                  ...(isNumberLocked
+                    ? styles.mobileWrapLocked
+                    : {}),
                 }}
               >
                 <div
@@ -8289,26 +8318,38 @@ export default function FinalSignInOTPPageWithChangeMobileNumber() {
 
                 <input
                   value={mobileNumber}
-                  onChange={(event) => handleMobileChange(event.target.value)}
+                  onChange={(event) =>
+                    handleMobileChange(event.target.value)
+                  }
                   onFocus={() => setFocusedField("mobile")}
                   onBlur={() => setFocusedField(null)}
                   placeholder="10 digit number"
                   inputMode="numeric"
                   maxLength={10}
                   disabled={isNumberLocked}
+                  aria-label="Mobile number"
                   style={{
                     ...styles.mobileInput,
-                    ...(isNumberLocked ? styles.mobileInputLocked : {}),
+                    ...(isNumberLocked
+                      ? styles.mobileInputLocked
+                      : {}),
                   }}
                 />
 
                 <div
                   style={{
                     ...styles.inputStatus,
-                    background: isMobileValid ? "#22c55e" : "#e7e5e4",
+                    background: isMobileValid
+                      ? "#22c55e"
+                      : "#e7e5e4",
+                    color: isMobileValid ? "#ffffff" : "#57534e",
                   }}
                 >
-                  {isNumberLocked ? "🔒" : isMobileValid ? "✓" : mobileNumber.length}
+                  {isNumberLocked
+                    ? "🔒"
+                    : isMobileValid
+                    ? "✓"
+                    : mobileNumber.length}
                 </div>
               </div>
 
@@ -8320,7 +8361,11 @@ export default function FinalSignInOTPPageWithChangeMobileNumber() {
                 </p>
 
                 {isNumberLocked && (
-                  <button onClick={handleChangeNumber} style={styles.changeNumberBtn}>
+                  <button
+                    type="button"
+                    onClick={handleChangeNumber}
+                    style={styles.changeNumberBtn}
+                  >
                     Change mobile number
                   </button>
                 )}
@@ -8330,25 +8375,35 @@ export default function FinalSignInOTPPageWithChangeMobileNumber() {
             {otpVisible && (
               <div style={styles.otpSection}>
                 <div style={styles.otpTopRow}>
-                  <div>
+                  <div style={styles.otpHeading}>
                     <label style={styles.label}>OTP Verification</label>
-                    <p style={styles.otpHint}>OTP sent to {formattedNumber}</p>
+                    <p style={styles.otpHint}>
+                      OTP sent to {formattedNumber}
+                    </p>
                   </div>
 
-                  <button style={styles.resendBtn}>Resend</button>
+                  <button type="button" style={styles.resendBtn}>
+                    Resend
+                  </button>
                 </div>
 
                 <input
                   value={otp}
-                  onChange={(event) => handleOtpChange(event.target.value)}
+                  onChange={(event) =>
+                    handleOtpChange(event.target.value)
+                  }
                   onFocus={() => setFocusedField("otp")}
                   onBlur={() => setFocusedField(null)}
                   placeholder="••••••"
                   inputMode="numeric"
                   maxLength={6}
+                  autoFocus
+                  aria-label="Six digit OTP"
                   style={{
                     ...styles.otpInput,
-                    ...(focusedField === "otp" ? styles.otpFocused : {}),
+                    ...(focusedField === "otp"
+                      ? styles.otpFocused
+                      : {}),
                   }}
                 />
 
@@ -8358,7 +8413,10 @@ export default function FinalSignInOTPPageWithChangeMobileNumber() {
                       key={index}
                       style={{
                         ...styles.otpDot,
-                        background: otp.length > index ? "#22c55e" : "#e7e5e4",
+                        background:
+                          otp.length > index
+                            ? "#22c55e"
+                            : "#e7e5e4",
                       }}
                     />
                   ))}
@@ -8368,20 +8426,25 @@ export default function FinalSignInOTPPageWithChangeMobileNumber() {
 
             <div style={styles.securityNote}>
               <div style={styles.noteIcon}>🔒</div>
+
               <p style={styles.noteText}>
-                Your account is protected with secure one-time password verification.
+                Your account is protected with secure one-time password
+                verification.
               </p>
             </div>
 
             {!otpVisible ? (
               <button
+                type="button"
                 disabled={!isMobileValid}
                 onClick={handleNext}
                 onMouseEnter={() => setHoveredButton("next")}
                 onMouseLeave={() => setHoveredButton(null)}
                 style={{
                   ...styles.primaryBtn,
-                  ...(isMobileValid ? styles.primaryActive : styles.primaryDisabled),
+                  ...(isMobileValid
+                    ? styles.primaryActive
+                    : styles.primaryDisabled),
                   transform:
                     hoveredButton === "next" && isMobileValid
                       ? "translateY(-3px) scale(1.015)"
@@ -8392,19 +8455,22 @@ export default function FinalSignInOTPPageWithChangeMobileNumber() {
               </button>
             ) : (
               <button
+                type="button"
                 disabled={!isOtpValid}
                 onMouseEnter={() => setHoveredButton("verify")}
                 onMouseLeave={() => setHoveredButton(null)}
                 style={{
                   ...styles.primaryBtn,
-                  ...(isOtpValid ? styles.primaryActive : styles.primaryDisabled),
+                  ...(isOtpValid
+                    ? styles.primaryActive
+                    : styles.primaryDisabled),
                   transform:
                     hoveredButton === "verify" && isOtpValid
                       ? "translateY(-3px) scale(1.015)"
                       : "none",
                 }}
               >
-                Verify & Sign In
+                Verify &amp; Sign In
               </button>
             )}
 
@@ -8418,552 +8484,837 @@ export default function FinalSignInOTPPageWithChangeMobileNumber() {
   );
 }
 
-const styles = {
-  page: {
-    minHeight: "100vh",
-    background: "#f4f1ea",
-    display: "flex",
-    justifyContent: "center",
-    padding: 16,
-    fontFamily: "Arial, sans-serif",
-  },
-  phone: {
-    width: "100%",
-    maxWidth: 430,
-    background: "#ffffff",
-    borderRadius: 36,
-    overflow: "hidden",
-    boxShadow: "0 30px 80px rgba(0,0,0,0.25)",
-  },
-  hero: {
-    position: "relative",
-    minHeight: 565,
-    padding: "22px 20px 28px",
-    color: "white",
-    background:
-      "radial-gradient(circle at 20% 8%, rgba(245,158,11,0.38), transparent 28%), linear-gradient(145deg, #020617 0%, #1c1917 52%, #92400e 100%)",
-    overflow: "hidden",
-  },
-  glowOne: {
-    position: "absolute",
-    top: -80,
-    right: -80,
-    width: 230,
-    height: 230,
-    borderRadius: "50%",
-    background: "rgba(251,191,36,0.25)",
-    filter: "blur(38px)",
-  },
-  glowTwo: {
-    position: "absolute",
-    bottom: 70,
-    left: -95,
-    width: 225,
-    height: 225,
-    borderRadius: "50%",
-    background: "rgba(34,197,94,0.14)",
-    filter: "blur(44px)",
-  },
-  gridOverlay: {
-    position: "absolute",
-    inset: 0,
-    backgroundImage:
-      "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
-    backgroundSize: "34px 34px",
-    maskImage: "linear-gradient(to bottom, black, transparent 82%)",
-  },
-  nav: {
-    position: "relative",
-    zIndex: 3,
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  brandWrap: {
-    display: "flex",
-    alignItems: "center",
-    gap: 12,
-  },
-  logo: {
-    width: 50,
-    height: 50,
-    borderRadius: 19,
-    background: "linear-gradient(145deg, rgba(255,255,255,0.24), rgba(255,255,255,0.08))",
-    display: "grid",
-    placeItems: "center",
-    fontSize: 24,
-    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3), 0 14px 26px rgba(0,0,0,0.25)",
-  },
-  brandName: {
-    margin: 0,
-    fontSize: 18,
-    fontWeight: 950,
-  },
-  brandSub: {
-    margin: "3px 0 0",
-    color: "#d6d3d1",
-    fontSize: 10,
-    fontWeight: 700,
-  },
-  backBtn: {
-    border: "1px solid rgba(255,255,255,0.2)",
-    borderRadius: 999,
-    background: "rgba(255,255,255,0.1)",
-    color: "white",
-    padding: "9px 14px",
-    fontSize: 12,
-    fontWeight: 900,
-    cursor: "pointer",
-  },
-  heroText: {
-    position: "relative",
-    zIndex: 3,
-    marginTop: 30,
-    textAlign: "center",
-  },
-  kicker: {
-    display: "inline-block",
-    margin: 0,
-    padding: "7px 12px",
-    borderRadius: 999,
-    background: "rgba(245,158,11,0.16)",
-    border: "1px solid rgba(245,158,11,0.35)",
-    color: "#fde68a",
-    fontSize: 10,
-    letterSpacing: 1.8,
-    fontWeight: 950,
-  },
-  title: {
-    margin: "14px 0 0",
-    fontSize: 37,
-    lineHeight: 1.05,
-    fontWeight: 950,
-    letterSpacing: -1,
-  },
-  subtitle: {
-    margin: "12px auto 0",
-    maxWidth: 330,
-    color: "#e7e5e4",
-    fontSize: 13,
-    lineHeight: 1.5,
-    fontWeight: 600,
-  },
-  visualStage: {
-    position: "relative",
-    zIndex: 3,
-    height: 290,
-    marginTop: 18,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    perspective: 1100,
-  },
-  orbitOne: {
-    position: "absolute",
-    width: 350,
-    height: 190,
-    borderRadius: "50%",
-    border: "1px solid rgba(255,255,255,0.16)",
-    transform: "rotateX(66deg) rotateZ(-12deg)",
-  },
-  orbitTwo: {
-    position: "absolute",
-    width: 250,
-    height: 235,
-    borderRadius: "50%",
-    border: "1px solid rgba(245,158,11,0.33)",
-    transform: "rotateX(64deg) rotateZ(12deg)",
-  },
-  loginCard3d: {
-    position: "relative",
-    width: 258,
-    minHeight: 255,
-    borderRadius: 36,
-    background: "linear-gradient(145deg, rgba(255,255,255,0.30), rgba(255,255,255,0.08))",
-    border: "2px solid rgba(255,255,255,0.25)",
-    backdropFilter: "blur(14px)",
-    transform: "rotateX(8deg) rotateY(-9deg) rotateZ(1deg)",
-    boxShadow: "0 30px 60px rgba(245,158,11,0.22)",
-    padding: 18,
-    transition: "all 320ms ease",
-  },
-  loginCardReady: {
-    border: "2px solid #22c55e",
-    boxShadow: "0 34px 72px rgba(34,197,94,0.38)",
-    background: "linear-gradient(145deg, rgba(34,197,94,0.22), rgba(255,255,255,0.09))",
-  },
-  topHandle: {
-    width: 75,
-    height: 8,
-    borderRadius: 999,
-    background: "rgba(255,255,255,0.62)",
-    marginBottom: 17,
-  },
-  cardHeaderRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  lockBox: {
-    width: 62,
-    height: 62,
-    borderRadius: 23,
-    color: "#111827",
-    display: "grid",
-    placeItems: "center",
-    fontSize: 29,
-    boxShadow: "0 16px 28px rgba(0,0,0,0.25)",
-    transition: "all 280ms ease",
-  },
-  statusPill: {
-    padding: "8px 11px",
-    borderRadius: 999,
-    background: "rgba(255,255,255,0.16)",
-    color: "white",
-    fontSize: 11,
-    fontWeight: 900,
-  },
-  numberPanel: {
-    marginTop: 16,
-    padding: 14,
-    borderRadius: 21,
-    background: "rgba(0,0,0,0.24)",
-    minWidth: 0,
-  },
-  panelLabel: {
-    margin: 0,
-    color: "#d6d3d1",
-    fontSize: 10,
-    fontWeight: 850,
-  },
-  panelNumber: {
-    margin: "7px 0 0",
-    color: "white",
-    fontSize: 17,
-    fontWeight: 950,
-    whiteSpace: "nowrap",
-    letterSpacing: -0.2,
-  },
-  readyPanel: {
-    marginTop: 12,
-    display: "flex",
-    gap: 10,
-    alignItems: "center",
-    padding: 12,
-    borderRadius: 20,
-    background: "rgba(255,255,255,0.18)",
-  },
-  statusDot: {
-    width: 13,
-    height: 13,
-    borderRadius: "50%",
-    flexShrink: 0,
-  },
-  readyTitle: {
-    margin: 0,
-    color: "white",
-    fontSize: 13,
-    fontWeight: 950,
-  },
-  readySub: {
-    margin: "4px 0 0",
-    color: "#e7e5e4",
-    fontSize: 10,
-    fontWeight: 700,
-  },
-  floatBadgeTop: {
-    position: "absolute",
-    top: 25,
-    right: 10,
-    zIndex: 5,
-    padding: "10px 13px",
-    borderRadius: 19,
-    background: "rgba(255,255,255,0.94)",
-    fontSize: 12,
-    fontWeight: 950,
-    boxShadow: "0 16px 30px rgba(0,0,0,0.25)",
-  },
-  floatBadgeLeft: {
-    position: "absolute",
-    bottom: 32,
-    left: 10,
-    zIndex: 5,
-    padding: "10px 13px",
-    borderRadius: 19,
-    background: "rgba(255,255,255,0.92)",
-    border: "2px solid #f59e0b",
-    color: "#1c1917",
-    fontSize: 12,
-    fontWeight: 950,
-    boxShadow: "0 16px 30px rgba(0,0,0,0.24)",
-  },
-  floatIcon: {
-    position: "absolute",
-    bottom: 73,
-    right: 16,
-    zIndex: 5,
-    width: 58,
-    height: 58,
-    borderRadius: 22,
-    display: "grid",
-    placeItems: "center",
-    fontSize: 29,
-    boxShadow: "0 18px 32px rgba(0,0,0,0.28)",
-    transition: "all 280ms ease",
-  },
-  formSection: {
-    marginTop: -28,
-    position: "relative",
-    zIndex: 5,
-    padding: "0 18px 24px",
-    background: "white",
-    borderRadius: "32px 32px 0 0",
-  },
-  formCard: {
-    padding: 16,
-    borderRadius: 30,
-    background: "#fafaf9",
-    border: "1px solid #eee7df",
-    boxShadow: "0 16px 34px rgba(0,0,0,0.08)",
-  },
-  formTitleRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  formKicker: {
-    margin: 0,
-    color: "#b45309",
-    fontSize: 10,
-    letterSpacing: 1.7,
-    fontWeight: 950,
-  },
-  formTitle: {
-    margin: "5px 0 0",
-    color: "#1c1917",
-    fontSize: 23,
-    fontWeight: 950,
-  },
-  formIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 18,
-    color: "white",
-    display: "grid",
-    placeItems: "center",
-    fontSize: 23,
-    boxShadow: "0 14px 24px rgba(0,0,0,0.18)",
-  },
-  fieldBlock: {
-    marginTop: 4,
-  },
-  label: {
-    display: "block",
-    marginBottom: 8,
-    color: "#1c1917",
-    fontSize: 13,
-    fontWeight: 900,
-  },
-  mobileWrap: {
-    display: "flex",
-    alignItems: "center",
-    gap: 9,
-    height: 54,
-    border: "1px solid #e7e5e4",
-    borderRadius: 20,
-    padding: "0 10px",
-    background: "white",
-    boxSizing: "border-box",
-    transition: "all 220ms ease",
-  },
-  mobileWrapLocked: {
-    borderColor: "#bbf7d0",
-    background: "#f0fdf4",
-  },
-  fieldFocused: {
-    borderColor: "#f59e0b",
-    boxShadow: "0 0 0 4px rgba(245,158,11,0.15)",
-    transform: "translateY(-1px)",
-  },
-  prefix: {
-    height: 36,
-    minWidth: 52,
-    borderRadius: 14,
-    background: "#1c1917",
-    color: "white",
-    display: "grid",
-    placeItems: "center",
-    fontSize: 13,
-    fontWeight: 950,
-  },
-  prefixLocked: {
-    background: "#166534",
-  },
-  mobileInput: {
-    flex: 1,
-    height: "100%",
-    border: 0,
-    outline: "none",
-    background: "transparent",
-    fontSize: 14,
-    fontWeight: 800,
-    color: "#1c1917",
-    minWidth: 0,
-  },
-  mobileInputLocked: {
-    color: "#166534",
-  },
-  inputStatus: {
-    width: 34,
-    height: 34,
-    borderRadius: 13,
-    color: "white",
-    display: "grid",
-    placeItems: "center",
-    fontSize: 12,
-    fontWeight: 950,
-  },
-  mobileHelperRow: {
-    marginTop: 8,
-    display: "flex",
-    flexDirection: "column",
-    gap: 8,
-  },
-  helper: {
-    margin: 0,
-    color: "#78716c",
-    fontSize: 11,
-    lineHeight: 1.35,
-    fontWeight: 700,
-  },
-  changeNumberBtn: {
-    alignSelf: "flex-start",
-    border: 0,
-    borderRadius: 999,
-    background: "#dcfce7",
-    color: "#166534",
-    padding: "8px 11px",
-    fontSize: 11,
-    fontWeight: 950,
-    cursor: "pointer",
-  },
-  otpSection: {
-    marginTop: 17,
-    padding: 14,
-    borderRadius: 24,
-    background: "#f0fdf4",
-    border: "1px solid #bbf7d0",
-  },
-  otpTopRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    gap: 12,
-  },
-  otpHint: {
-    margin: "-3px 0 0",
-    color: "#15803d",
-    fontSize: 11,
-    fontWeight: 750,
-  },
-  resendBtn: {
-    border: 0,
-    borderRadius: 999,
-    background: "#166534",
-    color: "white",
-    padding: "8px 11px",
-    fontSize: 11,
-    fontWeight: 900,
-    cursor: "pointer",
-  },
-  otpInput: {
-    width: "100%",
-    height: 52,
-    marginTop: 12,
-    border: "1px solid #bbf7d0",
-    borderRadius: 18,
-    padding: "0 14px",
-    fontSize: 18,
-    fontWeight: 950,
-    letterSpacing: 7,
-    outline: "none",
-    background: "white",
-    color: "#1c1917",
-    boxSizing: "border-box",
-    transition: "all 220ms ease",
-  },
-  otpFocused: {
-    borderColor: "#22c55e",
-    boxShadow: "0 0 0 4px rgba(34,197,94,0.14)",
-  },
-  otpDotRow: {
-    display: "flex",
-    justifyContent: "center",
-    gap: 8,
-    marginTop: 12,
-  },
-  otpDot: {
-    width: 8,
-    height: 8,
-    borderRadius: "50%",
-  },
-  securityNote: {
-    marginTop: 17,
-    padding: 12,
-    borderRadius: 22,
-    background: "#fffbeb",
-    border: "1px solid #fde68a",
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-  },
-  noteIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 16,
-    background: "#1c1917",
-    color: "white",
-    display: "grid",
-    placeItems: "center",
-    flexShrink: 0,
-    fontSize: 20,
-  },
-  noteText: {
-    margin: 0,
-    color: "#78716c",
-    fontSize: 12,
-    lineHeight: 1.35,
-    fontWeight: 800,
-  },
-  primaryBtn: {
-    width: "100%",
-    height: 58,
-    marginTop: 22,
-    border: 0,
-    borderRadius: 28,
-    color: "white",
-    fontSize: 18,
-    fontWeight: 950,
-    transition: "all 260ms ease",
-  },
-  primaryDisabled: {
-    background: "linear-gradient(135deg, rgba(2,6,23,0.38), rgba(146,64,14,0.38))",
-    opacity: 0.55,
-    boxShadow: "none",
-    cursor: "not-allowed",
-  },
-  primaryActive: {
-    background: "linear-gradient(135deg, #020617, #92400e)",
-    opacity: 1,
-    boxShadow: "0 18px 38px rgba(146,64,14,0.28)",
-    cursor: "pointer",
-  },
-  createText: {
-    margin: "20px 0 0",
-    textAlign: "center",
-    color: "#78716c",
-    fontSize: 13,
-    fontWeight: 850,
-  },
-};
+function useViewport() {
+  const [viewport, setViewport] = useState({
+    width:
+      typeof window !== "undefined"
+        ? window.innerWidth
+        : 390,
+    height:
+      typeof window !== "undefined"
+        ? window.innerHeight
+        : 844,
+  });
+
+  useEffect(() => {
+    const updateViewport = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    updateViewport();
+
+    window.addEventListener("resize", updateViewport);
+
+    return () => {
+      window.removeEventListener("resize", updateViewport);
+    };
+  }, []);
+
+  return viewport;
+}
+
+function createStyles(viewport) {
+  const viewportWidth = viewport.width || 390;
+  const viewportHeight = viewport.height || 844;
+
+  const isDesktop = viewportWidth >= 700;
+
+  const phoneWidth = isDesktop ? 390 : viewportWidth;
+  const phoneHeight = isDesktop ? 844 : viewportHeight;
+
+  const scale = Math.max(
+    0.68,
+    Math.min(
+      1,
+      Math.min(phoneWidth / 390, phoneHeight / 844)
+    )
+  );
+
+  const narrow = phoneWidth < 360;
+  const veryNarrow = phoneWidth < 300;
+  const short = phoneHeight < 700;
+  const veryShort = phoneHeight < 560;
+
+  const px = (value) => Math.round(value * scale);
+
+  return {
+    page: {
+      width: "100vw",
+      height: "100dvh",
+      minHeight: "100dvh",
+      background: isDesktop ? "#f4f1ea" : "#ffffff",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: isDesktop ? "center" : "stretch",
+      padding: isDesktop ? 16 : 0,
+      fontFamily: "Arial, sans-serif",
+      overflow: "hidden",
+      boxSizing: "border-box",
+    },
+
+    phone: {
+      width: isDesktop ? 390 : "100vw",
+      height: isDesktop ? 844 : "100dvh",
+      maxWidth: isDesktop ? 430 : "none",
+      background: "#ffffff",
+      borderRadius: isDesktop ? 36 : 0,
+      overflowY: "auto",
+      overflowX: "hidden",
+      WebkitOverflowScrolling: "touch",
+      boxShadow: isDesktop
+        ? "0 30px 80px rgba(0,0,0,0.25)"
+        : "none",
+      boxSizing: "border-box",
+    },
+
+    hero: {
+      position: "relative",
+      minHeight: px(
+        veryShort ? 430 : short ? 495 : 565
+      ),
+      padding: `${px(short ? 18 : 22)}px ${px(
+        narrow ? 15 : 20
+      )}px ${px(short ? 22 : 28)}px`,
+      color: "white",
+      background:
+        "radial-gradient(circle at 20% 8%, rgba(245,158,11,0.38), transparent 28%), linear-gradient(145deg, #020617 0%, #1c1917 52%, #92400e 100%)",
+      overflow: "hidden",
+      boxSizing: "border-box",
+    },
+
+    glowOne: {
+      position: "absolute",
+      top: px(-80),
+      right: px(-80),
+      width: px(230),
+      height: px(230),
+      borderRadius: "50%",
+      background: "rgba(251,191,36,0.25)",
+      filter: `blur(${px(38)}px)`,
+    },
+
+    glowTwo: {
+      position: "absolute",
+      bottom: px(70),
+      left: px(-95),
+      width: px(225),
+      height: px(225),
+      borderRadius: "50%",
+      background: "rgba(34,197,94,0.14)",
+      filter: `blur(${px(44)}px)`,
+    },
+
+    gridOverlay: {
+      position: "absolute",
+      inset: 0,
+      backgroundImage:
+        "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
+      backgroundSize: `${px(34)}px ${px(34)}px`,
+      maskImage:
+        "linear-gradient(to bottom, black, transparent 82%)",
+      pointerEvents: "none",
+    },
+
+    nav: {
+      position: "relative",
+      zIndex: 3,
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: px(10),
+    },
+
+    brandWrap: {
+      display: "flex",
+      alignItems: "center",
+      gap: px(12),
+      minWidth: 0,
+    },
+
+    brandText: {
+      minWidth: 0,
+    },
+
+    logo: {
+      width: px(short ? 42 : 50),
+      height: px(short ? 42 : 50),
+      borderRadius: px(19),
+      background:
+        "linear-gradient(145deg, rgba(255,255,255,0.24), rgba(255,255,255,0.08))",
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(short ? 20 : 24),
+      boxShadow:
+        "inset 0 1px 0 rgba(255,255,255,0.3), 0 14px 26px rgba(0,0,0,0.25)",
+      flexShrink: 0,
+    },
+
+    brandName: {
+      margin: 0,
+      fontSize: px(short ? 16 : 18),
+      fontWeight: 950,
+      lineHeight: 1,
+    },
+
+    brandSub: {
+      margin: `${px(3)}px 0 0`,
+      color: "#d6d3d1",
+      fontSize: px(10),
+      fontWeight: 700,
+      whiteSpace: "nowrap",
+    },
+
+    backBtn: {
+      border: "1px solid rgba(255,255,255,0.2)",
+      borderRadius: 999,
+      background: "rgba(255,255,255,0.1)",
+      color: "white",
+      padding: `${px(8)}px ${px(13)}px`,
+      fontSize: px(12),
+      fontWeight: 900,
+      cursor: "pointer",
+      flexShrink: 0,
+    },
+
+    heroText: {
+      position: "relative",
+      zIndex: 3,
+      marginTop: px(
+        veryShort ? 16 : short ? 22 : 30
+      ),
+      textAlign: "center",
+    },
+
+    kicker: {
+      display: "inline-block",
+      margin: 0,
+      padding: `${px(6)}px ${px(11)}px`,
+      borderRadius: 999,
+      background: "rgba(245,158,11,0.16)",
+      border: "1px solid rgba(245,158,11,0.35)",
+      color: "#fde68a",
+      fontSize: px(10),
+      letterSpacing: narrow ? 1.3 : 1.8,
+      fontWeight: 950,
+    },
+
+    title: {
+      margin: `${px(12)}px 0 0`,
+      fontSize: px(
+        veryShort ? 27 : short ? 32 : 37
+      ),
+      lineHeight: 1.05,
+      fontWeight: 950,
+      letterSpacing: -1,
+      overflowWrap: "break-word",
+    },
+
+    subtitle: {
+      margin: `${px(
+        veryShort ? 8 : 12
+      )}px auto 0`,
+      maxWidth: px(330),
+      color: "#e7e5e4",
+      fontSize: px(
+        veryShort ? 10 : short ? 12 : 13
+      ),
+      lineHeight: veryShort ? 1.35 : 1.5,
+      fontWeight: 600,
+    },
+
+    visualStage: {
+      position: "relative",
+      zIndex: 3,
+      height: px(
+        veryShort ? 220 : short ? 250 : 290
+      ),
+      marginTop: px(
+        veryShort ? 8 : short ? 12 : 18
+      ),
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      perspective: 1100,
+    },
+
+    orbitOne: {
+      position: "absolute",
+      width: Math.min(
+        px(350),
+        Math.max(0, phoneWidth - px(20))
+      ),
+      height: px(190),
+      borderRadius: "50%",
+      border: "1px solid rgba(255,255,255,0.16)",
+      transform: "rotateX(66deg) rotateZ(-12deg)",
+    },
+
+    orbitTwo: {
+      position: "absolute",
+      width: px(250),
+      height: px(235),
+      borderRadius: "50%",
+      border: "1px solid rgba(245,158,11,0.33)",
+      transform: "rotateX(64deg) rotateZ(12deg)",
+    },
+
+    loginCard3d: {
+      position: "relative",
+      width: px(
+        veryNarrow ? 210 : veryShort ? 220 : 258
+      ),
+      minHeight: px(
+        veryShort ? 205 : short ? 225 : 255
+      ),
+      borderRadius: px(36),
+      background:
+        "linear-gradient(145deg, rgba(255,255,255,0.30), rgba(255,255,255,0.08))",
+      border: "2px solid rgba(255,255,255,0.25)",
+      backdropFilter: "blur(14px)",
+      transform:
+        "rotateX(8deg) rotateY(-9deg) rotateZ(1deg)",
+      boxShadow:
+        "0 30px 60px rgba(245,158,11,0.22)",
+      padding: px(veryShort ? 13 : 18),
+      transition: "all 320ms ease",
+      boxSizing: "border-box",
+      overflow: "hidden",
+    },
+
+    loginCardReady: {
+      border: "2px solid #22c55e",
+      boxShadow:
+        "0 34px 72px rgba(34,197,94,0.38)",
+      background:
+        "linear-gradient(145deg, rgba(34,197,94,0.22), rgba(255,255,255,0.09))",
+    },
+
+    topHandle: {
+      width: px(75),
+      height: px(8),
+      borderRadius: 999,
+      background: "rgba(255,255,255,0.62)",
+      marginBottom: px(
+        veryShort ? 10 : 17
+      ),
+    },
+
+    cardHeaderRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: px(8),
+    },
+
+    lockBox: {
+      width: px(
+        veryShort ? 48 : 62
+      ),
+      height: px(
+        veryShort ? 48 : 62
+      ),
+      borderRadius: px(23),
+      color: "#111827",
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(
+        veryShort ? 23 : 29
+      ),
+      boxShadow:
+        "0 16px 28px rgba(0,0,0,0.25)",
+      transition: "all 280ms ease",
+      flexShrink: 0,
+    },
+
+    statusPill: {
+      padding: `${px(7)}px ${px(10)}px`,
+      borderRadius: 999,
+      background: "rgba(255,255,255,0.16)",
+      color: "white",
+      fontSize: px(11),
+      fontWeight: 900,
+      whiteSpace: "nowrap",
+    },
+
+    numberPanel: {
+      marginTop: px(
+        veryShort ? 10 : 16
+      ),
+      padding: px(
+        veryShort ? 10 : 14
+      ),
+      borderRadius: px(21),
+      background: "rgba(0,0,0,0.24)",
+      minWidth: 0,
+      overflow: "hidden",
+    },
+
+    panelLabel: {
+      margin: 0,
+      color: "#d6d3d1",
+      fontSize: px(10),
+      fontWeight: 850,
+    },
+
+    panelNumber: {
+      margin: `${px(7)}px 0 0`,
+      color: "white",
+      fontSize: px(
+        veryNarrow ? 13 : veryShort ? 15 : 17
+      ),
+      fontWeight: 950,
+      whiteSpace: "nowrap",
+      letterSpacing: -0.2,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    readyPanel: {
+      marginTop: px(
+        veryShort ? 8 : 12
+      ),
+      display: "flex",
+      gap: px(10),
+      alignItems: "center",
+      padding: px(
+        veryShort ? 9 : 12
+      ),
+      borderRadius: px(20),
+      background: "rgba(255,255,255,0.18)",
+      minWidth: 0,
+    },
+
+    readyText: {
+      minWidth: 0,
+    },
+
+    statusDot: {
+      width: px(13),
+      height: px(13),
+      borderRadius: "50%",
+      flexShrink: 0,
+    },
+
+    readyTitle: {
+      margin: 0,
+      color: "white",
+      fontSize: px(13),
+      fontWeight: 950,
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    readySub: {
+      margin: `${px(4)}px 0 0`,
+      color: "#e7e5e4",
+      fontSize: px(10),
+      fontWeight: 700,
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    floatBadgeTop: {
+      position: "absolute",
+      top: px(
+        veryShort ? 12 : 25
+      ),
+      right: narrow ? px(2) : px(10),
+      zIndex: 5,
+      padding: `${px(8)}px ${px(11)}px`,
+      borderRadius: px(19),
+      background: "rgba(255,255,255,0.94)",
+      fontSize: px(
+        veryShort ? 9 : 12
+      ),
+      fontWeight: 950,
+      boxShadow:
+        "0 16px 30px rgba(0,0,0,0.25)",
+      whiteSpace: "nowrap",
+    },
+
+    floatBadgeLeft: {
+      position: "absolute",
+      bottom: px(
+        veryShort ? 18 : 32
+      ),
+      left: narrow ? px(2) : px(10),
+      zIndex: 5,
+      padding: `${px(8)}px ${px(11)}px`,
+      borderRadius: px(19),
+      background: "rgba(255,255,255,0.92)",
+      border: "2px solid #f59e0b",
+      color: "#1c1917",
+      fontSize: px(
+        veryShort ? 9 : 12
+      ),
+      fontWeight: 950,
+      boxShadow:
+        "0 16px 30px rgba(0,0,0,0.24)",
+      whiteSpace: "nowrap",
+    },
+
+    floatIcon: {
+      position: "absolute",
+      bottom: px(
+        veryShort ? 48 : 73
+      ),
+      right: narrow ? px(5) : px(16),
+      zIndex: 5,
+      width: px(
+        veryShort ? 44 : 58
+      ),
+      height: px(
+        veryShort ? 44 : 58
+      ),
+      borderRadius: px(22),
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(
+        veryShort ? 22 : 29
+      ),
+      boxShadow:
+        "0 18px 32px rgba(0,0,0,0.28)",
+      transition: "all 280ms ease",
+    },
+
+    formSection: {
+      marginTop: px(-28),
+      position: "relative",
+      zIndex: 5,
+      padding: `0 ${px(
+        narrow ? 13 : 18
+      )}px ${px(24)}px`,
+      background: "white",
+      borderRadius: `${px(32)}px ${px(32)}px 0 0`,
+      boxSizing: "border-box",
+    },
+
+    formCard: {
+      padding: px(
+        narrow ? 13 : 16
+      ),
+      borderRadius: px(30),
+      background: "#fafaf9",
+      border: "1px solid #eee7df",
+      boxShadow:
+        "0 16px 34px rgba(0,0,0,0.08)",
+      boxSizing: "border-box",
+    },
+
+    formTitleRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: px(10),
+      marginBottom: px(16),
+    },
+
+    formHeadingText: {
+      minWidth: 0,
+    },
+
+    formKicker: {
+      margin: 0,
+      color: "#b45309",
+      fontSize: px(10),
+      letterSpacing: narrow ? 1.2 : 1.7,
+      fontWeight: 950,
+    },
+
+    formTitle: {
+      margin: `${px(5)}px 0 0`,
+      color: "#1c1917",
+      fontSize: px(
+        narrow ? 20 : 23
+      ),
+      fontWeight: 950,
+    },
+
+    formIcon: {
+      width: px(48),
+      height: px(48),
+      borderRadius: px(18),
+      color: "white",
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(23),
+      boxShadow:
+        "0 14px 24px rgba(0,0,0,0.18)",
+      flexShrink: 0,
+    },
+
+    fieldBlock: {
+      marginTop: px(4),
+    },
+
+    label: {
+      display: "block",
+      marginBottom: px(8),
+      color: "#1c1917",
+      fontSize: px(13),
+      fontWeight: 900,
+    },
+
+    mobileWrap: {
+      display: "flex",
+      alignItems: "center",
+      gap: px(
+        narrow ? 6 : 9
+      ),
+      height: px(54),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(20),
+      padding: `0 ${px(
+        narrow ? 7 : 10
+      )}px`,
+      background: "white",
+      boxSizing: "border-box",
+      transition: "all 220ms ease",
+      minWidth: 0,
+    },
+
+    mobileWrapLocked: {
+      borderColor: "#bbf7d0",
+      background: "#f0fdf4",
+    },
+
+    fieldFocused: {
+      borderColor: "#f59e0b",
+      boxShadow:
+        "0 0 0 4px rgba(245,158,11,0.15)",
+      transform: "translateY(-1px)",
+    },
+
+    prefix: {
+      height: px(36),
+      minWidth: px(
+        narrow ? 44 : 52
+      ),
+      borderRadius: px(14),
+      background: "#1c1917",
+      color: "white",
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(13),
+      fontWeight: 950,
+      flexShrink: 0,
+    },
+
+    prefixLocked: {
+      background: "#166534",
+    },
+
+    mobileInput: {
+      flex: 1,
+      width: 0,
+      height: "100%",
+      border: 0,
+      outline: "none",
+      background: "transparent",
+      fontSize: px(
+        narrow ? 12 : 14
+      ),
+      fontWeight: 800,
+      color: "#1c1917",
+      minWidth: 0,
+    },
+
+    mobileInputLocked: {
+      color: "#166534",
+    },
+
+    inputStatus: {
+      width: px(34),
+      height: px(34),
+      borderRadius: px(13),
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(12),
+      fontWeight: 950,
+      flexShrink: 0,
+    },
+
+    mobileHelperRow: {
+      marginTop: px(8),
+      display: "flex",
+      flexDirection: "column",
+      gap: px(8),
+    },
+
+    helper: {
+      margin: 0,
+      color: "#78716c",
+      fontSize: px(11),
+      lineHeight: 1.35,
+      fontWeight: 700,
+    },
+
+    changeNumberBtn: {
+      alignSelf: "flex-start",
+      border: 0,
+      borderRadius: 999,
+      background: "#dcfce7",
+      color: "#166534",
+      padding: `${px(8)}px ${px(11)}px`,
+      fontSize: px(11),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    otpSection: {
+      marginTop: px(17),
+      padding: px(
+        narrow ? 11 : 14
+      ),
+      borderRadius: px(24),
+      background: "#f0fdf4",
+      border: "1px solid #bbf7d0",
+      boxSizing: "border-box",
+    },
+
+    otpTopRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      gap: px(10),
+    },
+
+    otpHeading: {
+      minWidth: 0,
+    },
+
+    otpHint: {
+      margin: `${px(-3)}px 0 0`,
+      color: "#15803d",
+      fontSize: px(
+        narrow ? 9 : 11
+      ),
+      fontWeight: 750,
+      overflowWrap: "anywhere",
+    },
+
+    resendBtn: {
+      border: 0,
+      borderRadius: 999,
+      background: "#166534",
+      color: "white",
+      padding: `${px(8)}px ${px(11)}px`,
+      fontSize: px(11),
+      fontWeight: 900,
+      cursor: "pointer",
+      flexShrink: 0,
+    },
+
+    otpInput: {
+      width: "100%",
+      height: px(52),
+      marginTop: px(12),
+      border: "1px solid #bbf7d0",
+      borderRadius: px(18),
+      padding: `0 ${px(14)}px`,
+      fontSize: px(18),
+      fontWeight: 950,
+      letterSpacing: narrow ? 4 : 7,
+      textAlign: "center",
+      outline: "none",
+      background: "white",
+      color: "#1c1917",
+      boxSizing: "border-box",
+      transition: "all 220ms ease",
+    },
+
+    otpFocused: {
+      borderColor: "#22c55e",
+      boxShadow:
+        "0 0 0 4px rgba(34,197,94,0.14)",
+    },
+
+    otpDotRow: {
+      display: "flex",
+      justifyContent: "center",
+      gap: px(8),
+      marginTop: px(12),
+    },
+
+    otpDot: {
+      width: px(8),
+      height: px(8),
+      borderRadius: "50%",
+    },
+
+    securityNote: {
+      marginTop: px(17),
+      padding: px(12),
+      borderRadius: px(22),
+      background: "#fffbeb",
+      border: "1px solid #fde68a",
+      display: "flex",
+      alignItems: "center",
+      gap: px(10),
+    },
+
+    noteIcon: {
+      width: px(40),
+      height: px(40),
+      borderRadius: px(16),
+      background: "#1c1917",
+      color: "white",
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      fontSize: px(20),
+    },
+
+    noteText: {
+      margin: 0,
+      color: "#78716c",
+      fontSize: px(
+        narrow ? 10 : 12
+      ),
+      lineHeight: 1.35,
+      fontWeight: 800,
+    },
+
+    primaryBtn: {
+      width: "100%",
+      height: px(58),
+      marginTop: px(22),
+      border: 0,
+      borderRadius: px(28),
+      color: "white",
+      fontSize: px(18),
+      fontWeight: 950,
+      transition: "all 260ms ease",
+    },
+
+    primaryDisabled: {
+      background:
+        "linear-gradient(135deg, rgba(2,6,23,0.38), rgba(146,64,14,0.38))",
+      opacity: 0.55,
+      boxShadow: "none",
+      cursor: "not-allowed",
+    },
+
+    primaryActive: {
+      background:
+        "linear-gradient(135deg, #020617, #92400e)",
+      opacity: 1,
+      boxShadow:
+        "0 18px 38px rgba(146,64,14,0.28)",
+      cursor: "pointer",
+    },
+
+    createText: {
+      margin: `${px(20)}px 0 0`,
+      textAlign: "center",
+      color: "#78716c",
+      fontSize: px(13),
+      fontWeight: 850,
+    },
+  };
+}
