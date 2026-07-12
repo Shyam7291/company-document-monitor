@@ -4817,3 +4817,1652 @@ body {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+profile
+import React, { useEffect, useMemo, useState } from "react";
+
+const BASE_W = 206;
+const BASE_H = 445;
+const PROFILE_BG_IMAGE ="https://cdn.jsdelivr.net/gh/Shyam7291/company-document-monitor@main/1783841473662.png";
+
+const INITIAL_PROFILE = {
+  name: "Arjun Kumar",
+  shopName: "AK Stone Building Materials",
+  email: "arjun@akstone.in",
+  phone: "9876543210",
+  alternatePhone: "9123456780",
+  address: "Plot 18, Quarry Link Road, Hoskote Industrial Area",
+  pincode: "562114",
+  city: "Bengaluru",
+  state: "Karnataka",
+};
+const requiredFields = [
+  { key: "name", label: "Full Name" },
+  { key: "shopName", label: "Shop Name" },
+  { key: "phone", label: "Phone Number" },
+  { key: "address", label: "Address" },
+  { key: "pincode", label: "Pincode" },
+  { key: "city", label: "City" },
+  { key: "state", label: "State" },
+];
+
+const allProfileFields = [
+  "name",
+  "shopName",
+  "email",
+  "phone",
+  "alternatePhone",
+  "address",
+  "pincode",
+  "city",
+  "state",
+];
+
+
+function useViewport() {
+  const [viewport, setViewport] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 390,
+    height: typeof window !== "undefined" ? window.innerHeight : 844,
+  });
+
+  useEffect(() => {
+    const update = () =>
+      setViewport({ width: window.innerWidth, height: window.innerHeight });
+
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("orientationchange", update);
+
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("orientationchange", update);
+    };
+  }, []);
+
+  return viewport;
+}
+
+export default function App() {
+  const viewport = useViewport();
+  const styles = useMemo(
+    () => createStyles(viewport),
+    [viewport.width, viewport.height]
+  );
+
+  const [profile, setProfile] = useState(INITIAL_PROFILE);
+  const [draft, setDraft] = useState(INITIAL_PROFILE);
+  const [editing, setEditing] = useState(false);
+  const [focused, setFocused] = useState(null);
+  const [saved, setSaved] = useState(false);
+  const [activeNav, setActiveNav] = useState("Profile");
+  const closeValidationPopup = () => {
+    const fieldToFocus = validationPopup.field;
+  
+    setValidationPopup({
+      visible: false,
+      field: "",
+      message: "",
+    });
+  
+    if (fieldToFocus) {
+      setFocused(fieldToFocus);
+  
+      window.setTimeout(() => {
+        const fieldElement = document.querySelector(
+          `[data-profile-field="${fieldToFocus}"]`
+        );
+  
+        if (fieldElement) {
+          fieldElement.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+  
+          fieldElement.focus();
+        }
+      }, 150);
+    }
+  };
+  const [validationPopup, setValidationPopup] = useState({
+    visible: false,
+    field: "",
+    message: "",
+  });
+
+  const shown = editing ? draft : profile;
+  
+
+const requiredFields = [
+  { key: "name", label: "Full Name" },
+  { key: "shopName", label: "Shop Name" },
+  { key: "phone", label: "Phone Number" },
+  { key: "address", label: "Address" },
+  { key: "pincode", label: "Pincode" },
+  { key: "city", label: "City" },
+  { key: "state", label: "State" },
+];
+
+const allProfileFields = [
+  "name",
+  "shopName",
+  "email",
+  "phone",
+  "alternatePhone",
+  "address",
+  "pincode",
+  "city",
+  "state",
+];
+
+const completedFieldCount = allProfileFields.filter((field) => {
+  const value = shown[field];
+
+  return typeof value === "string" && value.trim() !== "";
+}).length;
+
+const profileCompletion = Math.round(
+  (completedFieldCount / allProfileFields.length) * 100
+);
+  const initials = shown.name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
+
+    const changeField = (field, value) => {
+      let cleanedValue = value;
+    
+      // Phone fields: numeric only, maximum 10 digits
+      if (field === "phone" || field === "alternatePhone") {
+        cleanedValue = value.replace(/\D/g, "").slice(0, 10);
+      }
+    
+      // Pincode: numeric only, maximum 6 digits
+      if (field === "pincode") {
+        cleanedValue = value.replace(/\D/g, "").slice(0, 6);
+      }
+    
+      // Name and shop name: alphabets and spaces only
+      if (field === "name" || field === "shopName") {
+        cleanedValue = value
+          .replace(/[^a-zA-Z ]/g, "")
+          .replace(/\s{2,}/g, " ");
+      }
+    
+      // City and state: alphabets and spaces only
+      if (field === "city" || field === "state") {
+        cleanedValue = value
+          .replace(/[^a-zA-Z ]/g, "")
+          .replace(/\s{2,}/g, " ");
+      }
+    
+      setDraft((current) => ({
+        ...current,
+        [field]: cleanedValue,
+      }));
+    };
+
+  const beginEdit = () => {
+    setDraft(profile);
+    setEditing(true);
+  };
+
+  const cancelEdit = () => {
+    setDraft(profile);
+    setEditing(false);
+    setFocused(null);
+  };
+
+  const saveChanges = () => {
+    const firstEmptyRequiredField = requiredFields.find(({ key }) => {
+      const value = draft[key];
+  
+      return typeof value !== "string" || value.trim() === "";
+    });
+  
+    if (firstEmptyRequiredField) {
+      setValidationPopup({
+        visible: true,
+        field: firstEmptyRequiredField.key,
+        message: `${firstEmptyRequiredField.label} cannot be blank.`,
+      });
+  
+      return;
+    }
+  
+    if (!/^[A-Za-z ]+$/.test(draft.name.trim())) {
+      setValidationPopup({
+        visible: true,
+        field: "name",
+        message: "Full Name can contain alphabets only.",
+      });
+  
+      return;
+    }
+  
+    if (!/^[A-Za-z ]+$/.test(draft.shopName.trim())) {
+      setValidationPopup({
+        visible: true,
+        field: "shopName",
+        message: "Shop Name can contain alphabets only.",
+      });
+  
+      return;
+    }
+  
+    if (!/^\d{10}$/.test(draft.phone)) {
+      setValidationPopup({
+        visible: true,
+        field: "phone",
+        message: "Phone Number must contain exactly 10 digits.",
+      });
+  
+      return;
+    }
+  
+    if (
+      draft.alternatePhone.trim() !== "" &&
+      !/^\d{10}$/.test(draft.alternatePhone)
+    ) {
+      setValidationPopup({
+        visible: true,
+        field: "alternatePhone",
+        message: "Alternate Phone must contain exactly 10 digits.",
+      });
+  
+      return;
+    }
+  
+    if (!/^\d{6}$/.test(draft.pincode)) {
+      setValidationPopup({
+        visible: true,
+        field: "pincode",
+        message: "Pincode must contain exactly 6 digits.",
+      });
+  
+      return;
+    }
+  
+    const cleanedProfile = {
+      name: draft.name.trim(),
+      shopName: draft.shopName.trim(),
+      email: draft.email.trim(),
+      phone: draft.phone.trim(),
+      alternatePhone: draft.alternatePhone.trim(),
+      address: draft.address.trim(),
+      pincode: draft.pincode.trim(),
+      city: draft.city.trim(),
+      state: draft.state.trim(),
+    };
+  
+    setProfile(cleanedProfile);
+    setDraft(cleanedProfile);
+    setEditing(false);
+    setFocused(null);
+    setSaved(true);
+  
+    window.setTimeout(() => {
+      setSaved(false);
+    }, 2200);
+  };
+
+  return (
+    <div style={styles.page}>
+      <style>{globalCss}</style>
+
+      <main style={styles.phone}>
+        <header style={styles.hero}>
+          <div style={styles.heroGlow} />
+          <div style={styles.heroGrid} />
+
+          
+           <div style={styles.topRow}>
+  <button
+    type="button"
+    style={{
+      ...styles.circleButton,
+      ...styles.backCircleButton,
+    }}
+    onClick={() => window.history.back()}
+    aria-label="Go back"
+  >
+    <span style={styles.backArrow}>‹</span>
+  </button>
+
+  <div style={styles.brandPill}>
+    <span>🪨</span>
+    <b>StoneRate</b>
+  </div>
+
+  <button
+    type="button"
+    style={{
+      ...styles.circleButton,
+      ...styles.notificationButton,
+    }}
+    aria-label="Notifications"
+  >
+    <span style={styles.bellIcon}>🔔</span>
+    <span style={styles.notificationDot} />
+  </button>
+</div>
+
+        </header>
+
+        <section style={styles.profileSurface}>
+          <div style={styles.avatarWrap}>
+            <div style={styles.avatarRing}>
+              <div style={styles.avatar}>{initials || "BP"}</div>
+            </div>
+
+            <button type="button" style={styles.cameraButton} aria-label="Change profile picture">
+              ◉
+            </button>
+          </div>
+
+          <div style={styles.identityBlock}>
+            <div style={styles.nameLine}>
+              <h1 style={styles.name}>{shown.name}</h1>
+              <span style={styles.verifiedIcon}>✓</span>
+            </div>
+            <p style={styles.email}>{shown.email}</p>
+            <p style={styles.shop}>{shown.shopName}</p>
+          </div>
+
+          <div style={styles.profileCompletion}>
+          <div style={styles.completionTop}>
+  <span>PROFILE COMPLETION</span>
+  <b>{profileCompletion}%</b>
+</div>
+
+<div style={styles.progressTrack}>
+  <div
+    style={{
+      ...styles.progressFill,
+      width: `${profileCompletion}%`,
+    }}
+  />
+</div>
+          </div>
+
+          <div className="profile-content-scroll" style={styles.contentScroll}>
+            <section style={styles.detailCard}>
+              <ProfileRow
+                styles={styles}
+                icon="👤"
+                label="Full Name"
+                field="name"
+                value={shown.name}
+                editing={editing}
+                focused={focused}
+                setFocused={setFocused}
+                onChange={changeField}
+              />
+
+              <ProfileRow
+                styles={styles}
+                icon="◆"
+                label="Shop Name"
+                field="shopName"
+                value={shown.shopName}
+                editing={editing}
+                focused={focused}
+                setFocused={setFocused}
+                onChange={changeField}
+              />
+
+              <ProfileRow
+                styles={styles}
+                icon="✉"
+                label="Mail ID"
+                field="email"
+                type="email"
+                value={shown.email}
+                editing={editing}
+                focused={focused}
+                setFocused={setFocused}
+                onChange={changeField}
+              />
+            </section>
+
+            <section style={styles.detailCard}>
+            <ProfileRow
+  styles={styles}
+  icon="☎"
+  label="Phone Number"
+  field="phone"
+  value={shown.phone}
+  editing={editing}
+  focused={focused}
+  setFocused={setFocused}
+  onChange={changeField}
+  verified
+  prefix="+91"
+  inputMode="numeric"
+  maxLength={10}
+/>
+
+<ProfileRow
+  styles={styles}
+  icon="☏"
+  label="Alternate Phone (Optional)"
+  field="alternatePhone"
+  value={shown.alternatePhone}
+  editing={editing}
+  focused={focused}
+  setFocused={setFocused}
+  onChange={changeField}
+  prefix="+91"
+  inputMode="numeric"
+  maxLength={10}
+/>
+            </section>
+
+            <section style={styles.addressCard}>
+              <div style={styles.addressHeading}>
+                <div style={styles.addressHeadingIcon}>⌖</div>
+                <div>
+                  <p style={styles.addressKicker}>DELIVERY LOCATION</p>
+                  <h2 style={styles.addressTitle}>Business Address</h2>
+                </div>
+                <span style={styles.defaultPill}>Default</span>
+              </div>
+
+              <ProfileRow
+                styles={styles}
+                icon="⌂"
+                label="Address"
+                field="address"
+                value={shown.address}
+                editing={editing}
+                focused={focused}
+                setFocused={setFocused}
+                onChange={changeField}
+                multiline
+              />
+
+              <div style={styles.twoColumns}>
+              <ProfileRow
+  styles={styles}
+  icon="#"
+  label="Pincode"
+  field="pincode"
+  value={shown.pincode}
+  editing={editing}
+  focused={focused}
+  setFocused={setFocused}
+  onChange={changeField}
+  compact
+  inputMode="numeric"
+  maxLength={6}
+/>
+                <ProfileRow
+                  styles={styles}
+                  icon="⌾"
+                  label="City"
+                  field="city"
+                  value={shown.city}
+                  editing={editing}
+                  focused={focused}
+                  setFocused={setFocused}
+                  onChange={changeField}
+                  compact
+                />
+              </div>
+
+              <ProfileRow
+                styles={styles}
+                icon="◇"
+                label="State"
+                field="state"
+                value={shown.state}
+                editing={editing}
+                focused={focused}
+                setFocused={setFocused}
+                onChange={changeField}
+              />
+            </section>
+
+            <div style={styles.securityNote}>
+              <div style={styles.securityIcon}>🛡</div>
+              <div>
+                <b>Your information is protected</b>
+                <p>Details are used only for rate enquiries and order delivery.</p>
+              </div>
+            </div>
+
+            {!editing ? (
+              <button type="button" style={styles.primaryButton} onClick={beginEdit}>
+                <span>✎</span>
+                Edit Profile
+              </button>
+            ) : (
+              <div style={styles.editButtons}>
+                <button type="button" style={styles.cancelButton} onClick={cancelEdit}>
+                  Cancel
+                </button>
+                <button type="button" style={styles.primaryButton} onClick={saveChanges}>
+                  <span>✓</span>
+                  Save Profile
+                </button>
+              </div>
+            )}
+
+            <div style={styles.bottomSpace} />
+          </div>
+        </section>
+
+        <nav style={styles.bottomNav}>
+          {[
+            { name: "Home", icon: "⌂" },
+            { name: "Orders", icon: "▣" },
+            { name: "Profile", icon: "●" },
+          ].map((item) => {
+            const active = activeNav === item.name;
+
+            return (
+              <button
+                type="button"
+                key={item.name}
+                onClick={() => setActiveNav(item.name)}
+                style={{
+                  ...styles.navButton,
+                  ...(active ? styles.navButtonActive : {}),
+                }}
+              >
+                {active && <span style={styles.activeMarker} />}
+                <span
+                  style={{
+                    ...styles.navIcon,
+                    ...(active ? styles.navIconActive : {}),
+                  }}
+                >
+                  {item.icon}
+                </span>
+                <span
+                  style={{
+                    ...styles.navText,
+                    ...(active ? styles.navTextActive : {}),
+                  }}
+                >
+                  {item.name}
+                </span>
+              </button>
+            );
+          })}
+        </nav>
+
+        {saved && (
+          <div style={styles.toast}>
+            <span>✓</span>
+            Profile updated successfully
+          </div>
+        )}
+        {validationPopup.visible && (
+  <div style={styles.validationOverlay}>
+    <div style={styles.validationPopup}>
+      <div style={styles.validationGlow} />
+
+      <div style={styles.warningCircle}>!</div>
+
+      <p style={styles.validationKicker}>REQUIRED INFORMATION</p>
+
+      <h2 style={styles.validationTitle}>
+        Complete Your Profile
+      </h2>
+
+      <p style={styles.validationMessage}>
+        {validationPopup.message}
+      </p>
+
+      <div style={styles.validationHint}>
+        <span style={styles.validationHintIcon}>✎</span>
+
+        <span>
+          Please enter this information before saving your profile.
+        </span>
+      </div>
+
+      <button
+        type="button"
+        style={styles.validationButton}
+        onClick={closeValidationPopup}
+      >
+        Fill Required Field
+      </button>
+    </div>
+  </div>
+)}
+      </main>
+    </div>
+  );
+}
+
+function ProfileRow({
+  styles,
+  icon,
+  label,
+  field,
+  value,
+  editing,
+  focused,
+  setFocused,
+  onChange,
+  type = "text",
+  multiline = false,
+  compact = false,
+  verified = false,
+  prefix = "",
+  inputMode,
+  maxLength,
+}) {
+  const isFocused = focused === field;
+
+  return (
+    <div
+      style={{
+        ...styles.profileRow,
+        ...(compact ? styles.profileRowCompact : {}),
+        ...(isFocused ? styles.profileRowFocused : {}),
+      }}
+    >
+      <div style={styles.rowIcon}>{icon}</div>
+
+      <div style={styles.rowContent}>
+        <span style={styles.rowLabel}>{label}</span>
+
+        {editing ? (
+          multiline ? (
+            
+<textarea
+  data-profile-field={field}
+  rows={2}
+  value={value}
+  onChange={(event) => onChange(field, event.target.value)}
+  onFocus={() => setFocused(field)}
+  onBlur={() => setFocused(null)}
+  style={styles.rowTextarea}
+/>
+
+          ) : (
+            
+<div style={styles.inputValueWrap}>
+  {prefix && <span style={styles.fixedPrefix}>{prefix}</span>}
+
+  <input
+    data-profile-field={field}
+    type={type}
+    value={value}
+    inputMode={inputMode}
+    maxLength={maxLength}
+    onChange={(event) => onChange(field, event.target.value)}
+    onFocus={() => setFocused(field)}
+    onBlur={() => setFocused(null)}
+    style={styles.rowInput}
+  />
+</div>
+
+          )
+        ) : (
+          <b
+  style={{
+    ...styles.rowValue,
+    ...(compact ? styles.rowValueCompact : {}),
+  }}
+>
+  {prefix ? `${prefix} ${value}` : value}
+</b>
+        )}
+      </div>
+
+      {verified ? (
+        <span style={styles.rowVerified}>✓</span>
+      ) : !editing ? (
+        <span style={styles.rowArrow}>›</span>
+      ) : (
+        <span style={styles.editMark}>✎</span>
+      )}
+    </div>
+  );
+}
+
+function createStyles(viewport) {
+  const vw = viewport.width || 390;
+  const vh = viewport.height || 844;
+  const isDesktop = vw >= 700;
+  const appW = isDesktop ? 390 : vw;
+  const appH = isDesktop ? 844 : vh;
+  const rawScale = Math.min(appW / BASE_W, appH / BASE_H);
+  const scale = Math.max(0.86, Math.min(2.05, rawScale));
+  const ms = (value, factor = 0.55) =>
+    Math.round(value + (value * scale - value) * factor);
+  const tiny = appW <= 230;
+  const navHeight = ms(63);
+  const heroHeight = ms(127);
+
+
+  return {
+    page: {
+      width: "100vw",
+      height: "100dvh",
+      minHeight: "100dvh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: isDesktop ? "center" : "stretch",
+      padding: isDesktop ? 10 : 0,
+      margin: 0,
+      overflow: "hidden",
+      background:
+        "radial-gradient(circle at 50% 0%, rgba(245,158,11,.18), transparent 35%), #17110d",
+      fontFamily: "Arial, sans-serif",
+    },
+    phone: {
+      position: "relative",
+      width: isDesktop ? 390 : "100vw",
+      height: isDesktop ? 844 : "100dvh",
+      overflow: "hidden",
+      background: "#f7f4ef",
+      borderRadius: isDesktop ? 30 : 0,
+      boxShadow: isDesktop ? "0 28px 80px rgba(0,0,0,.34)" : "none",
+    },
+    hero: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: 0,
+      zIndex: 2,
+      height: heroHeight,
+      padding: `${ms(3)}px ${ms(tiny ? 10 : 14)}px`,
+      overflow: "hidden",
+      color: "white",
+    
+      backgroundImage: PROFILE_BG_IMAGE
+        ? `linear-gradient(
+            135deg,
+            rgba(2, 6, 23, 0.25),
+            rgba(28, 25, 23, 0.18) 55%,
+            rgba(146, 64, 14, 0.10)
+          ),
+          url("${PROFILE_BG_IMAGE}")`
+        : `radial-gradient(
+            circle at 86% 8%,
+            rgba(251, 191, 36, 0.34),
+            transparent 30%
+          ),
+          radial-gradient(
+            circle at 8% 95%,
+            rgba(249, 115, 22, 0.18),
+            transparent 34%
+          ),
+          linear-gradient(
+            145deg,
+            #020617 0%,
+            #1c1917 54%,
+            #92400e 100%
+          )`,
+    
+      backgroundSize: "cover",
+      backgroundPosition: "center top",
+      backgroundRepeat: "no-repeat",
+    },
+    validationOverlay: {
+      position: "absolute",
+      inset: 0,
+      zIndex: 200,
+    
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    
+      padding: ms(18),
+    
+      background: "rgba(2, 6, 23, 0.72)",
+      backdropFilter: "blur(9px)",
+    },
+    
+    validationPopup: {
+      position: "relative",
+    
+      width: "100%",
+      maxWidth: ms(280),
+    
+      overflow: "hidden",
+    
+      padding: `${ms(24)}px ${ms(17)}px ${ms(17)}px`,
+    
+      border: "1px solid rgba(245,158,11,.28)",
+      borderRadius: ms(25),
+    
+      background:
+        "linear-gradient(145deg, rgba(255,255,255,.99), rgba(255,251,235,.98))",
+    
+      textAlign: "center",
+    
+      boxShadow:
+        "0 30px 80px rgba(0,0,0,.38), 0 0 45px rgba(245,158,11,.14)",
+    },
+    
+    validationGlow: {
+      position: "absolute",
+    
+      left: "50%",
+      top: ms(-60),
+    
+      width: ms(170),
+      height: ms(125),
+    
+      borderRadius: "50%",
+    
+      background: "rgba(245,158,11,.22)",
+      filter: `blur(${ms(28)}px)`,
+    
+      transform: "translateX(-50%)",
+      pointerEvents: "none",
+    },
+    
+    warningCircle: {
+      position: "relative",
+      zIndex: 2,
+    
+      width: ms(59),
+      height: ms(59),
+    
+      margin: "0 auto",
+    
+      display: "grid",
+      placeItems: "center",
+    
+      border: `${ms(5)}px solid #fef3c7`,
+      borderRadius: "50%",
+    
+      background:
+        "linear-gradient(145deg, #f59e0b, #ea580c)",
+    
+      color: "white",
+    
+      fontSize: ms(27),
+      fontWeight: 950,
+    
+      boxShadow:
+        "0 14px 28px rgba(234,88,12,.27), 0 0 0 7px rgba(245,158,11,.08)",
+    },
+    
+    validationKicker: {
+      position: "relative",
+      zIndex: 2,
+    
+      margin: `${ms(15)}px 0 0`,
+    
+      color: "#b45309",
+    
+      fontSize: ms(6.8),
+      letterSpacing: ms(1.1),
+      fontWeight: 950,
+    },
+    
+    validationTitle: {
+      position: "relative",
+      zIndex: 2,
+    
+      margin: `${ms(5)}px 0 0`,
+    
+      color: "#1c1917",
+    
+      fontSize: ms(18),
+      lineHeight: 1.08,
+      fontWeight: 950,
+      letterSpacing: -0.35,
+    },
+    
+    validationMessage: {
+      position: "relative",
+      zIndex: 2,
+    
+      margin: `${ms(9)}px auto 0`,
+    
+      color: "#92400e",
+    
+      fontSize: ms(9.2),
+      lineHeight: 1.4,
+      fontWeight: 900,
+    },
+    
+    validationHint: {
+      position: "relative",
+      zIndex: 2,
+    
+      display: "flex",
+      alignItems: "center",
+    
+      gap: ms(7),
+    
+      marginTop: ms(13),
+      padding: ms(9),
+    
+      border: "1px solid #fde68a",
+      borderRadius: ms(14),
+    
+      background: "#fffbeb",
+    
+      color: "#78716c",
+    
+      textAlign: "left",
+    
+      fontSize: ms(7.6),
+      lineHeight: 1.35,
+      fontWeight: 750,
+    },
+    
+    validationHintIcon: {
+      width: ms(27),
+      height: ms(27),
+    
+      display: "grid",
+      placeItems: "center",
+    
+      flexShrink: 0,
+    
+      borderRadius: ms(10),
+    
+      background: "#1c1917",
+      color: "#fbbf24",
+    
+      fontSize: ms(12),
+      fontWeight: 950,
+    },
+    
+    validationButton: {
+      position: "relative",
+      zIndex: 2,
+    
+      width: "100%",
+      minHeight: ms(45),
+    
+      marginTop: ms(15),
+    
+      border: 0,
+      borderRadius: ms(17),
+    
+      background:
+        "linear-gradient(135deg, #020617, #92400e)",
+    
+      color: "white",
+    
+      fontSize: ms(9.7),
+      fontWeight: 950,
+    
+      boxShadow:
+        "0 13px 27px rgba(146,64,14,.25)",
+    
+      cursor: "pointer",
+    },
+
+    heroGlow: {
+      position: "absolute",
+      right: ms(-45),
+      top: ms(-65),
+      width: ms(170),
+      height: ms(170),
+      borderRadius: "50%",
+      background: "rgba(245,158,11,.20)",
+      filter: `blur(${ms(30)}px)`,
+    },
+    heroGrid: {
+      position: "absolute",
+      inset: 0,
+      opacity: .25,
+      backgroundImage:
+        "linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px)",
+      backgroundSize: `${ms(30)}px ${ms(30)}px`,
+      pointerEvents: "none",
+    },
+    topRow: {
+      position: "relative",
+      zIndex: 5,
+    
+      display: "grid",
+      gridTemplateColumns: "1fr auto 1fr",
+      alignItems: "center",
+    
+      width: `calc(100% + ${ms(10)}px)`,
+      marginLeft: ms(-5),
+    
+      transform: `translateY(${ms(-3)}px)`,
+    },
+    circleButton: {
+      position: "relative",
+    
+      width: ms(34),
+      height: ms(34),
+    
+      display: "grid",
+      placeItems: "center",
+    
+      padding: 0,
+    
+      border: "1px solid rgba(255,255,255,.22)",
+      borderRadius: ms(12),
+    
+      background: "rgba(28,25,23,.52)",
+      color: "white",
+      
+      boxShadow:
+        "0 8px 18px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.15)",
+    
+      backdropFilter: "blur(12px)",
+      cursor: "pointer",
+    },
+    backCircleButton: {
+      justifySelf: "start",
+      transform: `translateX(${ms(-6)}px)`,
+    },
+    
+    notificationButton: {
+      justifySelf: "end",
+      transform: `translateX(${ms(5)}px)`,
+    },
+    notificationDot: {
+      position: "absolute",
+      right: ms(7),
+      top: ms(7),
+      width: ms(6),
+      height: ms(6),
+      border: "1px solid #1c1917",
+      borderRadius: "50%",
+      background: "#f59e0b",
+    },
+    brandPill: {
+      position: "relative",
+      zIndex: 5,
+    
+      display: "flex",
+      alignItems: "center",
+      gap: ms(5),
+    
+      padding: `${ms(6)}px ${ms(11)}px`,
+    
+      border: "1px solid rgba(251,191,36,.55)",
+      borderRadius: 999,
+    
+      background:
+        "linear-gradient(145deg, rgba(2,6,23,.92), rgba(28,25,23,.88))",
+    
+      color: "#fde68a",
+    
+      fontSize: ms(7.8),
+      fontWeight: 950,
+    
+      boxShadow:
+        "0 8px 20px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.12)",
+    
+      backdropFilter: "blur(12px)",
+    
+      transform: `translateY(${ms(-4)}px)`,
+    },
+    profileSurface: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: ms(70),
+      bottom: navHeight,
+      zIndex: 5,
+      borderRadius: `${ms(34)}px ${ms(34)}px 0 0`,
+      background:
+        "radial-gradient(circle at 90% 2%, rgba(245,158,11,.08), transparent 24%), linear-gradient(180deg, #fff 0%, #f8f5f0 55%, #efeae3 100%)",
+      boxShadow: "0 -12px 35px rgba(0,0,0,.18)",
+    },
+    avatarWrap: {
+      position: "absolute",
+      left: "50%",
+      top: ms(-42),
+      width: ms(88),
+      height: ms(88),
+      transform: "translateX(-50%)",
+    },
+    avatarRing: {
+      width: "100%",
+      height: "100%",
+      padding: ms(4),
+      borderRadius: "50%",
+    
+      background:
+        "linear-gradient(145deg, #fde68a, #f59e0b 45%, #ea580c 75%, #92400e)",
+    
+      boxShadow:
+        "0 14px 30px rgba(28,25,23,.24), " +
+        "0 0 0 3px rgba(255,255,255,.85), " +
+        "0 0 14px rgba(245,158,11,.80), " +
+        "0 0 28px rgba(234,88,12,.52), " +
+        "0 0 48px rgba(146,64,14,.28)",
+    
+      animation: "profileGlow 2.4s ease-in-out infinite",
+    },
+    avatar: {
+      width: "100%",
+      height: "100%",
+      display: "grid",
+      placeItems: "center",
+      borderRadius: "50%",
+      background:
+        "radial-gradient(circle at 35% 25%, rgba(255,255,255,.27), transparent 25%), linear-gradient(145deg, #f59e0b, #92400e)",
+      color: "white",
+      fontSize: ms(24),
+      fontWeight: 950,
+      letterSpacing: ms(1),
+    },
+    cameraButton: {
+      position: "absolute",
+      right: ms(-2),
+      bottom: ms(4),
+      width: ms(29),
+      height: ms(29),
+      display: "grid",
+      placeItems: "center",
+      padding: 0,
+      border: `${ms(3)}px solid white`,
+      borderRadius: "50%",
+      background: "linear-gradient(145deg, #1c1917, #44403c)",
+      color: "#fbbf24",
+      fontSize: ms(13),
+      boxShadow: "0 7px 15px rgba(0,0,0,.20)",
+      cursor: "pointer",
+    },
+    identityBlock: {
+      padding: `${ms(52)}px ${ms(14)}px 0`,
+      textAlign: "center",
+    },
+    nameLine: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(5),
+    },
+    name: {
+      maxWidth: "78%",
+      margin: 0,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      color: "#1c1917",
+      fontSize: ms(tiny ? 17 : 20),
+      fontWeight: 950,
+      letterSpacing: -.35,
+    },
+    verifiedIcon: {
+      width: ms(18),
+      height: ms(18),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: "50%",
+      background: "#f59e0b",
+      color: "white",
+      fontSize: ms(8),
+      fontWeight: 950,
+      boxShadow: "0 5px 12px rgba(245,158,11,.25)",
+    },
+    email: {
+      margin: `${ms(4)}px 0 0`,
+      color: "#8a817b",
+      fontSize: ms(7.7),
+      fontWeight: 750,
+    },
+    shop: {
+      maxWidth: "85%",
+      margin: `${ms(4)}px auto 0`,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      color: "#92400e",
+      fontSize: ms(7.4),
+      fontWeight: 900,
+    },
+    profileCompletion: {
+      width: `calc(100% - ${ms(26)}px)`,
+      margin: `${ms(10)}px auto 0`,
+      padding: ms(9),
+      border: "1px solid rgba(245,158,11,.16)",
+      borderRadius: ms(15),
+      background: "linear-gradient(145deg, #fffdf8, #fff7e7)",
+      boxShadow: "0 8px 20px rgba(146,64,14,.06)",
+    },
+    completionTop: {
+      display: "flex",
+      justifyContent: "space-between",
+      color: "#92400e",
+      fontSize: ms(6.3),
+      letterSpacing: ms(.7),
+      fontWeight: 950,
+    },
+    progressTrack: {
+      height: ms(5),
+      marginTop: ms(6),
+      overflow: "hidden",
+      borderRadius: 999,
+      background: "#fde7bd",
+    },
+    progressFill: {
+      height: "100%",
+      minWidth: 0,
+      borderRadius: 999,
+      background: "linear-gradient(90deg, #f59e0b, #ea580c)",
+      boxShadow: "0 0 12px rgba(245,158,11,.32)",
+      transition: "width 320ms ease",
+    },
+    contentScroll: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: ms(142),
+      bottom: 0,
+      overflowY: "auto",
+      overflowX: "hidden",
+      padding: `${ms(9)}px ${ms(tiny ? 9 : 13)}px ${ms(16)}px`,
+      scrollbarWidth: "none",
+      WebkitOverflowScrolling: "touch",
+    },
+    detailCard: {
+      overflow: "hidden",
+      marginTop: ms(10),
+      border: "1px solid #eeeae4",
+      borderRadius: ms(20),
+      background: "rgba(255,255,255,.96)",
+      boxShadow: "0 13px 28px rgba(28,25,23,.07)",
+    },
+    addressCard: {
+      marginTop: ms(10),
+      padding: ms(10),
+      border: "1px solid rgba(245,158,11,.16)",
+      borderRadius: ms(20),
+      background:
+        "radial-gradient(circle at 100% 0%, rgba(245,158,11,.08), transparent 30%), rgba(255,255,255,.97)",
+      boxShadow: "0 13px 28px rgba(28,25,23,.07)",
+    },
+    addressHeading: {
+      display: "flex",
+      alignItems: "center",
+      gap: ms(8),
+      marginBottom: ms(7),
+    },
+    addressHeadingIcon: {
+      width: ms(33),
+      height: ms(33),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: ms(12),
+      background: "linear-gradient(145deg, #fef3c7, #fde68a)",
+      color: "#92400e",
+      fontSize: ms(16),
+      fontWeight: 950,
+    },
+    addressKicker: {
+      margin: 0,
+      color: "#b45309",
+      fontSize: ms(5.8),
+      letterSpacing: ms(.8),
+      fontWeight: 950,
+    },
+    addressTitle: {
+      margin: `${ms(2)}px 0 0`,
+      color: "#1c1917",
+      fontSize: ms(10),
+      fontWeight: 950,
+    },
+    defaultPill: {
+      marginLeft: "auto",
+      padding: `${ms(4)}px ${ms(7)}px`,
+      borderRadius: 999,
+      background: "#fffbeb",
+      color: "#92400e",
+      fontSize: ms(6.4),
+      fontWeight: 950,
+    },
+    profileRow: {
+      minWidth: 0,
+      minHeight: ms(50),
+      display: "flex",
+      alignItems: "center",
+      gap: ms(8),
+      padding: `${ms(8)}px ${ms(9)}px`,
+      borderBottom: "1px solid #eeeae4",
+      background: "transparent",
+      transition: "all 180ms ease",
+    },
+    profileRowCompact: {
+      minWidth: 0,
+      minHeight: ms(55),
+      padding: `${ms(7)}px ${ms(6)}px`,
+      gap: ms(5),
+      border: "1px solid #eeeae4",
+      borderRadius: ms(14),
+      background: "#fffdf9",
+    },
+    
+    profileRowFocused: {
+      borderColor: "rgba(245,158,11,.55)",
+      background: "#fffbeb",
+      boxShadow: "inset 0 0 0 2px rgba(245,158,11,.08)",
+    },
+    rowIcon: {
+      width: ms(32),
+      height: ms(32),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: ms(11),
+      background: "linear-gradient(145deg, #fff7df, #fef3c7)",
+      color: "#b45309",
+      fontSize: ms(14),
+      fontWeight: 950,
+    },
+    rowContent: {
+      minWidth: 0,
+      flex: 1,
+    },
+    rowLabel: {
+      display: "block",
+      color: "#8a817b",
+      fontSize: ms(6.6),
+      fontWeight: 800,
+    },
+    rowValue: {
+      display: "block",
+      marginTop: ms(3),
+      overflowWrap: "anywhere",
+      color: "#292524",
+      fontSize: ms(8.4),
+      lineHeight: 1.22,
+      fontWeight: 900,
+    },
+    rowInput: {
+      width: "100%",
+      minWidth: 0,
+      marginTop: ms(3),
+      padding: 0,
+      border: 0,
+      outline: 0,
+      background: "transparent",
+      color: "#292524",
+      fontSize: ms(8.4),
+      fontWeight: 900,
+    },
+    rowTextarea: {
+      width: "100%",
+      minWidth: 0,
+      marginTop: ms(3),
+      padding: 0,
+      resize: "none",
+      border: 0,
+      outline: 0,
+      background: "transparent",
+      color: "#292524",
+      fontSize: ms(8.2),
+      lineHeight: 1.3,
+      fontWeight: 850,
+    },
+    rowArrow: {
+      color: "#b8afa7",
+      fontSize: ms(20),
+      lineHeight: 1,
+    },
+    rowVerified: {
+      width: ms(22),
+      height: ms(22),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: "50%",
+      background: "#22c55e",
+      color: "white",
+      fontSize: ms(9),
+      fontWeight: 950,
+    },
+    editMark: {
+      color: "#f59e0b",
+      fontSize: ms(12),
+      fontWeight: 950,
+    },
+    twoColumns: {
+      display: "grid",
+      gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)",
+      alignItems: "stretch",
+      gap: ms(7),
+      margin: `${ms(6)}px 0`,
+    },
+    
+    securityNote: {
+      display: "flex",
+      alignItems: "center",
+      gap: ms(9),
+      marginTop: ms(10),
+      padding: ms(10),
+      border: "1px solid #fde68a",
+      borderRadius: ms(18),
+      background: "#fffbeb",
+      color: "#78350f",
+      fontSize: ms(7.2),
+    },
+    securityIcon: {
+      width: ms(34),
+      height: ms(34),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: ms(13),
+      background: "linear-gradient(145deg, #1c1917, #44403c)",
+      color: "#fbbf24",
+      fontSize: ms(16),
+    },
+    primaryButton: {
+      width: "100%",
+      minHeight: ms(49),
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(6),
+      marginTop: ms(12),
+      border: 0,
+      borderRadius: ms(22),
+      background: "linear-gradient(135deg, #020617, #92400e)",
+      color: "white",
+      fontSize: ms(10),
+      fontWeight: 950,
+      boxShadow: "0 15px 31px rgba(146,64,14,.25)",
+      cursor: "pointer",
+    },
+    editButtons: {
+      display: "grid",
+      gridTemplateColumns: ".8fr 1.45fr",
+      gap: ms(8),
+    },
+    cancelButton: {
+      minHeight: ms(49),
+      marginTop: ms(12),
+      border: "1px solid #e7e5e4",
+      borderRadius: ms(22),
+      background: "white",
+      color: "#57534e",
+      fontSize: ms(9),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+    bottomSpace: {
+      height: ms(10),
+    },
+    bottomNav: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 30,
+      height: navHeight,
+      display: "grid",
+      gridTemplateColumns: "repeat(3,1fr)",
+      padding: `${ms(5)}px ${ms(8)}px calc(env(safe-area-inset-bottom, 0px) + ${ms(5)}px)`,
+      borderTop: "1px solid rgba(251,191,36,.20)",
+      background:
+        "radial-gradient(circle at 50% 0%, rgba(245,158,11,.16), transparent 46%), linear-gradient(135deg, #21140d 0%, #352013 52%, #4b250d 100%)",
+      boxShadow: "0 -14px 34px rgba(28,15,7,.30)",
+    },
+    navButton: {
+      position: "relative",
+      minWidth: 0,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(3),
+      padding: ms(3),
+      border: 0,
+      borderRadius: ms(15),
+      background: "transparent",
+      cursor: "pointer",
+    },
+    navButtonActive: {
+      background:
+        "linear-gradient(145deg, rgba(245,158,11,.22), rgba(234,88,12,.10))",
+      boxShadow: "inset 0 0 0 1px rgba(251,191,36,.24)",
+    },
+    activeMarker: {
+      position: "absolute",
+      top: ms(-5),
+      left: "50%",
+      width: ms(25),
+      height: ms(3),
+      borderRadius: 999,
+      background: "linear-gradient(90deg,#fbbf24,#f97316)",
+      boxShadow: "0 0 12px rgba(245,158,11,.70)",
+      transform: "translateX(-50%)",
+    },
+    navIcon: {
+      width: ms(28),
+      height: ms(26),
+      display: "grid",
+      placeItems: "center",
+      border: "1px solid rgba(255,255,255,.07)",
+      borderRadius: ms(9),
+      background: "rgba(255,255,255,.06)",
+      color: "#d6c3b5",
+      fontSize: ms(15),
+      fontWeight: 900,
+    },
+    navIconActive: {
+      borderColor: "rgba(251,191,36,.35)",
+      background: "linear-gradient(145deg,#f59e0b,#ea580c)",
+      color: "white",
+      boxShadow: "0 8px 17px rgba(234,88,12,.30)",
+    },
+    navText: {
+      color: "#c4afa0",
+      fontSize: ms(7.1),
+      fontWeight: 800,
+    },
+    navTextActive: {
+      color: "#fbbf24",
+      fontWeight: 950,
+    },
+    toast: {
+      position: "absolute",
+      left: "50%",
+      bottom: navHeight + ms(12),
+      zIndex: 80,
+      display: "flex",
+      alignItems: "center",
+      gap: ms(7),
+      padding: `${ms(9)}px ${ms(13)}px`,
+      border: "1px solid #bbf7d0",
+      borderRadius: 999,
+      background: "rgba(240,253,244,.98)",
+      color: "#166534",
+      fontSize: ms(8),
+      fontWeight: 950,
+      boxShadow: "0 14px 30px rgba(0,0,0,.18)",
+      transform: "translateX(-50%)",
+      whiteSpace: "nowrap",
+    },
+  };
+}
+
+const globalCss = `
+* { box-sizing: border-box; }
+html, body, #root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  background: #17110d;
+}
+@keyframes profileGlow {
+  0%,
+  100% {
+    box-shadow:
+      0 14px 30px rgba(28,25,23,.24),
+      0 0 0 3px rgba(255,255,255,.85),
+      0 0 14px rgba(245,158,11,.65),
+      0 0 27px rgba(234,88,12,.42),
+      0 0 42px rgba(146,64,14,.22);
+  }
+
+  50% {
+    box-shadow:
+      0 17px 34px rgba(28,25,23,.28),
+      0 0 0 3px rgba(255,255,255,.95),
+      0 0 19px rgba(251,191,36,.92),
+      0 0 36px rgba(234,88,12,.64),
+      0 0 57px rgba(146,64,14,.34);
+  }
+}
+button, input, textarea { font: inherit; }
+.profile-content-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.profile-content-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+body { -webkit-text-size-adjust: 100%; }
+`;
+
+
+
+
+
+
+
+
+
+
