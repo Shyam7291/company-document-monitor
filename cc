@@ -6466,3 +6466,1406 @@ body { -webkit-text-size-adjust: 100%; }
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+signup
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
+const StylesContext = createContext(null);
+
+function useAppStyles() {
+  return useContext(StylesContext);
+}
+
+export default function SignupRoleCardsSlideFormPageWithValidation() {
+  const [selectedRole, setSelectedRole] = useState(null);
+
+  const viewport = useViewport();
+  const styles = useMemo(
+    () => createStyles(viewport, selectedRole),
+    [viewport.width, viewport.height, selectedRole]
+  );
+
+  const productCategories = [
+    "20mm Crushed Stone",
+    "40mm Crushed Stone",
+    "GSB",
+    "M-Sand",
+    "Stone Dust",
+  ];
+
+  const truckFrequencyOptions = ["1-5", "5-10", "10-20", "More than 20"];
+  const productionOptions = [
+    "10-20 ton",
+    "20-40 ton",
+    "40-60 ton",
+    "More than 60 ton",
+  ];
+
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedFrequency, setSelectedFrequency] = useState("");
+  const [selectedProduction, setSelectedProduction] = useState("");
+  const [hoveredRole, setHoveredRole] = useState(null);
+  const [hoveredCategory, setHoveredCategory] = useState(null);
+  const [hoveredFrequency, setHoveredFrequency] = useState(null);
+  const [hoveredProduction, setHoveredProduction] = useState(null);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    shopName: "",
+    contactNumber: "",
+    alternateContactNumber: "",
+    aadhaarNumber: "",
+    address: "",
+    transporterAgencyName: "",
+    plantName: "",
+    plantAddress: "",
+  });
+
+  const updateField = (field, value) => {
+    setFormData((previous) => ({ ...previous, value }));
+  };
+
+  const resetFormByRole = (role) => {
+    setSelectedRole(role);
+    setSelectedCategories([]);
+    setSelectedFrequency("");
+    setSelectedProduction("");
+    setFormData({
+      name: "",
+      shopName: "",
+      contactNumber: "",
+      alternateContactNumber: "",
+      aadhaarNumber: "",
+      address: "",
+      transporterAgencyName: "",
+      plantName: "",
+      plantAddress: "",
+    });
+  };
+
+  const toggleCategory = (category) => {
+    setSelectedCategories((previous) =>
+      previous.includes(category)
+        ? previous.filter((item) => item !== category)
+        : [...previous, category]
+    );
+  };
+
+  const roleConfig = {
+    buyer: {
+      title: "Buyer Registration",
+      kicker: "BUYER DETAILS",
+      icon: "🛒",
+      color: "#f59e0b",
+      label: "Buyer",
+      description: "I want to order crushed stone",
+    },
+    transporter: {
+      title: "Transporter Registration",
+      kicker: "TRANSPORTER DETAILS",
+      icon: "🚚",
+      color: "#38bdf8",
+      label: "Transporter",
+      description: "I manage trucks and transport",
+    },
+    seller: {
+      title: "Seller Registration",
+      kicker: "SELLER DETAILS",
+      icon: "🏭",
+      color: "#22c55e",
+      label: "Seller",
+      description: "I produce and sell materials",
+    },
+  };
+
+  const activeRole = selectedRole ? roleConfig[selectedRole] : null;
+
+  const isFormComplete = useMemo(() => {
+    if (!selectedRole) return false;
+    if (selectedCategories.length === 0) return false;
+
+    const aadhaarValid = formData.aadhaarNumber.trim().length === 12;
+
+    if (selectedRole === "buyer") {
+      return Boolean(
+        formData.name.trim() &&
+          formData.shopName.trim() &&
+          formData.contactNumber.trim() &&
+          formData.alternateContactNumber.trim() &&
+          aadhaarValid &&
+          formData.address.trim()
+      );
+    }
+
+    if (selectedRole === "transporter") {
+      return Boolean(
+        formData.name.trim() &&
+          formData.transporterAgencyName.trim() &&
+          aadhaarValid &&
+          selectedFrequency &&
+          formData.address.trim()
+      );
+    }
+
+    if (selectedRole === "seller") {
+      return Boolean(
+        formData.name.trim() &&
+          formData.plantName.trim() &&
+          aadhaarValid &&
+          selectedProduction &&
+          formData.plantAddress.trim()
+      );
+    }
+
+    return false;
+  }, [
+    selectedRole,
+    selectedCategories,
+    selectedFrequency,
+    selectedProduction,
+    formData,
+  ]);
+
+  return (
+    <StylesContext.Provider value={styles}>
+      <div style={styles.page}>
+        <div style={styles.phone}>
+          <section style={styles.hero}>
+            <div style={styles.bgOrbOne} />
+            <div style={styles.bgOrbTwo} />
+            <div style={styles.bgOrbThree} />
+            <div style={styles.gridOverlay} />
+
+            <nav style={styles.nav}>
+              <div style={styles.brandWrap}>
+                <div style={styles.logo3d}>🪨</div>
+                <div style={{ minWidth: 0 }}>
+                  <p style={styles.brandName}>StoneRate</p>
+                  <p style={styles.brandSub}>Create your account</p>
+                </div>
+              </div>
+
+              <button type="button" style={styles.backBtn}>
+                Back
+              </button>
+            </nav>
+
+            <div style={styles.headerText}>
+              <div style={styles.heroBadge}>SIGN UP</div>
+              <h1 style={styles.title}>Who are you?</h1>
+              <p style={styles.subtitle}>
+                Choose your account type. The form will change based on your role.
+              </p>
+            </div>
+
+            <div
+              style={
+                selectedRole ? styles.roleCardsRow : styles.roleCardsStack
+              }
+            >
+              {Object.entries(roleConfig).map(([role, config]) => (
+                <RoleCard
+                  key={role}
+                  compact={!!selectedRole}
+                  label={config.label}
+                  description={config.description}
+                  icon={config.icon}
+                  active={selectedRole === role}
+                  hovered={hoveredRole === role}
+                  color={config.color}
+                  onClick={() => resetFormByRole(role)}
+                  onMouseEnter={() => setHoveredRole(role)}
+                  onMouseLeave={() => setHoveredRole(null)}
+                />
+              ))}
+            </div>
+          </section>
+
+          <section style={styles.formSection}>
+            {selectedRole && (
+              <div style={styles.formCard}>
+                <div style={styles.formHeader}>
+                  <div style={{ minWidth: 0 }}>
+                    <p
+                      style={{
+                        ...styles.formKicker,
+                        color: activeRole.color,
+                      }}
+                    >
+                      {activeRole.kicker}
+                    </p>
+
+                    <h2 style={styles.formTitle}>{activeRole.title}</h2>
+                  </div>
+
+                  <div
+                    style={{
+                      ...styles.roleIconBadge,
+                      background: activeRole.color,
+                    }}
+                  >
+                    {activeRole.icon}
+                  </div>
+                </div>
+
+                {selectedRole === "buyer" && (
+                  <BuyerForm
+                    formData={formData}
+                    updateField={updateField}
+                    productCategories={productCategories}
+                    selectedCategories={selectedCategories}
+                    toggleCategory={toggleCategory}
+                    hoveredCategory={hoveredCategory}
+                    setHoveredCategory={setHoveredCategory}
+                  />
+                )}
+
+                {selectedRole === "transporter" && (
+                  <TransporterForm
+                    formData={formData}
+                    updateField={updateField}
+                    productCategories={productCategories}
+                    selectedCategories={selectedCategories}
+                    toggleCategory={toggleCategory}
+                    truckFrequencyOptions={truckFrequencyOptions}
+                    selectedFrequency={selectedFrequency}
+                    setSelectedFrequency={setSelectedFrequency}
+                    hoveredCategory={hoveredCategory}
+                    setHoveredCategory={setHoveredCategory}
+                    hoveredFrequency={hoveredFrequency}
+                    setHoveredFrequency={setHoveredFrequency}
+                  />
+                )}
+
+                {selectedRole === "seller" && (
+                  <SellerForm
+                    formData={formData}
+                    updateField={updateField}
+                    productCategories={productCategories}
+                    selectedCategories={selectedCategories}
+                    toggleCategory={toggleCategory}
+                    productionOptions={productionOptions}
+                    selectedProduction={selectedProduction}
+                    setSelectedProduction={setSelectedProduction}
+                    hoveredCategory={hoveredCategory}
+                    setHoveredCategory={setHoveredCategory}
+                    hoveredProduction={hoveredProduction}
+                    setHoveredProduction={setHoveredProduction}
+                  />
+                )}
+              </div>
+            )}
+
+            <div style={styles.bottomPanel}>
+              <div style={styles.privacyNote}>
+                <span style={styles.lockIcon}>🔒</span>
+                <p style={styles.privacyText}>
+                  Sensitive details should be verified and stored securely.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                disabled={!isFormComplete}
+                style={{
+                  ...styles.submitBtn,
+                  ...(isFormComplete
+                    ? styles.submitBtnBright
+                    : styles.submitBtnDisabled),
+                }}
+              >
+                Create Account
+              </button>
+
+              <p style={styles.signInText}>
+                Already have an account? <b>Sign In</b>
+              </p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </StylesContext.Provider>
+  );
+}
+
+function RoleCard({
+  label,
+  description,
+  icon,
+  active,
+  hovered,
+  color,
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
+  compact,
+}) {
+  const styles = useAppStyles();
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      style={{
+        ...(compact ? styles.roleCardCompact : styles.roleCard),
+        ...(active ? styles.roleCardActive : {}),
+        borderColor: active ? color : "rgba(255,255,255,0.18)",
+        transform: hovered
+          ? compact
+            ? "translateY(-4px) scale(1.04)"
+            : "translateY(-7px) scale(1.025)"
+          : active
+          ? compact
+            ? "translateY(-2px) scale(1.02)"
+            : "translateY(-2px) scale(1.01)"
+          : "translateY(0) scale(1)",
+        boxShadow: hovered
+          ? `0 20px 42px ${color}44`
+          : active
+          ? `0 16px 34px ${color}33`
+          : "0 12px 28px rgba(0,0,0,0.18)",
+      }}
+    >
+      <div
+        style={{
+          ...(compact ? styles.roleIconCompact : styles.roleIcon),
+          background: active ? color : "rgba(255,255,255,0.16)",
+        }}
+      >
+        {icon}
+      </div>
+
+      {compact ? (
+        <span style={styles.roleLabelCompact}>{label}</span>
+      ) : (
+        <>
+          <div style={styles.roleTextBlock}>
+            <span style={styles.roleLabel}>{label}</span>
+            <span style={styles.roleDescription}>{description}</span>
+          </div>
+
+          <div
+            style={{
+              ...styles.roleStatus,
+              background: active ? color : "rgba(255,255,255,0.14)",
+            }}
+          >
+            {active ? "✓" : "+"}
+          </div>
+        </>
+      )}
+    </button>
+  );
+}
+
+function BuyerForm({
+  formData,
+  updateField,
+  productCategories,
+  selectedCategories,
+  toggleCategory,
+  hoveredCategory,
+  setHoveredCategory,
+}) {
+  const styles = useAppStyles();
+
+  return (
+    <div style={styles.formFields}>
+      <Input
+        label="Name"
+        value={formData.name}
+        onChange={(value) => updateField("name", value)}
+        placeholder="Enter full name"
+      />
+
+      <Input
+        label="Shop Name"
+        value={formData.shopName}
+        onChange={(value) => updateField("shopName", value)}
+        placeholder="Enter shop/company name"
+      />
+
+      <Input
+        label="Contact Number"
+        value={formData.contactNumber}
+        onChange={(value) => updateField("contactNumber", value)}
+        placeholder="Enter mobile number"
+        inputMode="numeric"
+      />
+
+      <Input
+        label="Alternate Contact Number"
+        value={formData.alternateContactNumber}
+        onChange={(value) => updateField("alternateContactNumber", value)}
+        placeholder="Enter alternate mobile number"
+        inputMode="numeric"
+      />
+
+      <Input
+        label="Aadhaar Number"
+        value={formData.aadhaarNumber}
+        onChange={(value) =>
+          updateField("aadhaarNumber", value.replace(/\D/g, ""))
+        }
+        placeholder="Enter 12 digit Aadhaar number"
+        inputMode="numeric"
+        maxLength={12}
+      />
+
+      <CategorySelect
+        title="Which category are you looking for?"
+        productCategories={productCategories}
+        selectedCategories={selectedCategories}
+        toggleCategory={toggleCategory}
+        hoveredCategory={hoveredCategory}
+        setHoveredCategory={setHoveredCategory}
+      />
+
+      <TextArea
+        label="Address"
+        value={formData.address}
+        onChange={(value) => updateField("address", value)}
+        placeholder="Enter complete address"
+      />
+    </div>
+  );
+}
+
+function TransporterForm({
+  formData,
+  updateField,
+  productCategories,
+  selectedCategories,
+  toggleCategory,
+  truckFrequencyOptions,
+  selectedFrequency,
+  setSelectedFrequency,
+  hoveredCategory,
+  setHoveredCategory,
+  hoveredFrequency,
+  setHoveredFrequency,
+}) {
+  const styles = useAppStyles();
+
+  return (
+    <div style={styles.formFields}>
+      <Input
+        label="Name"
+        value={formData.name}
+        onChange={(value) => updateField("name", value)}
+        placeholder="Enter full name"
+      />
+
+      <Input
+        label="Transporter Agency Name"
+        value={formData.transporterAgencyName}
+        onChange={(value) => updateField("transporterAgencyName", value)}
+        placeholder="Enter agency name"
+      />
+
+      <Input
+        label="Aadhaar Number"
+        value={formData.aadhaarNumber}
+        onChange={(value) =>
+          updateField("aadhaarNumber", value.replace(/\D/g, ""))
+        }
+        placeholder="Enter 12 digit Aadhaar number"
+        inputMode="numeric"
+        maxLength={12}
+      />
+
+      <CategorySelect
+        title="Which category do you deal with?"
+        productCategories={productCategories}
+        selectedCategories={selectedCategories}
+        toggleCategory={toggleCategory}
+        hoveredCategory={hoveredCategory}
+        setHoveredCategory={setHoveredCategory}
+      />
+
+      <OptionSelect
+        title="How many trucks do you frequently need in a week?"
+        options={truckFrequencyOptions}
+        selectedOption={selectedFrequency}
+        setSelectedOption={setSelectedFrequency}
+        hoveredOption={hoveredFrequency}
+        setHoveredOption={setHoveredFrequency}
+        activeColor="#38bdf8"
+      />
+
+      <TextArea
+        label="Address"
+        value={formData.address}
+        onChange={(value) => updateField("address", value)}
+        placeholder="Enter complete address"
+      />
+    </div>
+  );
+}
+
+function SellerForm({
+  formData,
+  updateField,
+  productCategories,
+  selectedCategories,
+  toggleCategory,
+  productionOptions,
+  selectedProduction,
+  setSelectedProduction,
+  hoveredCategory,
+  setHoveredCategory,
+  hoveredProduction,
+  setHoveredProduction,
+}) {
+  const styles = useAppStyles();
+
+  return (
+    <div style={styles.formFields}>
+      <Input
+        label="Name"
+        value={formData.name}
+        onChange={(value) => updateField("name", value)}
+        placeholder="Enter full name"
+      />
+
+      <Input
+        label="Plant Name"
+        value={formData.plantName}
+        onChange={(value) => updateField("plantName", value)}
+        placeholder="Enter plant name"
+      />
+
+      <Input
+        label="Aadhaar Number"
+        value={formData.aadhaarNumber}
+        onChange={(value) =>
+          updateField("aadhaarNumber", value.replace(/\D/g, ""))
+        }
+        placeholder="Enter 12 digit Aadhaar number"
+        inputMode="numeric"
+        maxLength={12}
+      />
+
+      <CategorySelect
+        title="Which material do you produce?"
+        productCategories={productCategories}
+        selectedCategories={selectedCategories}
+        toggleCategory={toggleCategory}
+        hoveredCategory={hoveredCategory}
+        setHoveredCategory={setHoveredCategory}
+      />
+
+      <OptionSelect
+        title="How much tons do you produce daily?"
+        options={productionOptions}
+        selectedOption={selectedProduction}
+        setSelectedOption={setSelectedProduction}
+        hoveredOption={hoveredProduction}
+        setHoveredOption={setHoveredProduction}
+        activeColor="#22c55e"
+      />
+
+      <TextArea
+        label="Plant Address"
+        value={formData.plantAddress}
+        onChange={(value) => updateField("plantAddress", value)}
+        placeholder="Enter complete plant address"
+      />
+    </div>
+  );
+}
+
+function CategorySelect({
+  title,
+  productCategories,
+  selectedCategories,
+  toggleCategory,
+  hoveredCategory,
+  setHoveredCategory,
+}) {
+  const styles = useAppStyles();
+
+  return (
+    <div>
+      <label style={styles.label}>{title}</label>
+
+      <div style={styles.categoryGrid}>
+        {productCategories.map((category) => {
+          const active = selectedCategories.includes(category);
+          const hovered = hoveredCategory === category;
+
+          return (
+            <button
+              type="button"
+              key={category}
+              onClick={() => toggleCategory(category)}
+              onMouseEnter={() => setHoveredCategory(category)}
+              onMouseLeave={() => setHoveredCategory(null)}
+              style={{
+                ...styles.categoryChip,
+                ...(active ? styles.categoryChipActive : {}),
+                transform: hovered
+                  ? "scale(1.03) translateY(-2px)"
+                  : active
+                  ? "scale(1.01)"
+                  : "scale(1)",
+              }}
+            >
+              <span>{active ? "✓" : "+"}</span>{" "}
+              {category.replace(" Crushed Stone", "")}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function OptionSelect({
+  title,
+  options,
+  selectedOption,
+  setSelectedOption,
+  hoveredOption,
+  setHoveredOption,
+  activeColor,
+}) {
+  const styles = useAppStyles();
+
+  return (
+    <div>
+      <label style={styles.label}>{title}</label>
+
+      <div style={styles.frequencyGrid}>
+        {options.map((option) => {
+          const active = selectedOption === option;
+          const hovered = hoveredOption === option;
+
+          return (
+            <button
+              type="button"
+              key={option}
+              onClick={() => setSelectedOption(option)}
+              onMouseEnter={() => setHoveredOption(option)}
+              onMouseLeave={() => setHoveredOption(null)}
+              style={{
+                ...styles.frequencyChip,
+                ...(active
+                  ? {
+                      ...styles.frequencyChipActive,
+                      background: activeColor,
+                      borderColor: activeColor,
+                    }
+                  : {}),
+                transform: hovered
+                  ? "scale(1.03) translateY(-2px)"
+                  : active
+                  ? "scale(1.01)"
+                  : "scale(1)",
+              }}
+            >
+              {option}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function Input({ label, placeholder, inputMode, maxLength, value, onChange }) {
+  const styles = useAppStyles();
+  const [focused, setFocused] = useState(false);
+
+  return (
+    <div>
+      <label style={styles.label}>{label}</label>
+
+      <input
+        style={{
+          ...styles.input,
+          ...(focused ? styles.inputFocused : {}),
+        }}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        inputMode={inputMode}
+        maxLength={maxLength}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+      />
+    </div>
+  );
+}
+
+function TextArea({ label, placeholder, value, onChange }) {
+  const styles = useAppStyles();
+  const [focused, setFocused] = useState(false);
+
+  return (
+    <div>
+      <label style={styles.label}>{label}</label>
+
+      <textarea
+        style={{
+          ...styles.textarea,
+          ...(focused ? styles.inputFocused : {}),
+        }}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+      />
+    </div>
+  );
+}
+
+function useViewport() {
+  const [viewport, setViewport] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 390,
+    height: typeof window !== "undefined" ? window.innerHeight : 844,
+  });
+
+  useEffect(() => {
+    const update = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    update();
+    window.addEventListener("resize", update);
+
+    return () => {
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  return viewport;
+}
+
+function createStyles(viewport, selectedRole) {
+  const vw = viewport.width || 390;
+  const vh = viewport.height || 844;
+
+  const isDesktop = vw >= 700;
+  const phoneW = isDesktop ? 390 : vw;
+  const phoneH = isDesktop ? 844 : vh;
+
+  const scale = Math.max(
+    0.72,
+    Math.min(1, Math.min(phoneW / 390, phoneH / 844))
+  );
+
+  const narrow = phoneW < 360;
+  const veryNarrow = phoneW < 300;
+  const short = phoneH < 700;
+  const veryShort = phoneH < 570;
+
+  const px = (value) => Math.round(value * scale);
+
+  return {
+    page: {
+      width: "100vw",
+      height: "100dvh",
+      minHeight: "100dvh",
+      background: isDesktop ? "#f4f1ea" : "#ffffff",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: isDesktop ? "center" : "stretch",
+      padding: isDesktop ? 16 : 0,
+      fontFamily: "Arial, sans-serif",
+      overflow: "hidden",
+      boxSizing: "border-box",
+    },
+
+    phone: {
+      width: isDesktop ? 390 : "100vw",
+      height: isDesktop ? 844 : "100dvh",
+      maxWidth: isDesktop ? 430 : "none",
+      background: "#ffffff",
+      borderRadius: isDesktop ? 36 : 0,
+      overflow: "hidden",
+      boxShadow: isDesktop ? "0 30px 80px rgba(0,0,0,0.25)" : "none",
+      display: "flex",
+      flexDirection: "column",
+      boxSizing: "border-box",
+    },
+
+    hero: {
+      position: "relative",
+      minHeight: selectedRole
+        ? px(veryShort ? 245 : short ? 285 : 330)
+        : px(veryShort ? 455 : short ? 500 : 560),
+      padding: `${px(short ? 18 : 22)}px ${px(narrow ? 16 : 20)}px ${px(
+        selectedRole ? 22 : 30
+      )}px`,
+      color: "white",
+      background:
+        "radial-gradient(circle at 20% 8%, rgba(245,158,11,0.38), transparent 28%), linear-gradient(145deg, #020617 0%, #1c1917 52%, #92400e 100%)",
+      overflow: "hidden",
+      transition: "min-height 360ms ease",
+      flexShrink: 0,
+      boxSizing: "border-box",
+    },
+
+    bgOrbOne: {
+      position: "absolute",
+      top: px(-75),
+      right: px(-80),
+      width: px(230),
+      height: px(230),
+      borderRadius: "50%",
+      background: "rgba(251,191,36,0.25)",
+      filter: `blur(${px(38)}px)`,
+    },
+
+    bgOrbTwo: {
+      position: "absolute",
+      bottom: px(70),
+      left: px(-95),
+      width: px(210),
+      height: px(210),
+      borderRadius: "50%",
+      background: "rgba(255,255,255,0.11)",
+      filter: `blur(${px(46)}px)`,
+    },
+
+    bgOrbThree: {
+      position: "absolute",
+      bottom: px(-70),
+      right: px(-50),
+      width: px(180),
+      height: px(180),
+      borderRadius: "50%",
+      background: "rgba(34,197,94,0.16)",
+      filter: `blur(${px(42)}px)`,
+    },
+
+    gridOverlay: {
+      position: "absolute",
+      inset: 0,
+      backgroundImage:
+        "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
+      backgroundSize: `${px(34)}px ${px(34)}px`,
+      maskImage: "linear-gradient(to bottom, black, transparent 82%)",
+    },
+
+    nav: {
+      position: "relative",
+      zIndex: 3,
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: px(10),
+    },
+
+    brandWrap: {
+      display: "flex",
+      alignItems: "center",
+      gap: px(12),
+      minWidth: 0,
+    },
+
+    logo3d: {
+      width: px(short ? 42 : 50),
+      height: px(short ? 42 : 50),
+      borderRadius: px(19),
+      background:
+        "linear-gradient(145deg, rgba(255,255,255,0.24), rgba(255,255,255,0.08))",
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(short ? 20 : 24),
+      boxShadow:
+        "inset 0 1px 0 rgba(255,255,255,0.3), 0 14px 26px rgba(0,0,0,0.25)",
+      flexShrink: 0,
+    },
+
+    brandName: {
+      margin: 0,
+      fontSize: px(short ? 16 : 18),
+      fontWeight: 950,
+      lineHeight: 1,
+    },
+
+    brandSub: {
+      margin: `${px(3)}px 0 0`,
+      color: "#d6d3d1",
+      fontSize: px(10),
+      fontWeight: 700,
+      whiteSpace: "nowrap",
+    },
+
+    backBtn: {
+      border: "1px solid rgba(255,255,255,0.2)",
+      borderRadius: 999,
+      background: "rgba(255,255,255,0.1)",
+      color: "white",
+      padding: `${px(8)}px ${px(13)}px`,
+      fontSize: px(12),
+      fontWeight: 900,
+      cursor: "pointer",
+      flexShrink: 0,
+    },
+
+    headerText: {
+      position: "relative",
+      zIndex: 3,
+      marginTop: selectedRole ? px(16) : px(short ? 24 : 34),
+      transition: "all 300ms ease",
+    },
+
+    heroBadge: {
+      display: "inline-block",
+      padding: `${px(6)}px ${px(11)}px`,
+      borderRadius: 999,
+      background: "rgba(245,158,11,0.16)",
+      border: "1px solid rgba(245,158,11,0.35)",
+      color: "#fde68a",
+      fontSize: px(10),
+      letterSpacing: 1.5,
+      fontWeight: 950,
+    },
+
+    title: {
+      margin: `${px(12)}px 0 0`,
+      color: "white",
+      fontSize: selectedRole ? px(30) : px(short ? 34 : 40),
+      lineHeight: 1.02,
+      fontWeight: 950,
+      letterSpacing: -1.1,
+      transition: "all 300ms ease",
+    },
+
+    subtitle: {
+      margin: `${px(10)}px 0 0`,
+      color: "#e7e5e4",
+      fontSize: px(short ? 12 : 13),
+      lineHeight: 1.4,
+      fontWeight: 600,
+      maxWidth: px(330),
+    },
+
+    roleCardsStack: {
+      position: "relative",
+      zIndex: 3,
+      marginTop: px(short ? 18 : 24),
+      display: "flex",
+      flexDirection: "column",
+      gap: px(short ? 12 : 16),
+      perspective: 900,
+    },
+
+    roleCardsRow: {
+      position: "relative",
+      zIndex: 3,
+      marginTop: px(16),
+      display: "grid",
+      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+      gap: px(narrow ? 7 : 9),
+      perspective: 900,
+      transition: "all 360ms ease",
+    },
+
+    roleCard: {
+      width: "100%",
+      minHeight: px(short ? 84 : 96),
+      borderRadius: px(28),
+      border: "1px solid rgba(255,255,255,0.18)",
+      background:
+        "linear-gradient(145deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08))",
+      color: "white",
+      backdropFilter: "blur(12px)",
+      cursor: "pointer",
+      transition: "all 260ms ease",
+      display: "flex",
+      alignItems: "center",
+      gap: px(13),
+      padding: px(narrow ? 12 : 14),
+      textAlign: "left",
+      boxSizing: "border-box",
+    },
+
+    roleCardCompact: {
+      width: "100%",
+      minHeight: px(short ? 76 : 92),
+      borderRadius: px(24),
+      border: "1px solid rgba(255,255,255,0.18)",
+      background:
+        "linear-gradient(145deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08))",
+      color: "white",
+      backdropFilter: "blur(12px)",
+      cursor: "pointer",
+      transition: "all 260ms ease",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: px(6),
+      padding: px(7),
+      textAlign: "center",
+      boxSizing: "border-box",
+      overflow: "hidden",
+    },
+
+    roleCardActive: {
+      background:
+        "linear-gradient(145deg, rgba(255,255,255,0.32), rgba(255,255,255,0.12))",
+    },
+
+    roleIcon: {
+      width: px(short ? 48 : 56),
+      height: px(short ? 48 : 56),
+      borderRadius: px(21),
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(short ? 25 : 29),
+      boxShadow: "0 14px 26px rgba(0,0,0,0.24)",
+      transition: "all 260ms ease",
+      flexShrink: 0,
+    },
+
+    roleIconCompact: {
+      width: px(short ? 36 : 42),
+      height: px(short ? 36 : 42),
+      borderRadius: px(16),
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(short ? 19 : 23),
+      boxShadow: "0 12px 22px rgba(0,0,0,0.22)",
+      transition: "all 260ms ease",
+      flexShrink: 0,
+    },
+
+    roleTextBlock: {
+      display: "flex",
+      flexDirection: "column",
+      gap: px(4),
+      flex: 1,
+      minWidth: 0,
+    },
+
+    roleLabel: {
+      fontSize: px(16),
+      fontWeight: 950,
+    },
+
+    roleLabelCompact: {
+      fontSize: px(narrow ? 9 : 11),
+      fontWeight: 950,
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      maxWidth: "100%",
+    },
+
+    roleDescription: {
+      color: "#d6d3d1",
+      fontSize: px(11),
+      fontWeight: 700,
+      lineHeight: 1.25,
+    },
+
+    roleStatus: {
+      width: px(30),
+      height: px(30),
+      borderRadius: px(12),
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(15),
+      fontWeight: 950,
+      color: "#111827",
+      flexShrink: 0,
+    },
+
+    formSection: {
+      flex: 1,
+      overflowY: "auto",
+      overflowX: "hidden",
+      WebkitOverflowScrolling: "touch",
+      marginTop: px(-28),
+      position: "relative",
+      zIndex: 5,
+      padding: `0 ${px(narrow ? 14 : 18)}px ${px(22)}px`,
+      background: "white",
+      borderRadius: `${px(32)}px ${px(32)}px 0 0`,
+      boxSizing: "border-box",
+    },
+
+    formCard: {
+      padding: px(narrow ? 14 : 16),
+      borderRadius: px(30),
+      background: "#fafaf9",
+      border: "1px solid #eee7df",
+      boxShadow: "0 16px 34px rgba(0,0,0,0.08)",
+      marginBottom: px(14),
+      boxSizing: "border-box",
+    },
+
+    formHeader: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: px(12),
+      marginBottom: px(16),
+    },
+
+    formKicker: {
+      margin: 0,
+      fontSize: px(10),
+      letterSpacing: 1.5,
+      fontWeight: 950,
+    },
+
+    formTitle: {
+      margin: `${px(5)}px 0 0`,
+      color: "#1c1917",
+      fontSize: px(21),
+      fontWeight: 950,
+      lineHeight: 1.1,
+    },
+
+    roleIconBadge: {
+      width: px(48),
+      height: px(48),
+      borderRadius: px(18),
+      color: "white",
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(24),
+      boxShadow: "0 14px 24px rgba(0,0,0,0.18)",
+      flexShrink: 0,
+    },
+
+    formFields: {
+      display: "flex",
+      flexDirection: "column",
+      gap: px(14),
+    },
+
+    label: {
+      display: "block",
+      marginBottom: px(7),
+      color: "#1c1917",
+      fontSize: px(13),
+      fontWeight: 900,
+      lineHeight: 1.25,
+    },
+
+    input: {
+      width: "100%",
+      height: px(48),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(17),
+      padding: `0 ${px(14)}px`,
+      fontSize: px(13),
+      fontWeight: 650,
+      outline: "none",
+      background: "white",
+      color: "#1c1917",
+      boxSizing: "border-box",
+      transition: "all 220ms ease",
+    },
+
+    inputFocused: {
+      borderColor: "#f59e0b",
+      boxShadow: "0 0 0 4px rgba(245,158,11,0.15)",
+      transform: "translateY(-1px)",
+    },
+
+    textarea: {
+      width: "100%",
+      minHeight: px(88),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(17),
+      padding: px(14),
+      fontSize: px(13),
+      fontWeight: 650,
+      outline: "none",
+      background: "white",
+      color: "#1c1917",
+      boxSizing: "border-box",
+      resize: "vertical",
+      transition: "all 220ms ease",
+      fontFamily: "Arial, sans-serif",
+    },
+
+    categoryGrid: {
+      display: "grid",
+      gridTemplateColumns: veryNarrow
+        ? "1fr"
+        : "repeat(2, minmax(0, 1fr))",
+      gap: px(9),
+    },
+
+    categoryChip: {
+      minHeight: px(42),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(16),
+      background: "white",
+      color: "#1c1917",
+      fontSize: px(narrow ? 10 : 11),
+      fontWeight: 850,
+      cursor: "pointer",
+      transition: "all 220ms ease",
+      boxShadow: "0 7px 16px rgba(0,0,0,0.04)",
+      padding: `0 ${px(8)}px`,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    categoryChipActive: {
+      background: "linear-gradient(135deg, #020617, #92400e)",
+      color: "white",
+      borderColor: "#92400e",
+      boxShadow: "0 12px 22px rgba(146,64,14,0.22)",
+    },
+
+    frequencyGrid: {
+      display: "grid",
+      gridTemplateColumns: veryNarrow
+        ? "1fr"
+        : "repeat(2, minmax(0, 1fr))",
+      gap: px(9),
+    },
+
+    frequencyChip: {
+      height: px(42),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(16),
+      background: "white",
+      color: "#1c1917",
+      fontSize: px(12),
+      fontWeight: 900,
+      cursor: "pointer",
+      transition: "all 220ms ease",
+      boxShadow: "0 7px 16px rgba(0,0,0,0.04)",
+      padding: `0 ${px(8)}px`,
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    frequencyChipActive: {
+      color: "#111827",
+      boxShadow: "0 12px 22px rgba(0,0,0,0.14)",
+    },
+
+    bottomPanel: {
+      padding: px(14),
+      borderRadius: px(30),
+      background: "#fafaf9",
+      border: "1px solid #eee7df",
+      boxShadow: "0 16px 34px rgba(0,0,0,0.08)",
+      boxSizing: "border-box",
+    },
+
+    privacyNote: {
+      padding: px(12),
+      borderRadius: px(22),
+      background: "#fffbeb",
+      border: "1px solid #fde68a",
+      display: "flex",
+      alignItems: "center",
+      gap: px(10),
+    },
+
+    lockIcon: {
+      width: px(48),
+      height: px(48),
+      borderRadius: px(18),
+      background: "#1c1917",
+      color: "white",
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      fontSize: px(21),
+    },
+
+    privacyText: {
+      margin: 0,
+      color: "#78716c",
+      fontSize: px(13),
+      lineHeight: 1.35,
+      fontWeight: 900,
+    },
+
+    submitBtn: {
+      width: "100%",
+      height: px(58),
+      marginTop: px(24),
+      border: 0,
+      borderRadius: px(28),
+      color: "white",
+      fontSize: px(18),
+      fontWeight: 950,
+      cursor: "pointer",
+      transition: "all 260ms ease",
+    },
+
+    submitBtnDisabled: {
+      background:
+        "linear-gradient(135deg, rgba(2,6,23,0.38), rgba(146,64,14,0.38))",
+      opacity: 0.55,
+      boxShadow: "none",
+      cursor: "not-allowed",
+    },
+
+    submitBtnBright: {
+      background: "linear-gradient(135deg, #020617, #92400e)",
+      opacity: 1,
+      boxShadow: "0 18px 38px rgba(146,64,14,0.28)",
+    },
+
+    signInText: {
+      margin: `${px(22)}px 0 0`,
+      textAlign: "center",
+      color: "#78716c",
+      fontSize: px(13),
+      fontWeight: 850,
+    },
+  };
+}
+
+
+
