@@ -3,9 +3,12 @@ import React, { useEffect, useMemo, useState } from "react";
 const ORIGINAL_BG_IMAGE =
   "https://raw.githubusercontent.com/Shyam7291/company-document-monitor/main/you_acn_only_generate_the_sa.png";
 
-const BG_IMAGE = `https://wsrv.nl/?url=${encodeURIComponent(ORIGINAL_BG_IMAGE)}&output=png&w=820&h=980&fit=cover`;
+const BG_IMAGE = `https://wsrv.nl/?url=${encodeURIComponent(
+  ORIGINAL_BG_IMAGE
+)}&output=png&w=820&h=980&fit=cover`;
 
-const GLASS_CARD_IMAGE = "https://cdn.jsdelivr.net/gh/Shyam7291/company-document-monitor@main/32454-removebg-preview.png";
+const GLASS_CARD_IMAGE =
+  "https://cdn.jsdelivr.net/gh/Shyam7291/company-document-monitor@main/32454-removebg-preview.png";
 
 const FEATURES = [
   {
@@ -72,23 +75,28 @@ export default function BuyerHomePage({
   };
 
   useEffect(() => {
-    const timer = window.setInterval(() => {
+    let changeTimer;
+    let revealTimer;
+
+    const carouselTimer = window.setInterval(() => {
       setContentHidden(true);
       setRotation((current) => current + 180);
 
-      window.setTimeout(() => {
+      changeTimer = window.setTimeout(() => {
         setActiveIndex(
           (current) => (current + 1) % FEATURES.length
         );
       }, 390);
 
-      window.setTimeout(() => {
+      revealTimer = window.setTimeout(() => {
         setContentHidden(false);
       }, 520);
     }, 3000);
 
     return () => {
-      window.clearInterval(timer);
+      window.clearInterval(carouselTimer);
+      window.clearTimeout(changeTimer);
+      window.clearTimeout(revealTimer);
     };
   }, []);
 
@@ -109,7 +117,7 @@ export default function BuyerHomePage({
       <style>{globalCss}</style>
 
       <main style={styles.phone}>
-        {/* FIXED TOP BAR */}
+        {/* Fixed top navigation */}
         <header style={styles.fixedTopBar}>
           <button
             type="button"
@@ -120,15 +128,16 @@ export default function BuyerHomePage({
           </button>
 
           <div style={styles.fixedBrand}>
-            <span style={styles.fixedBrandLogo}>🪨</span>
+            <span style={styles.fixedBrandLogo}>◆</span>
 
             <div style={styles.fixedBrandText}>
               <b style={styles.fixedBrandName}>
                 StoneRate
               </b>
 
-              
-            
+              <span style={styles.fixedBrandSub}>
+                Stone Marketplace
+              </span>
             </div>
           </div>
 
@@ -143,12 +152,12 @@ export default function BuyerHomePage({
           </button>
         </header>
 
-        {/* SCROLLABLE MIDDLE AREA */}
+        {/* Scrollable middle area */}
         <section
           className="buyer-page-scroll"
           style={styles.pageScrollArea}
         >
-          {/* HERO */}
+          {/* Quarry hero */}
           <section style={styles.hero}>
           <img src={BG_IMAGE} alt="Quarry background" style={styles.heroBg} />
 
@@ -163,9 +172,8 @@ export default function BuyerHomePage({
               }}
             />
 
+            {/* Greeting */}
             <div style={styles.intro}>
-              
-
               <h1 style={styles.greeting}>
                 Hey {buyerName} 👋
               </h1>
@@ -175,6 +183,7 @@ export default function BuyerHomePage({
               </p>
             </div>
 
+            {/* Responsive glass-card carousel */}
             <div style={styles.featureWrap}>
               <div style={styles.platform} />
 
@@ -242,12 +251,14 @@ export default function BuyerHomePage({
                     ...styles.featureArrow,
                     background: active.color,
                   }}
+                  aria-label={`Open ${active.title}`}
                 >
                   ➜
                 </button>
               </article>
             </div>
 
+            {/* Carousel dots */}
             <div style={styles.dots}>
               {FEATURES.map((feature, index) => (
                 <button
@@ -269,19 +280,21 @@ export default function BuyerHomePage({
             </div>
           </section>
 
-          {/* CURVED LOWER SECTION */}
+          {/* Curved lower sheet */}
           <section style={styles.contentArea}>
             <div style={styles.sheetHandle} />
             <div style={styles.contentGlowOne} />
             <div style={styles.contentGlowTwo} />
 
-            {/* PLACE ORDER */}
+            {/* Place New Order */}
             <button
               type="button"
               style={styles.placeOrderCard}
               onClick={goToPlaceOrder}
             >
-              <div style={styles.placeOrderIcon}>＋</div>
+              <div style={styles.placeOrderIcon}>
+                ＋
+              </div>
 
               <div style={styles.placeOrderText}>
                 <span style={styles.cardEyebrow}>
@@ -297,10 +310,12 @@ export default function BuyerHomePage({
                 </span>
               </div>
 
-              <span style={styles.placeOrderArrow}>➜</span>
+              <span style={styles.placeOrderArrow}>
+                ➜
+              </span>
             </button>
 
-            {/* SECTION TITLE */}
+            {/* Section heading */}
             <div style={styles.sectionHeading}>
               <div>
                 <span style={styles.sectionKicker}>
@@ -321,9 +336,9 @@ export default function BuyerHomePage({
               </button>
             </div>
 
-            {/* ORDER CARDS */}
+            {/* Quick order cards */}
             <div style={styles.quickGrid}>
-              {/* ACTIVE ORDER */}
+              {/* Active Order */}
               <button
                 type="button"
                 style={styles.activeOrderCard}
@@ -342,7 +357,7 @@ export default function BuyerHomePage({
                     </h3>
 
                     <span style={styles.quickHeaderSubtitle}>
-                      Tracking available
+                      In route
                     </span>
                   </div>
 
@@ -353,10 +368,6 @@ export default function BuyerHomePage({
                 </div>
 
                 <div style={styles.quickCardBody}>
-                  <span style={styles.materialLabel}>
-                    MATERIAL
-                  </span>
-
                   <h4 style={styles.materialTitle}>
                     40mm Crushed Stone
                   </h4>
@@ -371,12 +382,12 @@ export default function BuyerHomePage({
                 </div>
 
                 <div style={styles.quickFooter}>
-                  <span>In route</span>
+                  <span>Delivery progress</span>
                   <b>Track ➜</b>
                 </div>
               </button>
 
-              {/* REORDER */}
+              {/* Reorder */}
               <button
                 type="button"
                 style={styles.repeatOrderCard}
@@ -394,7 +405,7 @@ export default function BuyerHomePage({
                     </h3>
 
                     <span style={styles.quickHeaderSubtitle}>
-                      Quick repeat
+                      Last order
                     </span>
                   </div>
 
@@ -404,10 +415,6 @@ export default function BuyerHomePage({
                 </div>
 
                 <div style={styles.quickCardBody}>
-                  <span style={styles.materialLabel}>
-                    LAST ORDER
-                  </span>
-
                   <h4 style={styles.materialTitle}>
                     20mm Stone
                   </h4>
@@ -424,11 +431,11 @@ export default function BuyerHomePage({
 
                   <div style={styles.reorderInfoText}>
                     <b style={styles.reorderTitle}>
-                      Delivered
+                      Last order delivered
                     </b>
 
                     <small style={styles.reorderSubtitle}>
-                      Ready to order again
+                      Tap to order the same material
                     </small>
                   </div>
                 </div>
@@ -440,9 +447,11 @@ export default function BuyerHomePage({
               </button>
             </div>
 
-            {/* INSIGHT */}
+            {/* Buyer insight */}
             <div style={styles.insightCard}>
-              <div style={styles.insightIcon}>₹</div>
+              <div style={styles.insightIcon}>
+                ₹
+              </div>
 
               <div style={styles.insightText}>
                 <span style={styles.insightKicker}>
@@ -462,6 +471,7 @@ export default function BuyerHomePage({
               <button
                 type="button"
                 style={styles.insightButton}
+                aria-label="View buyer insight"
               >
                 ›
               </button>
@@ -471,7 +481,7 @@ export default function BuyerHomePage({
           </section>
         </section>
 
-        {/* FIXED BOTTOM NAVIGATION */}
+        {/* Fixed bottom navigation */}
         <nav style={styles.bottomNav}>
           {[
             { name: "Home", icon: "⌂" },
@@ -559,11 +569,7 @@ function useViewport() {
     );
 
     return () => {
-      window.removeEventListener(
-        "resize",
-        update
-      );
-
+      window.removeEventListener("resize", update);
       window.removeEventListener(
         "orientationchange",
         update
@@ -589,7 +595,7 @@ function createStyles(viewport) {
     : viewportHeight;
 
   const scale = Math.max(
-    0.72,
+    0.68,
     Math.min(
       1,
       Math.min(
@@ -602,14 +608,94 @@ function createStyles(viewport) {
   const px = (value) =>
     Math.round(value * scale);
 
+  const clamp = (minimum, preferred, maximum) =>
+    Math.round(
+      Math.max(
+        minimum,
+        Math.min(maximum, preferred)
+      )
+    );
+
   const narrow = appWidth < 360;
+  const veryNarrow = appWidth < 320;
   const short = appHeight < 700;
+  const veryShort = appHeight < 590;
 
   const topBarHeight = px(58);
   const navHeight = px(66);
 
-  const heroHeight = Math.round(
-    appHeight * (short ? 0.53 : 0.55)
+  const heroHeight = clamp(
+    390,
+    appHeight * (short ? 0.56 : 0.55),
+    470
+  );
+
+  /* Responsive hero values */
+
+  const glassCardSize = clamp(
+    veryNarrow ? 166 : 176,
+    appWidth * 0.57,
+    225
+  );
+
+  const greetingSize = clamp(
+    21,
+    appWidth * 0.068,
+    28
+  );
+
+  const introTextSize = clamp(
+    12,
+    appWidth * 0.039,
+    16
+  );
+
+  const featureIconSize = clamp(
+    34,
+    glassCardSize * 0.19,
+    42
+  );
+
+  const featureIconFontSize = clamp(
+    19,
+    glassCardSize * 0.11,
+    25
+  );
+
+  const starsSize = clamp(
+    10,
+    glassCardSize * 0.062,
+    14
+  );
+
+  const featureTitleSize = clamp(
+    14,
+    glassCardSize * 0.075,
+    17
+  );
+
+  const featureSubtitleSize = clamp(
+    9,
+    glassCardSize * 0.049,
+    11
+  );
+
+  const featureArrowSize = clamp(
+    38,
+    glassCardSize * 0.2,
+    44
+  );
+
+  const ringWidth = clamp(
+    140,
+    glassCardSize * 0.78,
+    175
+  );
+
+  const ringHeight = clamp(
+    58,
+    glassCardSize * 0.32,
+    72
   );
 
   return {
@@ -620,6 +706,7 @@ function createStyles(viewport) {
 
       display: "flex",
       justifyContent: "center",
+
       alignItems: isDesktop
         ? "center"
         : "stretch",
@@ -658,7 +745,7 @@ function createStyles(viewport) {
         : "none",
     },
 
-    /* FIXED TOP BAR */
+    /* Fixed top navigation */
 
     fixedTopBar: {
       position: "absolute",
@@ -672,6 +759,7 @@ function createStyles(viewport) {
       height: topBarHeight,
 
       display: "grid",
+
       gridTemplateColumns:
         "auto minmax(0,1fr) auto",
 
@@ -696,6 +784,8 @@ function createStyles(viewport) {
     },
 
     topMenuButton: {
+      justifySelf: "start",
+
       width: px(38),
       height: px(38),
 
@@ -722,6 +812,7 @@ function createStyles(viewport) {
 
     menuIcon: {
       display: "block",
+
       fontSize: px(17),
       lineHeight: 1,
       fontWeight: 950,
@@ -738,8 +829,8 @@ function createStyles(viewport) {
     },
 
     fixedBrandLogo: {
-      width: px(32),
-      height: px(32),
+      width: px(narrow ? 31 : 34),
+      height: px(narrow ? 31 : 34),
 
       display: "grid",
       placeItems: "center",
@@ -747,17 +838,21 @@ function createStyles(viewport) {
       flexShrink: 0,
 
       border:
-        "1px solid rgba(251,191,36,.28)",
+        "1px solid rgba(251,191,36,.42)",
 
-      borderRadius: px(11),
+      borderRadius: px(12),
 
       background:
-        "linear-gradient(145deg, rgba(245,158,11,.24), rgba(234,88,12,.10))",
+        "linear-gradient(145deg, #f59e0b, #92400e)",
 
-      fontSize: px(15),
+      color: "white",
+
+      fontSize: px(narrow ? 13 : 15),
+      lineHeight: 1,
+      fontWeight: 950,
 
       boxShadow:
-        "0 7px 15px rgba(146,64,14,.18)",
+        "0 8px 17px rgba(245,158,11,.28), inset 0 1px 0 rgba(255,255,255,.22)",
     },
 
     fixedBrandText: {
@@ -772,11 +867,17 @@ function createStyles(viewport) {
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
 
-      color: "white",
+      color: "#ffffff",
 
-      fontSize: px(11),
+      fontSize: clamp(
+        12,
+        appWidth * 0.035,
+        14
+      ),
+
       lineHeight: 1,
       fontWeight: 950,
+      letterSpacing: -0.2,
     },
 
     fixedBrandSub: {
@@ -786,15 +887,22 @@ function createStyles(viewport) {
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
 
-      color: "#d6c3b5",
+      color: "#fde68a",
 
-      fontSize: px(6.8),
+      fontSize: clamp(
+        6,
+        appWidth * 0.018,
+        7.4
+      ),
+
       lineHeight: 1,
-      fontWeight: 750,
+      fontWeight: 800,
     },
 
     topNotificationButton: {
       position: "relative",
+
+      justifySelf: "end",
 
       width: px(38),
       height: px(38),
@@ -822,6 +930,7 @@ function createStyles(viewport) {
 
     fixedBellIcon: {
       display: "block",
+
       fontSize: px(14),
       lineHeight: 1,
     },
@@ -844,7 +953,7 @@ function createStyles(viewport) {
         "0 0 8px rgba(245,158,11,.72)",
     },
 
-    /* SCROLL AREA */
+    /* Scroll area */
 
     pageScrollArea: {
       position: "absolute",
@@ -867,7 +976,7 @@ function createStyles(viewport) {
       overscrollBehavior: "contain",
     },
 
-    /* HERO */
+    /* Hero */
 
     hero: {
       position: "relative",
@@ -953,8 +1062,17 @@ function createStyles(viewport) {
 
       zIndex: 2,
 
-      width: px(190),
-      height: px(135),
+      width: clamp(
+        145,
+        glassCardSize * 0.85,
+        190
+      ),
+
+      height: clamp(
+        105,
+        glassCardSize * 0.6,
+        135
+      ),
 
       borderRadius: "50%",
 
@@ -971,69 +1089,98 @@ function createStyles(viewport) {
     intro: {
       position: "relative",
       zIndex: 7,
-    
-      marginTop: px(8),
-      marginLeft: px(4),
-    
-      transform: `translateY(${px(-4)}px)`,
-    
+
+      width: "100%",
+
+      marginTop: narrow
+        ? px(7)
+        : px(10),
+
+      marginLeft: narrow
+        ? 0
+        : px(4),
+
+      paddingRight: px(8),
+
       textShadow:
         "0 8px 24px rgba(0,0,0,.55)",
     },
 
-    introKicker: {
+    greeting: {
+      maxWidth: "92%",
+
       margin: 0,
 
-      color: "#fde68a",
-
-      fontSize: px(7),
-      letterSpacing: px(1.2),
-      fontWeight: 950,
-    },
-
-    greeting: {
-      margin: `${px(5)}px 0 0`,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
 
       color: "#fde68a",
 
-      fontSize: px(short ? 25 : 28),
-      lineHeight: 1,
+      fontSize: greetingSize,
+      lineHeight: 1.02,
       fontWeight: 950,
+      letterSpacing: -0.4,
     },
 
     introText: {
-      maxWidth: px(250),
+      maxWidth: narrow
+        ? "88%"
+        : px(270),
 
-      margin: `${px(7)}px 0 0`,
+      margin: `${px(5)}px 0 0`,
 
       color: "white",
 
-      fontSize: px(short ? 14 : 16),
-      lineHeight: 1.15,
+      fontSize: introTextSize,
+      lineHeight: 1.16,
       fontWeight: 900,
+
+      textWrap: "balance",
     },
 
     featureWrap: {
       position: "absolute",
+
       left: 0,
       right: 0,
-    
-      top: "35%",
-      bottom: "10%",
-    
+
+      top: veryShort
+        ? "35%"
+        : short
+        ? "34%"
+        : "35%",
+
+      bottom: veryShort
+        ? "14%"
+        : short
+        ? "13%"
+        : "12%",
+
       zIndex: 6,
+
       perspective: 1100,
-    
-      transform: `translateY(${px(-8)}px)`,
+
+      transform: `translateY(${px(
+        veryShort
+          ? -3
+          : short
+          ? -5
+          : -8
+      )}px)`,
     },
 
     singleFeatureCard: {
       position: "absolute",
 
       left: "50%",
-      top: "-10%",
 
-      width: px(short ? 205 : 225),
+      top: veryShort
+        ? "-6%"
+        : "-10%",
+
+      width: glassCardSize,
+      maxWidth: "72vw",
 
       aspectRatio: "1 / 1",
 
@@ -1077,12 +1224,22 @@ function createStyles(viewport) {
       position: "absolute",
 
       left: "50%",
-      top: "17%",
+
+      top: veryNarrow
+        ? "14%"
+        : narrow
+        ? "15%"
+        : "17%",
 
       zIndex: 2,
 
-      width: "58%",
-      maxHeight: "68%",
+      width: veryNarrow
+        ? "66%"
+        : narrow
+        ? "64%"
+        : "60%",
+
+      maxHeight: "70%",
 
       display: "flex",
       flexDirection: "column",
@@ -1106,33 +1263,58 @@ function createStyles(viewport) {
     },
 
     featureIcon: {
-      width: px(42),
-      height: px(42),
+      width: featureIconSize,
+      height: featureIconSize,
 
       display: "grid",
       placeItems: "center",
 
-      borderRadius: px(20),
+      flexShrink: 0,
+
+      borderRadius: "50%",
 
       color: "#111827",
 
-      fontSize: px(25),
+      fontSize: featureIconFontSize,
+      lineHeight: 1,
       fontWeight: 950,
     },
 
     stars: {
-      marginTop: px(14),
+      marginTop: clamp(
+        9,
+        glassCardSize * 0.06,
+        14
+      ),
 
-      fontSize: px(14),
-      letterSpacing: px(2.2),
+      fontSize: starsSize,
+
+      letterSpacing: clamp(
+        1,
+        glassCardSize * 0.009,
+        2
+      ),
+
+      lineHeight: 1,
+      whiteSpace: "nowrap",
     },
 
     featureTitle: {
-      margin: `${px(4)}px 0 0`,
+      width: "100%",
+
+      margin: `${clamp(
+        3,
+        glassCardSize * 0.018,
+        4
+      )}px 0 0`,
+
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
 
       color: "white",
 
-      fontSize: px(17),
+      fontSize: featureTitleSize,
       lineHeight: 1.05,
       fontWeight: 950,
 
@@ -1141,11 +1323,26 @@ function createStyles(viewport) {
     },
 
     featureSubtitle: {
-      margin: `${px(10)}px 0 0`,
+      width: "100%",
+
+      margin: `${clamp(
+        6,
+        glassCardSize * 0.04,
+        10
+      )}px 0 0`,
+
+      overflow: "hidden",
+
+      display: "-webkit-box",
+
+      WebkitLineClamp:
+        veryNarrow ? 2 : 3,
+
+      WebkitBoxOrient: "vertical",
 
       color: "#fff7ed",
 
-      fontSize: px(11),
+      fontSize: featureSubtitleSize,
       lineHeight: 1.18,
       fontWeight: 750,
 
@@ -1157,12 +1354,12 @@ function createStyles(viewport) {
       position: "absolute",
 
       left: "50%",
-      bottom: px(-18),
+      bottom: px(-10),
 
       zIndex: 20,
 
-      width: px(46),
-      height: px(46),
+      width: featureArrowSize,
+      height: featureArrowSize,
 
       display: "grid",
       placeItems: "center",
@@ -1174,13 +1371,21 @@ function createStyles(viewport) {
 
       color: "white",
 
-      fontSize: px(21),
+      fontSize: clamp(
+        17,
+        glassCardSize * 0.09,
+        20
+      ),
+
+      lineHeight: 1,
       fontWeight: 950,
 
       boxShadow:
         "0 8px 22px rgba(245,158,11,.42)",
 
       transform: "translateX(-50%)",
+
+      cursor: "pointer",
     },
 
     ring: {
@@ -1189,10 +1394,12 @@ function createStyles(viewport) {
       left: "50%",
       bottom: "4%",
 
-      width: px(175),
-      height: px(72),
+      width: ringWidth,
+      height: ringHeight,
 
-      border: `${px(2)}px solid #f59e0b`,
+      border:
+        `${px(2)}px solid #f59e0b`,
+
       borderRadius: "50%",
 
       transform:
@@ -1205,7 +1412,12 @@ function createStyles(viewport) {
       left: "50%",
       bottom: 0,
 
-      width: px(150),
+      width: clamp(
+        120,
+        glassCardSize * 0.67,
+        150
+      ),
+
       height: "15%",
 
       borderRadius: "50%",
@@ -1222,37 +1434,57 @@ function createStyles(viewport) {
 
       left: 0,
       right: 0,
-      bottom: "2.5%",
+      bottom: px(25),
 
-      zIndex: 8,
+      zIndex: 30,
 
       display: "flex",
+      alignItems: "center",
       justifyContent: "center",
 
       gap: px(8),
+
+      pointerEvents: "auto",
     },
 
     dot: {
       width: px(8),
       height: px(8),
 
+      flexShrink: 0,
+
       padding: 0,
-      border: 0,
+
+      border:
+        "1px solid rgba(255,255,255,.34)",
+
       borderRadius: 999,
 
       background:
         "rgba(255,255,255,.72)",
 
+      boxShadow:
+        "0 3px 8px rgba(0,0,0,.28)",
+
       cursor: "pointer",
 
-      transition: "all 200ms ease",
+      transition:
+        "width 220ms ease, background 220ms ease, transform 220ms ease",
     },
 
     activeDot: {
-      width: px(23),
+      width: px(24),
+
+      borderColor:
+        "rgba(251,191,36,.65)",
+
+      boxShadow:
+        "0 0 12px rgba(245,158,11,.54)",
+
+      transform: "scaleY(1.05)",
     },
 
-    /* LOWER SHEET */
+    /* Curved lower sheet */
 
     contentArea: {
       position: "relative",
@@ -1261,14 +1493,13 @@ function createStyles(viewport) {
       width: "100%",
       minHeight: px(500),
 
-      marginTop: px(-19),
+      marginTop: px(-12),
 
       overflow: "visible",
 
-      padding:
-        `${px(28)}px ${px(
-          narrow ? 12 : 16
-        )}px ${px(24)}px`,
+      padding: `${px(28)}px ${px(
+        narrow ? 12 : 16
+      )}px ${px(24)}px`,
 
       borderRadius:
         `${px(29)}px ${px(29)}px 0 0`,
@@ -1351,6 +1582,7 @@ function createStyles(viewport) {
       minHeight: px(75),
 
       display: "grid",
+
       gridTemplateColumns:
         "auto minmax(0,1fr) auto",
 
@@ -1481,8 +1713,7 @@ function createStyles(viewport) {
     },
 
     sectionTitle: {
-      margin:
-        `${px(3)}px 0 0`,
+      margin: `${px(3)}px 0 0`,
 
       color: "white",
 
@@ -1516,8 +1747,11 @@ function createStyles(viewport) {
       zIndex: 2,
 
       display: "grid",
+
       gridTemplateColumns:
         "repeat(2,minmax(0,1fr))",
+
+      alignItems: "stretch",
 
       gap: px(10),
     },
@@ -1641,17 +1875,18 @@ function createStyles(viewport) {
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
 
-      color: "white",
+      color: "#ffffff",
 
-      fontSize: px(narrow ? 10 : 12),
+      fontSize: px(narrow ? 11 : 13),
       lineHeight: 1,
       fontWeight: 950,
+      letterSpacing: -0.15,
     },
 
     quickHeaderSubtitle: {
       display: "block",
 
-      marginTop: px(3),
+      marginTop: px(4),
 
       overflow: "hidden",
       textOverflow: "ellipsis",
@@ -1659,52 +1894,62 @@ function createStyles(viewport) {
 
       color: "#a8a29e",
 
-      fontSize: px(6.5),
+      fontSize: px(narrow ? 6.5 : 7.2),
       lineHeight: 1,
       fontWeight: 750,
     },
 
     quickIconGreen: {
-      width: px(33),
-      height: px(33),
+      width: px(35),
+      height: px(35),
 
       display: "grid",
       placeItems: "center",
 
       flexShrink: 0,
 
-      borderRadius: px(12),
-
-      background:
-        "linear-gradient(145deg,#22c55e,#15803d)",
-
-      fontSize: px(15),
-
-      boxShadow:
-        "0 8px 17px rgba(34,197,94,.24)",
-    },
-
-    quickIconAmber: {
-      width: px(33),
-      height: px(33),
-
-      display: "grid",
-      placeItems: "center",
-
-      flexShrink: 0,
+      border:
+        "1px solid rgba(134,239,172,.26)",
 
       borderRadius: px(12),
 
       background:
-        "linear-gradient(145deg,#f59e0b,#ea580c)",
+        "linear-gradient(145deg, #22c55e, #15803d)",
 
       color: "white",
 
-      fontSize: px(18),
+      fontSize: px(16),
       fontWeight: 950,
 
       boxShadow:
-        "0 8px 17px rgba(245,158,11,.24)",
+        "0 8px 18px rgba(34,197,94,.28), inset 0 1px 0 rgba(255,255,255,.20)",
+    },
+
+    quickIconAmber: {
+      width: px(35),
+      height: px(35),
+
+      display: "grid",
+      placeItems: "center",
+
+      flexShrink: 0,
+
+      border:
+        "1px solid rgba(251,191,36,.30)",
+
+      borderRadius: px(12),
+
+      background:
+        "linear-gradient(145deg, #f59e0b, #ea580c)",
+
+      color: "white",
+
+      fontSize: px(19),
+      lineHeight: 1,
+      fontWeight: 950,
+
+      boxShadow:
+        "0 8px 18px rgba(245,158,11,.28), inset 0 1px 0 rgba(255,255,255,.20)",
     },
 
     livePill: {
@@ -1765,20 +2010,8 @@ function createStyles(viewport) {
       marginTop: px(11),
     },
 
-    materialLabel: {
-      display: "block",
-
-      color: "#a8a29e",
-
-      fontSize: px(6.3),
-      letterSpacing: px(0.65),
-      lineHeight: 1,
-      fontWeight: 950,
-    },
-
     materialTitle: {
-      margin:
-        `${px(5)}px 0 0`,
+      margin: `${px(5)}px 0 0`,
 
       overflow: "hidden",
 
@@ -1798,8 +2031,7 @@ function createStyles(viewport) {
       position: "relative",
       zIndex: 2,
 
-      margin:
-        `${px(5)}px 0 0`,
+      margin: `${px(5)}px 0 0`,
 
       color: "#d6d3d1",
 
@@ -2003,8 +2235,7 @@ function createStyles(viewport) {
     },
 
     insightDescription: {
-      margin:
-        `${px(4)}px 0 0`,
+      margin: `${px(4)}px 0 0`,
 
       color: "#d6d3d1",
 
@@ -2039,7 +2270,7 @@ function createStyles(viewport) {
       height: px(10),
     },
 
-    /* FIXED BOTTOM NAV */
+    /* Fixed bottom navigation */
 
     bottomNav: {
       position: "absolute",
@@ -2053,6 +2284,7 @@ function createStyles(viewport) {
       height: navHeight,
 
       display: "grid",
+
       gridTemplateColumns:
         "repeat(3,1fr)",
 
@@ -2199,6 +2431,10 @@ button,
 input,
 textarea {
   font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
 }
 
 .buyer-page-scroll {
