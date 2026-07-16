@@ -2179,3 +2179,577 @@ body {
   -webkit-text-size-adjust: 100%;
 }
 `;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+new code
+import React, { useEffect, useMemo, useState } from "react";
+
+const ORIGINAL_BG_IMAGE =
+  "https://raw.githubusercontent.com/Shyam7291/company-document-monitor/main/you_acn_only_generate_the_sa.png";
+
+const BG_IMAGE = `https://wsrv.nl/?url=${encodeURIComponent(
+  ORIGINAL_BG_IMAGE
+)}&output=png&w=820&h=980&fit=cover`;
+
+const GLASS_CARD_IMAGE =
+  "https://cdn.jsdelivr.net/gh/Shyam7291/company-document-monitor@main/32454-removebg-preview.png";
+
+const FEATURES = [
+  { title: "Best Rate", subtitle: "Comparison support\nfrom 1K+ sellers", icon: "🪨", color: "#f59e0b" },
+  { title: "Pure Quality", subtitle: "No mixing,Quality\nchecked material", icon: "🛡️", color: "#22c55e" },
+  { title: "Zero Brokerage", subtitle: "0% brokerage. No middleman cost", icon: "0%", color: "#f59e0b" },
+  { title: "Easy Transport", subtitle: "Transport as per your availability", icon: "🚚", color: "#38bdf8" },
+];
+
+export default function BuyerHomePage({
+  goToPlaceOrder,
+  goToOrders,
+  goToProfile,
+  goToNotifications,
+  goToRateRequests,
+  goToOrderHistory,
+  goToHowToUse,
+  goToHelpSupport,
+  goToSettings,
+  goToAbout,
+}) {
+  const viewport = useViewport();
+  const styles = useMemo(() => createStyles(viewport), [viewport.width, viewport.height]);
+  const buyerName = "Shyam";
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [rotation, setRotation] = useState(0);
+  const [contentHidden, setContentHidden] = useState(false);
+  const [activeNav, setActiveNav] = useState("Home");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const active = FEATURES[activeIndex];
+
+  const rotateToFeature = (nextIndex) => {
+    if (nextIndex === activeIndex) return;
+    setContentHidden(true);
+    setRotation((current) => current + 180);
+    window.setTimeout(() => setActiveIndex(nextIndex), 390);
+    window.setTimeout(() => setContentHidden(false), 520);
+  };
+
+  useEffect(() => {
+    let changeTimer;
+    let revealTimer;
+    const carouselTimer = window.setInterval(() => {
+      setContentHidden(true);
+      setRotation((current) => current + 180);
+      changeTimer = window.setTimeout(() => {
+        setActiveIndex((current) => (current + 1) % FEATURES.length);
+      }, 390);
+      revealTimer = window.setTimeout(() => setContentHidden(false), 520);
+    }, 3000);
+    return () => {
+      window.clearInterval(carouselTimer);
+      window.clearTimeout(changeTimer);
+      window.clearTimeout(revealTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
+  const handleNavigation = (name) => {
+    setActiveNav(name);
+    if (name === "Orders" && goToOrders) goToOrders();
+    if (name === "Profile" && goToProfile) goToProfile();
+  };
+
+  const handleMenuAction = (action) => {
+    setMenuOpen(false);
+    if (typeof action === "function") action();
+  };
+
+  return (
+    <div style={styles.page}>
+      <style>{globalCss}</style>
+      <main style={styles.phone}>
+        <header style={styles.fixedTopBar}>
+          <button
+            type="button"
+            style={{ ...styles.topMenuButton, ...(menuOpen ? styles.topMenuButtonActive : {}) }}
+            onClick={() => setMenuOpen(true)}
+            aria-label="Open menu"
+            aria-expanded={menuOpen}
+          >
+            <span style={styles.menuIcon}>☰</span>
+          </button>
+
+          <div style={styles.fixedBrand}>
+            <span style={styles.fixedBrandLogo}>◆</span>
+            <div style={styles.fixedBrandText}>
+              <b style={styles.fixedBrandName}>StoneRate</b>
+              <span style={styles.fixedBrandSub}>Stone Marketplace</span>
+            </div>
+          </div>
+
+          <button type="button" style={styles.topNotificationButton} onClick={goToNotifications} aria-label="Notifications">
+            <span style={styles.fixedBellIcon}>🔔</span>
+            <span style={styles.fixedNotificationDot} />
+          </button>
+        </header>
+
+        <section className="buyer-page-scroll" style={styles.pageScrollArea}>
+          <section style={styles.hero}>
+            <img src={BG_IMAGE} alt="Quarry background" style={styles.heroBg} />
+            <div style={styles.heroShade} />
+            <div style={styles.heroGrid} />
+            <div style={styles.bottomBlend} />
+            <div style={{ ...styles.activeGlow, background: active.color }} />
+
+            <div style={styles.intro}>
+              <h1 style={styles.greeting}>Hey {buyerName} 👋</h1>
+              <p style={styles.introText}>Ready to order good-quality stone today?</p>
+            </div>
+
+            <div style={styles.featureWrap}>
+              <article style={styles.singleFeatureCard}>
+                <div style={{ ...styles.ring, borderColor: active.color, boxShadow: `0 0 20px ${active.color}aa` }} />
+                <div style={styles.platform} />
+                <div style={{ ...styles.glassSpinLayer, transform: `rotateY(${rotation}deg)` }}>
+                  <img src={GLASS_CARD_IMAGE} alt="Glass feature card" style={styles.glassCardImage} />
+                </div>
+                <div style={{ ...styles.cardContent, ...(contentHidden ? styles.cardContentHidden : {}) }}>
+                  <div style={{ ...styles.featureIcon, background: active.color, boxShadow: `0 0 26px ${active.color}88` }}>{active.icon}</div>
+                  <div style={{ ...styles.stars, color: active.color }}>★★★★★</div>
+                  <h2 style={styles.featureTitle}>{active.title}</h2>
+                  <p style={styles.featureSubtitle}>{active.subtitle}</p>
+                </div>
+                <button
+                  type="button"
+                  style={{ ...styles.featureArrow, background: active.color, boxShadow: `0 8px 24px ${active.color}88` }}
+                  aria-label={`Open ${active.title}`}
+                >
+                  ➜
+                </button>
+              </article>
+            </div>
+
+            <div style={styles.dots}>
+              {FEATURES.map((feature, index) => (
+                <button
+                  type="button"
+                  key={feature.title}
+                  aria-label={`Show ${feature.title}`}
+                  onClick={() => rotateToFeature(index)}
+                  style={{ ...styles.dot, ...(index === activeIndex ? { ...styles.activeDot, background: feature.color } : {}) }}
+                />
+              ))}
+            </div>
+          </section>
+
+          <section style={styles.contentArea}>
+            <div style={styles.sheetHandle} />
+            <div style={styles.contentGlowOne} />
+            <div style={styles.contentGlowTwo} />
+
+            <button type="button" style={styles.placeOrderCard} onClick={goToPlaceOrder}>
+              <div style={styles.placeOrderIcon}>＋</div>
+              <div style={styles.placeOrderText}>
+                <span style={styles.cardEyebrow}>START A NEW REQUEST</span>
+                <strong style={styles.placeOrderTitle}>Place New Order</strong>
+                <span style={styles.placeOrderSub}>Select material, trucks and delivery location</span>
+              </div>
+              <span style={styles.placeOrderArrow}>➜</span>
+            </button>
+
+            <div style={styles.sectionHeading}>
+              <div>
+                <span style={styles.sectionKicker}>QUICK ACCESS</span>
+                <h2 style={styles.sectionTitle}>Your order centre</h2>
+              </div>
+              <button type="button" style={styles.viewAllButton} onClick={goToOrders}>View all</button>
+            </div>
+
+            <div style={styles.quickGrid}>
+              <button type="button" style={styles.activeOrderCard} onClick={goToOrders}>
+                <div style={styles.cardAmbientGreen} />
+                <div style={styles.activeCardHeader}>
+                  <div style={styles.activeStatusRow}>
+                    <div style={styles.livePill}><span style={styles.liveDot} /><span>Live</span></div>
+                  </div>
+                  <div style={styles.activeTitleRow}>
+                    <div style={styles.quickIconGreen}>🚚</div>
+                    <div style={styles.quickHeaderText}>
+                      <h3 style={styles.quickHeaderTitle}>Active Order</h3>
+                      <span style={styles.quickHeaderSubtitle}>In route</span>
+                    </div>
+                  </div>
+                </div>
+                <div style={styles.quickCardBody}>
+                  <h4 style={styles.materialTitle}>40mm Crushed Stone</h4>
+                  <p style={styles.quickDescription}>32 tons • 2 vehicles</p>
+                </div>
+                <div style={styles.miniProgressTrack}><div style={styles.miniProgressFill} /></div>
+                <div style={styles.quickFooter}><span>Delivery progress</span><b>Track ➜</b></div>
+              </button>
+
+              <button type="button" style={styles.repeatOrderCard}>
+                <div style={styles.cardAmbientAmber} />
+                <div style={styles.reorderCardHeader}>
+                  <div style={styles.reorderStatusRow}><span style={styles.lastOrderPill}>9 Jul</span></div>
+                  <div style={styles.activeTitleRow}>
+                    <div style={styles.quickIconAmber}>↻</div>
+                    <div style={styles.quickHeaderText}>
+                      <h3 style={styles.quickHeaderTitle}>Reorder</h3>
+                      <span style={styles.quickHeaderSubtitle}>Last order</span>
+                    </div>
+                  </div>
+                </div>
+                <div style={styles.quickCardBody}>
+                  <h4 style={styles.materialTitle}>20mm Stone</h4>
+                  <p style={styles.quickDescription}>20 tons • 2 trucks</p>
+                </div>
+                <div style={styles.reorderInfo}>
+                  <span style={styles.reorderInfoIcon}>✓</span>
+                  <div style={styles.reorderInfoText}>
+                    <b style={styles.reorderTitle}>Last order delivered</b>
+                    <small style={styles.reorderSubtitle}>Tap to order the same material</small>
+                  </div>
+                </div>
+                <div style={styles.quickFooter}><span>Previous order</span><b>Repeat ➜</b></div>
+              </button>
+            </div>
+
+            <div style={styles.insightCard}>
+              <div style={styles.insightIcon}>₹</div>
+              <div style={styles.insightText}>
+                <span style={styles.insightKicker}>TODAY&apos;S BUYER INSIGHT</span>
+                <strong style={styles.insightTitle}>Compare rates before confirming</strong>
+                <p style={styles.insightDescription}>Request a fresh quotation from verified sellers near your site.</p>
+              </div>
+              <button type="button" style={styles.insightButton} aria-label="View buyer insight">›</button>
+            </div>
+            <div style={styles.contentBottomSpace} />
+          </section>
+        </section>
+
+        <nav style={styles.bottomNav}>
+          {[{ name: "Home", icon: "⌂" }, { name: "Orders", icon: "▣" }, { name: "Profile", icon: "●" }].map((item) => {
+            const selected = activeNav === item.name;
+            return (
+              <button
+                type="button"
+                key={item.name}
+                onClick={() => handleNavigation(item.name)}
+                style={{ ...styles.navButton, ...(selected ? styles.navButtonActive : {}) }}
+              >
+                {selected && <span style={styles.activeIndicator} />}
+                <span style={{ ...styles.navIconBox, ...(selected ? styles.navIconBoxActive : {}) }}>{item.icon}</span>
+                <span style={{ ...styles.navLabel, ...(selected ? styles.navLabelActive : {}) }}>{item.name}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+        <div
+          style={{ ...styles.menuOverlay, ...(menuOpen ? styles.menuOverlayOpen : {}) }}
+          onClick={() => setMenuOpen(false)}
+          aria-hidden={!menuOpen}
+        />
+
+        <aside style={{ ...styles.menuDrawer, ...(menuOpen ? styles.menuDrawerOpen : {}) }} aria-hidden={!menuOpen}>
+          <div className="drawer-scroll" style={styles.drawerScroll}>
+            <div style={styles.drawerHeader}>
+              <div style={styles.drawerUserBlock}>
+                <div style={styles.drawerUserIcon}>S</div>
+                <div style={styles.drawerUserText}>
+                  <span style={styles.drawerGreeting}>Hello, {buyerName}</span>
+                  <span style={styles.drawerAccountType}>Buyer Account</span>
+                </div>
+              </div>
+              <button type="button" style={styles.drawerCloseButton} onClick={() => setMenuOpen(false)} aria-label="Close menu">×</button>
+            </div>
+
+            <button type="button" style={styles.drawerPrimaryAction} onClick={() => handleMenuAction(goToPlaceOrder)}>
+              <span style={styles.drawerPrimaryIcon}>＋</span>
+              <span style={styles.drawerPrimaryText}>
+                <b style={styles.drawerItemTitle}>Place New Order</b>
+                <small style={styles.drawerItemSubtitle}>Request material and seller rates</small>
+              </span>
+              <span style={styles.drawerPrimaryArrow}>➜</span>
+            </button>
+
+            <div style={styles.drawerSection}>
+              <p style={styles.drawerSectionLabel}>QUICK ACTIONS</p>
+              <div style={styles.drawerMenuGroup}>
+                <DrawerItem styles={styles} icon="🚚" iconStyle={styles.drawerGreenIcon} title="Active Order" subtitle="Track your current delivery" onClick={() => handleMenuAction(goToOrders)} end={<span style={styles.drawerLivePill}><span style={styles.drawerLiveDot} />Live</span>} />
+                <DrawerItem styles={styles} icon="↻" iconStyle={styles.drawerAmberIcon} title="Reorder" subtitle="Repeat your last order" end={<span style={styles.drawerItemArrow}>›</span>} />
+                <DrawerItem styles={styles} icon="₹" iconStyle={styles.drawerOrangeIcon} title="Rate Requests" subtitle="Compare seller quotations" onClick={() => handleMenuAction(goToRateRequests)} end={<span style={styles.drawerItemArrow}>›</span>} />
+                <DrawerItem styles={styles} icon="▣" iconStyle={styles.drawerNeutralIcon} title="Order History" subtitle="Delivered and cancelled orders" onClick={() => handleMenuAction(goToOrderHistory)} end={<span style={styles.drawerItemArrow}>›</span>} />
+                <DrawerItem styles={styles} icon="🔔" iconStyle={styles.drawerAmberIcon} title="Notifications" subtitle="Order and rate updates" onClick={() => handleMenuAction(goToNotifications)} end={<span style={styles.notificationCount}>3</span>} />
+              </div>
+            </div>
+
+            <div style={styles.drawerSection}>
+              <p style={styles.drawerSectionLabel}>APP AND SUPPORT</p>
+              <div style={styles.drawerSupportGroup}>
+                <SupportItem styles={styles} icon="▶" label="How to Use StoneRate" onClick={() => handleMenuAction(goToHowToUse)} />
+                <SupportItem styles={styles} icon="?" label="Help and Support" onClick={() => handleMenuAction(goToHelpSupport)} />
+                <SupportItem styles={styles} icon="⚙" label="Settings" onClick={() => handleMenuAction(goToSettings)} />
+                <SupportItem styles={styles} icon="ⓘ" label="About StoneRate" onClick={() => handleMenuAction(goToAbout)} />
+              </div>
+            </div>
+
+            <div style={styles.drawerFooter}>
+              <span style={styles.drawerFooterLogo}>◆</span>
+              <div style={styles.drawerFooterText}>
+                <b style={styles.drawerFooterTitle}>StoneRate</b>
+                <small style={styles.drawerFooterSubtitle}>Smart stone booking</small>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </main>
+    </div>
+  );
+}
+
+function DrawerItem({ styles, icon, iconStyle, title, subtitle, onClick, end }) {
+  return (
+    <button type="button" style={styles.drawerMenuItem} onClick={onClick}>
+      <span style={{ ...styles.drawerMenuIcon, ...iconStyle }}>{icon}</span>
+      <span style={styles.drawerMenuText}>
+        <b style={styles.drawerItemTitle}>{title}</b>
+        <small style={styles.drawerItemSubtitle}>{subtitle}</small>
+      </span>
+      {end}
+    </button>
+  );
+}
+
+function SupportItem({ styles, icon, label, onClick }) {
+  return (
+    <button type="button" style={styles.drawerSupportItem} onClick={onClick}>
+      <span style={styles.drawerSupportIcon}>{icon}</span>
+      <span>{label}</span>
+      <span style={styles.drawerItemArrow}>›</span>
+    </button>
+  );
+}
+
+function useViewport() {
+  const [viewport, setViewport] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 390,
+    height: typeof window !== "undefined" ? window.innerHeight : 844,
+  });
+  useEffect(() => {
+    const update = () => setViewport({ width: window.innerWidth, height: window.innerHeight });
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("orientationchange", update);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("orientationchange", update);
+    };
+  }, []);
+  return viewport;
+}
+
+function createStyles(viewport) {
+  const viewportWidth = viewport.width || 390;
+  const viewportHeight = viewport.height || 844;
+  const isDesktop = viewportWidth >= 700;
+  const appWidth = isDesktop ? 390 : viewportWidth;
+  const appHeight = isDesktop ? 844 : viewportHeight;
+  const scale = Math.max(0.68, Math.min(1, Math.min(appWidth / 390, appHeight / 844)));
+  const px = (value) => Math.round(value * scale);
+  const clamp = (minimum, preferred, maximum) => Math.round(Math.max(minimum, Math.min(maximum, preferred)));
+  const narrow = appWidth < 360;
+  const veryNarrow = appWidth < 320;
+  const short = appHeight < 700;
+  const veryShort = appHeight < 590;
+  const topBarHeight = px(58);
+  const navHeight = px(66);
+  const heroHeight = clamp(390, appHeight * (short ? 0.56 : 0.55), 470);
+  const glassCardSize = clamp(veryNarrow ? 185 : 195, appWidth * 0.84, 300);
+  const greetingSize = clamp(21, appWidth * 0.068, 28);
+  const introTextSize = clamp(12, appWidth * 0.039, 16);
+  const featureIconSize = clamp(34, glassCardSize * 0.19, 42);
+  const featureIconFontSize = clamp(19, glassCardSize * 0.11, 25);
+  const starsSize = clamp(10, glassCardSize * 0.062, 14);
+  const featureTitleSize = clamp(12, glassCardSize * 0.05, 15);
+  const featureSubtitleSize = clamp(9, glassCardSize * 0.049, 11);
+  const featureArrowSize = clamp(38, glassCardSize * 0.2, 44);
+
+  return {
+    page: { width: "100vw", height: "100dvh", minHeight: "100dvh", display: "flex", justifyContent: "center", alignItems: isDesktop ? "center" : "stretch", padding: isDesktop ? 10 : 0, margin: 0, overflow: "hidden", background: isDesktop ? "#f4f1ea" : "#080706", fontFamily: "Arial, sans-serif" },
+    phone: { position: "relative", width: isDesktop ? 390 : "100vw", height: isDesktop ? 844 : "100dvh", overflow: "hidden", background: "#120c08", borderRadius: isDesktop ? 32 : 0, boxShadow: isDesktop ? "0 30px 80px rgba(0,0,0,.30)" : "none" },
+    fixedTopBar: { position: "absolute", left: 0, right: 0, top: 0, zIndex: 100, height: topBarHeight, display: "grid", gridTemplateColumns: "auto minmax(0,1fr) auto", alignItems: "center", gap: px(9), padding: `${px(7)}px ${px(narrow ? 10 : 14)}px`, borderBottom: "1px solid rgba(251,191,36,.17)", background: "radial-gradient(circle at 88% 0%, rgba(245,158,11,.24), transparent 36%), linear-gradient(135deg, rgba(10,7,6,.98), rgba(48,25,12,.97))", boxShadow: "0 12px 30px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.05)", backdropFilter: "blur(20px)" },
+    topMenuButton: { justifySelf: "start", width: px(38), height: px(38), display: "grid", placeItems: "center", padding: 0, border: "1px solid rgba(255,255,255,.14)", borderRadius: px(14), background: "linear-gradient(145deg, rgba(255,255,255,.11), rgba(255,255,255,.035))", color: "white", boxShadow: "0 8px 18px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.09)", cursor: "pointer" },
+    topMenuButtonActive: { borderColor: "rgba(251,191,36,.55)", background: "linear-gradient(145deg, rgba(245,158,11,.30), rgba(146,64,14,.18))", color: "#fde68a", boxShadow: "0 0 18px rgba(245,158,11,.20), inset 0 1px 0 rgba(255,255,255,.12)" },
+    menuIcon: { display: "block", fontSize: px(17), lineHeight: 1, fontWeight: 950 },
+    fixedBrand: { minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: px(7) },
+    fixedBrandLogo: { width: px(narrow ? 31 : 34), height: px(narrow ? 31 : 34), display: "grid", placeItems: "center", flexShrink: 0, border: "1px solid rgba(251,191,36,.42)", borderRadius: px(12), background: "linear-gradient(145deg, #f59e0b, #92400e)", color: "white", fontSize: px(narrow ? 13 : 15), lineHeight: 1, fontWeight: 950, boxShadow: "0 8px 17px rgba(245,158,11,.28), inset 0 1px 0 rgba(255,255,255,.22)" },
+    fixedBrandText: { minWidth: 0, display: "flex", flexDirection: "column" },
+    fixedBrandName: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#ffffff", fontSize: clamp(12, appWidth * 0.035, 14), lineHeight: 1, fontWeight: 950, letterSpacing: -0.2 },
+    fixedBrandSub: { marginTop: px(3), overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#fde68a", fontSize: clamp(6, appWidth * 0.018, 7.4), lineHeight: 1, fontWeight: 800 },
+    topNotificationButton: { position: "relative", justifySelf: "end", width: px(38), height: px(38), display: "grid", placeItems: "center", padding: 0, border: "1px solid rgba(251,191,36,.20)", borderRadius: px(14), background: "linear-gradient(145deg, rgba(245,158,11,.16), rgba(255,255,255,.035))", color: "white", boxShadow: "0 8px 18px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.09)", cursor: "pointer" },
+    fixedBellIcon: { display: "block", fontSize: px(14), lineHeight: 1 },
+    fixedNotificationDot: { position: "absolute", right: px(6), top: px(5), width: px(6), height: px(6), border: `${px(1)}px solid #29160d`, borderRadius: "50%", background: "#f59e0b", boxShadow: "0 0 8px rgba(245,158,11,.72)" },
+    pageScrollArea: { position: "absolute", left: 0, right: 0, top: topBarHeight, bottom: navHeight, overflowY: "auto", overflowX: "hidden", background: "#120c08", scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch", overscrollBehavior: "contain" },
+    hero: { position: "relative", zIndex: 2, width: "100%", height: heroHeight, overflow: "hidden", padding: `${px(14)}px ${px(narrow ? 14 : 18)}px`, color: "white", background: "#111" },
+    heroBg: { position: "absolute", inset: 0, zIndex: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 45%", transform: "scale(1)", transformOrigin: "center center", filter: "brightness(.88) contrast(1.06)" },
+    heroShade: { position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(to bottom, rgba(2,6,23,.18), rgba(28,25,23,.03) 40%, rgba(8,7,6,.32) 78%)", pointerEvents: "none" },
+    heroGrid: { position: "absolute", inset: 0, zIndex: 2, opacity: 0.16, pointerEvents: "none", backgroundImage: "linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px)", backgroundSize: `${px(32)}px ${px(32)}px` },
+    bottomBlend: { position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 3, height: "27%", background: "linear-gradient(to bottom, transparent 0%, rgba(30,18,11,.60) 58%, #321b0e 100%)", pointerEvents: "none" },
+    activeGlow: { position: "absolute", left: "50%", top: "55%", zIndex: 2, width: clamp(145, glassCardSize * 0.85, 190), height: clamp(105, glassCardSize * 0.6, 135), borderRadius: "50%", filter: `blur(${px(34)}px)`, opacity: 0.25, transform: "translateX(-50%)", animation: "pulseGlow 3s ease-in-out infinite" },
+    intro: { position: "relative", zIndex: 7, width: "100%", marginTop: narrow ? px(7) : px(10), marginLeft: narrow ? 0 : px(4), paddingRight: px(8), textShadow: "0 8px 24px rgba(0,0,0,.55)" },
+    greeting: { maxWidth: "92%", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#fde68a", fontSize: greetingSize, lineHeight: 1.02, fontWeight: 950, letterSpacing: -0.4 },
+    introText: { maxWidth: narrow ? "88%" : px(270), margin: `${px(5)}px 0 0`, color: "white", fontSize: introTextSize, lineHeight: 1.16, fontWeight: 900, textWrap: "balance" },
+    featureWrap: { position: "absolute", left: 0, right: 0, top: veryShort ? "31%" : short ? "30%" : "31%", bottom: veryShort ? "14%" : short ? "13%" : "12%", zIndex: 6, perspective: 1100, transform: `translateY(${px(veryShort ? -3 : short ? -5 : -8)}px)` },
+    singleFeatureCard: { position: "absolute", left: "50%", top: veryShort ? "-6%" : "-10%", width: glassCardSize, maxWidth: "62vw", aspectRatio: "1 / 1", color: "white", textAlign: "center", transform: "translateX(-50%)", animation: "floatCard 3.8s ease-in-out infinite", overflow: "visible", isolation: "isolate" },
+    glassSpinLayer: { position: "absolute", inset: 0, zIndex: 2, transformStyle: "preserve-3d", transformOrigin: "center center", transition: "transform 1500ms cubic-bezier(.32,.72,.22,1)" },
+    glassCardImage: { position: "absolute", inset: 0, zIndex: 1, width: "100%", height: "100%", objectFit: "contain", filter: "drop-shadow(0 14px 20px rgba(0,0,0,.27))" },
+    cardContent: { position: "absolute", left: "50%", top: veryNarrow ? "14%" : narrow ? "15%" : "17%", zIndex: 4, width: veryNarrow ? "66%" : narrow ? "64%" : "60%", maxHeight: "70%", display: "flex", flexDirection: "column", alignItems: "center", overflow: "hidden", opacity: 1, transform: "translateX(-50%)", transition: "opacity 150ms ease, transform 150ms ease" },
+    cardContentHidden: { opacity: 0, transform: "translateX(-50%) scale(.96)" },
+    featureIcon: { width: featureIconSize, height: featureIconSize, display: "grid", placeItems: "center", flexShrink: 0, borderRadius: "50%", color: "#111827", fontSize: featureIconFontSize, lineHeight: 1, fontWeight: 950 },
+    stars: { marginTop: clamp(9, glassCardSize * 0.06, 14), fontSize: starsSize, letterSpacing: clamp(1, glassCardSize * 0.009, 2), lineHeight: 1, whiteSpace: "nowrap" },
+    featureTitle: { width: "100%", margin: `${clamp(3, glassCardSize * 0.018, 4)}px 0 0`, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "white", fontSize: featureTitleSize, lineHeight: 1.05, fontWeight: 950, textShadow: "0 6px 17px rgba(0,0,0,.6)" },
+    featureSubtitle: { width: "100%", margin: `${clamp(6, glassCardSize * 0.04, 10)}px 0 0`, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", whiteSpace: "pre-line", textAlign: "center", overflowWrap: "normal", wordBreak: "normal", color: "#fff7ed", fontSize: featureSubtitleSize, lineHeight: 1.18, fontWeight: 750, textShadow: "0 5px 16px rgba(0,0,0,.65)" },
+    featureArrow: { position: "absolute", left: "50%", bottom: px(-18), zIndex: 20, width: featureArrowSize, height: featureArrowSize, display: "grid", placeItems: "center", padding: 0, border: `${px(2)}px solid rgba(255,255,255,.16)`, borderRadius: "50%", color: "white", fontSize: clamp(17, glassCardSize * 0.09, 20), lineHeight: 1, fontWeight: 950, transform: "translateX(-50%)", cursor: "pointer" },
+    ring: { position: "absolute", left: "50%", bottom: px(-34), zIndex: 0, width: clamp(145, glassCardSize * 0.68, 195), height: clamp(34, glassCardSize * 0.15, 45), border: `${px(2)}px solid #f59e0b`, borderRadius: "50%", background: "radial-gradient(ellipse at center, rgba(56,189,248,.11), transparent 68%)", transform: "translateX(-50%) rotateX(68deg)", transformOrigin: "center center", pointerEvents: "none" },
+    platform: { position: "absolute", left: "50%", bottom: px(-29), zIndex: 0, width: clamp(120, glassCardSize * 0.58, 165), height: clamp(22, glassCardSize * 0.1, 30), borderRadius: "50%", background: "rgba(0,0,0,.38)", filter: `blur(${px(4)}px)`, transform: "translateX(-50%)", pointerEvents: "none" },
+    dots: { position: "absolute", left: 0, right: 0, bottom: px(25), zIndex: 30, display: "flex", alignItems: "center", justifyContent: "center", gap: px(8), pointerEvents: "auto" },
+    dot: { width: px(8), height: px(8), flexShrink: 0, padding: 0, border: "1px solid rgba(255,255,255,.34)", borderRadius: 999, background: "rgba(255,255,255,.72)", boxShadow: "0 3px 8px rgba(0,0,0,.28)", cursor: "pointer", transition: "width 220ms ease, background 220ms ease, transform 220ms ease" },
+    activeDot: { width: px(24), borderColor: "rgba(251,191,36,.65)", boxShadow: "0 0 12px rgba(245,158,11,.54)", transform: "scaleY(1.05)" },
+    contentArea: { position: "relative", zIndex: 10, width: "100%", minHeight: px(500), marginTop: px(-12), overflow: "visible", padding: `${px(28)}px ${px(narrow ? 12 : 16)}px ${px(24)}px`, borderRadius: `${px(29)}px ${px(29)}px 0 0`, borderTop: "1px solid rgba(251,191,36,.18)", background: "radial-gradient(circle at 88% 0%, rgba(245,158,11,.18), transparent 28%), radial-gradient(circle at 0% 70%, rgba(234,88,12,.08), transparent 28%), linear-gradient(180deg, rgba(50,27,14,.99) 0%, #1e120b 16%, #150e0a 56%, #0e0a08 100%)", boxShadow: "0 -18px 40px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.05)", backdropFilter: "blur(18px)" },
+    sheetHandle: { position: "absolute", left: "50%", top: px(9), width: px(47), height: px(4), borderRadius: 999, background: "linear-gradient(90deg, rgba(255,255,255,.10), rgba(251,191,36,.72), rgba(255,255,255,.10))", boxShadow: "0 0 14px rgba(245,158,11,.32)", transform: "translateX(-50%)" },
+    contentGlowOne: { position: "absolute", right: px(-65), top: px(55), width: px(170), height: px(170), borderRadius: "50%", background: "rgba(245,158,11,.08)", filter: `blur(${px(36)}px)`, pointerEvents: "none" },
+    contentGlowTwo: { position: "absolute", left: px(-70), bottom: px(50), width: px(160), height: px(160), borderRadius: "50%", background: "rgba(234,88,12,.07)", filter: `blur(${px(38)}px)`, pointerEvents: "none" },
+    placeOrderCard: { position: "relative", zIndex: 2, width: "100%", minHeight: px(75), display: "grid", gridTemplateColumns: "auto minmax(0,1fr) auto", alignItems: "center", gap: px(11), padding: `${px(12)}px ${px(14)}px`, border: "1px solid rgba(251,191,36,.35)", borderRadius: px(23), overflow: "hidden", textAlign: "left", background: "radial-gradient(circle at 85% 15%, rgba(251,191,36,.22), transparent 35%), linear-gradient(135deg, #3b1e0d 0%, #7c2d12 56%, #f97316 130%)", color: "white", boxShadow: "0 17px 35px rgba(146,64,14,.28), inset 0 1px 0 rgba(255,255,255,.13)", cursor: "pointer" },
+    placeOrderIcon: { width: px(43), height: px(43), display: "grid", placeItems: "center", border: "1px solid rgba(255,255,255,.18)", borderRadius: px(15), background: "rgba(255,255,255,.13)", color: "#fde68a", fontSize: px(25), fontWeight: 700, backdropFilter: "blur(10px)" },
+    placeOrderText: { minWidth: 0, display: "flex", flexDirection: "column", gap: px(3) },
+    cardEyebrow: { color: "#fde68a", fontSize: px(7), letterSpacing: px(0.8), fontWeight: 950 },
+    placeOrderTitle: { color: "white", fontSize: px(16), lineHeight: 1, fontWeight: 950 },
+    placeOrderSub: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#fed7aa", fontSize: px(9), fontWeight: 700 },
+    placeOrderArrow: { width: px(34), height: px(34), display: "grid", placeItems: "center", borderRadius: "50%", background: "rgba(255,255,255,.14)", color: "white", fontSize: px(16), fontWeight: 950 },
+    sectionHeading: { position: "relative", zIndex: 2, display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: px(8), marginTop: px(16), marginBottom: px(9) },
+    sectionKicker: { color: "#f59e0b", fontSize: px(7), letterSpacing: px(0.9), fontWeight: 950 },
+    sectionTitle: { margin: `${px(3)}px 0 0`, color: "white", fontSize: px(15), fontWeight: 950 },
+    viewAllButton: { minHeight: px(29), padding: `0 ${px(9)}px`, border: "1px solid rgba(245,158,11,.28)", borderRadius: 999, background: "rgba(245,158,11,.10)", color: "#fbbf24", fontSize: px(8), fontWeight: 950, cursor: "pointer" },
+    quickGrid: { position: "relative", zIndex: 2, display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", alignItems: "stretch", gap: px(10) },
+    activeOrderCard: { position: "relative", display: "block", verticalAlign: "top", width: "100%", minWidth: 0, minHeight: px(narrow ? 170 : 178), overflow: "hidden", padding: `${px(8)}px ${px(10)}px ${px(10)}px`, border: "1px solid rgba(34,197,94,.30)", borderRadius: px(21), background: "radial-gradient(circle at 100% 0%, rgba(34,197,94,.18), transparent 38%), linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.025))", color: "white", textAlign: "left", boxShadow: "0 14px 28px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.08)", backdropFilter: "blur(14px)", appearance: "none", WebkitAppearance: "none", cursor: "pointer" },
+    repeatOrderCard: { position: "relative", display: "block", verticalAlign: "top", width: "100%", minWidth: 0, minHeight: px(narrow ? 170 : 178), overflow: "hidden", padding: `${px(8)}px ${px(10)}px ${px(10)}px`, border: "1px solid rgba(245,158,11,.30)", borderRadius: px(21), background: "radial-gradient(circle at 100% 0%, rgba(245,158,11,.18), transparent 38%), linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.025))", color: "white", textAlign: "left", boxShadow: "0 14px 28px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.08)", backdropFilter: "blur(14px)", appearance: "none", WebkitAppearance: "none", cursor: "pointer" },
+    cardAmbientGreen: { position: "absolute", right: px(-35), top: px(-45), width: px(105), height: px(105), borderRadius: "50%", background: "rgba(34,197,94,.13)", filter: `blur(${px(24)}px)`, pointerEvents: "none" },
+    cardAmbientAmber: { position: "absolute", right: px(-35), top: px(-45), width: px(105), height: px(105), borderRadius: "50%", background: "rgba(245,158,11,.15)", filter: `blur(${px(24)}px)`, pointerEvents: "none" },
+    activeCardHeader: { position: "relative", zIndex: 3, width: "100%", minWidth: 0, paddingTop: px(34) },
+    reorderCardHeader: { position: "relative", zIndex: 3, width: "100%", minWidth: 0, paddingTop: px(24) },
+    activeStatusRow: { position: "absolute", top: 0, right: 0, zIndex: 5, width: "auto", display: "flex", alignItems: "center", justifyContent: "flex-end" },
+    reorderStatusRow: { position: "absolute", top: 0, right: 0, zIndex: 5, width: "auto", display: "flex", alignItems: "center", justifyContent: "flex-end" },
+    activeTitleRow: { position: "relative", zIndex: 3, width: "100%", minWidth: 0, display: "grid", gridTemplateColumns: "auto minmax(0, 1fr)", alignItems: "center", gap: px(8) },
+    quickHeaderText: { minWidth: 0 },
+    quickHeaderTitle: { margin: 0, color: "#ffffff", fontSize: px(narrow ? 13 : 15), lineHeight: 1.05, fontWeight: 950, letterSpacing: -0.2, whiteSpace: "nowrap" },
+    quickHeaderSubtitle: { display: "block", marginTop: px(4), color: "#a8a29e", fontSize: px(narrow ? 7 : 8), lineHeight: 1, fontWeight: 750, whiteSpace: "nowrap" },
+    quickIconGreen: { width: px(37), height: px(37), display: "grid", placeItems: "center", flexShrink: 0, border: "1px solid rgba(134,239,172,.28)", borderRadius: px(13), background: "linear-gradient(145deg, #22c55e, #15803d)", color: "white", fontSize: px(17), fontWeight: 950, boxShadow: "0 8px 18px rgba(34,197,94,.28), inset 0 1px 0 rgba(255,255,255,.20)" },
+    quickIconAmber: { width: px(37), height: px(37), display: "grid", placeItems: "center", flexShrink: 0, border: "1px solid rgba(251,191,36,.30)", borderRadius: px(13), background: "linear-gradient(145deg, #f59e0b, #ea580c)", color: "white", fontSize: px(20), lineHeight: 1, fontWeight: 950, boxShadow: "0 8px 18px rgba(245,158,11,.28), inset 0 1px 0 rgba(255,255,255,.20)" },
+    livePill: { width: "max-content", minWidth: px(54), display: "inline-flex", alignItems: "center", justifyContent: "center", gap: px(4), padding: `${px(5)}px ${px(10)}px`, border: "1px solid rgba(34,197,94,.38)", borderRadius: 999, background: "linear-gradient(145deg, rgba(34,197,94,.28), rgba(21,128,61,.18))", color: "#86efac", fontSize: px(narrow ? 7.5 : 8.5), lineHeight: 1, fontWeight: 950, whiteSpace: "nowrap", boxShadow: "0 5px 14px rgba(34,197,94,.17), inset 0 1px 0 rgba(255,255,255,.10)" },
+    liveDot: { width: px(6), height: px(6), flexShrink: 0, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 9px rgba(34,197,94,.90)" },
+    lastOrderPill: { width: "max-content", minWidth: px(48), display: "inline-flex", alignItems: "center", justifyContent: "center", padding: `${px(5)}px ${px(9)}px`, border: "1px solid rgba(245,158,11,.30)", borderRadius: 999, background: "linear-gradient(145deg, rgba(245,158,11,.22), rgba(234,88,12,.12))", color: "#fbbf24", fontSize: px(narrow ? 7.5 : 8.5), lineHeight: 1, fontWeight: 950, whiteSpace: "nowrap", boxShadow: "0 5px 14px rgba(245,158,11,.12)" },
+    quickCardBody: { position: "relative", zIndex: 2, marginTop: px(10) },
+    materialTitle: { margin: 0, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", color: "white", fontSize: px(narrow ? 11 : 12.5), lineHeight: 1.14, fontWeight: 950 },
+    quickDescription: { position: "relative", zIndex: 2, margin: `${px(5)}px 0 0`, color: "#d6d3d1", fontSize: px(8), lineHeight: 1.2, fontWeight: 750 },
+    miniProgressTrack: { position: "relative", zIndex: 2, height: px(4), marginTop: px(10), overflow: "hidden", borderRadius: 999, background: "rgba(255,255,255,.10)" },
+    miniProgressFill: { width: "72%", height: "100%", borderRadius: 999, background: "linear-gradient(90deg, #22c55e, #86efac)" },
+    reorderInfo: { position: "relative", zIndex: 2, display: "flex", alignItems: "center", gap: px(6), marginTop: px(9), padding: px(7), border: "1px solid rgba(245,158,11,.13)", borderRadius: px(11), background: "rgba(245,158,11,.08)", color: "white", textAlign: "left" },
+    reorderInfoIcon: { width: px(21), height: px(21), display: "grid", placeItems: "center", flexShrink: 0, borderRadius: "50%", background: "#f59e0b", color: "white", fontSize: px(8), fontWeight: 950 },
+    reorderInfoText: { minWidth: 0 },
+    reorderTitle: { display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#fde68a", fontSize: px(8), lineHeight: 1, fontWeight: 950 },
+    reorderSubtitle: { display: "block", marginTop: px(3), overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#a8a29e", fontSize: px(6.5), lineHeight: 1, fontWeight: 750 },
+    quickFooter: { position: "absolute", left: px(12), right: px(12), bottom: px(11), zIndex: 2, display: "flex", alignItems: "center", justifyContent: "space-between", gap: px(5), color: "#a8a29e", fontSize: px(7.2), fontWeight: 800 },
+    insightCard: { position: "relative", zIndex: 2, display: "grid", gridTemplateColumns: "auto minmax(0,1fr) auto", alignItems: "center", gap: px(9), marginTop: px(11), padding: px(11), border: "1px solid rgba(245,158,11,.18)", borderRadius: px(19), background: "linear-gradient(145deg, rgba(245,158,11,.11), rgba(255,255,255,.035))", boxShadow: "0 12px 24px rgba(0,0,0,.16)" },
+    insightIcon: { width: px(38), height: px(38), display: "grid", placeItems: "center", borderRadius: px(14), background: "linear-gradient(145deg,#f59e0b,#ea580c)", color: "white", fontSize: px(19), fontWeight: 950 },
+    insightText: { minWidth: 0, color: "white" },
+    insightKicker: { display: "block", color: "#fbbf24", fontSize: px(6.5), letterSpacing: px(0.65), fontWeight: 950 },
+    insightTitle: { display: "block", marginTop: px(3), color: "white", fontSize: px(11), lineHeight: 1.1, fontWeight: 950 },
+    insightDescription: { margin: `${px(4)}px 0 0`, color: "#d6d3d1", fontSize: px(8), lineHeight: 1.25, fontWeight: 700 },
+    insightButton: { width: px(30), height: px(30), display: "grid", placeItems: "center", border: "1px solid rgba(255,255,255,.10)", borderRadius: "50%", background: "rgba(255,255,255,.07)", color: "#fbbf24", fontSize: px(20), cursor: "pointer" },
+    contentBottomSpace: { height: px(10) },
+    bottomNav: { position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 100, height: navHeight, display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: px(4), padding: `${px(5)}px ${px(8)}px calc(env(safe-area-inset-bottom,0px) + ${px(5)}px)`, borderTop: "1px solid rgba(251,191,36,.18)", background: "radial-gradient(circle at 50% 0%, rgba(245,158,11,.17), transparent 47%), linear-gradient(135deg, rgba(33,20,13,.99), rgba(75,37,13,.99))", boxShadow: "0 -14px 34px rgba(28,15,7,.34), inset 0 1px 0 rgba(255,255,255,.05)", backdropFilter: "blur(20px)" },
+    navButton: { position: "relative", minWidth: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: px(3), padding: px(3), border: 0, borderRadius: px(15), background: "transparent", cursor: "pointer" },
+    navButtonActive: { background: "linear-gradient(145deg,rgba(245,158,11,.22),rgba(234,88,12,.10))", boxShadow: "inset 0 0 0 1px rgba(251,191,36,.24)" },
+    activeIndicator: { position: "absolute", left: "50%", top: px(-5), width: px(25), height: px(3), borderRadius: 999, background: "linear-gradient(90deg,#fbbf24,#f97316)", boxShadow: "0 0 12px rgba(245,158,11,.70)", transform: "translateX(-50%)" },
+    navIconBox: { width: px(28), height: px(26), display: "grid", placeItems: "center", border: "1px solid rgba(255,255,255,.07)", borderRadius: px(9), background: "rgba(255,255,255,.06)", color: "#d6c3b5", fontSize: px(15), fontWeight: 900 },
+    navIconBoxActive: { borderColor: "rgba(251,191,36,.35)", background: "linear-gradient(145deg,#f59e0b,#ea580c)", color: "white", boxShadow: "0 8px 17px rgba(234,88,12,.30)" },
+    navLabel: { maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#c4afa0", fontSize: px(7.2), fontWeight: 800 },
+    navLabelActive: { color: "#fbbf24", fontWeight: 950 },
+
+    menuOverlay: { position: "absolute", inset: 0, zIndex: 190, background: "rgba(3,2,2,.70)", backdropFilter: "blur(3px)", opacity: 0, visibility: "hidden", transition: "opacity 280ms ease, visibility 280ms ease", pointerEvents: "none" },
+    menuOverlayOpen: { opacity: 1, visibility: "visible", pointerEvents: "auto" },
+    menuDrawer: { position: "absolute", left: 0, top: 0, bottom: 0, zIndex: 200, width: narrow ? "88%" : "84%", maxWidth: px(330), overflow: "hidden", borderRight: "1px solid rgba(251,191,36,.24)", borderRadius: `0 ${px(28)}px ${px(28)}px 0`, background: "radial-gradient(circle at 15% 0%, rgba(245,158,11,.20), transparent 26%), radial-gradient(circle at 100% 75%, rgba(234,88,12,.10), transparent 30%), linear-gradient(160deg, #120c08 0%, #21130c 48%, #0d0907 100%)", boxShadow: "25px 0 60px rgba(0,0,0,.48), inset -1px 0 0 rgba(255,255,255,.04)", transform: "translateX(-105%)", transition: "transform 360ms cubic-bezier(.22,.75,.22,1)", pointerEvents: "none" },
+    menuDrawerOpen: { transform: "translateX(0)", pointerEvents: "auto" },
+    drawerScroll: { position: "relative", width: "100%", height: "100%", overflowY: "auto", overflowX: "hidden", padding: `${px(15)}px ${px(14)}px calc(env(safe-area-inset-bottom, 0px) + ${px(18)}px)`, WebkitOverflowScrolling: "touch" },
+    drawerHeader: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: px(10), paddingBottom: px(14), borderBottom: "1px solid rgba(255,255,255,.08)" },
+    drawerUserBlock: { minWidth: 0, display: "flex", alignItems: "center", gap: px(10) },
+    drawerUserIcon: { width: px(43), height: px(43), display: "grid", placeItems: "center", flexShrink: 0, border: "1px solid rgba(251,191,36,.38)", borderRadius: px(15), background: "linear-gradient(145deg, #f59e0b, #9a3412)", color: "white", fontSize: px(17), fontWeight: 950, boxShadow: "0 10px 22px rgba(245,158,11,.22), inset 0 1px 0 rgba(255,255,255,.20)" },
+    drawerUserText: { minWidth: 0, display: "flex", flexDirection: "column" },
+    drawerGreeting: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "white", fontSize: px(15), lineHeight: 1, fontWeight: 950 },
+    drawerAccountType: { marginTop: px(5), color: "#d6c3b5", fontSize: px(8), lineHeight: 1, fontWeight: 750 },
+    drawerCloseButton: { width: px(34), height: px(34), display: "grid", placeItems: "center", flexShrink: 0, padding: 0, border: "1px solid rgba(255,255,255,.12)", borderRadius: px(12), background: "rgba(255,255,255,.06)", color: "#fde68a", fontSize: px(23), lineHeight: 1, fontWeight: 500, cursor: "pointer" },
+    drawerPrimaryAction: { position: "relative", width: "100%", display: "grid", gridTemplateColumns: "auto minmax(0,1fr) auto", alignItems: "center", gap: px(10), marginTop: px(15), padding: px(11), overflow: "hidden", border: "1px solid rgba(251,191,36,.39)", borderRadius: px(19), background: "radial-gradient(circle at 90% 0%, rgba(253,186,116,.28), transparent 36%), linear-gradient(135deg, #7c2d12, #ea580c)", color: "white", textAlign: "left", boxShadow: "0 14px 27px rgba(146,64,14,.25), inset 0 1px 0 rgba(255,255,255,.14)", cursor: "pointer" },
+    drawerPrimaryIcon: { width: px(39), height: px(39), display: "grid", placeItems: "center", border: "1px solid rgba(255,255,255,.16)", borderRadius: px(13), background: "rgba(255,255,255,.13)", color: "#fde68a", fontSize: px(23), fontWeight: 700 },
+    drawerPrimaryText: { minWidth: 0, display: "flex", flexDirection: "column" },
+    drawerPrimaryArrow: { width: px(29), height: px(29), display: "grid", placeItems: "center", borderRadius: "50%", background: "rgba(255,255,255,.13)", color: "white", fontSize: px(13), fontWeight: 950 },
+    drawerSection: { marginTop: px(17) },
+    drawerSectionLabel: { margin: `0 0 ${px(8)}px`, color: "#f59e0b", fontSize: px(7), letterSpacing: px(1.05), lineHeight: 1, fontWeight: 950 },
+    drawerMenuGroup: { display: "flex", flexDirection: "column", gap: px(7) },
+    drawerMenuItem: { position: "relative", width: "100%", minHeight: px(55), display: "grid", gridTemplateColumns: "auto minmax(0,1fr) auto", alignItems: "center", gap: px(9), padding: `${px(8)}px ${px(9)}px`, border: "1px solid rgba(255,255,255,.08)", borderRadius: px(16), background: "linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.025))", color: "white", textAlign: "left", boxShadow: "inset 0 1px 0 rgba(255,255,255,.04)", cursor: "pointer" },
+    drawerMenuIcon: { width: px(36), height: px(36), display: "grid", placeItems: "center", flexShrink: 0, borderRadius: px(12), color: "white", fontSize: px(16), lineHeight: 1, fontWeight: 950 },
+    drawerGreenIcon: { background: "linear-gradient(145deg, #22c55e, #15803d)", boxShadow: "0 7px 14px rgba(34,197,94,.18)" },
+    drawerAmberIcon: { background: "linear-gradient(145deg, #f59e0b, #d97706)", boxShadow: "0 7px 14px rgba(245,158,11,.18)" },
+    drawerOrangeIcon: { background: "linear-gradient(145deg, #f97316, #c2410c)", boxShadow: "0 7px 14px rgba(249,115,22,.18)" },
+    drawerNeutralIcon: { border: "1px solid rgba(255,255,255,.12)", background: "linear-gradient(145deg, #44403c, #1c1917)", boxShadow: "0 7px 14px rgba(0,0,0,.18)" },
+    drawerMenuText: { minWidth: 0, display: "flex", flexDirection: "column" },
+    drawerItemTitle: { display: "block", overflow: "hidden", color: "white", fontSize: px(11), lineHeight: 1.1, fontWeight: 950, textOverflow: "ellipsis", whiteSpace: "nowrap" },
+    drawerItemSubtitle: { display: "block", marginTop: px(4), overflow: "hidden", color: "#a8a29e", fontSize: px(7), lineHeight: 1.1, fontWeight: 700, textOverflow: "ellipsis", whiteSpace: "nowrap" },
+    drawerItemArrow: { display: "grid", placeItems: "center", width: px(25), height: px(25), borderRadius: "50%", background: "rgba(255,255,255,.055)", color: "#fbbf24", fontSize: px(17), fontWeight: 800 },
+    drawerLivePill: { display: "inline-flex", alignItems: "center", justifyContent: "center", gap: px(3), padding: `${px(4)}px ${px(7)}px`, border: "1px solid rgba(34,197,94,.28)", borderRadius: 999, background: "rgba(34,197,94,.12)", color: "#86efac", fontSize: px(7), lineHeight: 1, fontWeight: 950, whiteSpace: "nowrap" },
+    drawerLiveDot: { width: px(5), height: px(5), borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 7px rgba(34,197,94,.85)" },
+    notificationCount: { minWidth: px(23), height: px(23), display: "grid", placeItems: "center", padding: `0 ${px(5)}px`, borderRadius: 999, background: "linear-gradient(145deg, #f59e0b, #ea580c)", color: "white", fontSize: px(7), lineHeight: 1, fontWeight: 950, boxShadow: "0 6px 13px rgba(245,158,11,.20)" },
+    drawerSupportGroup: { overflow: "hidden", border: "1px solid rgba(255,255,255,.08)", borderRadius: px(17), background: "linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.018))" },
+    drawerSupportItem: { width: "100%", minHeight: px(44), display: "grid", gridTemplateColumns: "auto minmax(0,1fr) auto", alignItems: "center", gap: px(9), padding: `${px(8)}px ${px(10)}px`, border: 0, borderBottom: "1px solid rgba(255,255,255,.055)", background: "transparent", color: "#e7e5e4", textAlign: "left", fontSize: px(9), fontWeight: 850, cursor: "pointer" },
+    drawerSupportIcon: { width: px(28), height: px(28), display: "grid", placeItems: "center", border: "1px solid rgba(245,158,11,.18)", borderRadius: px(9), background: "rgba(245,158,11,.08)", color: "#fbbf24", fontSize: px(12), lineHeight: 1, fontWeight: 950 },
+    drawerFooter: { display: "flex", alignItems: "center", gap: px(8), marginTop: px(18), paddingTop: px(13), borderTop: "1px solid rgba(255,255,255,.07)", color: "white" },
+    drawerFooterLogo: { width: px(28), height: px(28), display: "grid", placeItems: "center", borderRadius: px(9), background: "linear-gradient(145deg, #f59e0b, #92400e)", color: "white", fontSize: px(10) },
+    drawerFooterText: { minWidth: 0, display: "flex", flexDirection: "column" },
+    drawerFooterTitle: { color: "white", fontSize: px(9), fontWeight: 950 },
+    drawerFooterSubtitle: { marginTop: px(3), color: "#a8a29e", fontSize: px(6) },
+  };
+}
+
+const globalCss = `
+* { box-sizing: border-box; }
+html, body, #root { margin: 0; width: 100%; height: 100%; min-height: 100%; overflow: hidden; background: #080706; }
+button, input, textarea { font: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+.buyer-page-scroll, .drawer-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+.buyer-page-scroll::-webkit-scrollbar, .drawer-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
+@keyframes floatCard { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-5px); } }
+@keyframes pulseGlow { 0%, 100% { transform: translateX(-50%) scale(.92); opacity: .20; } 50% { transform: translateX(-50%) scale(1.12); opacity: .34; } }
+body { -webkit-text-size-adjust: 100%; }
+`;
+
