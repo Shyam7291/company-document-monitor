@@ -1057,7 +1057,7 @@ function createStyles(viewport) {
         : "-10%",
     
       width: glassCardSize,
-      maxWidth: "78vw",
+      maxWidth: "62vw",
     
       aspectRatio: "1 / 1",
     
