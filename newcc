@@ -13,19 +13,19 @@ const GLASS_CARD_IMAGE =
 const FEATURES = [
   {
     title: "Best Rate",
-    subtitle: "Comparison support from 1K+ sellers",
+    subtitle: "Comparison support\nfrom 1K+ sellers",
     icon: "🪨",
     color: "#f59e0b",
   },
   {
     title: "Pure Quality",
-    subtitle: "No mixing. Quality checked material",
+    subtitle: "No mixing,Quality\nchecked material",
     icon: "🛡️",
     color: "#22c55e",
   },
   {
     title: "Zero Brokerage",
-    subtitle: "0% brokerage. No heavy middleman cost",
+    subtitle: "0% brokerage. No middleman cost",
     icon: "0%",
     color: "#f59e0b",
   },
@@ -42,6 +42,12 @@ export default function BuyerHomePage({
   goToOrders,
   goToProfile,
   goToNotifications,
+  goToRateRequests,
+  goToOrderHistory,
+  goToHowToUse,
+  goToHelpSupport,
+  goToSettings,
+  goToAbout,
 }) {
   const viewport = useViewport();
 
@@ -56,6 +62,7 @@ export default function BuyerHomePage({
   const [rotation, setRotation] = useState(0);
   const [contentHidden, setContentHidden] = useState(false);
   const [activeNav, setActiveNav] = useState("Home");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const active = FEATURES[activeIndex];
 
@@ -111,21 +118,32 @@ export default function BuyerHomePage({
       goToProfile();
     }
   };
+  const handleMenuAction = (action) => {
+    setMenuOpen(false);
+  
+    if (typeof action === "function") {
+      action();
+    }
+  };
 
   return (
     <div style={styles.page}>
       <style>{globalCss}</style>
 
       <main style={styles.phone}>
-        {/* Fixed top navigation */}
         <header style={styles.fixedTopBar}>
-          <button
-            type="button"
-            style={styles.topMenuButton}
-            aria-label="Open menu"
-          >
-            <span style={styles.menuIcon}>☰</span>
-          </button>
+        <button
+  type="button"
+  style={{
+    ...styles.topMenuButton,
+    ...(menuOpen ? styles.topMenuButtonActive : {}),
+  }}
+  onClick={() => setMenuOpen(true)}
+  aria-label="Open menu"
+  aria-expanded={menuOpen}
+>
+  <span style={styles.menuIcon}>☰</span>
+</button>
 
           <div style={styles.fixedBrand}>
             <span style={styles.fixedBrandLogo}>◆</span>
@@ -152,14 +170,13 @@ export default function BuyerHomePage({
           </button>
         </header>
 
-        {/* Scrollable middle area */}
         <section
           className="buyer-page-scroll"
           style={styles.pageScrollArea}
         >
-          {/* Quarry hero */}
           <section style={styles.hero}>
           <img src={BG_IMAGE} alt="Quarry background" style={styles.heroBg} />
+
 
             <div style={styles.heroShade} />
             <div style={styles.heroGrid} />
@@ -172,7 +189,6 @@ export default function BuyerHomePage({
               }}
             />
 
-            {/* Greeting */}
             <div style={styles.intro}>
               <h1 style={styles.greeting}>
                 Hey {buyerName} 👋
@@ -183,82 +199,89 @@ export default function BuyerHomePage({
               </p>
             </div>
 
-            {/* Responsive glass-card carousel */}
             <div style={styles.featureWrap}>
-              <div style={styles.platform} />
+  <article style={styles.singleFeatureCard}>
+    {/* Ring is now attached to the glass card */}
+    <div
+      style={{
+        ...styles.ring,
+        borderColor: active.color,
+        boxShadow: `0 0 20px ${active.color}aa`,
+      }}
+    />
 
-              <div
-                style={{
-                  ...styles.ring,
-                  borderColor: active.color,
-                  boxShadow: `0 0 20px ${active.color}aa`,
-                }}
-              />
+    {/* Platform is also attached to the glass card */}
+    <div style={styles.platform} />
 
-              <article style={styles.singleFeatureCard}>
-                <div
-                  style={{
-                    ...styles.glassSpinLayer,
-                    transform: `rotateY(${rotation}deg)`,
-                  }}
-                >
-                  <img
-                  src={GLASS_CARD_IMAGE}
-                  alt="Glass feature card"
-                  style={styles.glassCardImage}
-                />
-                </div>
+    {/* Rotating glass image */}
+    <div
+      style={{
+        ...styles.glassSpinLayer,
+        transform: `rotateY(${rotation}deg)`,
+      }}
+    >
+      <img
+          src={GLASS_CARD_IMAGE}
 
-                <div
-                  style={{
-                    ...styles.cardContent,
-                    ...(contentHidden
-                      ? styles.cardContentHidden
-                      : {}),
-                  }}
-                >
-                  <div
-                    style={{
-                      ...styles.featureIcon,
-                      background: active.color,
-                      boxShadow: `0 0 26px ${active.color}88`,
-                    }}
-                  >
-                    {active.icon}
-                  </div>
+                 alt="Glass feature card"
 
-                  <div
-                    style={{
-                      ...styles.stars,
-                      color: active.color,
-                    }}
-                  >
-                    ★★★★★
-                  </div>
+                 style={styles.glassCardImage}
 
-                  <h2 style={styles.featureTitle}>
-                    {active.title}
-                  </h2>
+               />
+    </div>
 
-                  <p style={styles.featureSubtitle}>
-                    {active.subtitle}
-                  </p>
-                </div>
+    {/* Feature content */}
+    <div
+      style={{
+        ...styles.cardContent,
+        ...(contentHidden
+          ? styles.cardContentHidden
+          : {}),
+      }}
+    >
+      <div
+        style={{
+          ...styles.featureIcon,
+          background: active.color,
+          boxShadow: `0 0 26px ${active.color}88`,
+        }}
+      >
+        {active.icon}
+      </div>
 
-                <button
-                  type="button"
-                  style={{
-                    ...styles.featureArrow,
-                    background: active.color,
-                  }}
-                  aria-label={`Open ${active.title}`}
-                >
-                  ➜
-                </button>
-              </article>
-            </div>
+      <div
+        style={{
+          ...styles.stars,
+          color: active.color,
+        }}
+      >
+        ★★★★★
+      </div>
 
-            {/* Carousel dots */}
+      <h2 style={styles.featureTitle}>
+        {active.title}
+      </h2>
+
+      <p style={styles.featureSubtitle}>
+        {active.subtitle}
+      </p>
+    </div>
+
+    {/* Arrow is attached to the same glass card */}
+    <button
+      type="button"
+      style={{
+        ...styles.featureArrow,
+        background: active.color,
+        boxShadow: `0 8px 24px ${active.color}88`,
+      }}
+      aria-label={`Open ${active.title}`}
+    >
+      ➜
+    </button>
+  </article>
+</div>
+
             <div style={styles.dots}>
               {FEATURES.map((feature, index) => (
                 <button
@@ -280,13 +303,11 @@ export default function BuyerHomePage({
             </div>
           </section>
 
-          {/* Curved lower sheet */}
           <section style={styles.contentArea}>
             <div style={styles.sheetHandle} />
             <div style={styles.contentGlowOne} />
             <div style={styles.contentGlowTwo} />
 
-            {/* Place New Order */}
             <button
               type="button"
               style={styles.placeOrderCard}
@@ -315,7 +336,6 @@ export default function BuyerHomePage({
               </span>
             </button>
 
-            {/* Section heading */}
             <div style={styles.sectionHeading}>
               <div>
                 <span style={styles.sectionKicker}>
@@ -336,7 +356,6 @@ export default function BuyerHomePage({
               </button>
             </div>
 
-            {/* Quick order cards */}
             <div style={styles.quickGrid}>
               {/* Active Order */}
               <button
@@ -346,26 +365,30 @@ export default function BuyerHomePage({
               >
                 <div style={styles.cardAmbientGreen} />
 
-                <div style={styles.quickCardHeader}>
-                  <div style={styles.quickIconGreen}>
-                    🚚
-                  </div>
+                <div style={styles.activeCardHeader}>
+  <div style={styles.activeStatusRow}>
+    <div style={styles.livePill}>
+      <span style={styles.liveDot} />
+      <span>Live</span>
+    </div>
+  </div>
 
-                  <div style={styles.quickHeaderText}>
-                    <h3 style={styles.quickHeaderTitle}>
-                      Active Order
-                    </h3>
+  <div style={styles.activeTitleRow}>
+    <div style={styles.quickIconGreen}>
+      🚚
+    </div>
 
-                    <span style={styles.quickHeaderSubtitle}>
-                      In route
-                    </span>
-                  </div>
+    <div style={styles.quickHeaderText}>
+      <h3 style={styles.quickHeaderTitle}>
+        Active Order
+      </h3>
 
-                  <div style={styles.livePill}>
-                    <span style={styles.liveDot} />
-                    Live
-                  </div>
-                </div>
+      <span style={styles.quickHeaderSubtitle}>
+        In route
+      </span>
+    </div>
+  </div>
+</div>
 
                 <div style={styles.quickCardBody}>
                   <h4 style={styles.materialTitle}>
@@ -394,24 +417,28 @@ export default function BuyerHomePage({
               >
                 <div style={styles.cardAmbientAmber} />
 
-                <div style={styles.quickCardHeader}>
-                  <div style={styles.quickIconAmber}>
-                    ↻
-                  </div>
-
-                  <div style={styles.quickHeaderText}>
-                    <h3 style={styles.quickHeaderTitle}>
-                      Reorder
-                    </h3>
-
-                    <span style={styles.quickHeaderSubtitle}>
-                      Last order
+                <div style={styles.reorderCardHeader}>
+                  <div style={styles.reorderStatusRow}>
+                    <span style={styles.lastOrderPill}>
+                      9 Jul
                     </span>
                   </div>
 
-                  <span style={styles.lastOrderPill}>
-                    9 Jul
-                  </span>
+                  <div style={styles.activeTitleRow}>
+                    <div style={styles.quickIconAmber}>
+                      ↻
+                    </div>
+
+                    <div style={styles.quickHeaderText}>
+                      <h3 style={styles.quickHeaderTitle}>
+                        Reorder
+                      </h3>
+
+                      <span style={styles.quickHeaderSubtitle}>
+                        Last order
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
                 <div style={styles.quickCardBody}>
@@ -447,7 +474,6 @@ export default function BuyerHomePage({
               </button>
             </div>
 
-            {/* Buyer insight */}
             <div style={styles.insightCard}>
               <div style={styles.insightIcon}>
                 ₹
@@ -481,7 +507,6 @@ export default function BuyerHomePage({
           </section>
         </section>
 
-        {/* Fixed bottom navigation */}
         <nav style={styles.bottomNav}>
           {[
             { name: "Home", icon: "⌂" },
@@ -494,9 +519,7 @@ export default function BuyerHomePage({
               <button
                 type="button"
                 key={item.name}
-                onClick={() =>
-                  handleNavigation(item.name)
-                }
+                onClick={() => handleNavigation(item.name)}
                 style={{
                   ...styles.navButton,
                   ...(selected
@@ -505,9 +528,7 @@ export default function BuyerHomePage({
                 }}
               >
                 {selected && (
-                  <span
-                    style={styles.activeIndicator}
-                  />
+                  <span style={styles.activeIndicator} />
                 )}
 
                 <span
@@ -563,10 +584,7 @@ function useViewport() {
     update();
 
     window.addEventListener("resize", update);
-    window.addEventListener(
-      "orientationchange",
-      update
-    );
+    window.addEventListener("orientationchange", update);
 
     return () => {
       window.removeEventListener("resize", update);
@@ -603,8 +621,9 @@ function createStyles(viewport) {
         appHeight / 844
       )
     )
-  );
+    );
 
+    
   const px = (value) =>
     Math.round(value * scale);
 
@@ -630,12 +649,10 @@ function createStyles(viewport) {
     470
   );
 
-  /* Responsive hero values */
-
   const glassCardSize = clamp(
-    veryNarrow ? 166 : 176,
-    appWidth * 0.57,
-    225
+    veryNarrow ? 185 : 195,
+    appWidth * 0.84,
+    300
   );
 
   const greetingSize = clamp(
@@ -669,9 +686,9 @@ function createStyles(viewport) {
   );
 
   const featureTitleSize = clamp(
-    14,
-    glassCardSize * 0.075,
-    17
+    12,
+    glassCardSize * 0.05,
+    15
   );
 
   const featureSubtitleSize = clamp(
@@ -703,116 +720,71 @@ function createStyles(viewport) {
       width: "100vw",
       height: "100dvh",
       minHeight: "100dvh",
-
       display: "flex",
       justifyContent: "center",
-
-      alignItems: isDesktop
-        ? "center"
-        : "stretch",
-
+      alignItems: isDesktop ? "center" : "stretch",
       padding: isDesktop ? 10 : 0,
       margin: 0,
-
       overflow: "hidden",
-
-      background: isDesktop
-        ? "#f4f1ea"
-        : "#080706",
-
+      background: isDesktop ? "#f4f1ea" : "#080706",
       fontFamily: "Arial, sans-serif",
     },
 
     phone: {
       position: "relative",
-
-      width: isDesktop
-        ? 390
-        : "100vw",
-
-      height: isDesktop
-        ? 844
-        : "100dvh",
-
+      width: isDesktop ? 390 : "100vw",
+      height: isDesktop ? 844 : "100dvh",
       overflow: "hidden",
-
       background: "#120c08",
-
       borderRadius: isDesktop ? 32 : 0,
-
       boxShadow: isDesktop
         ? "0 30px 80px rgba(0,0,0,.30)"
         : "none",
     },
 
-    /* Fixed top navigation */
-
     fixedTopBar: {
       position: "absolute",
-
       left: 0,
       right: 0,
       top: 0,
-
       zIndex: 100,
-
       height: topBarHeight,
-
       display: "grid",
-
-      gridTemplateColumns:
-        "auto minmax(0,1fr) auto",
-
+      gridTemplateColumns: "auto minmax(0,1fr) auto",
       alignItems: "center",
-
       gap: px(9),
-
       padding: `${px(7)}px ${px(
         narrow ? 10 : 14
       )}px`,
-
       borderBottom:
         "1px solid rgba(251,191,36,.17)",
-
       background:
         "radial-gradient(circle at 88% 0%, rgba(245,158,11,.24), transparent 36%), linear-gradient(135deg, rgba(10,7,6,.98), rgba(48,25,12,.97))",
-
       boxShadow:
         "0 12px 30px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.05)",
-
       backdropFilter: "blur(20px)",
     },
 
     topMenuButton: {
       justifySelf: "start",
-
       width: px(38),
       height: px(38),
-
       display: "grid",
       placeItems: "center",
-
       padding: 0,
-
       border:
         "1px solid rgba(255,255,255,.14)",
-
       borderRadius: px(14),
-
       background:
         "linear-gradient(145deg, rgba(255,255,255,.11), rgba(255,255,255,.035))",
-
       color: "white",
-
       boxShadow:
         "0 8px 18px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.09)",
-
       cursor: "pointer",
     },
 
     menuIcon: {
       display: "block",
-
       fontSize: px(17),
       lineHeight: 1,
       fontWeight: 950,
@@ -820,44 +792,33 @@ function createStyles(viewport) {
 
     fixedBrand: {
       minWidth: 0,
-
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-
       gap: px(7),
     },
 
     fixedBrandLogo: {
       width: px(narrow ? 31 : 34),
       height: px(narrow ? 31 : 34),
-
       display: "grid",
       placeItems: "center",
-
       flexShrink: 0,
-
       border:
         "1px solid rgba(251,191,36,.42)",
-
       borderRadius: px(12),
-
       background:
         "linear-gradient(145deg, #f59e0b, #92400e)",
-
       color: "white",
-
       fontSize: px(narrow ? 13 : 15),
       lineHeight: 1,
       fontWeight: 950,
-
       boxShadow:
         "0 8px 17px rgba(245,158,11,.28), inset 0 1px 0 rgba(255,255,255,.22)",
     },
 
     fixedBrandText: {
       minWidth: 0,
-
       display: "flex",
       flexDirection: "column",
     },
@@ -866,15 +827,12 @@ function createStyles(viewport) {
       overflow: "hidden",
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
-
       color: "#ffffff",
-
       fontSize: clamp(
         12,
         appWidth * 0.035,
         14
       ),
-
       lineHeight: 1,
       fontWeight: 950,
       letterSpacing: -0.2,
@@ -882,115 +840,81 @@ function createStyles(viewport) {
 
     fixedBrandSub: {
       marginTop: px(3),
-
       overflow: "hidden",
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
-
       color: "#fde68a",
-
       fontSize: clamp(
         6,
         appWidth * 0.018,
         7.4
       ),
-
       lineHeight: 1,
       fontWeight: 800,
     },
 
     topNotificationButton: {
       position: "relative",
-
       justifySelf: "end",
-
       width: px(38),
       height: px(38),
-
       display: "grid",
       placeItems: "center",
-
       padding: 0,
-
       border:
         "1px solid rgba(251,191,36,.20)",
-
       borderRadius: px(14),
-
       background:
         "linear-gradient(145deg, rgba(245,158,11,.16), rgba(255,255,255,.035))",
-
       color: "white",
-
       boxShadow:
         "0 8px 18px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.09)",
-
       cursor: "pointer",
     },
 
     fixedBellIcon: {
       display: "block",
-
       fontSize: px(14),
       lineHeight: 1,
     },
 
     fixedNotificationDot: {
       position: "absolute",
-
       right: px(6),
       top: px(5),
-
       width: px(6),
       height: px(6),
-
       border: `${px(1)}px solid #29160d`,
       borderRadius: "50%",
-
       background: "#f59e0b",
-
       boxShadow:
         "0 0 8px rgba(245,158,11,.72)",
     },
 
-    /* Scroll area */
-
     pageScrollArea: {
       position: "absolute",
-
       left: 0,
       right: 0,
-
       top: topBarHeight,
       bottom: navHeight,
-
       overflowY: "auto",
       overflowX: "hidden",
-
       background: "#120c08",
-
       scrollbarWidth: "none",
       msOverflowStyle: "none",
-
       WebkitOverflowScrolling: "touch",
       overscrollBehavior: "contain",
     },
 
-    /* Hero */
-
     hero: {
       position: "relative",
       zIndex: 2,
-
       width: "100%",
       height: heroHeight,
-
       overflow: "hidden",
-
       padding: `${px(14)}px ${px(
         narrow ? 14 : 18
       )}px`,
-
       color: "white",
       background: "#111",
     },
@@ -999,25 +923,21 @@ function createStyles(viewport) {
       position: "absolute",
       inset: 0,
       zIndex: 0,
-
       width: "100%",
       height: "100%",
-
       objectFit: "cover",
-      objectPosition: "center center",
-
-      transform:
-        "translateY(-2%) scale(1.12)",
+      objectPosition: "center 45%",
+      transform: "scale(1)",
+      transformOrigin: "center center",
+      filter: "brightness(.88) contrast(1.06)",
     },
 
     heroShade: {
       position: "absolute",
       inset: 0,
       zIndex: 1,
-
       background:
         "linear-gradient(to bottom, rgba(2,6,23,.18), rgba(28,25,23,.03) 40%, rgba(8,7,6,.32) 78%)",
-
       pointerEvents: "none",
     },
 
@@ -1025,63 +945,45 @@ function createStyles(viewport) {
       position: "absolute",
       inset: 0,
       zIndex: 2,
-
       opacity: 0.16,
-
       pointerEvents: "none",
-
       backgroundImage:
         "linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px)",
-
       backgroundSize:
         `${px(32)}px ${px(32)}px`,
     },
 
     bottomBlend: {
       position: "absolute",
-
       left: 0,
       right: 0,
       bottom: 0,
-
       zIndex: 3,
-
       height: "27%",
-
       background:
         "linear-gradient(to bottom, transparent 0%, rgba(30,18,11,.60) 58%, #321b0e 100%)",
-
       pointerEvents: "none",
     },
 
     activeGlow: {
       position: "absolute",
-
       left: "50%",
       top: "55%",
-
       zIndex: 2,
-
       width: clamp(
         145,
         glassCardSize * 0.85,
         190
       ),
-
       height: clamp(
         105,
         glassCardSize * 0.6,
         135
       ),
-
       borderRadius: "50%",
-
       filter: `blur(${px(34)}px)`,
-
       opacity: 0.25,
-
       transform: "translateX(-50%)",
-
       animation:
         "pulseGlow 3s ease-in-out infinite",
     },
@@ -1089,34 +991,21 @@ function createStyles(viewport) {
     intro: {
       position: "relative",
       zIndex: 7,
-
       width: "100%",
-
-      marginTop: narrow
-        ? px(7)
-        : px(10),
-
-      marginLeft: narrow
-        ? 0
-        : px(4),
-
+      marginTop: narrow ? px(7) : px(10),
+      marginLeft: narrow ? 0 : px(4),
       paddingRight: px(8),
-
       textShadow:
         "0 8px 24px rgba(0,0,0,.55)",
     },
 
     greeting: {
       maxWidth: "92%",
-
       margin: 0,
-
       overflow: "hidden",
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
-
       color: "#fde68a",
-
       fontSize: greetingSize,
       lineHeight: 1.02,
       fontWeight: 950,
@@ -1124,43 +1013,31 @@ function createStyles(viewport) {
     },
 
     introText: {
-      maxWidth: narrow
-        ? "88%"
-        : px(270),
-
+      maxWidth: narrow ? "88%" : px(270),
       margin: `${px(5)}px 0 0`,
-
       color: "white",
-
       fontSize: introTextSize,
       lineHeight: 1.16,
       fontWeight: 900,
-
       textWrap: "balance",
     },
 
     featureWrap: {
       position: "absolute",
-
       left: 0,
       right: 0,
-
       top: veryShort
-        ? "35%"
+        ? "31%"
         : short
-        ? "34%"
-        : "35%",
-
+        ? "30%"
+        : "31%",
       bottom: veryShort
         ? "14%"
         : short
         ? "13%"
         : "12%",
-
       zIndex: 6,
-
       perspective: 1100,
-
       transform: `translateY(${px(
         veryShort
           ? -3
@@ -1172,36 +1049,40 @@ function createStyles(viewport) {
 
     singleFeatureCard: {
       position: "absolute",
-
+    
       left: "50%",
-
+    
       top: veryShort
         ? "-6%"
         : "-10%",
-
+    
       width: glassCardSize,
-      maxWidth: "72vw",
-
+      maxWidth: "78vw",
+    
       aspectRatio: "1 / 1",
-
+    
       color: "white",
       textAlign: "center",
-
+    
       transform: "translateX(-50%)",
-
+    
       animation:
         "floatCard 3.8s ease-in-out infinite",
-
+    
       overflow: "visible",
+    
+      isolation: "isolate",
     },
 
     glassSpinLayer: {
       position: "absolute",
       inset: 0,
-
+    
+      zIndex: 2,
+    
       transformStyle: "preserve-3d",
       transformOrigin: "center center",
-
+    
       transition:
         "transform 1500ms cubic-bezier(.32,.72,.22,1)",
     },
@@ -1210,54 +1091,40 @@ function createStyles(viewport) {
       position: "absolute",
       inset: 0,
       zIndex: 1,
-
       width: "100%",
       height: "100%",
-
       objectFit: "contain",
-
       filter:
         "drop-shadow(0 14px 20px rgba(0,0,0,.27))",
     },
 
     cardContent: {
       position: "absolute",
-
       left: "50%",
-
       top: veryNarrow
         ? "14%"
         : narrow
         ? "15%"
         : "17%",
-
-      zIndex: 2,
-
+      zIndex: 4,
       width: veryNarrow
         ? "66%"
         : narrow
         ? "64%"
         : "60%",
-
       maxHeight: "70%",
-
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-
       overflow: "hidden",
-
       opacity: 1,
-
       transform: "translateX(-50%)",
-
       transition:
         "opacity 150ms ease, transform 150ms ease",
     },
 
     cardContentHidden: {
       opacity: 0,
-
       transform:
         "translateX(-50%) scale(.96)",
     },
@@ -1265,16 +1132,11 @@ function createStyles(viewport) {
     featureIcon: {
       width: featureIconSize,
       height: featureIconSize,
-
       display: "grid",
       placeItems: "center",
-
       flexShrink: 0,
-
       borderRadius: "50%",
-
       color: "#111827",
-
       fontSize: featureIconFontSize,
       lineHeight: 1,
       fontWeight: 950,
@@ -1286,368 +1148,308 @@ function createStyles(viewport) {
         glassCardSize * 0.06,
         14
       ),
-
       fontSize: starsSize,
-
       letterSpacing: clamp(
         1,
         glassCardSize * 0.009,
         2
       ),
-
       lineHeight: 1,
       whiteSpace: "nowrap",
     },
 
     featureTitle: {
       width: "100%",
-
       margin: `${clamp(
         3,
         glassCardSize * 0.018,
         4
       )}px 0 0`,
-
       overflow: "hidden",
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
-
       color: "white",
-
       fontSize: featureTitleSize,
       lineHeight: 1.05,
       fontWeight: 950,
-
       textShadow:
         "0 6px 17px rgba(0,0,0,.6)",
     },
 
     featureSubtitle: {
       width: "100%",
-
       margin: `${clamp(
         6,
         glassCardSize * 0.04,
         10
       )}px 0 0`,
-
       overflow: "hidden",
-
       display: "-webkit-box",
-
-      WebkitLineClamp:
-        veryNarrow ? 2 : 3,
-
+      WebkitLineClamp: 3,
       WebkitBoxOrient: "vertical",
-
+      whiteSpace: "pre-line",
+      textAlign: "center",
+      overflowWrap: "normal",
+      wordBreak: "normal",
       color: "#fff7ed",
-
       fontSize: featureSubtitleSize,
       lineHeight: 1.18,
       fontWeight: 750,
-
       textShadow:
         "0 5px 16px rgba(0,0,0,.65)",
     },
 
     featureArrow: {
       position: "absolute",
-
+    
       left: "50%",
-      bottom: px(-10),
-
+      bottom: px(-18),
+    
       zIndex: 20,
-
+    
       width: featureArrowSize,
       height: featureArrowSize,
-
+    
       display: "grid",
       placeItems: "center",
-
+    
       padding: 0,
-
-      border: 0,
+    
+      border: `${px(2)}px solid rgba(255,255,255,.16)`,
       borderRadius: "50%",
-
+    
       color: "white",
-
+    
       fontSize: clamp(
         17,
         glassCardSize * 0.09,
         20
       ),
-
+    
       lineHeight: 1,
       fontWeight: 950,
-
-      boxShadow:
-        "0 8px 22px rgba(245,158,11,.42)",
-
+    
       transform: "translateX(-50%)",
-
+    
       cursor: "pointer",
     },
+      
 
     ring: {
       position: "absolute",
-
+    
       left: "50%",
-      bottom: "4%",
-
-      width: ringWidth,
-      height: ringHeight,
-
-      border:
-        `${px(2)}px solid #f59e0b`,
-
+      bottom: px(-34),
+    
+      zIndex: 0,
+    
+      width: clamp(
+        145,
+        glassCardSize * 0.68,
+        195
+      ),
+    
+      height: clamp(
+        34,
+        glassCardSize * 0.15,
+        45
+      ),
+    
+      border: `${px(2)}px solid #f59e0b`,
       borderRadius: "50%",
-
+    
+      background:
+        "radial-gradient(ellipse at center, rgba(56,189,248,.11), transparent 68%)",
+    
       transform:
         "translateX(-50%) rotateX(68deg)",
+    
+      transformOrigin: "center center",
+    
+      pointerEvents: "none",
     },
 
     platform: {
       position: "absolute",
-
+    
       left: "50%",
-      bottom: 0,
-
+      bottom: px(-29),
+    
+      zIndex: 0,
+    
       width: clamp(
         120,
-        glassCardSize * 0.67,
-        150
+        glassCardSize * 0.58,
+        165
       ),
-
-      height: "15%",
-
+    
+      height: clamp(
+        22,
+        glassCardSize * 0.1,
+        30
+      ),
+    
       borderRadius: "50%",
-
-      background: "rgba(0,0,0,.36)",
-
-      filter: `blur(${px(3)}px)`,
-
+    
+      background: "rgba(0,0,0,.38)",
+    
+      filter: `blur(${px(4)}px)`,
+    
       transform: "translateX(-50%)",
+    
+      pointerEvents: "none",
     },
 
     dots: {
       position: "absolute",
-
       left: 0,
       right: 0,
       bottom: px(25),
-
       zIndex: 30,
-
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-
       gap: px(8),
-
       pointerEvents: "auto",
     },
 
     dot: {
       width: px(8),
       height: px(8),
-
       flexShrink: 0,
-
       padding: 0,
-
       border:
         "1px solid rgba(255,255,255,.34)",
-
       borderRadius: 999,
-
       background:
         "rgba(255,255,255,.72)",
-
       boxShadow:
         "0 3px 8px rgba(0,0,0,.28)",
-
       cursor: "pointer",
-
       transition:
         "width 220ms ease, background 220ms ease, transform 220ms ease",
     },
 
     activeDot: {
       width: px(24),
-
       borderColor:
         "rgba(251,191,36,.65)",
-
       boxShadow:
         "0 0 12px rgba(245,158,11,.54)",
-
       transform: "scaleY(1.05)",
     },
-
-    /* Curved lower sheet */
 
     contentArea: {
       position: "relative",
       zIndex: 10,
-
       width: "100%",
       minHeight: px(500),
-
       marginTop: px(-12),
-
       overflow: "visible",
-
       padding: `${px(28)}px ${px(
         narrow ? 12 : 16
       )}px ${px(24)}px`,
-
       borderRadius:
         `${px(29)}px ${px(29)}px 0 0`,
-
       borderTop:
         "1px solid rgba(251,191,36,.18)",
-
       background:
         "radial-gradient(circle at 88% 0%, rgba(245,158,11,.18), transparent 28%), radial-gradient(circle at 0% 70%, rgba(234,88,12,.08), transparent 28%), linear-gradient(180deg, rgba(50,27,14,.99) 0%, #1e120b 16%, #150e0a 56%, #0e0a08 100%)",
-
       boxShadow:
         "0 -18px 40px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.05)",
-
       backdropFilter: "blur(18px)",
     },
 
     sheetHandle: {
       position: "absolute",
-
       left: "50%",
       top: px(9),
-
       width: px(47),
       height: px(4),
-
       borderRadius: 999,
-
       background:
         "linear-gradient(90deg, rgba(255,255,255,.10), rgba(251,191,36,.72), rgba(255,255,255,.10))",
-
       boxShadow:
         "0 0 14px rgba(245,158,11,.32)",
-
       transform: "translateX(-50%)",
     },
 
     contentGlowOne: {
       position: "absolute",
-
       right: px(-65),
       top: px(55),
-
       width: px(170),
       height: px(170),
-
       borderRadius: "50%",
-
       background:
         "rgba(245,158,11,.08)",
-
       filter: `blur(${px(36)}px)`,
-
       pointerEvents: "none",
     },
 
     contentGlowTwo: {
       position: "absolute",
-
       left: px(-70),
       bottom: px(50),
-
       width: px(160),
       height: px(160),
-
       borderRadius: "50%",
-
       background:
         "rgba(234,88,12,.07)",
-
       filter: `blur(${px(38)}px)`,
-
       pointerEvents: "none",
     },
 
     placeOrderCard: {
       position: "relative",
       zIndex: 2,
-
       width: "100%",
       minHeight: px(75),
-
       display: "grid",
-
       gridTemplateColumns:
         "auto minmax(0,1fr) auto",
-
       alignItems: "center",
-
       gap: px(11),
-
       padding:
         `${px(12)}px ${px(14)}px`,
-
       border:
         "1px solid rgba(251,191,36,.35)",
-
       borderRadius: px(23),
-
       overflow: "hidden",
-
       textAlign: "left",
-
       background:
         "radial-gradient(circle at 85% 15%, rgba(251,191,36,.22), transparent 35%), linear-gradient(135deg, #3b1e0d 0%, #7c2d12 56%, #f97316 130%)",
-
       color: "white",
-
       boxShadow:
         "0 17px 35px rgba(146,64,14,.28), inset 0 1px 0 rgba(255,255,255,.13)",
-
       cursor: "pointer",
     },
 
     placeOrderIcon: {
       width: px(43),
       height: px(43),
-
       display: "grid",
       placeItems: "center",
-
       border:
         "1px solid rgba(255,255,255,.18)",
-
       borderRadius: px(15),
-
       background:
         "rgba(255,255,255,.13)",
-
       color: "#fde68a",
-
       fontSize: px(25),
       fontWeight: 700,
-
       backdropFilter: "blur(10px)",
     },
 
     placeOrderText: {
       minWidth: 0,
-
       display: "flex",
       flexDirection: "column",
-
       gap: px(3),
     },
 
     cardEyebrow: {
       color: "#fde68a",
-
       fontSize: px(7),
       letterSpacing: px(0.8),
       fontWeight: 950,
@@ -1655,7 +1457,6 @@ function createStyles(viewport) {
 
     placeOrderTitle: {
       color: "white",
-
       fontSize: px(16),
       lineHeight: 1,
       fontWeight: 950,
@@ -1665,9 +1466,7 @@ function createStyles(viewport) {
       overflow: "hidden",
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
-
       color: "#fed7aa",
-
       fontSize: px(9),
       fontWeight: 700,
     },
@@ -1675,17 +1474,12 @@ function createStyles(viewport) {
     placeOrderArrow: {
       width: px(34),
       height: px(34),
-
       display: "grid",
       placeItems: "center",
-
       borderRadius: "50%",
-
       background:
         "rgba(255,255,255,.14)",
-
       color: "white",
-
       fontSize: px(16),
       fontWeight: 950,
     },
@@ -1693,20 +1487,16 @@ function createStyles(viewport) {
     sectionHeading: {
       position: "relative",
       zIndex: 2,
-
       display: "flex",
       alignItems: "flex-end",
       justifyContent: "space-between",
-
       gap: px(8),
-
       marginTop: px(16),
       marginBottom: px(9),
     },
 
     sectionKicker: {
       color: "#f59e0b",
-
       fontSize: px(7),
       letterSpacing: px(0.9),
       fontWeight: 950,
@@ -1714,154 +1504,186 @@ function createStyles(viewport) {
 
     sectionTitle: {
       margin: `${px(3)}px 0 0`,
-
       color: "white",
-
       fontSize: px(15),
       fontWeight: 950,
     },
 
     viewAllButton: {
       minHeight: px(29),
-
       padding: `0 ${px(9)}px`,
-
       border:
         "1px solid rgba(245,158,11,.28)",
-
       borderRadius: 999,
-
       background:
         "rgba(245,158,11,.10)",
-
       color: "#fbbf24",
-
       fontSize: px(8),
       fontWeight: 950,
-
       cursor: "pointer",
     },
+
+    /* Updated downside cards */
 
     quickGrid: {
       position: "relative",
       zIndex: 2,
-
       display: "grid",
-
       gridTemplateColumns:
-        "repeat(2,minmax(0,1fr))",
-
+        "repeat(2, minmax(0, 1fr))",
       alignItems: "stretch",
-
       gap: px(10),
     },
 
     activeOrderCard: {
       position: "relative",
-
+    
+      display: "block",
+      verticalAlign: "top",
+    
+      width: "100%",
       minWidth: 0,
-      minHeight: px(narrow ? 182 : 190),
+      minHeight: px(narrow ? 170 : 178),
 
+    
       overflow: "hidden",
-
-      padding: px(12),
-
-      border:
-        "1px solid rgba(34,197,94,.23)",
-
+    
+      padding: `${px(8)}px ${px(10)}px ${px(10)}px`,
+    
+      border: "1px solid rgba(34,197,94,.30)",
       borderRadius: px(21),
-
+    
       background:
         "radial-gradient(circle at 100% 0%, rgba(34,197,94,.18), transparent 38%), linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.025))",
-
+    
       color: "white",
       textAlign: "left",
-
+    
       boxShadow:
         "0 14px 28px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.08)",
-
+    
       backdropFilter: "blur(14px)",
-
+    
+      appearance: "none",
+      WebkitAppearance: "none",
+    
       cursor: "pointer",
     },
-
+    
     repeatOrderCard: {
       position: "relative",
-
+    
+      display: "block",
+      verticalAlign: "top",
+    
+      width: "100%",
       minWidth: 0,
-      minHeight: px(narrow ? 182 : 190),
+      minHeight: px(narrow ? 170 : 178),
 
+    
       overflow: "hidden",
-
-      padding: px(12),
-
-      border:
-        "1px solid rgba(245,158,11,.23)",
-
+    
+      padding: `${px(8)}px ${px(10)}px ${px(10)}px`,
+    
+      border: "1px solid rgba(245,158,11,.30)",
       borderRadius: px(21),
-
+    
       background:
         "radial-gradient(circle at 100% 0%, rgba(245,158,11,.18), transparent 38%), linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.025))",
-
+    
       color: "white",
       textAlign: "left",
-
+    
       boxShadow:
         "0 14px 28px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.08)",
-
+    
       backdropFilter: "blur(14px)",
-
+    
+      appearance: "none",
+      WebkitAppearance: "none",
+    
       cursor: "pointer",
     },
+    
 
     cardAmbientGreen: {
       position: "absolute",
-
       right: px(-35),
       top: px(-45),
-
       width: px(105),
       height: px(105),
-
       borderRadius: "50%",
-
       background:
         "rgba(34,197,94,.13)",
-
       filter: `blur(${px(24)}px)`,
+      pointerEvents: "none",
     },
 
     cardAmbientAmber: {
       position: "absolute",
-
       right: px(-35),
       top: px(-45),
-
       width: px(105),
       height: px(105),
-
       borderRadius: "50%",
-
       background:
         "rgba(245,158,11,.15)",
-
       filter: `blur(${px(24)}px)`,
+      pointerEvents: "none",
     },
 
-    quickCardHeader: {
+    activeCardHeader: {
       position: "relative",
-      zIndex: 2,
-
+      zIndex: 3,
+    
+      width: "100%",
       minWidth: 0,
+    
+      paddingTop: px(34),
+    },
+    
+    reorderCardHeader: {
+      position: "relative",
+      zIndex: 3,
+    
+      width: "100%",
+      minWidth: 0,
+    
+      paddingTop: px(24),
+    },
 
-      display: "grid",
-
-      gridTemplateColumns:
-        "auto minmax(0,1fr) auto",
-
+    activeStatusRow: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      zIndex: 5,
+      width: "auto",
+      display: "flex",
       alignItems: "center",
+      justifyContent: "flex-end",
+    },
 
-      gap: px(7),
+    reorderStatusRow: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      zIndex: 5,
+      width: "auto",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "flex-end",
+    },
+
+    activeTitleRow: {
+      position: "relative",
+      zIndex: 3,
+      width: "100%",
+      minWidth: 0,
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0, 1fr)",
+      alignItems: "center",
+      gap: px(8),
     },
 
     quickHeaderText: {
@@ -1870,171 +1692,139 @@ function createStyles(viewport) {
 
     quickHeaderTitle: {
       margin: 0,
-
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-
       color: "#ffffff",
-
-      fontSize: px(narrow ? 11 : 13),
-      lineHeight: 1,
+      fontSize: px(narrow ? 13 : 15),
+      lineHeight: 1.05,
       fontWeight: 950,
-      letterSpacing: -0.15,
+      letterSpacing: -0.2,
+      whiteSpace: "nowrap",
     },
 
     quickHeaderSubtitle: {
       display: "block",
-
       marginTop: px(4),
-
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-
       color: "#a8a29e",
-
-      fontSize: px(narrow ? 6.5 : 7.2),
+      fontSize: px(narrow ? 7 : 8),
       lineHeight: 1,
       fontWeight: 750,
+      whiteSpace: "nowrap",
     },
 
     quickIconGreen: {
-      width: px(35),
-      height: px(35),
-
+      width: px(37),
+      height: px(37),
       display: "grid",
       placeItems: "center",
-
       flexShrink: 0,
-
       border:
-        "1px solid rgba(134,239,172,.26)",
-
-      borderRadius: px(12),
-
+        "1px solid rgba(134,239,172,.28)",
+      borderRadius: px(13),
       background:
         "linear-gradient(145deg, #22c55e, #15803d)",
-
       color: "white",
-
-      fontSize: px(16),
+      fontSize: px(17),
       fontWeight: 950,
-
       boxShadow:
         "0 8px 18px rgba(34,197,94,.28), inset 0 1px 0 rgba(255,255,255,.20)",
     },
 
     quickIconAmber: {
-      width: px(35),
-      height: px(35),
-
+      width: px(37),
+      height: px(37),
       display: "grid",
       placeItems: "center",
-
       flexShrink: 0,
-
       border:
         "1px solid rgba(251,191,36,.30)",
-
-      borderRadius: px(12),
-
+      borderRadius: px(13),
       background:
         "linear-gradient(145deg, #f59e0b, #ea580c)",
-
       color: "white",
-
-      fontSize: px(19),
+      fontSize: px(20),
       lineHeight: 1,
       fontWeight: 950,
-
       boxShadow:
         "0 8px 18px rgba(245,158,11,.28), inset 0 1px 0 rgba(255,255,255,.20)",
     },
 
     livePill: {
-      display: "flex",
+      width: "max-content",
+      minWidth: px(54),
+      display: "inline-flex",
       alignItems: "center",
-
+      justifyContent: "center",
       gap: px(4),
-
       padding:
-        `${px(4)}px ${px(6)}px`,
-
+        `${px(5)}px ${px(10)}px`,
+      border:
+        "1px solid rgba(34,197,94,.38)",
       borderRadius: 999,
-
       background:
-        "rgba(34,197,94,.13)",
-
+        "linear-gradient(145deg, rgba(34,197,94,.28), rgba(21,128,61,.18))",
       color: "#86efac",
-
-      fontSize: px(7),
+      fontSize: px(narrow ? 7.5 : 8.5),
+      lineHeight: 1,
       fontWeight: 950,
-
       whiteSpace: "nowrap",
+      boxShadow:
+        "0 5px 14px rgba(34,197,94,.17), inset 0 1px 0 rgba(255,255,255,.10)",
     },
 
     liveDot: {
-      width: px(5),
-      height: px(5),
-
+      width: px(6),
+      height: px(6),
+      flexShrink: 0,
       borderRadius: "50%",
-
       background: "#22c55e",
-
       boxShadow:
-        "0 0 8px rgba(34,197,94,.75)",
+        "0 0 9px rgba(34,197,94,.90)",
     },
 
     lastOrderPill: {
+      width: "max-content",
+      minWidth: px(48),
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
       padding:
-        `${px(4)}px ${px(6)}px`,
-
+        `${px(5)}px ${px(9)}px`,
+      border:
+        "1px solid rgba(245,158,11,.30)",
       borderRadius: 999,
-
       background:
-        "rgba(245,158,11,.12)",
-
+        "linear-gradient(145deg, rgba(245,158,11,.22), rgba(234,88,12,.12))",
       color: "#fbbf24",
-
-      fontSize: px(7),
+      fontSize: px(narrow ? 7.5 : 8.5),
+      lineHeight: 1,
       fontWeight: 950,
-
       whiteSpace: "nowrap",
+      boxShadow:
+        "0 5px 14px rgba(245,158,11,.12)",
     },
 
     quickCardBody: {
       position: "relative",
       zIndex: 2,
-
-      marginTop: px(11),
+      marginTop: px(10),
     },
 
     materialTitle: {
-      margin: `${px(5)}px 0 0`,
-
+      margin: 0,
       overflow: "hidden",
-
       display: "-webkit-box",
-
       WebkitLineClamp: 2,
       WebkitBoxOrient: "vertical",
-
       color: "white",
-
-      fontSize: px(narrow ? 10.5 : 12),
-      lineHeight: 1.12,
+      fontSize: px(narrow ? 11 : 12.5),
+      lineHeight: 1.14,
       fontWeight: 950,
     },
 
     quickDescription: {
       position: "relative",
       zIndex: 2,
-
       margin: `${px(5)}px 0 0`,
-
       color: "#d6d3d1",
-
       fontSize: px(8),
       lineHeight: 1.2,
       fontWeight: 750,
@@ -2043,15 +1833,10 @@ function createStyles(viewport) {
     miniProgressTrack: {
       position: "relative",
       zIndex: 2,
-
       height: px(4),
-
       marginTop: px(10),
-
       overflow: "hidden",
-
       borderRadius: 999,
-
       background:
         "rgba(255,255,255,.10)",
     },
@@ -2059,52 +1844,37 @@ function createStyles(viewport) {
     miniProgressFill: {
       width: "72%",
       height: "100%",
-
       borderRadius: 999,
-
       background:
-        "linear-gradient(90deg,#22c55e,#86efac)",
+        "linear-gradient(90deg, #22c55e, #86efac)",
     },
 
     reorderInfo: {
       position: "relative",
       zIndex: 2,
-
       display: "flex",
       alignItems: "center",
-
       gap: px(6),
-
       marginTop: px(9),
       padding: px(7),
-
       border:
         "1px solid rgba(245,158,11,.13)",
-
       borderRadius: px(11),
-
       background:
         "rgba(245,158,11,.08)",
-
       color: "white",
-
       textAlign: "left",
     },
 
     reorderInfoIcon: {
       width: px(21),
       height: px(21),
-
       display: "grid",
       placeItems: "center",
-
       flexShrink: 0,
-
       borderRadius: "50%",
-
       background: "#f59e0b",
       color: "white",
-
       fontSize: px(8),
       fontWeight: 950,
     },
@@ -2115,9 +1885,10 @@ function createStyles(viewport) {
 
     reorderTitle: {
       display: "block",
-
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
       color: "#fde68a",
-
       fontSize: px(8),
       lineHeight: 1,
       fontWeight: 950,
@@ -2125,15 +1896,11 @@ function createStyles(viewport) {
 
     reorderSubtitle: {
       display: "block",
-
       marginTop: px(3),
-
       overflow: "hidden",
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
-
       color: "#a8a29e",
-
       fontSize: px(6.5),
       lineHeight: 1,
       fontWeight: 750,
@@ -2141,21 +1908,15 @@ function createStyles(viewport) {
 
     quickFooter: {
       position: "absolute",
-
       left: px(12),
       right: px(12),
       bottom: px(11),
-
       zIndex: 2,
-
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
-
       gap: px(5),
-
       color: "#a8a29e",
-
       fontSize: px(7.2),
       fontWeight: 800,
     },
@@ -2163,27 +1924,18 @@ function createStyles(viewport) {
     insightCard: {
       position: "relative",
       zIndex: 2,
-
       display: "grid",
-
       gridTemplateColumns:
         "auto minmax(0,1fr) auto",
-
       alignItems: "center",
-
       gap: px(9),
-
       marginTop: px(11),
       padding: px(11),
-
       border:
         "1px solid rgba(245,158,11,.18)",
-
       borderRadius: px(19),
-
       background:
         "linear-gradient(145deg, rgba(245,158,11,.11), rgba(255,255,255,.035))",
-
       boxShadow:
         "0 12px 24px rgba(0,0,0,.16)",
     },
@@ -2191,32 +1943,24 @@ function createStyles(viewport) {
     insightIcon: {
       width: px(38),
       height: px(38),
-
       display: "grid",
       placeItems: "center",
-
       borderRadius: px(14),
-
       background:
         "linear-gradient(145deg,#f59e0b,#ea580c)",
-
       color: "white",
-
       fontSize: px(19),
       fontWeight: 950,
     },
 
     insightText: {
       minWidth: 0,
-
       color: "white",
     },
 
     insightKicker: {
       display: "block",
-
       color: "#fbbf24",
-
       fontSize: px(6.5),
       letterSpacing: px(0.65),
       fontWeight: 950,
@@ -2224,11 +1968,8 @@ function createStyles(viewport) {
 
     insightTitle: {
       display: "block",
-
       marginTop: px(3),
-
       color: "white",
-
       fontSize: px(11),
       lineHeight: 1.1,
       fontWeight: 950,
@@ -2236,9 +1977,7 @@ function createStyles(viewport) {
 
     insightDescription: {
       margin: `${px(4)}px 0 0`,
-
       color: "#d6d3d1",
-
       fontSize: px(8),
       lineHeight: 1.25,
       fontWeight: 700,
@@ -2247,22 +1986,15 @@ function createStyles(viewport) {
     insightButton: {
       width: px(30),
       height: px(30),
-
       display: "grid",
       placeItems: "center",
-
       border:
         "1px solid rgba(255,255,255,.10)",
-
       borderRadius: "50%",
-
       background:
         "rgba(255,255,255,.07)",
-
       color: "#fbbf24",
-
       fontSize: px(20),
-
       cursor: "pointer",
     },
 
@@ -2270,110 +2002,77 @@ function createStyles(viewport) {
       height: px(10),
     },
 
-    /* Fixed bottom navigation */
-
     bottomNav: {
       position: "absolute",
-
       left: 0,
       right: 0,
       bottom: 0,
-
       zIndex: 100,
-
       height: navHeight,
-
       display: "grid",
-
       gridTemplateColumns:
         "repeat(3,1fr)",
-
       gap: px(4),
-
       padding:
         `${px(5)}px ${px(8)}px calc(env(safe-area-inset-bottom,0px) + ${px(
           5
         )}px)`,
-
       borderTop:
         "1px solid rgba(251,191,36,.18)",
-
       background:
         "radial-gradient(circle at 50% 0%, rgba(245,158,11,.17), transparent 47%), linear-gradient(135deg, rgba(33,20,13,.99), rgba(75,37,13,.99))",
-
       boxShadow:
         "0 -14px 34px rgba(28,15,7,.34), inset 0 1px 0 rgba(255,255,255,.05)",
-
       backdropFilter: "blur(20px)",
     },
 
     navButton: {
       position: "relative",
-
       minWidth: 0,
-
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-
       gap: px(3),
-
       padding: px(3),
-
       border: 0,
       borderRadius: px(15),
-
       background: "transparent",
-
       cursor: "pointer",
     },
 
     navButtonActive: {
       background:
         "linear-gradient(145deg,rgba(245,158,11,.22),rgba(234,88,12,.10))",
-
       boxShadow:
         "inset 0 0 0 1px rgba(251,191,36,.24)",
     },
 
     activeIndicator: {
       position: "absolute",
-
       left: "50%",
       top: px(-5),
-
       width: px(25),
       height: px(3),
-
       borderRadius: 999,
-
       background:
         "linear-gradient(90deg,#fbbf24,#f97316)",
-
       boxShadow:
         "0 0 12px rgba(245,158,11,.70)",
-
       transform: "translateX(-50%)",
     },
 
     navIconBox: {
       width: px(28),
       height: px(26),
-
       display: "grid",
       placeItems: "center",
-
       border:
         "1px solid rgba(255,255,255,.07)",
-
       borderRadius: px(9),
-
       background:
         "rgba(255,255,255,.06)",
-
       color: "#d6c3b5",
-
       fontSize: px(15),
       fontWeight: 900,
     },
@@ -2381,25 +2080,19 @@ function createStyles(viewport) {
     navIconBoxActive: {
       borderColor:
         "rgba(251,191,36,.35)",
-
       background:
         "linear-gradient(145deg,#f59e0b,#ea580c)",
-
       color: "white",
-
       boxShadow:
         "0 8px 17px rgba(234,88,12,.30)",
     },
 
     navLabel: {
       maxWidth: "100%",
-
       overflow: "hidden",
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
-
       color: "#c4afa0",
-
       fontSize: px(7.2),
       fontWeight: 800,
     },
