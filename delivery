@@ -1828,7 +1828,7 @@ function createStyles(viewport) {
       borderRadius: px(12),
       background: "rgba(255,255,255,.11)",
       color: "white",
-      fontSize: px(24),
+      fontSize: font(24),
       lineHeight: 1,
       cursor: "pointer",
     },
@@ -1840,7 +1840,7 @@ function createStyles(viewport) {
       borderRadius: 999,
       background: "rgba(245,158,11,.17)",
       color: "#fde68a",
-      fontSize: px(8),
+      fontSize: font(8),
       letterSpacing: px(1),
       fontWeight: 950,
     },
@@ -1854,7 +1854,7 @@ function createStyles(viewport) {
       borderRadius: 999,
       background: "rgba(255,255,255,.11)",
       color: "white",
-      fontSize: px(9),
+      fontSize: font(9),
       fontWeight: 900,
       cursor: "pointer",
     },
@@ -1876,7 +1876,7 @@ function createStyles(viewport) {
     eyebrow: {
       margin: 0,
       color: "#fde68a",
-      fontSize: px(7),
+      fontSize: font(7),
       letterSpacing: px(1.2),
       fontWeight: 950,
     },
@@ -1894,7 +1894,7 @@ function createStyles(viewport) {
       maxWidth: px(245),
       margin: `${px(8)}px 0 0`,
       color: "#e7e5e4",
-      fontSize: px(9),
+      fontSize: font(9),
       lineHeight: 1.35,
       fontWeight: 650,
     },
@@ -1909,7 +1909,7 @@ function createStyles(viewport) {
       background:
         "linear-gradient(135deg,#f59e0b,#ea580c)",
       color: "white",
-      fontSize: px(25),
+      fontSize: font(25),
       fontWeight: 950,
       boxShadow:
         "0 15px 30px rgba(234,88,12,.32)",
@@ -1955,7 +1955,7 @@ function createStyles(viewport) {
       gap: px(3),
       color: "#e7e5e4",
       textAlign: "center",
-      fontSize: px(7),
+      fontSize: font(7),
     },
 
     headerSummaryDivider: {
@@ -2006,14 +2006,14 @@ function createStyles(viewport) {
 
     sectionEyebrow: {
       color: "#b45309",
-      fontSize: px(7),
+      fontSize: font(7),
       letterSpacing: px(1),
       fontWeight: 950,
     },
 
     trackerTitle: {
       margin: `${px(4)}px 0 0`,
-      fontSize: px(13),
+      fontSize: font(13),
       fontWeight: 950,
     },
 
@@ -2022,7 +2022,7 @@ function createStyles(viewport) {
       borderRadius: 999,
       background: "#fffbeb",
       color: "#b45309",
-      fontSize: px(7),
+      fontSize: font(7),
       fontWeight: 950,
       whiteSpace: "nowrap",
     },
@@ -2066,7 +2066,7 @@ function createStyles(viewport) {
       display: "grid",
       placeItems: "center",
       borderRadius: "50%",
-      fontSize: px(10),
+      fontSize: font(10),
       fontWeight: 950,
     },
 
@@ -2095,7 +2095,7 @@ function createStyles(viewport) {
     trackerLabel: {
       marginTop: px(6),
       color: "#a8a29e",
-      fontSize: px(6.5),
+      fontSize: font(6.5),
       lineHeight: 1.15,
       fontWeight: 750,
     },
@@ -2137,7 +2137,7 @@ function createStyles(viewport) {
       borderRadius: px(13),
       background: "#fffbeb",
       color: "#92400e",
-      fontSize: px(8),
+      fontSize: font(8),
       fontWeight: 900,
       cursor: "pointer",
     },
@@ -2157,7 +2157,7 @@ function createStyles(viewport) {
       borderRadius: px(10),
       background: "white",
       color: "#57534e",
-      fontSize: px(6.5),
+      fontSize: font(6.5),
       fontWeight: 850,
       cursor: "pointer",
     },
@@ -2193,13 +2193,13 @@ function createStyles(viewport) {
       background:
         "linear-gradient(135deg,#22c55e,#15803d)",
       color: "white",
-      fontSize: px(21),
+      fontSize: font(21),
       fontWeight: 950,
     },
 
     cardEyebrow: {
       color: "#b45309",
-      fontSize: px(6.8),
+      fontSize: font(6.8),
       letterSpacing: px(0.9),
       fontWeight: 950,
     },
@@ -2207,14 +2207,14 @@ function createStyles(viewport) {
     primaryStatusTitle: {
       margin: `${px(4)}px 0 0`,
       color: "#78350f",
-      fontSize: px(12),
+      fontSize: font(12),
       fontWeight: 950,
     },
 
     primaryStatusText: {
       margin: `${px(5)}px 0 0`,
       color: "#92400e",
-      fontSize: px(7.8),
+      fontSize: font(7.8),
       lineHeight: 1.4,
       fontWeight: 650,
     },
@@ -2230,7 +2230,7 @@ function createStyles(viewport) {
 
     sectionTitle: {
       margin: `${px(4)}px 0 0`,
-      fontSize: px(14),
+      fontSize: font(14),
       fontWeight: 950,
     },
 
@@ -2239,7 +2239,7 @@ function createStyles(viewport) {
       borderRadius: 999,
       background: "#ecfdf5",
       color: "#15803d",
-      fontSize: px(7),
+      fontSize: font(7),
       fontWeight: 950,
     },
 
@@ -2270,7 +2270,7 @@ function createStyles(viewport) {
       background:
         "linear-gradient(135deg,#f59e0b,#ea580c)",
       color: "white",
-      fontSize: px(16),
+      fontSize: font(16),
       fontWeight: 950,
     },
 
@@ -2283,7 +2283,7 @@ function createStyles(viewport) {
       background:
         "linear-gradient(135deg,#38bdf8,#1d4ed8)",
       color: "white",
-      fontSize: px(17),
+      fontSize: font(17),
     },
 
     assignmentTitleArea: {
@@ -2292,7 +2292,7 @@ function createStyles(viewport) {
 
     assignmentLabel: {
       color: "#a8a29e",
-      fontSize: px(6.5),
+      fontSize: font(6.5),
       letterSpacing: px(0.7),
       fontWeight: 950,
     },
@@ -2303,14 +2303,14 @@ function createStyles(viewport) {
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
       color: "#111827",
-      fontSize: px(10.5),
+      fontSize: font(10.5),
       fontWeight: 950,
     },
 
     assignmentSubtitle: {
       margin: `${px(3)}px 0 0`,
       color: "#78716c",
-      fontSize: px(7.5),
+      fontSize: font(7.5),
     },
 
     verifiedIcon: {
@@ -2321,7 +2321,7 @@ function createStyles(viewport) {
       borderRadius: "50%",
       background: "#dcfce7",
       color: "#15803d",
-      fontSize: px(10),
+      fontSize: font(10),
       fontWeight: 950,
     },
 
@@ -2342,7 +2342,7 @@ function createStyles(viewport) {
       borderRadius: px(13),
       background: "#fafaf9",
       color: "#78716c",
-      fontSize: px(7),
+      fontSize: font(7),
     },
 
     infoBoxWide: {
@@ -2355,7 +2355,7 @@ function createStyles(viewport) {
       borderRadius: px(12),
       background: "#eff6ff",
       color: "#1d4ed8",
-      fontSize: px(7.3),
+      fontSize: font(7.3),
       lineHeight: 1.35,
       fontWeight: 700,
     },
@@ -2393,7 +2393,7 @@ function createStyles(viewport) {
       right: px(4),
       bottom: px(10),
       zIndex: 3,
-      fontSize: px(38),
+      fontSize: font(38),
       animation:
         "truckBounce 1.8s ease-in-out infinite",
     },
@@ -2403,7 +2403,7 @@ function createStyles(viewport) {
       left: px(12),
       top: px(8),
       color: "#f59e0b",
-      fontSize: px(15),
+      fontSize: font(15),
       animation:
         "materialDrop 1.6s ease-in-out infinite",
     },
@@ -2413,7 +2413,7 @@ function createStyles(viewport) {
       left: px(32),
       top: px(4),
       color: "#d97706",
-      fontSize: px(12),
+      fontSize: font(12),
       animation:
         "materialDrop 1.6s .35s ease-in-out infinite",
     },
@@ -2423,7 +2423,7 @@ function createStyles(viewport) {
       left: px(49),
       top: px(12),
       color: "#92400e",
-      fontSize: px(13),
+      fontSize: font(13),
       animation:
         "materialDrop 1.6s .7s ease-in-out infinite",
     },
@@ -2445,14 +2445,14 @@ function createStyles(viewport) {
 
     loadingTitle: {
       margin: `${px(5)}px 0 0`,
-      fontSize: px(14),
+      fontSize: font(14),
       fontWeight: 950,
     },
 
     loadingText: {
       margin: `${px(6)}px 0 0`,
       color: "#d6d3d1",
-      fontSize: px(8),
+      fontSize: font(8),
       lineHeight: 1.4,
     },
 
@@ -2475,7 +2475,7 @@ function createStyles(viewport) {
 
     progressTitle: {
       margin: `${px(4)}px 0 0`,
-      fontSize: px(11),
+      fontSize: font(11),
       fontWeight: 950,
     },
 
@@ -2487,7 +2487,7 @@ function createStyles(viewport) {
       borderRadius: 999,
       background: "#fffbeb",
       color: "#b45309",
-      fontSize: px(7),
+      fontSize: font(7),
       fontWeight: 950,
     },
 
@@ -2523,7 +2523,7 @@ function createStyles(viewport) {
       gap: px(8),
       marginTop: px(9),
       color: "#78716c",
-      fontSize: px(7),
+      fontSize: font(7),
     },
 
     vehicleStack: {
@@ -2556,7 +2556,7 @@ function createStyles(viewport) {
       borderRadius: px(11),
       background: "#fffbeb",
       color: "#b45309",
-      fontSize: px(11),
+      fontSize: font(11),
       fontWeight: 950,
     },
 
@@ -2566,7 +2566,7 @@ function createStyles(viewport) {
 
     loadingVehicleTitle: {
       margin: 0,
-      fontSize: px(10),
+      fontSize: font(10),
       fontWeight: 950,
     },
 
@@ -2576,7 +2576,7 @@ function createStyles(viewport) {
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
       color: "#78716c",
-      fontSize: px(7),
+      fontSize: font(7),
     },
 
     loadingStatusPill: {
@@ -2584,7 +2584,7 @@ function createStyles(viewport) {
       borderRadius: 999,
       background: "#fffbeb",
       color: "#b45309",
-      fontSize: px(6.5),
+      fontSize: font(6.5),
       fontWeight: 950,
     },
 
@@ -2623,7 +2623,7 @@ function createStyles(viewport) {
       justifyContent: "space-between",
       marginTop: px(6),
       color: "#78716c",
-      fontSize: px(6.7),
+      fontSize: font(6.7),
     },
 
     qualityNotice: {
@@ -2635,7 +2635,7 @@ function createStyles(viewport) {
       borderRadius: px(17),
       background: "#f0fdf4",
       color: "#166534",
-      fontSize: px(7.5),
+      fontSize: font(7.5),
       lineHeight: 1.35,
     },
 
@@ -2695,7 +2695,7 @@ function createStyles(viewport) {
       position: "absolute",
       left: px(5),
       bottom: px(17),
-      fontSize: px(34),
+      fontSize: font(34),
       animation:
         "driveTruck 3s ease-in-out infinite",
     },
@@ -2706,21 +2706,21 @@ function createStyles(viewport) {
 
     transitEyebrow: {
       color: "#bae6fd",
-      fontSize: px(6.8),
+      fontSize: font(6.8),
       letterSpacing: px(1),
       fontWeight: 950,
     },
 
     transitTitle: {
       margin: `${px(5)}px 0 0`,
-      fontSize: px(13),
+      fontSize: font(13),
       fontWeight: 950,
     },
 
     transitText: {
       margin: `${px(6)}px 0 0`,
       color: "#dbeafe",
-      fontSize: px(7.5),
+      fontSize: font(7.5),
       lineHeight: 1.35,
     },
 
@@ -2750,7 +2750,7 @@ function createStyles(viewport) {
       borderRadius: px(13),
       background: "#eff6ff",
       color: "#1d4ed8",
-      fontSize: px(18),
+      fontSize: font(18),
       fontWeight: 950,
     },
 
@@ -2760,7 +2760,7 @@ function createStyles(viewport) {
 
     routeLabel: {
       color: "#1d4ed8",
-      fontSize: px(6.5),
+      fontSize: font(6.5),
       letterSpacing: px(0.8),
       fontWeight: 950,
     },
@@ -2770,7 +2770,7 @@ function createStyles(viewport) {
       overflow: "hidden",
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
-      fontSize: px(10),
+      fontSize: font(10),
       fontWeight: 950,
     },
 
@@ -2779,7 +2779,7 @@ function createStyles(viewport) {
       borderRadius: 999,
       background: "#eff6ff",
       color: "#1d4ed8",
-      fontSize: px(7),
+      fontSize: font(7),
       fontWeight: 950,
     },
 
@@ -2826,7 +2826,7 @@ function createStyles(viewport) {
       justifyContent: "space-between",
       marginTop: px(7),
       color: "#64748b",
-      fontSize: px(6.7),
+      fontSize: font(6.7),
       fontWeight: 750,
     },
 
@@ -2837,7 +2837,7 @@ function createStyles(viewport) {
       background: "#eff6ff",
       color: "#1d4ed8",
       textAlign: "center",
-      fontSize: px(7),
+      fontSize: font(7),
       fontWeight: 800,
     },
 
@@ -2846,7 +2846,7 @@ function createStyles(viewport) {
       borderRadius: 999,
       background: "#eff6ff",
       color: "#1d4ed8",
-      fontSize: px(7),
+      fontSize: font(7),
       fontWeight: 950,
     },
 
@@ -2875,7 +2875,7 @@ function createStyles(viewport) {
       borderRadius: px(13),
       background:
         "linear-gradient(135deg,#38bdf8,#1d4ed8)",
-      fontSize: px(18),
+      fontSize: font(18),
     },
 
     vehicleMainText: {
@@ -2884,14 +2884,14 @@ function createStyles(viewport) {
 
     vehicleNumberLabel: {
       color: "#64748b",
-      fontSize: px(6.3),
+      fontSize: font(6.3),
       letterSpacing: px(0.7),
       fontWeight: 950,
     },
 
     vehicleNumber: {
       margin: `${px(3)}px 0 0`,
-      fontSize: px(10.5),
+      fontSize: font(10.5),
       fontWeight: 950,
     },
 
@@ -2903,7 +2903,7 @@ function createStyles(viewport) {
       borderRadius: 999,
       background: "#eff6ff",
       color: "#1d4ed8",
-      fontSize: px(6.5),
+      fontSize: font(6.5),
       fontWeight: 950,
     },
 
@@ -2937,7 +2937,7 @@ function createStyles(viewport) {
       background:
         "linear-gradient(135deg,#22c55e,#15803d)",
       color: "white",
-      fontSize: px(7.5),
+      fontSize: font(7.5),
       fontWeight: 950,
       cursor: "pointer",
     },
@@ -2948,7 +2948,7 @@ function createStyles(viewport) {
       borderRadius: px(12),
       background: "#fafaf9",
       color: "#57534e",
-      fontSize: px(7.5),
+      fontSize: font(7.5),
       fontWeight: 900,
       cursor: "pointer",
     },
@@ -2978,7 +2978,7 @@ function createStyles(viewport) {
       background:
         "linear-gradient(135deg,#22c55e,#15803d)",
       color: "white",
-      fontSize: px(24),
+      fontSize: font(24),
       fontWeight: 950,
       boxShadow:
         "0 12px 25px rgba(34,197,94,.22)",
@@ -2990,7 +2990,7 @@ function createStyles(viewport) {
 
     deliveredEyebrow: {
       color: "#15803d",
-      fontSize: px(6.8),
+      fontSize: font(6.8),
       letterSpacing: px(0.9),
       fontWeight: 950,
     },
@@ -2998,14 +2998,14 @@ function createStyles(viewport) {
     deliveredTitle: {
       margin: `${px(5)}px 0 0`,
       color: "#166534",
-      fontSize: px(13),
+      fontSize: font(13),
       fontWeight: 950,
     },
 
     deliveredDescription: {
       margin: `${px(5)}px 0 0`,
       color: "#166534",
-      fontSize: px(7.5),
+      fontSize: font(7.5),
       lineHeight: 1.35,
     },
 
@@ -3034,7 +3034,7 @@ function createStyles(viewport) {
       borderRadius: px(13),
       background: "#f0fdf4",
       color: "#166534",
-      fontSize: px(7),
+      fontSize: font(7),
     },
 
     deliveryLocation: {
@@ -3046,7 +3046,7 @@ function createStyles(viewport) {
       border: "1px solid #eeeae6",
       borderRadius: px(14),
       color: "#78716c",
-      fontSize: px(7),
+      fontSize: font(7),
     },
 
     deliveryLocationIcon: {
@@ -3058,7 +3058,7 @@ function createStyles(viewport) {
       borderRadius: px(11),
       background: "#fffbeb",
       color: "#b45309",
-      fontSize: px(15),
+      fontSize: font(15),
       fontWeight: 950,
     },
 
@@ -3067,7 +3067,7 @@ function createStyles(viewport) {
       borderRadius: 999,
       background: "#f5f5f4",
       color: "#78716c",
-      fontSize: px(7),
+      fontSize: font(7),
       fontWeight: 900,
     },
 
@@ -3099,14 +3099,14 @@ function createStyles(viewport) {
 
     ratingLabel: {
       margin: 0,
-      fontSize: px(10),
+      fontSize: font(10),
       fontWeight: 950,
     },
 
     ratingDescription: {
       margin: `${px(3)}px 0 0`,
       color: "#78716c",
-      fontSize: px(7),
+      fontSize: font(7),
       lineHeight: 1.3,
     },
 
@@ -3116,7 +3116,7 @@ function createStyles(viewport) {
       borderRadius: 999,
       background: "#fef3c7",
       color: "#92400e",
-      fontSize: px(6.5),
+      fontSize: font(6.5),
       fontWeight: 950,
     },
 
@@ -3137,7 +3137,7 @@ function createStyles(viewport) {
       borderRadius: px(11),
       background: "#fafaf9",
       color: "#d6d3d1",
-      fontSize: px(18),
+      fontSize: font(18),
       cursor: "pointer",
       transition:
         "transform 160ms ease,color 160ms ease,background 160ms ease",
@@ -3171,13 +3171,13 @@ function createStyles(viewport) {
     },
 
     commentsLabel: {
-      fontSize: px(9),
+      fontSize: font(9),
       fontWeight: 950,
     },
 
     characterCount: {
       color: "#a8a29e",
-      fontSize: px(6.5),
+      fontSize: font(6.5),
     },
 
     commentsTextarea: {
@@ -3192,7 +3192,7 @@ function createStyles(viewport) {
       background: "#fafaf9",
       color: "#111827",
       fontFamily: "Arial, sans-serif",
-      fontSize: px(8),
+      fontSize: font(8),
       lineHeight: 1.45,
     },
 
@@ -3205,7 +3205,7 @@ function createStyles(viewport) {
       background:
         "linear-gradient(135deg,#22c55e,#15803d)",
       color: "white",
-      fontSize: px(9),
+      fontSize: font(9),
       fontWeight: 950,
       cursor: "pointer",
     },
@@ -3229,14 +3229,14 @@ function createStyles(viewport) {
       background:
         "linear-gradient(135deg,#22c55e,#15803d)",
       color: "white",
-      fontSize: px(24),
+      fontSize: font(24),
       fontWeight: 950,
     },
 
     feedbackSuccessTitle: {
       margin: `${px(13)}px 0 0`,
       color: "#166534",
-      fontSize: px(13),
+      fontSize: font(13),
       fontWeight: 950,
     },
 
@@ -3244,7 +3244,7 @@ function createStyles(viewport) {
       maxWidth: px(280),
       margin: `${px(7)}px auto 0`,
       color: "#166534",
-      fontSize: px(7.8),
+      fontSize: font(7.8),
       lineHeight: 1.45,
     },
 
@@ -3253,7 +3253,7 @@ function createStyles(viewport) {
       borderRadius: 999,
       background: "#fffbeb",
       color: "#b45309",
-      fontSize: px(7),
+      fontSize: font(7),
       fontWeight: 950,
     },
 
@@ -3274,7 +3274,7 @@ function createStyles(viewport) {
       gap: px(12),
       padding: `${px(8)}px 0`,
       color: "#78716c",
-      fontSize: px(7.5),
+      fontSize: font(7.5),
     },
 
     summaryDivider: {
@@ -3313,7 +3313,7 @@ function createStyles(viewport) {
       gap: px(6),
       marginBottom: px(7),
       color: "#92400e",
-      fontSize: px(7),
+      fontSize: font(7),
       fontWeight: 800,
     },
 
@@ -3333,7 +3333,7 @@ function createStyles(viewport) {
       gap: px(6),
       marginBottom: px(7),
       color: "#1d4ed8",
-      fontSize: px(7),
+      fontSize: font(7),
       fontWeight: 850,
     },
 
@@ -3353,7 +3353,7 @@ function createStyles(viewport) {
       gap: px(6),
       marginBottom: px(7),
       color: "#15803d",
-      fontSize: px(7),
+      fontSize: font(7),
       fontWeight: 850,
     },
 
@@ -3365,7 +3365,7 @@ function createStyles(viewport) {
       background:
         "linear-gradient(135deg,#f59e0b,#ea580c)",
       color: "white",
-      fontSize: px(9),
+      fontSize: font(9),
       fontWeight: 950,
       cursor: "pointer",
     },
@@ -3382,7 +3382,7 @@ function createStyles(viewport) {
       borderRadius: px(17),
       background: "white",
       color: "#1d4ed8",
-      fontSize: px(9),
+      fontSize: font(9),
       fontWeight: 950,
       cursor: "pointer",
     },
@@ -3394,7 +3394,7 @@ function createStyles(viewport) {
       background:
         "linear-gradient(135deg,#38bdf8,#1d4ed8)",
       color: "white",
-      fontSize: px(9),
+      fontSize: font(9),
       fontWeight: 950,
       cursor: "pointer",
     },
@@ -3407,7 +3407,7 @@ function createStyles(viewport) {
       background:
         "linear-gradient(135deg,#22c55e,#15803d)",
       color: "white",
-      fontSize: px(9),
+      fontSize: font(9),
       fontWeight: 950,
       cursor: "pointer",
     },
@@ -3446,21 +3446,21 @@ function createStyles(viewport) {
       background:
         "linear-gradient(135deg,#f59e0b,#ea580c)",
       color: "white",
-      fontSize: px(25),
+      fontSize: font(25),
       fontWeight: 950,
     },
 
     popupTitle: {
       margin: `${px(15)}px 0 0`,
       color: "#111827",
-      fontSize: px(15),
+      fontSize: font(15),
       fontWeight: 950,
     },
 
     popupText: {
       margin: `${px(8)}px auto 0`,
       color: "#57534e",
-      fontSize: px(8),
+      fontSize: font(8),
       lineHeight: 1.45,
     },
 
@@ -3477,7 +3477,7 @@ function createStyles(viewport) {
       borderRadius: px(15),
       background: "#fafaf9",
       color: "#57534e",
-      fontSize: px(8),
+      fontSize: font(8),
       fontWeight: 900,
       cursor: "pointer",
     },
@@ -3489,7 +3489,7 @@ function createStyles(viewport) {
       background:
         "linear-gradient(135deg,#22c55e,#15803d)",
       color: "white",
-      fontSize: px(8),
+      fontSize: font(8),
       fontWeight: 950,
       cursor: "pointer",
     },
