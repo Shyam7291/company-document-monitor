@@ -13155,7 +13155,7 @@ body {
 
 @keyframes driveTruck {
   0% {
-    transform: translateX(-44px);
+    transform: translateX(105px);
   }
 
   45%,
@@ -13164,7 +13164,7 @@ body {
   }
 
   100% {
-    transform: translateX(105px);
+    transform: translateX(-44px);
   }
 }
 
