@@ -13195,3 +13195,3477 @@ body {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+recent order
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
+const BASE_W = 390;
+const BASE_H = 844;
+const RECENT_ORDERS_BG = "https://cdn.jsdelivr.net/gh/Shyam7291/company-document-monitor@main/just give me the bg image of this not with the fon.png";
+
+const ORDERS = [
+  {
+    id: "SR-260711-04",
+    type: "rate",
+    title: "20mm + 40mm Crushed Stone",
+    subtitle: "30 tons • 3 vehicles",
+    date: "11 Jul 2026",
+    orderDate: "2026-07-11",
+    timestamp: 1783708200000,
+    value: "₹1,280 / ton",
+    status: "Best rate ready",
+    statusKey: "rateReady",
+    tone: "success",
+    progress: 3,
+    stages: [
+      "Submitted",
+      "Checking",
+      "Rate ready",
+      "Confirm",
+    ],
+  },
+  {
+    id: "SO-260709-02",
+    type: "delivery",
+    title: "40mm Crushed Stone",
+    subtitle: "22 tons • 1 vehicle",
+    date: "09 Jul 2026",
+    orderDate: "2026-07-09",
+    timestamp: 1783535400000,
+    value: "In transit",
+    status: "In transit",
+    statusKey: "inTransit",
+    tone: "delivery",
+    progress: 3,
+    stages: [
+      "Confirmed",
+      "Loading",
+      "In transit",
+      "Delivered",
+    ],
+  },
+  {
+    id: "SR-260707-01",
+    type: "rate",
+    title: "M-Sand",
+    subtitle: "18 tons • 1 vehicle",
+    date: "07 Jul 2026",
+    orderDate: "2026-07-07",
+    timestamp: 1783362600000,
+    value: "₹1,050 / ton",
+    status: "Rejected",
+    statusKey: "rejected",
+    tone: "rejected",
+    progress: 4,
+    stages: [
+      "Submitted",
+      "Checking",
+      "Rate ready",
+      "Rejected",
+    ],
+  },
+  {
+    id: "SR-260705-08",
+    type: "rate",
+    title: "Stone Dust",
+    subtitle: "15 tons • 1 vehicle",
+    date: "05 Jul 2026",
+    orderDate: "2026-07-05",
+    timestamp: 1783189800000,
+    value: "Checking sellers",
+    status: "Checking sellers",
+    statusKey: "checking",
+    tone: "pending",
+    progress: 2,
+    stages: [
+      "Submitted",
+      "Checking",
+      "Rate ready",
+      "Confirm",
+    ],
+  },
+  {
+    id: "SO-260702-03",
+    type: "delivery",
+    title: "20mm Crushed Stone",
+    subtitle: "30 tons • 3 vehicles",
+    date: "02 Jul 2026",
+    orderDate: "2026-07-02",
+    timestamp: 1782930600000,
+    value: "Delivered",
+    status: "Delivered",
+    statusKey: "delivered",
+    tone: "delivered",
+    progress: 4,
+    stages: [
+      "Confirmed",
+      "Loading",
+      "In transit",
+      "Delivered",
+    ],
+  },
+];
+
+const QUICK_FILTERS = [
+  {
+    id: "all",
+    label: "All",
+  },
+  {
+    id: "rate",
+    label: "Rate requests",
+  },
+  {
+    id: "delivery",
+    label: "Delivery orders",
+  },
+  {
+    id: "active",
+    label: "Active",
+  },
+];
+const ORDER_TYPE_OPTIONS = [
+  {
+    id: "all",
+    label: "All orders",
+    icon: "▣",
+  },
+  {
+    id: "rate",
+    label: "Rate requests",
+    icon: "₹",
+  },
+  {
+    id: "delivery",
+    label: "Delivery orders",
+    icon: "🚚",
+  },
+  {
+    id: "active",
+    label: "Active orders",
+    icon: "●",
+  },
+];
+
+const SORT_OPTIONS = [
+  "Newest first",
+  "Oldest first",
+  "Rate requests first",
+  "Delivery orders first",
+];
+
+const STATUS_OPTIONS = [
+  {
+    id: "all",
+    label: "All statuses",
+  },
+  {
+    id: "checking",
+    label: "Checking sellers",
+  },
+  {
+    id: "rateReady",
+    label: "Best rate ready",
+  },
+  {
+    id: "inTransit",
+    label: "In transit",
+  },
+  {
+    id: "delivered",
+    label: "Delivered",
+  },
+  {
+    id: "rejected",
+    label: "Rejected",
+  },
+];
+
+function useViewport() {
+  const [viewport, setViewport] = useState({
+    width:
+      typeof window !== "undefined"
+        ? window.innerWidth
+        : BASE_W,
+    height:
+      typeof window !== "undefined"
+        ? window.innerHeight
+        : BASE_H,
+  });
+
+  useEffect(() => {
+    const update = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    update();
+
+    window.addEventListener("resize", update);
+    window.addEventListener(
+      "orientationchange",
+      update
+    );
+
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener(
+        "orientationchange",
+        update
+      );
+    };
+  }, []);
+
+  return viewport;
+}
+
+export default function OrdersPage({
+  goToPage4,
+  goToPage7,
+  goToPage8,
+  goToProfile,
+}) {
+  const viewport = useViewport();
+
+  const styles = useMemo(
+    () => createStyles(viewport),
+    [viewport.width, viewport.height]
+  );
+
+  const [query, setQuery] = useState("");
+  const [quickFilter, setQuickFilter] =
+    useState("all");
+
+  const [statusFilter, setStatusFilter] =
+    useState("all");
+
+  const [sortOrder, setSortOrder] =
+    useState("Newest first");
+
+  const [showFilters, setShowFilters] =
+    useState(false);
+
+  const [activeFilterTab, setActiveFilterTab] =
+    useState("type");
+
+    const [dateMode, setDateMode] =
+    useState("single");
+  
+  const [singleDate, setSingleDate] =
+    useState("");
+  
+  const [fromDate, setFromDate] =
+    useState("");
+  
+  const [toDate, setToDate] =
+    useState("");  
+
+  const [activeNav, setActiveNav] =
+    useState("Orders");
+
+    const hasDateFilter =
+    dateMode === "single"
+      ? Boolean(singleDate)
+      : Boolean(fromDate || toDate);
+  
+  const activeFilterCount =
+    (quickFilter !== "all" ? 1 : 0) +
+    (statusFilter !== "all" ? 1 : 0) +
+    (hasDateFilter ? 1 : 0) +
+    (sortOrder !== "Newest first" ? 1 : 0);
+
+  const activeAdvancedFilterCount =
+    statusFilter === "all" ? 0 : 1;
+
+  const filteredOrders = useMemo(() => {
+    const normalizedQuery = query
+      .trim()
+      .toLowerCase();
+
+    let result = ORDERS.filter((order) => {
+      const searchMatches =
+        !normalizedQuery ||
+        order.id
+          .toLowerCase()
+          .includes(normalizedQuery) ||
+        order.title
+          .toLowerCase()
+          .includes(normalizedQuery) ||
+        order.subtitle
+          .toLowerCase()
+          .includes(normalizedQuery) ||
+        order.status
+          .toLowerCase()
+          .includes(normalizedQuery);
+
+      const quickFilterMatches =
+        quickFilter === "all" ||
+        (quickFilter === "rate" &&
+          order.type === "rate") ||
+        (quickFilter === "delivery" &&
+          order.type === "delivery") ||
+        (quickFilter === "active" &&
+          !["rejected", "delivered"].includes(
+            order.statusKey
+          ));
+
+      const statusMatches =
+        statusFilter === "all" ||
+        order.statusKey === statusFilter;
+
+        let dateMatches = true;
+
+        if (dateMode === "single" && singleDate) {
+          dateMatches =
+            order.orderDate === singleDate;
+        }
+        
+        if (dateMode === "range") {
+          const matchesFromDate =
+            !fromDate ||
+            order.orderDate >= fromDate;
+        
+          const matchesToDate =
+            !toDate ||
+            order.orderDate <= toDate;
+        
+          dateMatches =
+            matchesFromDate && matchesToDate;
+        }  
+
+        return (
+          searchMatches &&
+          quickFilterMatches &&
+          statusMatches &&
+          dateMatches
+        );
+    });
+
+    if (sortOrder === "Newest first") {
+      result = [...result].sort(
+        (first, second) =>
+          second.timestamp - first.timestamp
+      );
+    }
+
+    if (sortOrder === "Oldest first") {
+      result = [...result].sort(
+        (first, second) =>
+          first.timestamp - second.timestamp
+      );
+    }
+
+    if (
+      sortOrder === "Rate requests first"
+    ) {
+      result = [...result].sort((first, second) => {
+        if (first.type === second.type) {
+          return second.timestamp - first.timestamp;
+        }
+
+        return first.type === "rate" ? -1 : 1;
+      });
+    }
+
+    if (
+      sortOrder === "Delivery orders first"
+    ) {
+      result = [...result].sort((first, second) => {
+        if (first.type === second.type) {
+          return second.timestamp - first.timestamp;
+        }
+
+        return first.type === "delivery"
+          ? -1
+          : 1;
+      });
+    }
+
+    return result;
+  }, [
+    query,
+    quickFilter,
+    statusFilter,
+    sortOrder,
+    dateMode,
+    singleDate,
+    fromDate,
+    toDate,
+  ]);
+
+  const totalOrders = ORDERS.length;
+
+  const totalRateRequests = ORDERS.filter(
+    (order) => order.type === "rate"
+  ).length;
+
+  const totalInTransit = ORDERS.filter(
+    (order) =>
+      order.statusKey === "inTransit"
+  ).length;
+
+  const clearAllFilters = () => {
+    setQuery("");
+    setQuickFilter("all");
+    setStatusFilter("all");
+    setSortOrder("Newest first");
+  
+    setDateMode("single");
+    setSingleDate("");
+    setFromDate("");
+    setToDate("");
+  
+    setActiveFilterTab("type");
+    setShowFilters(false);
+  };
+
+  const handleViewDetails = (order) => {
+    if (
+      order.type === "delivery" &&
+      goToPage8
+    ) {
+      goToPage8();
+      return;
+    }
+
+    if (order.type === "rate" && goToPage7) {
+      goToPage7();
+    }
+  };
+
+  const handleBottomNavigation = (name) => {
+    setActiveNav(name);
+
+    if (name === "Home" && goToPage4) {
+      goToPage4();
+      return;
+    }
+
+    if (name === "Profile" && goToProfile) {
+      goToProfile();
+    }
+  };
+
+  return (
+    <div style={styles.page}>
+      <style>{globalCss}</style>
+
+      <main style={styles.phone}>
+        <header style={styles.controlHeader}>
+          <div style={styles.headerAmbientGlow} />
+
+          <div style={styles.topControlRow}>
+            <button
+              type="button"
+              style={styles.backButton}
+              aria-label="Back to Home"
+              onClick={goToPage4}
+            >
+              ‹
+            </button>
+
+            <div style={styles.searchContainer}>
+              <div style={styles.searchIconBox}>
+                ⌕
+              </div>
+
+              <div style={styles.searchTextArea}>
+                <span style={styles.searchLabel}>
+                  SEARCH ORDERS
+                </span>
+
+                <input
+                  type="search"
+                  value={query}
+                  onChange={(event) =>
+                    setQuery(event.target.value)
+                  }
+                  placeholder="Order ID, material or status"
+                  style={styles.searchInput}
+                />
+              </div>
+
+              {query && (
+                <button
+                  type="button"
+                  style={styles.clearSearchButton}
+                  onClick={() => setQuery("")}
+                  aria-label="Clear search"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+
+            <button
+  type="button"
+  style={{
+    ...styles.combinedFilterButton,
+    ...(showFilters || activeFilterCount > 0
+      ? styles.combinedFilterButtonActive
+      : {}),
+  }}
+  onClick={() =>
+    setShowFilters((previous) => !previous)
+  }
+  aria-label="Filter and sort orders"
+  aria-expanded={showFilters}
+>
+  <span style={styles.combinedFilterIcon}>
+    ☷
+  </span>
+
+  <span style={styles.combinedFilterText}>
+    Filter
+  </span>
+
+  {activeFilterCount > 0 && (
+    <span style={styles.filterCountBadge}>
+      {activeFilterCount}
+    </span>
+  )}
+</button>
+          </div>
+
+         
+
+          {showFilters && (
+  <div style={styles.filterPanel}>
+    <div style={styles.panelHeader}>
+      <div>
+        <span style={styles.panelEyebrow}>
+          ORDER FILTERS
+        </span>
+
+        <h2 style={styles.panelTitle}>
+          Find the right order
+        </h2>
+      </div>
+
+      <button
+        type="button"
+        style={styles.panelCloseButton}
+        onClick={() => setShowFilters(false)}
+        aria-label="Close filters"
+      >
+        ×
+      </button>
+    </div>
+
+    <div style={styles.filterTabs}>
+      <button
+        type="button"
+        style={{
+          ...styles.filterTab,
+          ...(activeFilterTab === "type"
+            ? styles.filterTabActive
+            : {}),
+        }}
+        onClick={() =>
+          setActiveFilterTab("type")
+        }
+      >
+        <span style={styles.filterTabIcon}>
+          ▣
+        </span>
+
+        Order Type
+
+        {quickFilter !== "all" && (
+          <span style={styles.tabSelectionDot} />
+        )}
+      </button>
+
+      <button
+        type="button"
+        style={{
+          ...styles.filterTab,
+          ...(activeFilterTab === "status"
+            ? styles.filterTabActive
+            : {}),
+        }}
+        onClick={() =>
+          setActiveFilterTab("status")
+        }
+      >
+        <span style={styles.filterTabIcon}>
+          ◉
+        </span>
+
+        Status
+
+        {statusFilter !== "all" && (
+          <span style={styles.tabSelectionDot} />
+        )}
+      </button>
+
+      <button
+        type="button"
+        style={{
+          ...styles.filterTab,
+          ...(activeFilterTab === "sort"
+            ? styles.filterTabActive
+            : {}),
+        }}
+        onClick={() =>
+          setActiveFilterTab("sort")
+        }
+      >
+        <span style={styles.filterTabIcon}>
+          ⇅
+        </span>
+
+        Sort
+
+        {sortOrder !== "Newest first" && (
+          <span style={styles.tabSelectionDot} />
+        )}
+      </button>
+      <button
+  type="button"
+  style={{
+    ...styles.filterTab,
+    ...(activeFilterTab === "date"
+      ? styles.filterTabActive
+      : {}),
+  }}
+  onClick={() =>
+    setActiveFilterTab("date")
+  }
+>
+  <span style={styles.filterTabIcon}>
+    📅
+  </span>
+
+  Date
+
+  {hasDateFilter && (
+    <span style={styles.tabSelectionDot} />
+  )}
+</button>
+    </div>
+
+    <div style={styles.filterTabContent}>
+      {activeFilterTab === "type" && (
+        <>
+          <div style={styles.tabContentHeading}>
+            <span style={styles.filterSectionLabel}>
+              SELECT ORDER TYPE
+            </span>
+
+            <p style={styles.tabContentDescription}>
+              Choose which kind of orders you want
+              to see.
+            </p>
+          </div>
+
+          <div style={styles.optionCardGrid}>
+            {ORDER_TYPE_OPTIONS.map((option) => {
+              const selected =
+                quickFilter === option.id;
+
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  style={{
+                    ...styles.optionCard,
+                    ...(selected
+                      ? styles.optionCardActive
+                      : {}),
+                  }}
+                  onClick={() =>
+                    setQuickFilter(option.id)
+                  }
+                >
+                  <span
+                    style={{
+                      ...styles.optionCardIcon,
+                      ...(selected
+                        ? styles.optionCardIconActive
+                        : {}),
+                    }}
+                  >
+                    {option.icon}
+                  </span>
+
+                  <span style={styles.optionCardLabel}>
+                    {option.label}
+                  </span>
+
+                  <span
+                    style={{
+                      ...styles.optionCheck,
+                      ...(selected
+                        ? styles.optionCheckActive
+                        : {}),
+                    }}
+                  >
+                    {selected ? "✓" : ""}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {activeFilterTab === "status" && (
+        <>
+          <div style={styles.tabContentHeading}>
+            <span style={styles.filterSectionLabel}>
+              SELECT ORDER STATUS
+            </span>
+
+            <p style={styles.tabContentDescription}>
+              Filter orders by their current
+              progress.
+            </p>
+          </div>
+
+          <div style={styles.statusOptionStack}>
+            {STATUS_OPTIONS.map((option) => {
+              const selected =
+                statusFilter === option.id;
+
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  style={{
+                    ...styles.statusOption,
+                    ...(selected
+                      ? styles.statusOptionActive
+                      : {}),
+                  }}
+                  onClick={() =>
+                    setStatusFilter(option.id)
+                  }
+                >
+                  <span
+                    style={{
+                      ...styles.statusOptionDot,
+                      background:
+                        option.id === "checking"
+                          ? "#f59e0b"
+                          : option.id === "rateReady"
+                          ? "#22c55e"
+                          : option.id === "inTransit"
+                          ? "#38bdf8"
+                          : option.id === "delivered"
+                          ? "#16a34a"
+                          : option.id === "rejected"
+                          ? "#ef4444"
+                          : "#a8a29e",
+                    }}
+                  />
+
+                  <span style={styles.statusOptionLabel}>
+                    {option.label}
+                  </span>
+
+                  <span
+                    style={{
+                      ...styles.optionCheck,
+                      ...(selected
+                        ? styles.optionCheckActive
+                        : {}),
+                    }}
+                  >
+                    {selected ? "✓" : ""}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
+      {activeFilterTab === "date" && (
+  <>
+    <div style={styles.tabContentHeading}>
+      <span style={styles.filterSectionLabel}>
+        FILTER BY DATE
+      </span>
+
+      <p style={styles.tabContentDescription}>
+        Choose one specific day or select a
+        date range.
+      </p>
+    </div>
+
+    <div style={styles.dateModeTabs}>
+      <button
+        type="button"
+        style={{
+          ...styles.dateModeButton,
+          ...(dateMode === "single"
+            ? styles.dateModeButtonActive
+            : {}),
+        }}
+        onClick={() => setDateMode("single")}
+      >
+        <span>●</span>
+        Specific day
+      </button>
+
+      <button
+        type="button"
+        style={{
+          ...styles.dateModeButton,
+          ...(dateMode === "range"
+            ? styles.dateModeButtonActive
+            : {}),
+        }}
+        onClick={() => setDateMode("range")}
+      >
+        <span>↔</span>
+        Date range
+      </button>
+    </div>
+
+    {dateMode === "single" && (
+      <div style={styles.singleDateSection}>
+        <label style={styles.dateFieldLabel}>
+          Order date
+        </label>
+
+        <div style={styles.dateInputShell}>
+          <span style={styles.dateInputIcon}>
+            📅
+          </span>
+
+          <input
+            type="date"
+            value={singleDate}
+            onChange={(event) =>
+              setSingleDate(event.target.value)
+            }
+            style={styles.dateInput}
+          />
+
+          {singleDate && (
+            <button
+              type="button"
+              style={styles.clearDateButton}
+              onClick={() => setSingleDate("")}
+              aria-label="Clear selected date"
+            >
+              ×
+            </button>
+          )}
+        </div>
+
+        <p style={styles.dateHelperText}>
+          Orders created on the selected day
+          will be displayed.
+        </p>
+      </div>
+    )}
+
+    {dateMode === "range" && (
+      <div style={styles.dateRangeSection}>
+        <div style={styles.dateField}>
+          <label style={styles.dateFieldLabel}>
+            From
+          </label>
+
+          <div style={styles.dateInputShell}>
+            <span style={styles.dateInputIcon}>
+              📅
+            </span>
+
+            <input
+              type="date"
+              value={fromDate}
+              max={toDate || undefined}
+              onChange={(event) =>
+                setFromDate(event.target.value)
+              }
+              style={styles.dateInput}
+            />
+
+            {fromDate && (
+              <button
+                type="button"
+                style={styles.clearDateButton}
+                onClick={() => setFromDate("")}
+                aria-label="Clear from date"
+              >
+                ×
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div style={styles.dateRangeConnector}>
+          <span>→</span>
+        </div>
+
+        <div style={styles.dateField}>
+          <label style={styles.dateFieldLabel}>
+            To
+          </label>
+
+          <div style={styles.dateInputShell}>
+            <span style={styles.dateInputIcon}>
+              📅
+            </span>
+
+            <input
+              type="date"
+              value={toDate}
+              min={fromDate || undefined}
+              onChange={(event) =>
+                setToDate(event.target.value)
+              }
+              style={styles.dateInput}
+            />
+
+            {toDate && (
+              <button
+                type="button"
+                style={styles.clearDateButton}
+                onClick={() => setToDate("")}
+                aria-label="Clear to date"
+              >
+                ×
+              </button>
+            )}
+          </div>
+        </div>
+
+        <p style={styles.dateRangeHelper}>
+          Both start and end dates are included
+          in the results.
+        </p>
+      </div>
+    )}
+
+    {hasDateFilter && (
+      <button
+        type="button"
+        style={styles.removeDateFilterButton}
+        onClick={() => {
+          setSingleDate("");
+          setFromDate("");
+          setToDate("");
+        }}
+      >
+        Remove date filter
+      </button>
+    )}
+  </>
+)}
+      {activeFilterTab === "sort" && (
+        <>
+          <div style={styles.tabContentHeading}>
+            <span style={styles.filterSectionLabel}>
+              SORT RESULTS
+            </span>
+
+            <p style={styles.tabContentDescription}>
+              Choose how orders should be arranged.
+            </p>
+          </div>
+
+          <div style={styles.sortOptionStack}>
+            {SORT_OPTIONS.map((option) => {
+              const selected =
+                sortOrder === option;
+
+              return (
+                <button
+                  type="button"
+                  key={option}
+                  style={{
+                    ...styles.sortOption,
+                    ...(selected
+                      ? styles.sortOptionActive
+                      : {}),
+                  }}
+                  onClick={() =>
+                    setSortOrder(option)
+                  }
+                >
+                  <span>{option}</span>
+
+                  <span
+                    style={{
+                      ...styles.sortSelection,
+                      ...(selected
+                        ? styles.sortSelectionActive
+                        : {}),
+                    }}
+                  >
+                    {selected ? "✓" : ""}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
+    </div>
+
+    <div style={styles.panelFooter}>
+      <button
+        type="button"
+        style={styles.resetButton}
+        onClick={clearAllFilters}
+      >
+        Reset all
+      </button>
+
+      <button
+        type="button"
+        style={styles.applyButton}
+        onClick={() => setShowFilters(false)}
+      >
+        Show {filteredOrders.length}{" "}
+        {filteredOrders.length === 1
+          ? "order"
+          : "orders"}
+      </button>
+    </div>
+  </div>
+)}
+
+          
+        </header>
+
+        <section
+          className="orders-scroll-area"
+          style={styles.ordersScrollArea}
+        >
+          <section style={styles.hero}>
+            <div style={styles.heroGrid} />
+            <div style={styles.heroGlow} />
+
+            <div style={styles.heroContent}>
+              <p style={styles.heroEyebrow}>
+                ORDER CENTRE
+              </p>
+
+              <h1 style={styles.heroTitle}>
+                Recent Orders
+              </h1>
+
+              <p style={styles.heroDescription}>
+                Track rate requests, active deliveries
+                and completed orders.
+              </p>
+            </div>
+
+            <div style={styles.summaryCard}>
+              <SummaryItem
+                styles={styles}
+                value={totalOrders}
+                label="Total orders"
+              />
+
+              <div style={styles.summaryDivider} />
+
+              <SummaryItem
+                styles={styles}
+                value={totalRateRequests}
+                label="Rate requests"
+              />
+
+              <div style={styles.summaryDivider} />
+
+              <SummaryItem
+                styles={styles}
+                value={totalInTransit}
+                label="In transit"
+              />
+            </div>
+          </section>
+
+          <section style={styles.activityArea}>
+            <div style={styles.resultsHeader}>
+              <div>
+                <span style={styles.resultsEyebrow}>
+                  RECENT ACTIVITY
+                </span>
+
+                <h2 style={styles.resultsTitle}>
+                  {filteredOrders.length}{" "}
+                  {filteredOrders.length === 1
+                    ? "order"
+                    : "orders"}
+                </h2>
+              </div>
+
+              <button
+  type="button"
+  style={styles.currentSortButton}
+  onClick={() => {
+    setActiveFilterTab("sort");
+    setShowFilters(true);
+  }}
+>
+  <span>{sortOrder}</span>
+  <b>⌄</b>
+</button>
+            </div>
+
+            {(query ||
+              quickFilter !== "all" ||
+              statusFilter !== "all") && (
+              <div style={styles.activeFiltersRow}>
+                <span
+                  style={styles.activeFiltersLabel}
+                >
+                  ACTIVE FILTERS
+                </span>
+
+                {query && (
+                  <ActiveFilter
+                    styles={styles}
+                    label={`Search: ${query}`}
+                    onRemove={() => setQuery("")}
+                  />
+                )}
+
+                {quickFilter !== "all" && (
+                  <ActiveFilter
+                    styles={styles}
+                    label={
+                      QUICK_FILTERS.find(
+                        (item) =>
+                          item.id === quickFilter
+                      )?.label
+                    }
+                    onRemove={() =>
+                      setQuickFilter("all")
+                    }
+                  />
+                )}
+
+                {statusFilter !== "all" && (
+                  <ActiveFilter
+                    styles={styles}
+                    label={
+                      STATUS_OPTIONS.find(
+                        (item) =>
+                          item.id === statusFilter
+                      )?.label
+                    }
+                    onRemove={() =>
+                      setStatusFilter("all")
+                    }
+                  />
+                )}
+              </div>
+            )}
+                {hasDateFilter && (
+  <ActiveFilter
+    styles={styles}
+    label={
+      dateMode === "single"
+        ? `Date: ${singleDate}`
+        : `Date: ${fromDate || "Any"} to ${
+            toDate || "Any"
+          }`
+    }
+    onRemove={() => {
+      setSingleDate("");
+      setFromDate("");
+      setToDate("");
+    }}
+  />
+)}
+
+            <div style={styles.orderStack}>
+              {filteredOrders.map((order) => (
+                <OrderCard
+                  key={order.id}
+                  order={order}
+                  styles={styles}
+                  onViewDetails={() =>
+                    handleViewDetails(order)
+                  }
+                />
+              ))}
+
+              {filteredOrders.length === 0 && (
+                <div style={styles.emptyCard}>
+                  <div style={styles.emptyIcon}>
+                    ⌕
+                  </div>
+
+                  <h3 style={styles.emptyTitle}>
+                    No matching orders
+                  </h3>
+
+                  <p style={styles.emptyText}>
+                    Try another order ID, material,
+                    type or status.
+                  </p>
+
+                  <button
+                    type="button"
+                    style={styles.emptyResetButton}
+                    onClick={clearAllFilters}
+                  >
+                    Clear all filters
+                  </button>
+                </div>
+              )}
+            </div>
+          </section>
+        </section>
+
+        <nav style={styles.bottomNav}>
+          {[
+            {
+              name: "Home",
+              icon: "⌂",
+            },
+            {
+              name: "Orders",
+              icon: "▣",
+            },
+            {
+              name: "Profile",
+              icon: "●",
+            },
+          ].map((item) => {
+            const active =
+              activeNav === item.name;
+
+            return (
+              <button
+                type="button"
+                key={item.name}
+                onClick={() =>
+                  handleBottomNavigation(
+                    item.name
+                  )
+                }
+                style={{
+                  ...styles.navButton,
+                  ...(active
+                    ? styles.navButtonActive
+                    : {}),
+                }}
+              >
+                {active && (
+                  <span
+                    style={
+                      styles.activeNavIndicator
+                    }
+                  />
+                )}
+
+                <span
+                  style={{
+                    ...styles.navIconBox,
+                    ...(active
+                      ? styles.navIconBoxActive
+                      : {}),
+                  }}
+                >
+                  {item.icon}
+                </span>
+
+                <span
+                  style={{
+                    ...styles.navLabel,
+                    ...(active
+                      ? styles.navLabelActive
+                      : {}),
+                  }}
+                >
+                  {item.name}
+                </span>
+              </button>
+            );
+          })}
+        </nav>
+      </main>
+    </div>
+  );
+}
+
+function SummaryItem({
+  styles,
+  value,
+  label,
+}) {
+  return (
+    <div style={styles.summaryItem}>
+      <b>{value}</b>
+      <span>{label}</span>
+    </div>
+  );
+}
+
+function ActiveFilter({
+  styles,
+  label,
+  onRemove,
+}) {
+  return (
+    <button
+      type="button"
+      style={styles.activeFilterChip}
+      onClick={onRemove}
+    >
+      <span>{label}</span>
+      <b>×</b>
+    </button>
+  );
+}
+
+function OrderCard({
+  order,
+  styles,
+  onViewDetails,
+}) {
+  const isDelivery =
+    order.type === "delivery";
+
+  const isRejected =
+    order.statusKey === "rejected";
+
+  const isPending =
+    order.statusKey === "checking";
+
+  const isDelivered =
+    order.statusKey === "delivered";
+
+  const tone = isRejected
+    ? "red"
+    : isDelivery
+    ? "blue"
+    : isPending
+    ? "amber"
+    : "green";
+
+  const accentStyle =
+    tone === "red"
+      ? styles.accentRed
+      : tone === "blue"
+      ? styles.accentBlue
+      : tone === "amber"
+      ? styles.accentAmber
+      : styles.accentGreen;
+
+  const statusStyle =
+    tone === "red"
+      ? styles.statusRed
+      : tone === "blue"
+      ? styles.statusBlue
+      : tone === "amber"
+      ? styles.statusAmber
+      : styles.statusGreen;
+
+  return (
+    <article style={styles.orderCard}>
+      <div
+        style={{
+          ...styles.cardAccent,
+          ...accentStyle,
+        }}
+      />
+
+      <div
+        style={{
+          ...styles.cardGlow,
+          background:
+            tone === "red"
+              ? "rgba(239,68,68,.15)"
+              : tone === "blue"
+              ? "rgba(59,130,246,.15)"
+              : tone === "amber"
+              ? "rgba(245,158,11,.16)"
+              : "rgba(34,197,94,.14)",
+        }}
+      />
+
+      <div style={styles.orderHeader}>
+        <div
+          style={{
+            ...styles.orderTypeIcon,
+            ...(isDelivery
+              ? styles.deliveryOrderIcon
+              : {}),
+            ...(isRejected
+              ? styles.rejectedOrderIcon
+              : {}),
+          }}
+        >
+          {isDelivery ? "🚚" : "₹"}
+        </div>
+
+        <div style={styles.orderHeadingArea}>
+          <div style={styles.orderMetaRow}>
+            <span style={styles.orderId}>
+              {order.id}
+            </span>
+
+            <span
+              style={{
+                ...styles.orderStatusPill,
+                ...statusStyle,
+              }}
+            >
+              <span
+                style={{
+                  ...styles.orderStatusDot,
+                  background:
+                    tone === "red"
+                      ? "#ef4444"
+                      : tone === "blue"
+                      ? "#38bdf8"
+                      : tone === "amber"
+                      ? "#f59e0b"
+                      : "#22c55e",
+                }}
+              />
+
+              {order.status}
+            </span>
+          </div>
+
+          <h3 style={styles.orderTitle}>
+            {order.title}
+          </h3>
+
+          <p style={styles.orderSubtitle}>
+            {order.subtitle}
+          </p>
+        </div>
+      </div>
+
+      <div style={styles.orderInfoGrid}>
+        <div style={styles.orderInfoCell}>
+          <span>Request date</span>
+          <b>{order.date}</b>
+        </div>
+
+        <div style={styles.orderInfoCell}>
+          <span>
+            {isDelivery
+              ? "Current state"
+              : "Quoted rate"}
+          </span>
+
+          <b>{order.value}</b>
+        </div>
+      </div>
+
+      <div style={styles.progressSection}>
+        <div style={styles.progressHeader}>
+          <span>
+            {isDelivery
+              ? "DELIVERY PROGRESS"
+              : "RATE REQUEST PROGRESS"}
+          </span>
+
+          <b>
+            {Math.round(
+              (order.progress /
+                order.stages.length) *
+                100
+            )}
+            %
+          </b>
+        </div>
+
+        <div
+          className="progress-scroll"
+          style={styles.progressScroller}
+        >
+          <div style={styles.miniTracker}>
+            {order.stages.map(
+              (stage, index) => {
+                const completed =
+                  index < order.progress;
+
+                const current =
+                  index === order.progress - 1;
+
+                return (
+                  <React.Fragment key={stage}>
+                    <div
+                      style={styles.miniStep}
+                    >
+                      <div
+                        style={{
+                          ...styles.miniCircle,
+                          ...(completed
+                            ? accentStyle
+                            : styles.miniCircleWaiting),
+                          ...(current
+                            ? styles.miniCircleCurrent
+                            : {}),
+                        }}
+                      >
+                        {completed
+                          ? isRejected &&
+                            index ===
+                              order.stages.length -
+                                1
+                            ? "×"
+                            : "✓"
+                          : ""}
+                      </div>
+
+                      <span
+                        style={{
+                          ...styles.miniLabel,
+                          color: completed
+                            ? tone === "red"
+                              ? "#b91c1c"
+                              : tone === "blue"
+                              ? "#1d4ed8"
+                              : tone === "amber"
+                              ? "#b45309"
+                              : "#15803d"
+                            : "#a8a29e",
+                          fontWeight: current
+                            ? 950
+                            : 750,
+                        }}
+                      >
+                        {stage}
+                      </span>
+                    </div>
+
+                    {index <
+                      order.stages.length - 1 && (
+                      <div
+                        style={{
+                          ...styles.miniConnector,
+                          background:
+                            index <
+                            order.progress - 1
+                              ? tone === "red"
+                                ? "#ef4444"
+                                : tone === "blue"
+                                ? "#38bdf8"
+                                : tone === "amber"
+                                ? "#f59e0b"
+                                : "#22c55e"
+                              : "#e7e5e4",
+                        }}
+                      />
+                    )}
+                  </React.Fragment>
+                );
+              }
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div style={styles.orderFooter}>
+        <span
+          style={{
+            ...styles.orderTypeLabel,
+            color:
+              tone === "red"
+                ? "#b91c1c"
+                : tone === "blue"
+                ? "#1d4ed8"
+                : tone === "amber"
+                ? "#b45309"
+                : "#15803d",
+          }}
+        >
+          {isDelivery
+            ? isDelivered
+              ? "Completed delivery"
+              : "Active delivery order"
+            : isRejected
+            ? "Rejected rate request"
+            : isPending
+            ? "Rate comparison in progress"
+            : "Active rate request"}
+        </span>
+
+        <button
+          type="button"
+          onClick={onViewDetails}
+          style={{
+            ...styles.viewDetailsButton,
+            ...(tone === "red"
+              ? styles.viewDetailsRed
+              : {}),
+            ...(tone === "blue"
+              ? styles.viewDetailsBlue
+              : {}),
+            ...(tone === "amber"
+              ? styles.viewDetailsAmber
+              : {}),
+          }}
+        >
+          View details
+          <b>›</b>
+        </button>
+      </div>
+    </article>
+  );
+}
+
+function createStyles(viewport) {
+  const viewportWidth =
+    viewport.width || BASE_W;
+
+  const viewportHeight =
+    viewport.height || BASE_H;
+
+  const isDesktop = viewportWidth >= 700;
+
+  const appWidth = isDesktop
+    ? 390
+    : viewportWidth;
+
+  const appHeight = isDesktop
+    ? 844
+    : viewportHeight;
+
+  const scale = Math.max(
+    0.72,
+    Math.min(
+      1,
+      Math.min(
+        appWidth / BASE_W,
+        appHeight / BASE_H
+      )
+    )
+  );
+
+  const px = (value) =>
+    Math.max(1, Math.round(value * scale));
+
+  const font = (value) =>
+    Math.max(
+      1,
+      Math.round(value * scale * 1.12)
+    );
+
+  const narrow = appWidth < 360;
+  const controlsHeight = px(72);
+  const navHeight = px(74);
+
+  return {
+    page: {
+      width: "100vw",
+      height: "100dvh",
+      minHeight: "100dvh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: isDesktop
+        ? "center"
+        : "stretch",
+      margin: 0,
+      padding: isDesktop ? 10 : 0,
+      overflow: "hidden",
+      background: isDesktop
+        ? "#f4f1ea"
+        : "#0b0907",
+      fontFamily: "Arial, sans-serif",
+    },
+
+    phone: {
+      position: "relative",
+      width: isDesktop ? 390 : "100vw",
+      height: isDesktop ? 844 : "100dvh",
+      overflow: "hidden",
+      background: "#0b0907",
+      borderRadius: isDesktop ? 30 : 0,
+      boxShadow: isDesktop
+        ? "0 25px 70px rgba(0,0,0,.25)"
+        : "none",
+    },
+
+    controlHeader: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: 0,
+      zIndex: 50,
+      height: controlsHeight,
+      padding: `${px(10)}px ${px(
+        narrow ? 9 : 12
+      )}px ${px(8)}px`,
+      overflow: "visible",
+      borderBottom:
+        "1px solid rgba(245,158,11,.20)",
+      background:
+        "radial-gradient(circle at 92% 0%,rgba(245,158,11,.28),transparent 35%),linear-gradient(145deg,#080706,#24140c 58%,#4b250d)",
+      boxShadow:
+        "0 14px 32px rgba(0,0,0,.28)",
+    },
+
+    headerAmbientGlow: {
+      position: "absolute",
+      right: px(-35),
+      top: px(-45),
+      width: px(150),
+      height: px(150),
+      borderRadius: "50%",
+      background: "rgba(245,158,11,.12)",
+      filter: `blur(${px(30)}px)`,
+      pointerEvents: "none",
+    },
+
+    topControlRow: {
+      position: "relative",
+      zIndex: 2,
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr) auto",
+      alignItems: "stretch",
+      gap: px(7),
+    },
+
+    backButton: {
+      width: px(42),
+      minHeight: px(48),
+      display: "grid",
+      placeItems: "center",
+      padding: 0,
+      border:
+        "1px solid rgba(255,255,255,.18)",
+      borderRadius: px(15),
+      background:
+        "linear-gradient(145deg,rgba(255,255,255,.14),rgba(255,255,255,.05))",
+      color: "white",
+      fontSize: px(25),
+      lineHeight: 1,
+      cursor: "pointer",
+      backdropFilter: "blur(12px)",
+    },
+    dateModeTabs: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: px(7),
+      padding: px(4),
+    
+      border:
+        "1px solid rgba(255,255,255,.08)",
+    
+      borderRadius: px(14),
+    
+      background: "rgba(255,255,255,.04)",
+    },
+    
+    dateModeButton: {
+      minHeight: px(39),
+    
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    
+      gap: px(6),
+      padding: `0 ${px(7)}px`,
+    
+      border: 0,
+      borderRadius: px(10),
+    
+      background: "transparent",
+      color: "#a8a29e",
+    
+      fontSize: font(6.8),
+      fontWeight: 900,
+    
+      cursor: "pointer",
+    },
+    
+    dateModeButtonActive: {
+      background:
+        "linear-gradient(135deg, rgba(245,158,11,.25), rgba(234,88,12,.14))",
+    
+      color: "#fbbf24",
+    
+      boxShadow:
+        "inset 0 0 0 1px rgba(245,158,11,.28)",
+    },
+    
+    singleDateSection: {
+      marginTop: px(12),
+    },
+    
+    dateRangeSection: {
+      display: "grid",
+      gridTemplateColumns:
+        "minmax(0,1fr) auto minmax(0,1fr)",
+    
+      alignItems: "end",
+    
+      gap: px(7),
+      marginTop: px(12),
+    },
+    
+    dateField: {
+      minWidth: 0,
+    },
+    
+    dateFieldLabel: {
+      display: "block",
+      marginBottom: px(6),
+    
+      color: "#d6d3d1",
+    
+      fontSize: font(6.5),
+      fontWeight: 900,
+    },
+    
+    dateInputShell: {
+      minWidth: 0,
+      minHeight: px(44),
+    
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr) auto",
+    
+      alignItems: "center",
+    
+      gap: px(6),
+      padding: `0 ${px(8)}px`,
+    
+      border:
+        "1px solid rgba(255,255,255,.11)",
+    
+      borderRadius: px(13),
+    
+      background: "rgba(255,255,255,.055)",
+    },
+    
+    dateInputIcon: {
+      fontSize: px(13),
+      lineHeight: 1,
+    },
+    
+    dateInput: {
+      width: "100%",
+      minWidth: 0,
+    
+      padding: 0,
+      border: 0,
+      outline: 0,
+    
+      background: "transparent",
+      color: "#ffffff",
+      colorScheme: "dark",
+    
+      fontSize: font(6.8),
+      fontWeight: 850,
+    },
+    
+    clearDateButton: {
+      width: px(22),
+      height: px(22),
+    
+      display: "grid",
+      placeItems: "center",
+    
+      flexShrink: 0,
+    
+      padding: 0,
+      border: 0,
+      borderRadius: "50%",
+    
+      background: "rgba(255,255,255,.10)",
+      color: "#fde68a",
+    
+      fontSize: px(13),
+      cursor: "pointer",
+    },
+    
+    dateRangeConnector: {
+      height: px(44),
+    
+      display: "grid",
+      placeItems: "center",
+    
+      color: "#f59e0b",
+    
+      fontSize: px(16),
+      fontWeight: 950,
+    },
+    
+    dateHelperText: {
+      margin: `${px(7)}px 0 0`,
+      color: "#a8a29e",
+    
+      fontSize: font(6.4),
+      lineHeight: 1.35,
+    },
+    
+    dateRangeHelper: {
+      gridColumn: "1 / -1",
+    
+      margin: 0,
+      color: "#a8a29e",
+    
+      fontSize: font(6.4),
+      lineHeight: 1.35,
+    },
+    
+    removeDateFilterButton: {
+      minHeight: px(33),
+      marginTop: px(11),
+      padding: `0 ${px(11)}px`,
+    
+      border:
+        "1px solid rgba(239,68,68,.25)",
+    
+      borderRadius: 999,
+    
+      background: "rgba(239,68,68,.08)",
+      color: "#fca5a5",
+    
+      fontSize: font(6.5),
+      fontWeight: 900,
+    
+      cursor: "pointer",
+    },
+
+    searchContainer: {
+      minWidth: 0,
+      minHeight: px(48),
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr) auto",
+      alignItems: "center",
+      gap: px(8),
+      padding: `0 ${px(10)}px`,
+      overflow: "hidden",
+      border:
+        "1px solid rgba(255,255,255,.17)",
+      borderRadius: px(16),
+      background:
+        "linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.05))",
+      boxShadow:
+        "inset 0 1px 0 rgba(255,255,255,.12)",
+      backdropFilter: "blur(14px)",
+    },
+
+    searchIconBox: {
+      width: px(31),
+      height: px(31),
+      display: "grid",
+      placeItems: "center",
+      border:
+        "1px solid rgba(245,158,11,.24)",
+      borderRadius: px(11),
+      background: "rgba(245,158,11,.13)",
+      color: "#fbbf24",
+      fontSize: px(18),
+      fontWeight: 950,
+    },
+
+    searchTextArea: {
+      minWidth: 0,
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      gap: px(2),
+    },
+
+    searchLabel: {
+      color: "#fde68a",
+      fontSize: font(6),
+      letterSpacing: px(0.7),
+      lineHeight: 1,
+      fontWeight: 950,
+    },
+
+    searchInput: {
+      width: "100%",
+      minWidth: 0,
+      padding: 0,
+      border: 0,
+      outline: 0,
+      background: "transparent",
+      color: "white",
+      caretColor: "#f59e0b",
+      fontSize: font(8),
+      lineHeight: 1.2,
+      fontWeight: 800,
+    },
+
+    clearSearchButton: {
+      width: px(23),
+      height: px(23),
+      display: "grid",
+      placeItems: "center",
+      padding: 0,
+      border: 0,
+      borderRadius: "50%",
+      background: "rgba(255,255,255,.14)",
+      color: "white",
+      fontSize: px(14),
+      cursor: "pointer",
+    },
+
+    filterButton: {
+      position: "relative",
+      width: px(43),
+      minHeight: px(48),
+      display: "grid",
+      placeItems: "center",
+      padding: 0,
+      border:
+        "1px solid rgba(255,255,255,.16)",
+      borderRadius: px(15),
+      background: "rgba(255,255,255,.08)",
+      color: "#fde68a",
+      cursor: "pointer",
+    },
+    combinedFilterButton: {
+      position: "relative",
+    
+      minWidth: px(76),
+      minHeight: px(48),
+    
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    
+      gap: px(6),
+      padding: `0 ${px(11)}px`,
+    
+      border:
+        "1px solid rgba(245, 158, 11, 0.42)",
+    
+      borderRadius: px(15),
+    
+      background:
+        "linear-gradient(145deg, rgba(245,158,11,.18), rgba(234,88,12,.10))",
+    
+      color: "#fde68a",
+    
+      boxShadow:
+        "inset 0 1px 0 rgba(255,255,255,.10), 0 8px 18px rgba(0,0,0,.14)",
+    
+      cursor: "pointer",
+    },
+    
+    combinedFilterButtonActive: {
+      borderColor: "#f59e0b",
+    
+      background:
+        "linear-gradient(145deg, #f59e0b, #ea580c)",
+    
+      color: "#ffffff",
+    
+      boxShadow:
+        "0 10px 22px rgba(234,88,12,.28), inset 0 1px 0 rgba(255,255,255,.22)",
+    },
+    
+    combinedFilterIcon: {
+      fontSize: px(16),
+      lineHeight: 1,
+      fontWeight: 950,
+    },
+    
+    combinedFilterText: {
+      fontSize: font(7.5),
+      lineHeight: 1,
+      fontWeight: 950,
+      whiteSpace: "nowrap",
+    },
+
+    filterButtonActive: {
+      borderColor: "rgba(245,158,11,.58)",
+      background:
+        "linear-gradient(145deg,#f59e0b,#ea580c)",
+      color: "white",
+      boxShadow:
+        "0 10px 22px rgba(234,88,12,.28)",
+    },
+
+    filterButtonIcon: {
+      fontSize: px(18),
+      fontWeight: 950,
+    },
+
+    filterCountBadge: {
+      position: "absolute",
+      right: px(-3),
+      top: px(-4),
+      minWidth: px(17),
+      height: px(17),
+      display: "grid",
+      placeItems: "center",
+      padding: `0 ${px(4)}px`,
+      border: `${px(2)}px solid #24140c`,
+      borderRadius: 999,
+      background: "#22c55e",
+      color: "white",
+      fontSize: font(6),
+      fontWeight: 950,
+    },
+
+    sortButton: {
+      width: px(43),
+      minHeight: px(48),
+      display: "grid",
+      placeItems: "center",
+      padding: 0,
+      border:
+        "1px solid rgba(245,158,11,.38)",
+      borderRadius: px(15),
+      background:
+        "linear-gradient(145deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: px(20),
+      fontWeight: 950,
+      boxShadow:
+        "0 10px 22px rgba(234,88,12,.28)",
+      cursor: "pointer",
+    },
+
+    sortButtonActive: {
+      transform: "scale(.96)",
+      boxShadow:
+        "0 6px 15px rgba(234,88,12,.22)",
+    },
+
+    quickFilterScroller: {
+      position: "relative",
+      zIndex: 2,
+      display: "flex",
+      alignItems: "center",
+      gap: px(7),
+      marginTop: px(8),
+      paddingBottom: px(2),
+      overflowX: "auto",
+      overflowY: "hidden",
+      scrollbarWidth: "none",
+      scrollSnapType: "x proximity",
+    },
+
+    quickFilterChip: {
+      minHeight: px(36),
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: px(5),
+      flexShrink: 0,
+      padding: `0 ${px(13)}px`,
+      border:
+        "1px solid rgba(255,255,255,.15)",
+      borderRadius: 999,
+      background: "rgba(255,255,255,.08)",
+      color: "#e7e5e4",
+      fontSize: font(7.2),
+      fontWeight: 900,
+      cursor: "pointer",
+      scrollSnapAlign: "start",
+      backdropFilter: "blur(10px)",
+    },
+
+    quickFilterChipActive: {
+      borderColor: "#f59e0b",
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      boxShadow:
+        "0 8px 18px rgba(245,158,11,.24)",
+    },
+
+    selectedChipDot: {
+      width: px(6),
+      height: px(6),
+      flexShrink: 0,
+      borderRadius: "50%",
+      background: "white",
+      boxShadow:
+        "0 0 8px rgba(255,255,255,.8)",
+    },
+
+    filterPanel: {
+      position: "absolute",
+      left: px(10),
+      right: px(10),
+      top: `calc(100% + ${px(7)}px)`,
+      zIndex: 100,
+      padding: px(14),
+      border:
+        "1px solid rgba(245,158,11,.22)",
+      borderRadius: px(21),
+      background:
+        "linear-gradient(155deg,rgba(28,25,23,.99),rgba(50,27,14,.99))",
+      color: "white",
+      boxShadow:
+        "0 24px 55px rgba(0,0,0,.45)",
+      backdropFilter: "blur(20px)",
+    },
+    filterTabs: {
+      display: "grid",
+      gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+    
+      gap: px(5),
+      marginTop: px(13),
+      padding: px(4),
+    
+      border:
+        "1px solid rgba(255,255,255,.08)",
+    
+      borderRadius: px(15),
+    
+      background: "rgba(255,255,255,.045)",
+    },
+    
+    filterTab: {
+      position: "relative",
+      minWidth: 0,
+      minHeight: px(40),
+    
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    
+      gap: px(5),
+      padding: `0 ${px(5)}px`,
+    
+      border: 0,
+      borderRadius: px(11),
+    
+      background: "transparent",
+      color: "#a8a29e",
+    
+      fontSize: font(6.6),
+      lineHeight: 1,
+      fontWeight: 900,
+    
+      whiteSpace: "nowrap",
+      cursor: "pointer",
+    },
+    
+    filterTabActive: {
+      background:
+        "linear-gradient(135deg, rgba(245,158,11,.28), rgba(234,88,12,.17))",
+    
+      color: "#fbbf24",
+    
+      boxShadow:
+        "inset 0 0 0 1px rgba(245,158,11,.28)",
+    },
+    
+    filterTabIcon: {
+      fontSize: px(13),
+      lineHeight: 1,
+    },
+    
+    tabSelectionDot: {
+      position: "absolute",
+      right: px(5),
+      top: px(5),
+    
+      width: px(6),
+      height: px(6),
+    
+      borderRadius: "50%",
+    
+      background: "#22c55e",
+    
+      boxShadow:
+        "0 0 7px rgba(34,197,94,.75)",
+    },
+    
+    filterTabContent: {
+      minHeight: px(220),
+      marginTop: px(12),
+    },
+    
+    tabContentHeading: {
+      marginBottom: px(10),
+    },
+    
+    filterSectionLabel: {
+      display: "block",
+    
+      margin: 0,
+    
+      color: "#fbbf24",
+    
+      fontSize: font(6.4),
+      letterSpacing: px(0.85),
+      fontWeight: 950,
+    },
+    
+    tabContentDescription: {
+      margin: `${px(4)}px 0 0`,
+    
+      color: "#a8a29e",
+    
+      fontSize: font(6.8),
+      lineHeight: 1.4,
+      fontWeight: 700,
+    },
+    optionCardGrid: {
+      display: "grid",
+      gridTemplateColumns:
+        "repeat(2, minmax(0, 1fr))",
+    
+      gap: px(7),
+    },
+    
+    optionCard: {
+      position: "relative",
+      minWidth: 0,
+      minHeight: px(67),
+    
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0, 1fr) auto",
+    
+      alignItems: "center",
+    
+      gap: px(8),
+      padding: px(9),
+    
+      border:
+        "1px solid rgba(255,255,255,.09)",
+    
+      borderRadius: px(15),
+    
+      background: "rgba(255,255,255,.045)",
+      color: "#d6d3d1",
+    
+      textAlign: "left",
+      cursor: "pointer",
+    },
+    
+    optionCardActive: {
+      borderColor: "rgba(245,158,11,.45)",
+    
+      background:
+        "linear-gradient(145deg, rgba(245,158,11,.18), rgba(234,88,12,.10))",
+    
+      color: "#fbbf24",
+    
+      boxShadow:
+        "inset 0 1px 0 rgba(255,255,255,.05)",
+    },
+    
+    optionCardIcon: {
+      width: px(32),
+      height: px(32),
+    
+      display: "grid",
+      placeItems: "center",
+    
+      flexShrink: 0,
+    
+      borderRadius: px(11),
+    
+      background: "rgba(255,255,255,.07)",
+      color: "#d6d3d1",
+    
+      fontSize: px(14),
+      lineHeight: 1,
+      fontWeight: 950,
+    },
+    
+    optionCardIconActive: {
+      background:
+        "linear-gradient(135deg, #f59e0b, #ea580c)",
+    
+      color: "#ffffff",
+    
+      boxShadow:
+        "0 7px 15px rgba(234,88,12,.22)",
+    },
+    
+    optionCardLabel: {
+      minWidth: 0,
+    
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    
+      fontSize: font(7),
+      lineHeight: 1.2,
+      fontWeight: 900,
+    },
+    
+    optionCheck: {
+      width: px(21),
+      height: px(21),
+    
+      display: "grid",
+      placeItems: "center",
+    
+      flexShrink: 0,
+    
+      border:
+        "1px solid rgba(255,255,255,.13)",
+    
+      borderRadius: "50%",
+    
+      background: "rgba(255,255,255,.04)",
+      color: "transparent",
+    
+      fontSize: font(7),
+      fontWeight: 950,
+    },
+    
+    optionCheckActive: {
+      borderColor: "#22c55e",
+      background: "#22c55e",
+      color: "#ffffff",
+    
+      boxShadow:
+        "0 5px 12px rgba(34,197,94,.20)",
+    },
+    statusOptionStack: {
+      display: "grid",
+      gap: px(6),
+    },
+    
+    statusOption: {
+      minWidth: 0,
+      minHeight: px(38),
+    
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0, 1fr) auto",
+    
+      alignItems: "center",
+    
+      gap: px(8),
+      padding: `0 ${px(10)}px`,
+    
+      border:
+        "1px solid rgba(255,255,255,.08)",
+    
+      borderRadius: px(12),
+    
+      background: "rgba(255,255,255,.04)",
+      color: "#d6d3d1",
+    
+      textAlign: "left",
+      cursor: "pointer",
+    },
+    
+    statusOptionActive: {
+      borderColor: "rgba(245,158,11,.38)",
+    
+      background: "rgba(245,158,11,.12)",
+    
+      color: "#fbbf24",
+    },
+    
+    statusOptionDot: {
+      width: px(8),
+      height: px(8),
+    
+      flexShrink: 0,
+    
+      borderRadius: "50%",
+    
+      boxShadow:
+        "0 0 0 3px rgba(255,255,255,.05)",
+    },
+    
+    statusOptionLabel: {
+      minWidth: 0,
+    
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+    
+      fontSize: font(7),
+      fontWeight: 850,
+    },
+
+    sortPanel: {
+      position: "absolute",
+      left: px(10),
+      right: px(10),
+      top: `calc(100% + ${px(7)}px)`,
+      zIndex: 100,
+      padding: px(14),
+      border:
+        "1px solid rgba(245,158,11,.22)",
+      borderRadius: px(21),
+      background:
+        "linear-gradient(155deg,rgba(28,25,23,.99),rgba(50,27,14,.99))",
+      color: "white",
+      boxShadow:
+        "0 24px 55px rgba(0,0,0,.45)",
+      backdropFilter: "blur(20px)",
+    },
+
+    panelHeader: {
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: px(10),
+    },
+
+    panelEyebrow: {
+      color: "#fbbf24",
+      fontSize: font(6),
+      letterSpacing: px(1),
+      fontWeight: 950,
+    },
+
+    panelTitle: {
+      margin: `${px(4)}px 0 0`,
+      color: "white",
+      fontSize: font(12),
+      fontWeight: 950,
+    },
+
+    panelCloseButton: {
+      width: px(30),
+      height: px(30),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      padding: 0,
+      border:
+        "1px solid rgba(255,255,255,.12)",
+      borderRadius: px(10),
+      background: "rgba(255,255,255,.07)",
+      color: "#fde68a",
+      fontSize: px(19),
+      cursor: "pointer",
+    },
+
+    filterSectionLabel: {
+      margin: `${px(14)}px 0 ${px(8)}px`,
+      color: "#a8a29e",
+      fontSize: font(6.5),
+      letterSpacing: px(0.8),
+      fontWeight: 950,
+    },
+
+    statusFilterGrid: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: px(7),
+    },
+
+    statusFilterButton: {
+      minHeight: px(39),
+      display: "flex",
+      alignItems: "center",
+      gap: px(7),
+      padding: `0 ${px(9)}px`,
+      border:
+        "1px solid rgba(255,255,255,.10)",
+      borderRadius: px(13),
+      background: "rgba(255,255,255,.05)",
+      color: "#d6d3d1",
+      textAlign: "left",
+      fontSize: font(7),
+      fontWeight: 850,
+      cursor: "pointer",
+    },
+
+    statusFilterButtonActive: {
+      borderColor: "rgba(245,158,11,.45)",
+      background: "rgba(245,158,11,.15)",
+      color: "#fbbf24",
+    },
+
+    statusFilterRadio: {
+      width: px(19),
+      height: px(19),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      border:
+        "1px solid rgba(255,255,255,.16)",
+      borderRadius: px(7),
+      background: "rgba(255,255,255,.05)",
+      fontSize: font(7),
+      fontWeight: 950,
+    },
+
+    statusFilterRadioActive: {
+      borderColor: "#f59e0b",
+      background: "#f59e0b",
+      color: "white",
+    },
+
+    panelFooter: {
+      display: "grid",
+      gridTemplateColumns: ".8fr 1.2fr",
+      gap: px(8),
+      marginTop: px(14),
+      paddingTop: px(12),
+      borderTop:
+        "1px solid rgba(255,255,255,.08)",
+    },
+
+    resetButton: {
+      minHeight: px(42),
+      border:
+        "1px solid rgba(255,255,255,.13)",
+      borderRadius: px(14),
+      background: "rgba(255,255,255,.06)",
+      color: "#e7e5e4",
+      fontSize: font(7.5),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+
+    applyButton: {
+      minHeight: px(42),
+      border: 0,
+      borderRadius: px(14),
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: font(7.5),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    sortOptionStack: {
+      display: "grid",
+      gap: px(6),
+      marginTop: px(13),
+    },
+
+    sortOption: {
+      width: "100%",
+      minHeight: px(41),
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: px(8),
+      padding: `0 ${px(11)}px`,
+      border:
+        "1px solid rgba(255,255,255,.08)",
+      borderRadius: px(13),
+      background: "rgba(255,255,255,.04)",
+      color: "#d6d3d1",
+      fontSize: font(7.5),
+      fontWeight: 850,
+      cursor: "pointer",
+    },
+
+    sortOptionActive: {
+      borderColor: "rgba(245,158,11,.42)",
+      background: "rgba(245,158,11,.14)",
+      color: "#fbbf24",
+    },
+
+    sortSelection: {
+      width: px(21),
+      height: px(21),
+      display: "grid",
+      placeItems: "center",
+      border:
+        "1px solid rgba(255,255,255,.12)",
+      borderRadius: "50%",
+      color: "transparent",
+    },
+
+    sortSelectionActive: {
+      borderColor: "#f59e0b",
+      background: "#f59e0b",
+      color: "white",
+    },
+
+    ordersScrollArea: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: controlsHeight,
+      bottom: navHeight,
+      overflowY: "auto",
+      overflowX: "hidden",
+      background: "#f6f4ef",
+      scrollbarWidth: "none",
+      WebkitOverflowScrolling: "touch",
+    },
+
+    hero: {
+      position: "relative",
+      minHeight: px(245),
+    
+      padding: `${px(18)}px ${px(
+        narrow ? 15 : 20
+      )}px ${px(18)}px`,
+    
+      overflow: "hidden",
+      color: "white",
+    
+      backgroundImage: `url("${RECENT_ORDERS_BG}")`,
+    
+      backgroundSize: "cover",
+      backgroundPosition: "64% 58%",
+      backgroundRepeat: "no-repeat",
+    
+      borderBottom:
+        "1px solid rgba(245, 158, 11, 0.22)",
+    
+      boxShadow:
+        "0 14px 30px rgba(28, 25, 23, 0.20)",
+    },
+
+    heroGrid: {
+      position: "absolute",
+      inset: 0,
+      opacity: 0.2,
+      backgroundImage:
+        "linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px)",
+      backgroundSize: `${px(30)}px ${px(
+        30
+      )}px`,
+      pointerEvents: "none",
+    },
+
+    heroGlow: {
+      position: "absolute",
+      right: px(-45),
+      bottom: px(-70),
+      width: px(190),
+      height: px(190),
+      borderRadius: "50%",
+      background: "rgba(245,158,11,.15)",
+      filter: `blur(${px(38)}px)`,
+    },
+
+    heroContent: {
+      position: "relative",
+      zIndex: 2,
+    },
+
+    heroEyebrow: {
+      margin: 0,
+      color: "#fde68a",
+      fontSize: font(7),
+      letterSpacing: px(1.2),
+      fontWeight: 950,
+    },
+
+    heroTitle: {
+      margin: `${px(6)}px 0 0`,
+      color: "white",
+      fontSize: font(25),
+      lineHeight: 1,
+      letterSpacing: -0.7,
+      fontWeight: 950,
+    },
+
+    heroDescription: {
+      maxWidth: px(290),
+      margin: `${px(7)}px 0 0`,
+      color: "#e7e5e4",
+      fontSize: font(8),
+      lineHeight: 1.4,
+      fontWeight: 650,
+    },
+
+    summaryCard: {
+      position: "absolute",
+      zIndex: 3,
+    
+      left: px(narrow ? 12 : 20),
+      right: px(narrow ? 12 : 20),
+      bottom: px(14),
+    
+      display: "grid",
+      gridTemplateColumns:
+        "1fr auto 1fr auto 1fr",
+      alignItems: "center",
+    
+      margin: 0,
+      padding: `${px(11)}px ${px(8)}px`,
+    
+      border:
+        "1px solid rgba(255,255,255,.22)",
+    
+      borderRadius: px(18),
+    
+      background:
+        "linear-gradient(135deg, rgba(18,12,8,.88), rgba(76,38,17,.78))",
+    
+      backdropFilter: "blur(15px)",
+      WebkitBackdropFilter: "blur(15px)",
+    
+      boxShadow:
+        "0 13px 30px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.12)",
+    },
+
+    summaryItem: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: px(3),
+      minWidth: 0,
+      color: "white",
+      textAlign: "center",
+      fontSize: font(7),
+    },
+
+    summaryDivider: {
+      width: 1,
+      height: px(31),
+      background:
+        "rgba(255,255,255,.18)",
+    },
+
+    activityArea: {
+      minHeight: "100%",
+      padding: `${px(16)}px 0 ${px(18)}px`,
+      background:
+        "linear-gradient(180deg,#faf9f7,#f6f4ef 55%,#efede8)",
+    },
+
+    resultsHeader: {
+      display: "flex",
+      alignItems: "flex-end",
+      justifyContent: "space-between",
+      gap: px(8),
+      margin: `0 ${px(
+        narrow ? 12 : 17
+      )}px ${px(11)}px`,
+    },
+
+    resultsEyebrow: {
+      color: "#b45309",
+      fontSize: font(7),
+      letterSpacing: px(1),
+      fontWeight: 950,
+    },
+
+    resultsTitle: {
+      margin: `${px(4)}px 0 0`,
+      color: "#111827",
+      fontSize: font(15),
+      fontWeight: 950,
+    },
+
+    currentSortButton: {
+      maxWidth: "48%",
+      display: "inline-flex",
+      alignItems: "center",
+      gap: px(5),
+      padding: `${px(5)}px ${px(8)}px`,
+      overflow: "hidden",
+      border: 0,
+      borderRadius: 999,
+      background: "#eeeae6",
+      color: "#78716c",
+      fontSize: font(6.5),
+      fontWeight: 850,
+      cursor: "pointer",
+    },
+
+    activeFiltersRow: {
+      display: "flex",
+      alignItems: "center",
+      gap: px(6),
+      margin: `0 ${px(
+        narrow ? 12 : 17
+      )}px ${px(11)}px`,
+      overflowX: "auto",
+      scrollbarWidth: "none",
+    },
+
+    activeFiltersLabel: {
+      flexShrink: 0,
+      color: "#a8a29e",
+      fontSize: font(5.8),
+      letterSpacing: px(0.7),
+      fontWeight: 950,
+    },
+
+    activeFilterChip: {
+      minHeight: px(27),
+      display: "inline-flex",
+      alignItems: "center",
+      gap: px(5),
+      flexShrink: 0,
+      padding: `0 ${px(8)}px`,
+      border: "1px solid #fde68a",
+      borderRadius: 999,
+      background: "#fffbeb",
+      color: "#92400e",
+      fontSize: font(6.5),
+      fontWeight: 850,
+      cursor: "pointer",
+    },
+
+    orderStack: {
+      display: "grid",
+      gap: px(13),
+      padding: `0 ${px(
+        narrow ? 12 : 17
+      )}px`,
+    },
+
+    orderCard: {
+      position: "relative",
+      overflow: "hidden",
+      padding: px(14),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(23),
+      background:
+        "linear-gradient(145deg,#fff,#fafaf9)",
+      boxShadow:
+        "0 16px 34px rgba(28,25,23,.08),inset 0 1px 0 #fff",
+    },
+
+    cardAccent: {
+      position: "absolute",
+      left: 0,
+      top: px(16),
+      bottom: px(16),
+      width: px(5),
+      borderRadius:
+        "0 999px 999px 0",
+    },
+
+    accentGreen: {
+      background:
+        "linear-gradient(to bottom,#22c55e,#15803d)",
+    },
+
+    accentBlue: {
+      background:
+        "linear-gradient(to bottom,#38bdf8,#1d4ed8)",
+    },
+
+    accentRed: {
+      background:
+        "linear-gradient(to bottom,#ef4444,#991b1b)",
+    },
+
+    accentAmber: {
+      background:
+        "linear-gradient(to bottom,#f59e0b,#ea580c)",
+    },
+
+    cardGlow: {
+      position: "absolute",
+      right: px(-35),
+      top: px(-40),
+      width: px(125),
+      height: px(125),
+      borderRadius: "50%",
+      filter: `blur(${px(28)}px)`,
+      pointerEvents: "none",
+    },
+
+    orderHeader: {
+      position: "relative",
+      zIndex: 2,
+      display: "grid",
+      gridTemplateColumns:
+        `${px(43)}px minmax(0,1fr)`,
+      alignItems: "start",
+      gap: px(10),
+    },
+
+    orderTypeIcon: {
+      width: px(43),
+      height: px(43),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: px(15),
+      background:
+        "linear-gradient(145deg,#fffbeb,#fef3c7)",
+      color: "#b45309",
+      fontSize: px(20),
+      fontWeight: 950,
+      boxShadow:
+        "0 8px 18px rgba(180,83,9,.10)",
+    },
+
+    deliveryOrderIcon: {
+      background:
+        "linear-gradient(145deg,#eff6ff,#dbeafe)",
+    },
+
+    rejectedOrderIcon: {
+      background:
+        "linear-gradient(145deg,#fff7f7,#fee2e2)",
+    },
+
+    orderHeadingArea: {
+      minWidth: 0,
+    },
+
+    orderMetaRow: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: px(6),
+    },
+
+    orderId: {
+      minWidth: 0,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      color: "#a8a29e",
+      fontSize: font(6.5),
+      letterSpacing: px(0.5),
+      fontWeight: 900,
+    },
+
+    orderStatusPill: {
+      minWidth: 0,
+      maxWidth: px(130),
+      minHeight: px(25),
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: px(5),
+      padding: `0 ${px(8)}px`,
+      overflow: "hidden",
+      borderRadius: 999,
+      whiteSpace: "nowrap",
+      textOverflow: "ellipsis",
+      fontSize: font(6.5),
+      fontWeight: 950,
+    },
+
+    statusGreen: {
+      background: "#ecfdf5",
+      color: "#15803d",
+    },
+
+    statusBlue: {
+      background: "#eff6ff",
+      color: "#1d4ed8",
+    },
+
+    statusRed: {
+      background: "#fee2e2",
+      color: "#b91c1c",
+    },
+
+    statusAmber: {
+      background: "#fffbeb",
+      color: "#b45309",
+    },
+
+    orderStatusDot: {
+      width: px(6),
+      height: px(6),
+      flexShrink: 0,
+      borderRadius: "50%",
+    },
+
+    orderTitle: {
+      margin: `${px(6)}px 0 0`,
+      color: "#111827",
+      fontSize: font(11),
+      lineHeight: 1.15,
+      fontWeight: 950,
+    },
+
+    orderSubtitle: {
+      margin: `${px(4)}px 0 0`,
+      color: "#78716c",
+      fontSize: font(7.5),
+      fontWeight: 700,
+    },
+
+    orderInfoGrid: {
+      position: "relative",
+      zIndex: 2,
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: px(8),
+      marginTop: px(12),
+    },
+
+    orderInfoCell: {
+      display: "flex",
+      flexDirection: "column",
+      gap: px(4),
+      minWidth: 0,
+      padding: px(9),
+      border: "1px solid #eeeae6",
+      borderRadius: px(14),
+      background: "#fafaf9",
+      color: "#78716c",
+      fontSize: font(7),
+    },
+
+    progressSection: {
+      position: "relative",
+      zIndex: 2,
+      marginTop: px(12),
+      paddingTop: px(10),
+      borderTop: "1px solid #eeeae6",
+    },
+
+    progressHeader: {
+      display: "flex",
+      justifyContent: "space-between",
+      gap: px(8),
+      marginBottom: px(9),
+      color: "#a8a29e",
+      fontSize: font(6),
+      letterSpacing: px(0.7),
+      fontWeight: 950,
+    },
+
+    progressScroller: {
+      overflowX: "auto",
+      overflowY: "hidden",
+      scrollbarWidth: "none",
+    },
+
+    miniTracker: {
+      minWidth: px(340),
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "center",
+    },
+
+    miniStep: {
+      width: px(68),
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      flexShrink: 0,
+      textAlign: "center",
+    },
+
+    miniCircle: {
+      width: px(21),
+      height: px(21),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: "50%",
+      color: "white",
+      fontSize: font(7),
+      fontWeight: 950,
+    },
+
+    miniCircleWaiting: {
+      background: "#e7e5e4",
+      color: "#a8a29e",
+    },
+
+    miniCircleCurrent: {
+      boxShadow:
+        "0 0 0 4px rgba(245,158,11,.10)",
+    },
+
+    miniLabel: {
+      marginTop: px(5),
+      fontSize: font(6),
+      lineHeight: 1.15,
+    },
+
+    miniConnector: {
+      width: px(21),
+      height: px(3),
+      marginTop: px(9),
+      flexShrink: 0,
+      borderRadius: 999,
+    },
+
+    orderFooter: {
+      position: "relative",
+      zIndex: 2,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: px(8),
+      marginTop: px(12),
+    },
+
+    orderTypeLabel: {
+      fontSize: font(7),
+      fontWeight: 900,
+    },
+
+    viewDetailsButton: {
+      minHeight: px(34),
+      display: "inline-flex",
+      alignItems: "center",
+      gap: px(6),
+      padding: `0 ${px(12)}px`,
+      border: 0,
+      borderRadius: 999,
+      background:
+        "linear-gradient(135deg,#1c1917,#44403c)",
+      color: "white",
+      fontSize: font(7),
+      fontWeight: 950,
+      boxShadow:
+        "0 8px 17px rgba(28,25,23,.15)",
+      cursor: "pointer",
+    },
+
+    viewDetailsBlue: {
+      background:
+        "linear-gradient(135deg,#38bdf8,#1d4ed8)",
+    },
+
+    viewDetailsRed: {
+      background:
+        "linear-gradient(135deg,#ef4444,#b91c1c)",
+    },
+
+    viewDetailsAmber: {
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+    },
+
+    emptyCard: {
+      padding: px(28),
+      border: "1px dashed #d6d3d1",
+      borderRadius: px(22),
+      background: "rgba(255,255,255,.74)",
+      textAlign: "center",
+    },
+
+    emptyIcon: {
+      width: px(48),
+      height: px(48),
+      margin: "0 auto",
+      display: "grid",
+      placeItems: "center",
+      borderRadius: px(16),
+      background: "#fffbeb",
+      color: "#b45309",
+      fontSize: px(23),
+    },
+
+    emptyTitle: {
+      margin: `${px(12)}px 0 0`,
+      color: "#292524",
+      fontSize: font(12),
+      fontWeight: 950,
+    },
+
+    emptyText: {
+      margin: `${px(6)}px 0 0`,
+      color: "#78716c",
+      fontSize: font(7.5),
+      lineHeight: 1.4,
+    },
+
+    emptyResetButton: {
+      minHeight: px(37),
+      marginTop: px(13),
+      padding: `0 ${px(13)}px`,
+      border: 0,
+      borderRadius: 999,
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: font(7),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    bottomNav: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 50,
+      height: navHeight,
+      display: "grid",
+      gridTemplateColumns: "repeat(3,1fr)",
+      gap: px(5),
+      padding: `${px(5)}px ${px(
+        8
+      )}px calc(env(safe-area-inset-bottom,0px) + ${px(
+        5
+      )}px)`,
+      borderTop:
+        "1px solid rgba(251,191,36,.19)",
+      background:
+        "radial-gradient(circle at 50% 0%,rgba(245,158,11,.16),transparent 47%),linear-gradient(135deg,#21140d,#352013 52%,#4b250d)",
+      boxShadow:
+        "0 -14px 34px rgba(28,15,7,.30)",
+    },
+
+    navButton: {
+      position: "relative",
+      minWidth: 0,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: px(3),
+      padding: px(3),
+      border: 0,
+      borderRadius: px(15),
+      background: "transparent",
+      cursor: "pointer",
+    },
+
+    navButtonActive: {
+      background: "rgba(245,158,11,.14)",
+      boxShadow:
+        "inset 0 0 0 1px rgba(245,158,11,.18)",
+    },
+
+    activeNavIndicator: {
+      position: "absolute",
+      left: "50%",
+      top: px(-5),
+      width: px(25),
+      height: px(3),
+      borderRadius: 999,
+      background:
+        "linear-gradient(90deg,#fbbf24,#f97316)",
+      boxShadow:
+        "0 0 12px rgba(245,158,11,.70)",
+      transform: "translateX(-50%)",
+    },
+
+    navIconBox: {
+      width: px(29),
+      height: px(27),
+      display: "grid",
+      placeItems: "center",
+      border:
+        "1px solid rgba(255,255,255,.07)",
+      borderRadius: px(9),
+      background: "rgba(255,255,255,.06)",
+      color: "#d6c3b5",
+      fontSize: px(15),
+    },
+
+    navIconBoxActive: {
+      borderColor: "rgba(251,191,36,.35)",
+      background:
+        "linear-gradient(145deg,#f59e0b,#ea580c)",
+      color: "white",
+      boxShadow:
+        "0 8px 17px rgba(234,88,12,.30)",
+    },
+
+    navLabel: {
+      maxWidth: "100%",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      color: "#c4afa0",
+      fontSize: font(6.7),
+      fontWeight: 800,
+    },
+
+    navLabelActive: {
+      color: "#fbbf24",
+      fontWeight: 950,
+    },
+  };
+}
+
+const globalCss = `
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  background: #0b0907;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+  display: none;
+}
+
+input::placeholder {
+  color: rgba(255,255,255,.60);
+  opacity: 1;
+}
+
+.orders-scroll-area,
+.quick-filter-scroll,
+.progress-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.orders-scroll-area::-webkit-scrollbar,
+.quick-filter-scroll::-webkit-scrollbar,
+.progress-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+body {
+  -webkit-text-size-adjust: 100%;
+}
+`;
+
+
