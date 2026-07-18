@@ -8,16 +8,39 @@ import Page3 from "./pages/Page3";
 import Page4 from "./pages/Page4";
 import Page5 from "./pages/Page5";
 import Page6 from "./pages/Page6";
+import Page7 from "./pages/Page7";
+import Page8 from "./pages/Page8";
+
+
+
 
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState("page1");
-
+  if (currentPage === "page8") {
+    return (
+      <Page8
+        goToPage4={() => setCurrentPage("page4")}
+        goToPage7={() => setCurrentPage("page7")}
+      />
+    );
+  }
+  
+  if (currentPage === "page7") {
+    return (
+      <Page7
+        goToPage4={() => setCurrentPage("page4")}
+        goToPage8={() => setCurrentPage("page8")}
+      />
+    );
+  }
+  
 
   if (currentPage === "page6") {
     return (
       <Page6
         goToPage5={() => setCurrentPage("page5")}
+        goToPage7={() => setCurrentPage("page7")}
       />
     );
   }
@@ -173,8 +196,7 @@ if (currentPage === "page4") {
 
 
 
-
-landingpage
+landing page
 import React, { useEffect, useMemo, useState } from "react";
 
 export default function FullScreen3DFeatureCarouselLandingPage({
@@ -1024,7 +1046,58 @@ function createStyles(viewport) {
 
 
 
-signup
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+create account
 import React, {
   createContext,
   useContext,
@@ -1054,6 +1127,7 @@ const EMPTY_FORM = {
 export default function CreateAccountPage
 ({
   goToPage1,
+  goToPage3,
   goToPage4,
 }) {
 
@@ -1391,9 +1465,19 @@ export default function CreateAccountPage
   Create Account
 </button>
 
-              <p style={styles.signInText}>
-                Already have an account? <b>Sign In</b>
-              </p>
+<div style={styles.signInRow}>
+  <span style={styles.signInText}>
+    Already have an account?
+  </span>
+
+  <button
+    type="button"
+    style={styles.signInLink}
+    onClick={goToPage3}
+  >
+    Sign In
+  </button>
+</div>
             </div>
           </section>
         </div>
@@ -2597,15 +2681,51 @@ function createStyles(viewport, selectedRole) {
       boxShadow: "0 18px 38px rgba(146,64,14,0.28)",
     },
 
+    signInRow: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      flexWrap: "wrap",
+      gap: px(5),
+      marginTop: px(14),
+    },
+    
     signInText: {
-      margin: `${px(14)}px 0 0`,
-      textAlign: "center",
       color: "#78716c",
       fontSize: px(13),
+      lineHeight: 1.2,
       fontWeight: 850,
     },
+    
+    signInLink: {
+      padding: `${px(4)}px ${px(7)}px`,
+    
+      border: 0,
+      borderRadius: px(8),
+    
+      background: "rgbargba(255,255,255,0.16)",
+      color: "#b45309",
+    
+      fontSize: px(13),
+      lineHeight: 1.2,
+      fontWeight: 950,
+    
+      textDecoration: "underline",
+      textUnderlineOffset: px(3),
+    
+      cursor: "pointer",
+    },
+  
   };
 }
+
+
+
+
+
+
+
+
 
 
 
@@ -2682,6 +2802,7 @@ import React, { useEffect, useMemo, useState } from "react";
 export default function FinalSignInOTPPageWithChangeMobileNumber
 ({
   goToPage1,
+  goToPage2,
   goToPage4,
 }) {
 
@@ -3063,9 +3184,19 @@ export default function FinalSignInOTPPageWithChangeMobileNumber
     Verify &amp; Sign In
   </button>
 )}
-            <p style={styles.createText}>
-              New to StoneRate? <b>Create Account</b>
-            </p>
+            <div style={styles.createAccountRow}>
+  <span style={styles.newAccountText}>
+    New to StoneRate?
+  </span>
+
+  <button
+    type="button"
+    style={styles.createAccountLink}
+    onClick={goToPage2}
+  >
+    Create Account
+  </button>
+</div>
           </div>
         </section>
       </div>
@@ -3898,56 +4029,52 @@ function createStyles(viewport) {
       cursor: "pointer",
     },
 
-    createText: {
-      margin: `${px(20)}px 0 0`,
-      textAlign: "center",
+    createAccountRow: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      flexWrap: "wrap",
+    
+      gap: px(5),
+      marginTop: px(20),
+    },
+    
+    newAccountText: {
       color: "#78716c",
+    
       fontSize: px(13),
+      lineHeight: 1.2,
       fontWeight: 850,
+    },
+    
+    createAccountLink: {
+      padding: `${px(5)}px ${px(8)}px`,
+    
+      border: "1px solid rgba(245,158,11,0.28)",
+      borderRadius: px(9),
+    
+      background:
+        "linear-gradient(145deg, rgba(245,158,11,0.16), rgba(234,88,12,0.08))",
+    
+      color: "#b45309",
+    
+      fontSize: px(13),
+      lineHeight: 1.2,
+      fontWeight: 950,
+    
+      textDecoration: "underline",
+      textUnderlineOffset: px(3),
+    
+      boxShadow:
+        "0 5px 12px rgba(146,64,14,0.08)",
+    
+      cursor: "pointer",
+    
+      transition:
+        "background 180ms ease, color 180ms ease, transform 180ms ease",
     },
   };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -3995,6 +4122,7 @@ const FEATURES = [
 ];
 
 export default function BuyerHomePage({
+  goToRateDetailsPage,
   goToPlaceOrder,
   goToOrders,
   goToProfile,
@@ -4569,12 +4697,7 @@ body { -webkit-text-size-adjust: 100%; }
 
 
 
-
-
-
-
-
-Material slection
+placeorder
 import React, { useEffect, useMemo, useState } from "react";
 const HEADER_BG_IMAGE =
   "https://cdn.jsdelivr.net/gh/Shyam7291/company-document-monitor@main/Designer (1).png";
@@ -5575,56 +5698,7 @@ function createStyles(viewport) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-order confirmation
+orderconfirmation
 import React, { useEffect, useMemo, useState } from "react";
 
 const BASE_W = 206;
@@ -5656,6 +5730,7 @@ function useViewport() {
 
 export default function OrderConfirmationPage({
   goToPage5,
+  goToPage7,
 }) {
   const viewport = useViewport();
   const styles = useMemo(
@@ -5683,6 +5758,10 @@ export default function OrderConfirmationPage({
   const handleSubmit = () => {
     if (!confirmed) return;
     setSubmitted(true);
+  };
+  const handleDone = () => {
+    setSubmitted(false);
+    goToPage7();
   };
 
   return (
@@ -5889,12 +5968,12 @@ export default function OrderConfirmationPage({
       </div>
 
       <button
-        type="button"
-        style={styles.popupButton}
-        onClick={() => setSubmitted(false)}
-      >
-        Done
-      </button>
+  type="button"
+  style={styles.popupButton}
+  onClick={handleDone}
+>
+  Done
+</button>
     </div>
   </div>
 )}
@@ -6127,3 +6206,6992 @@ html, body, #root { margin: 0; width: 100%; height: 100%; min-height: 100%; back
 button, input, select, textarea { font: inherit; }
 body { -webkit-text-size-adjust: 100%; }
 `;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ratestatus
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+
+const BASE_W = 206;
+const BASE_H = 445;
+const HEADER_BG_IMAGE = "";
+
+// Frontend testing settings.
+// Later, these values should come from the backend.
+const INITIAL_REQUEST_STATUS = "checking";
+const INITIAL_CONTACTED_SELLERS = 8;
+const TOTAL_MATCHED_SELLERS = 12;
+const INITIAL_SELLER_RESPONSES = 3;
+const SIX_HOURS_IN_SECONDS = 6 * 60 * 60;
+const FOUR_HOURS_IN_SECONDS = 20;
+
+function useViewport() {
+  const [viewport, setViewport] = useState({
+    width:
+      typeof window !== "undefined"
+        ? window.innerWidth
+        : 390,
+    height:
+      typeof window !== "undefined"
+        ? window.innerHeight
+        : 844,
+  });
+
+  useEffect(() => {
+    const update = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    update();
+
+    window.addEventListener("resize", update);
+    window.addEventListener("orientationchange", update);
+
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener(
+        "orientationchange",
+        update
+      );
+    };
+  }, []);
+
+  return viewport;
+}
+
+export default function RateDetailsPage({
+  goToPage4,
+  goToPage8,
+}) {
+  const viewport = useViewport();
+
+  const styles = useMemo(
+    () => createStyles(viewport),
+    [viewport.width, viewport.height]
+  );
+
+  /*
+    requestStatus values:
+    checking
+    rateReady
+  */
+  /*
+  requestStatus values:
+  checking
+  rateReady
+*/
+const [requestStatus, setRequestStatus] = useState(
+  INITIAL_REQUEST_STATUS
+);
+
+/*
+  decision values:
+  pending
+  accepted
+  rejected
+*/
+const [decision, setDecision] = useState("pending");
+
+const [showRejectPopup, setShowRejectPopup] =
+  useState(false);
+
+const [showAcceptPopup, setShowAcceptPopup] =
+  useState(false);
+
+const [contactedSellers] = useState(
+  INITIAL_CONTACTED_SELLERS
+);
+
+const [sellerResponses] = useState(
+  INITIAL_SELLER_RESPONSES
+);
+
+// Six-hour timer for finding the best rate
+const [remainingSeconds, setRemainingSeconds] =
+  useState(SIX_HOURS_IN_SECONDS);
+
+// Four-hour timer for buyer acceptance
+const [
+  acceptanceRemainingSeconds,
+  setAcceptanceRemainingSeconds,
+] = useState(FOUR_HOURS_IN_SECONDS);
+
+const trackerRef = useRef(null);
+
+const isChecking =
+  requestStatus === "checking";
+
+const isRateReady =
+  requestStatus === "rateReady";
+
+const isAcceptanceExpired =
+  isRateReady &&
+  acceptanceRemainingSeconds <= 0 &&
+  decision === "pending";
+
+const orderItems = [
+  {
+    product: "20mm Crushed Stone",
+    vehicles: 2,
+    quantity: 20,
+  },
+  {
+    product: "40mm Crushed Stone",
+    vehicles: 1,
+    quantity: 10,
+  },
+];
+
+const totalVehicles = orderItems.reduce(
+  (sum, item) => sum + item.vehicles,
+  0
+);
+
+const totalTons = orderItems.reduce(
+  (sum, item) => sum + item.quantity,
+  0
+);
+
+const sellerProgress = Math.min(
+  100,
+  Math.round(
+    (contactedSellers / TOTAL_MATCHED_SELLERS) * 100
+  )
+);
+
+// Six-hour checking countdown
+const countdownHours = String(
+  Math.floor(remainingSeconds / 3600)
+).padStart(2, "0");
+
+const countdownMinutes = String(
+  Math.floor((remainingSeconds % 3600) / 60)
+).padStart(2, "0");
+
+const countdownSeconds = String(
+  remainingSeconds % 60
+).padStart(2, "0");
+
+const countdownText =
+  `${countdownHours}:${countdownMinutes}:${countdownSeconds}`;
+
+// Four-hour rate acceptance countdown
+const acceptanceHours = String(
+  Math.floor(acceptanceRemainingSeconds / 3600)
+).padStart(2, "0");
+
+const acceptanceMinutes = String(
+  Math.floor(
+    (acceptanceRemainingSeconds % 3600) / 60
+  )
+).padStart(2, "0");
+
+const acceptanceSeconds = String(
+  acceptanceRemainingSeconds % 60
+).padStart(2, "0");
+
+const acceptanceCountdownText =
+  `${acceptanceHours}:${acceptanceMinutes}:${acceptanceSeconds}`;
+  const finalStatus =
+  decision === "accepted"
+    ? {
+        label: "Accepted",
+        color: "green",
+        symbol: "✓",
+      }
+    : decision === "rejected"
+    ? {
+        label: "Rejected",
+        color: "red",
+        symbol: "×",
+      }
+    : {
+        label: "Waiting for your confirmation",
+        color: "orange",
+        symbol: "",
+      };  
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const trackerElement = trackerRef.current;
+
+      if (!trackerElement) return;
+
+      if (isChecking) {
+        trackerElement.scrollTo({
+          left: 70,
+          behavior: "smooth",
+        });
+      } else {
+        trackerElement.scrollTo({
+          left:
+            trackerElement.scrollWidth -
+            trackerElement.clientWidth,
+          behavior: "smooth",
+        });
+      }
+    }, 350);
+
+    return () => window.clearTimeout(timer);
+  }, [isChecking]);
+
+  useEffect(() => {
+    if (
+      !isRateReady ||
+      decision !== "pending" ||
+      acceptanceRemainingSeconds <= 0
+    ) {
+      return;
+    }
+  
+    const acceptanceTimer = window.setInterval(() => {
+      setAcceptanceRemainingSeconds((current) => {
+        if (current <= 1) {
+          window.clearInterval(acceptanceTimer);
+          return 0;
+        }
+  
+        return current - 1;
+      });
+    }, 1000);
+  
+    return () => {
+      window.clearInterval(acceptanceTimer);
+    };
+  }, [
+    isRateReady,
+    decision,
+    acceptanceRemainingSeconds,
+  ]);
+
+  useEffect(() => {
+    if (!isChecking) return;
+
+    const countdownTimer = window.setInterval(() => {
+      setRemainingSeconds((current) => {
+        if (current <= 1) {
+          window.clearInterval(countdownTimer);
+          return 0;
+        }
+
+        return current - 1;
+      });
+    }, 1000);
+
+    return () => {
+      window.clearInterval(countdownTimer);
+    };
+  }, [isChecking]);
+
+  const acceptRate = () => {
+    if (isAcceptanceExpired) return;
+  
+    setDecision("accepted");
+    setShowAcceptPopup(true);
+  };
+
+  const rejectRate = () => {
+    if (isAcceptanceExpired) return;
+  
+    setDecision("rejected");
+    setShowRejectPopup(false);
+  };
+  ``
+
+  const showReadyStateForTesting = () => {
+    setRequestStatus("rateReady");
+    setDecision("pending");
+    setAcceptanceRemainingSeconds(
+      FOUR_HOURS_IN_SECONDS
+    );
+  };
+
+  const showCheckingStateForTesting = () => {
+    setRequestStatus("checking");
+    setDecision("pending");
+    setAcceptanceRemainingSeconds(
+      FOUR_HOURS_IN_SECONDS
+    );
+    setShowAcceptPopup(false);
+    setShowRejectPopup(false);
+  };
+
+  return (
+    <div style={styles.page}>
+      <style>{globalCss}</style>
+
+      <main style={styles.phone}>
+        <div
+          className="rate-page-scroll"
+          style={styles.scrollArea}
+        >
+          <header style={styles.header}>
+            <div style={styles.headerShade} />
+            <div style={styles.headerGrid} />
+
+            <div style={styles.topBar}>
+              <button
+                type="button"
+                style={styles.backButton}
+                onClick={goToPage4}
+                aria-label="Back to Home"
+              >
+                ‹
+              </button>
+
+              <div style={styles.requestBadge}>
+                RATE REQUEST
+              </div>
+
+              <button
+                type="button"
+                style={styles.helpButton}
+              >
+                Help
+              </button>
+            </div>
+
+            <div style={styles.heroRow}>
+              <div style={{ minWidth: 0 }}>
+                <p style={styles.eyebrow}>
+                  REQUEST ID: SR-260705-01
+                </p>
+
+                <h1 style={styles.title}>
+                  {isChecking ? (
+                    <>
+                      Finding Your
+                      <br />
+                      Best Rate
+                    </>
+                  ) : (
+                    <>
+                      Your Best Rate
+                      <br />
+                      Is Ready
+                    </>
+                  )}
+                </h1>
+
+                <p style={styles.heroText}>
+                  {isChecking
+                    ? "We’re comparing rates and transport availability with verified sellers near your delivery location."
+                    : "Review the quote and accept or reject the seller rate."}
+                </p>
+              </div>
+
+              <div
+                style={{
+                  ...styles.rateIcon,
+                  ...(isChecking
+                    ? styles.rateIconScanning
+                    : {}),
+                }}
+              >
+                {isChecking ? "⌕" : "₹"}
+              </div>
+            </div>
+          </header>
+
+          <section style={styles.content}>
+            <article style={styles.trackerCard}>
+              <p style={styles.trackerHeading}>
+                Rate request status
+              </p>
+
+              <div
+                ref={trackerRef}
+                className="tracker-scroll"
+                style={styles.trackerViewport}
+              >
+                <div style={styles.tracker}>
+                  <StatusStep
+                    styles={styles}
+                    label="Request submitted"
+                    state="done"
+                  />
+
+                  <StatusConnector
+                    styles={styles}
+                    state="done"
+                  />
+
+                  <StatusStep
+                    styles={styles}
+                    label="Checking with sellers"
+                    state={
+                      isChecking ? "active" : "done"
+                    }
+                    symbol={
+                      isChecking ? "⌕" : "✓"
+                    }
+                  />
+
+                  <StatusConnector
+                    styles={styles}
+                    state={
+                      isRateReady
+                        ? "done"
+                        : "waiting"
+                    }
+                  />
+
+                  <StatusStep
+                    styles={styles}
+                    label="Best rate provided"
+                    state={
+                      isRateReady
+                        ? "done"
+                        : "waiting"
+                    }
+                  />
+
+                  <StatusConnector
+                    styles={styles}
+                    state={
+                      isRateReady
+                        ? finalStatus.color
+                        : "waiting"
+                    }
+                  />
+
+                  <StatusStep
+                    styles={styles}
+                    label={
+                      isRateReady
+                        ? finalStatus.label
+                        : "Your confirmation"
+                    }
+                    state={
+                      isRateReady
+                        ? finalStatus.color
+                        : "waiting"
+                    }
+                    symbol={
+                      isRateReady
+                        ? finalStatus.symbol
+                        : ""
+                    }
+                    wide
+                  />
+                </div>
+              </div>
+            </article>
+
+            <div style={styles.rateNotice}>
+              <div
+                style={{
+                  ...styles.noticeIcon,
+                  ...(isChecking
+                    ? styles.noticeIconChecking
+                    : {}),
+                }}
+              >
+                {isChecking ? "⌕" : "✓"}
+              </div>
+
+              <div style={{ minWidth: 0 }}>
+                <b style={styles.noticeTitle}>
+                  {isChecking
+                    ? "Checking with verified sellers"
+                    : "Best rate provided"}
+                </b>
+
+                <p style={styles.noticeText}>
+                  {isChecking
+                    ? "StoneRate is comparing material rates, transport availability and delivery timing."
+                    : "The quote is waiting for your confirmation."}
+                </p>
+              </div>
+            </div>
+
+            {isChecking && (
+              <>
+                <article style={styles.scanningCard}>
+                  <div style={styles.scannerArea}>
+                    <div style={styles.scannerRingOuter}>
+                      <div
+                        style={styles.scannerGridLineOne}
+                      />
+
+                      <div
+                        style={styles.scannerGridLineTwo}
+                      />
+
+                      <div
+                        style={styles.scannerRingMiddle}
+                      >
+                        <div
+                          style={styles.scannerRingInner}
+                        >
+                          <span
+                            style={styles.scannerCentre}
+                          >
+                            ₹
+                          </span>
+                        </div>
+                      </div>
+
+                      <div
+                        style={styles.scannerBeam}
+                      />
+
+                      <span
+                        style={{
+                          ...styles.sellerDot,
+                          ...styles.sellerDotOne,
+                        }}
+                      />
+
+                      <span
+                        style={{
+                          ...styles.sellerDot,
+                          ...styles.sellerDotTwo,
+                        }}
+                      />
+
+                      <span
+                        style={{
+                          ...styles.sellerDot,
+                          ...styles.sellerDotThree,
+                        }}
+                      />
+
+                      <span
+                        style={{
+                          ...styles.sellerDot,
+                          ...styles.sellerDotFour,
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={styles.scanningText}>
+                    <span
+                      style={styles.scanningEyebrow}
+                    >
+                      LIVE SELLER SEARCH
+                    </span>
+
+                    <h2 style={styles.scanningTitle}>
+                      Scanning nearby sellers
+                    </h2>
+
+                    <p
+                      style={
+                        styles.scanningDescription
+                      }
+                    >
+                      Comparing material price,
+                      transport cost and vehicle
+                      availability.
+                    </p>
+                  </div>
+                </article>
+
+                <article
+                  style={styles.sellerProgressCard}
+                >
+                  <div
+                    style={styles.sellerProgressHeader}
+                  >
+                    <div>
+                      <span
+                        style={styles.progressEyebrow}
+                      >
+                        SELLER OUTREACH
+                      </span>
+
+                      <h3
+                        style={styles.progressTitle}
+                      >
+                        {contactedSellers} of{" "}
+                        {TOTAL_MATCHED_SELLERS} sellers
+                        contacted
+                      </h3>
+                    </div>
+
+                    <div
+                      style={
+                        styles.progressPercentage
+                      }
+                    >
+                      {sellerProgress}%
+                    </div>
+                  </div>
+
+                  <div
+                    style={
+                      styles.sellerProgressTrack
+                    }
+                  >
+                    <div
+                      style={{
+                        ...styles.sellerProgressFill,
+                        width: `${sellerProgress}%`,
+                      }}
+                    />
+                  </div>
+
+                  <div
+                    style={styles.sellerMetricGrid}
+                  >
+                    <div
+                      style={styles.sellerMetric}
+                    >
+                      <span>Matched</span>
+                      <b>
+                        {TOTAL_MATCHED_SELLERS}
+                      </b>
+                    </div>
+
+                    <div
+                      style={styles.sellerMetric}
+                    >
+                      <span>Contacted</span>
+                      <b>{contactedSellers}</b>
+                    </div>
+
+                    <div
+                      style={styles.sellerMetric}
+                    >
+                      <span>Responses</span>
+                      <b>{sellerResponses}</b>
+                    </div>
+                  </div>
+                </article>
+
+                <article style={styles.countdownCard}>
+                  <div style={styles.countdownIcon}>
+                    ◷
+                  </div>
+
+                  <div
+                    style={styles.countdownContent}
+                  >
+                    <span
+                      style={styles.countdownLabel}
+                    >
+                      ESTIMATED UPDATE WITHIN
+                    </span>
+
+                    {remainingSeconds > 0 ? (
+                      <strong
+                        style={
+                          styles.countdownValue
+                        }
+                      >
+                        {countdownText}
+                      </strong>
+                    ) : (
+                      <strong
+                        style={
+                          styles.countdownExpired
+                        }
+                      >
+                        Follow-up in progress
+                      </strong>
+                    )}
+
+                    <p
+                      style={
+                        styles.countdownDescription
+                      }
+                    >
+                      {remainingSeconds > 0
+                        ? "We aim to provide the best available rate before this timer ends."
+                        : "The rate check is taking longer than expected. We’re following up with sellers and will notify you as soon as possible."}
+                    </p>
+                  </div>
+                </article>
+
+                <article
+                  style={styles.comparisonCard}
+                >
+                  <div
+                    style={styles.comparisonHeader}
+                  >
+                    <div>
+                      <span
+                        style={styles.progressEyebrow}
+                      >
+                        RATE COMPARISON
+                      </span>
+
+                      <h3
+                        style={styles.comparisonTitle}
+                      >
+                        What StoneRate is checking
+                      </h3>
+                    </div>
+
+                    <span style={styles.liveBadge}>
+                      <span
+                        style={styles.liveBadgeDot}
+                      />
+                      Live
+                    </span>
+                  </div>
+
+                  <ComparisonRow
+                    styles={styles}
+                    label="Material availability"
+                    status="Checked"
+                    state="done"
+                  />
+
+                  <ComparisonRow
+                    styles={styles}
+                    label="Seller price per ton"
+                    status="Checking"
+                    state="active"
+                  />
+
+                  <ComparisonRow
+                    styles={styles}
+                    label="Vehicle availability"
+                    status="Checking"
+                    state="active"
+                  />
+
+                  <ComparisonRow
+                    styles={styles}
+                    label="Transport cost"
+                    status="Waiting"
+                    state="waiting"
+                  />
+
+                  <ComparisonRow
+                    styles={styles}
+                    label="Delivery timing"
+                    status="Waiting"
+                    state="waiting"
+                    last
+                  />
+                </article>
+
+                <div
+                  style={styles.notificationCard}
+                >
+                  <div
+                    style={styles.notificationIcon}
+                  >
+                    🔔
+                  </div>
+
+                  <div style={{ minWidth: 0 }}>
+                    <b
+                      style={
+                        styles.notificationTitle
+                      }
+                    >
+                      We’ll notify you when the rate
+                      is ready
+                    </b>
+
+                    <p
+                      style={
+                        styles.notificationText
+                      }
+                    >
+                      You can leave this page. Seller
+                      outreach will continue in the
+                      background.
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
+
+{isRateReady && (
+  <>
+    {decision === "pending" && (
+      <article
+        style={{
+          ...styles.acceptanceTimerCard,
+          ...(isAcceptanceExpired
+            ? styles.acceptanceTimerCardExpired
+            : {}),
+        }}
+      >
+        <div
+          style={{
+            ...styles.acceptanceTimerIcon,
+            ...(isAcceptanceExpired
+              ? styles.acceptanceTimerIconExpired
+              : {}),
+          }}
+        >
+          {isAcceptanceExpired ? "!" : "◷"}
+        </div>
+
+        <div style={styles.acceptanceTimerContent}>
+          <span
+            style={{
+              ...styles.acceptanceTimerLabel,
+              ...(isAcceptanceExpired
+                ? styles.acceptanceTimerLabelExpired
+                : {}),
+            }}
+          >
+            {isAcceptanceExpired
+              ? "RESPONSE WINDOW CLOSED"
+              : "RATE RESERVED FOR"}
+          </span>
+
+          {isAcceptanceExpired ? (
+            <strong
+              style={styles.acceptanceExpiredTitle}
+            >
+              Response time expired
+            </strong>
+          ) : (
+            <strong
+              style={styles.acceptanceTimerValue}
+            >
+              {acceptanceCountdownText}
+            </strong>
+          )}
+
+          <p
+            style={{
+              ...styles.acceptanceTimerDescription,
+              ...(isAcceptanceExpired
+                ? styles.acceptanceTimerDescriptionExpired
+                : {}),
+            }}
+          >
+            {isAcceptanceExpired
+              ? "No response was received before the four-hour deadline. This quote is no longer available for acceptance."
+              : "Please accept or reject this rate before the timer ends. Seller rates and availability may change afterward."}
+          </p>
+        </div>
+      </article>
+    )}
+
+    <div style={styles.sectionHeading}>
+      <div>
+        <p style={styles.sectionEyebrow}>
+          QUOTE DETAILS
+        </p>
+
+        <h2 style={styles.sectionTitle}>
+          Rate summary
+        </h2>
+      </div>
+
+      <div
+        style={{
+          ...styles.validPill,
+          ...(isAcceptanceExpired
+            ? styles.expiredPill
+            : {}),
+        }}
+      >
+        {isAcceptanceExpired
+          ? "Expired"
+          : "Valid for 4 hours"}
+      </div>
+    </div>
+
+    <article
+      style={{
+        ...styles.quoteCard,
+        ...(isAcceptanceExpired
+          ? styles.quoteCardExpired
+          : {}),
+      }}
+    >
+      <div style={styles.quoteGlow} />
+
+      <div style={styles.quoteTopRow}>
+        <div>
+          <p style={styles.quoteLabel}>
+            Best available rate
+          </p>
+
+          <div style={styles.quoteValueRow}>
+            <span style={styles.rupeeSymbol}>
+              ₹
+            </span>
+
+            <b style={styles.quoteValue}>
+              1,280
+            </b>
+
+            <span style={styles.perTon}>
+              / ton
+            </span>
+          </div>
+        </div>
+
+        <div
+          style={{
+            ...styles.bestRateBadge,
+            ...(isAcceptanceExpired
+              ? styles.bestRateBadgeExpired
+              : {}),
+          }}
+        >
+          {isAcceptanceExpired
+            ? "QUOTE EXPIRED"
+            : "BEST RATE"}
+        </div>
+      </div>
+
+      <div style={styles.quoteMetaGrid}>
+        <div style={styles.quoteMetaItem}>
+          <span>Total quantity</span>
+          <b>{totalTons} tons</b>
+        </div>
+
+        <div style={styles.quoteMetaItem}>
+          <span>Vehicles</span>
+          <b>{totalVehicles} vehicles</b>
+        </div>
+
+        <div style={styles.quoteMetaItem}>
+          <span>Transport</span>
+          <b>Included</b>
+        </div>
+      </div>
+
+      <div style={styles.estimatedRow}>
+        <span>Estimated material value</span>
+        <b>₹38,400</b>
+      </div>
+    </article>
+  </>
+)}
+
+            <div style={styles.sectionHeading}>
+              <div>
+                <p style={styles.sectionEyebrow}>
+                  REQUEST DETAILS
+                </p>
+
+                <h2 style={styles.sectionTitle}>
+                  Order summary
+                </h2>
+              </div>
+
+              <div style={styles.requestPill}>
+                {totalTons} tons
+              </div>
+            </div>
+
+            <article style={styles.tableCard}>
+              <div style={styles.tableHeader}>
+                <span>Product</span>
+                <span>Vehicle</span>
+                <span>Qty.</span>
+              </div>
+
+              {orderItems.map((item, index) => (
+                <React.Fragment
+                  key={item.product}
+                >
+                  {index > 0 && (
+                    <div
+                      style={styles.tableDivider}
+                    />
+                  )}
+
+                  <div style={styles.tableRow}>
+                    <div
+                      style={styles.productCell}
+                    >
+                      <span
+                        style={styles.productIcon}
+                      >
+                        🪨
+                      </span>
+
+                      <b>{item.product}</b>
+                    </div>
+
+                    <div
+                      style={styles.vehicleCell}
+                    >
+                      <span>🚚</span>
+                      <b>{item.vehicles}</b>
+
+                      <small>
+                        {item.vehicles === 1
+                          ? "vehicle"
+                          : "vehicles"}
+                      </small>
+                    </div>
+
+                    <div style={styles.qtyCell}>
+                      <b>{item.quantity}</b>
+                      <span>tons</span>
+                    </div>
+                  </div>
+                </React.Fragment>
+              ))}
+            </article>
+
+            <article style={styles.deliveryCard}>
+              <div style={styles.deliveryIcon}>
+                📅
+              </div>
+
+              <div
+                style={{
+                  minWidth: 0,
+                  flex: 1,
+                }}
+              >
+                <span style={styles.detailLabel}>
+                  Expected delivery
+                </span>
+
+                <b style={styles.deliveryDate}>
+                  05 July 2026
+                </b>
+              </div>
+
+              <div style={styles.deliveryStatus}>
+                Scheduled
+              </div>
+            </article>
+
+            {isRateReady &&
+              decision === "accepted" && (
+                <div style={styles.acceptedCard}>
+                  <div
+                    style={styles.acceptedIcon}
+                  >
+                    ✓
+                  </div>
+
+                  <div>
+                    <b>Rate accepted</b>
+
+                    <p>
+                      Continue to the
+                      supplier-details page to review
+                      and confirm the seller.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+            {isRateReady &&
+              decision === "rejected" && (
+                <div style={styles.rejectedCard}>
+                  <div
+                    style={styles.rejectedIcon}
+                  >
+                    ×
+                  </div>
+
+                  <div>
+                    <b>Rate rejected</b>
+
+                    <p>
+                      This quote will not be used to
+                      place the order.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+            {isChecking && (
+              <button
+                type="button"
+                style={styles.testReadyButton}
+                onClick={showReadyStateForTesting}
+              >
+                Test: Mark Best Rate as Ready
+              </button>
+            )}
+
+            {isRateReady && (
+              <button
+                type="button"
+                style={styles.testCheckingButton}
+                onClick={showCheckingStateForTesting}
+              >
+                Test: Return to Checking State
+              </button>
+            )}
+
+            <div style={styles.bottomSpacer} />
+          </section>
+        </div>
+
+        <footer style={styles.fixedFooter}>
+          {isChecking && (
+            <>
+              <div
+                style={styles.checkingFooterHint}
+              >
+                <span
+                  style={styles.checkingFooterDot}
+                />
+
+                <span>
+                  Seller outreach is currently in
+                  progress
+                </span>
+              </div>
+
+              <button
+                type="button"
+                style={styles.checkingButton}
+                disabled
+              >
+                <span
+                  style={styles.footerSpinner}
+                >
+                  ⌕
+                </span>
+
+                Checking Best Rates...
+              </button>
+            </>
+          )}
+
+{isRateReady &&
+  decision === "pending" &&
+  !isAcceptanceExpired && (
+              <>
+                <div style={styles.footerHint}>
+                  <span>🛡️</span>
+
+                  <span>
+                    Choose whether to accept or reject
+                    this rate
+                  </span>
+                </div>
+
+                <div
+                  style={styles.footerButtons}
+                >
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowRejectPopup(true)
+                    }
+                    style={styles.rejectButton}
+                  >
+                    <span>×</span>
+                    Reject Rate
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={acceptRate}
+                    style={styles.acceptButton}
+                  >
+                    <span>✓</span>
+                    Accept Rate
+                  </button>
+                </div>
+              </>
+            )}
+
+{isRateReady &&
+  decision === "pending" &&
+  isAcceptanceExpired && (
+    <>
+      <div style={styles.expiredFooterHint}>
+        <span>!</span>
+
+        <span>
+          No response was received within four hours
+        </span>
+      </div>
+
+      <button
+        type="button"
+        style={styles.expiredFooterButton}
+        disabled
+      >
+        Response Time Expired
+      </button>
+    </>
+  )}  
+
+          {isRateReady &&
+            decision === "accepted" && (
+              <>
+                <div
+                  style={styles.footerHintGreen}
+                >
+                  <span>✓</span>
+                  <span>
+                    Rate accepted successfully
+                  </span>
+                </div>
+
+                <button
+  type="button"
+  style={styles.nextPageButton}
+  onClick={goToPage8}
+>
+  View Active Order
+  <b>›</b>
+</button>
+              </>
+            )}
+
+          {isRateReady &&
+            decision === "rejected" && (
+              <>
+                <div
+                  style={styles.footerHintRed}
+                >
+                  <span>×</span>
+
+                  <span>
+                    This rate has been rejected
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  style={
+                    styles.rejectedOnlyButton
+                  }
+                  disabled
+                >
+                  Rate Rejected
+                </button>
+              </>
+            )}
+        </footer>
+
+        {showRejectPopup && (
+          <div style={styles.popupOverlay}>
+            <div style={styles.rejectPopup}>
+              <div style={styles.warningIcon}>
+                !
+              </div>
+
+              <h2 style={styles.popupTitle}>
+                Reject this rate?
+              </h2>
+
+              <p style={styles.popupText}>
+                The quote will be marked as rejected
+                and will not be used to place this
+                order.
+              </p>
+
+              <div style={styles.popupButtons}>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowRejectPopup(false)
+                  }
+                  style={styles.cancelButton}
+                >
+                  Keep Rate
+                </button>
+
+                <button
+                  type="button"
+                  onClick={rejectRate}
+                  style={
+                    styles.confirmRejectButton
+                  }
+                >
+                  Yes, Reject
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showAcceptPopup && (
+          <div style={styles.popupOverlay}>
+            <div style={styles.acceptPopup}>
+              <div style={styles.popupGlow} />
+
+              <div style={styles.greenTick}>
+                ✓
+              </div>
+
+              <h2 style={styles.popupTitle}>
+                Rate Accepted
+              </h2>
+
+              <p style={styles.popupText}>
+                The best rate has been accepted.
+                Supplier details can now be reviewed
+                on the next page.
+              </p>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowAcceptPopup(false)
+                }
+                style={styles.doneButton}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
+
+function StatusStep({
+  styles,
+  label,
+  state,
+  symbol,
+  wide,
+}) {
+  const circleStyle =
+    state === "done" || state === "green"
+      ? styles.statusCircleGreen
+      : state === "red"
+      ? styles.statusCircleRed
+      : state === "waiting"
+      ? styles.statusCircleWaiting
+      : styles.statusCircleOrange;
+
+  const labelStyle =
+    state === "done" || state === "green"
+      ? styles.statusLabelGreen
+      : state === "red"
+      ? styles.statusLabelRed
+      : state === "waiting"
+      ? styles.statusLabelWaiting
+      : styles.statusLabelOrange;
+
+  return (
+    <div
+      style={{
+        ...styles.statusStep,
+        ...(wide ? styles.statusStepWide : {}),
+      }}
+    >
+      <div
+        style={{
+          ...styles.statusCircle,
+          ...circleStyle,
+        }}
+      >
+        {state === "done" ? "✓" : symbol}
+      </div>
+
+      <span
+        style={{
+          ...styles.statusLabel,
+          ...labelStyle,
+        }}
+      >
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function StatusConnector({ styles, state }) {
+  const background =
+    state === "done" || state === "green"
+      ? "#22c55e"
+      : state === "red"
+      ? "linear-gradient(to right, #22c55e, #ef4444)"
+      : state === "waiting"
+      ? "#e7e5e4"
+      : "linear-gradient(to right, #22c55e, #f59e0b)";
+
+  return (
+    <div
+      style={{
+        ...styles.statusConnector,
+        background,
+      }}
+    />
+  );
+}
+
+function ComparisonRow({
+  styles,
+  label,
+  status,
+  state,
+  last,
+}) {
+  const icon =
+    state === "done"
+      ? "✓"
+      : state === "active"
+      ? "⌕"
+      : "•";
+
+  return (
+    <div
+      style={{
+        ...styles.comparisonRow,
+        ...(last
+          ? styles.comparisonRowLast
+          : {}),
+      }}
+    >
+      <span
+        style={{
+          ...styles.comparisonIcon,
+          ...(state === "done"
+            ? styles.comparisonIconDone
+            : {}),
+          ...(state === "active"
+            ? styles.comparisonIconActive
+            : {}),
+          ...(state === "waiting"
+            ? styles.comparisonIconWaiting
+            : {}),
+        }}
+      >
+        {icon}
+      </span>
+
+      <span style={styles.comparisonLabel}>
+        {label}
+      </span>
+
+      <span
+        style={{
+          ...styles.comparisonStatus,
+          ...(state === "done"
+            ? styles.comparisonStatusDone
+            : {}),
+          ...(state === "active"
+            ? styles.comparisonStatusActive
+            : {}),
+          ...(state === "waiting"
+            ? styles.comparisonStatusWaiting
+            : {}),
+        }}
+      >
+        {status}
+      </span>
+    </div>
+  );
+}
+
+function createStyles(viewport) {
+  const vw = viewport.width || 390;
+  const vh = viewport.height || 844;
+
+  const isDesktop = vw >= 700;
+  const appW = isDesktop ? 390 : vw;
+  const appH = isDesktop ? 844 : vh;
+
+  const rawScale = Math.min(
+    appW / BASE_W,
+    appH / BASE_H
+  );
+
+  const scale = Math.max(
+    0.86,
+    Math.min(2.05, rawScale)
+  );
+
+  const ms = (value, factor = 0.55) =>
+    Math.round(
+      value +
+        (value * scale - value) * factor
+    );
+
+  const tiny = appW <= 230;
+  const short = appH <= 620;
+
+  return {
+    page: {
+      width: "100vw",
+      height: "100dvh",
+      minHeight: "100dvh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: isDesktop
+        ? "center"
+        : "stretch",
+      margin: 0,
+      padding: isDesktop ? 10 : 0,
+      overflow: "hidden",
+      background: isDesktop
+        ? "#f4f1ea"
+        : "#0b0907",
+      fontFamily: "Arial, sans-serif",
+    },
+
+    phone: {
+      position: "relative",
+      width: isDesktop ? 390 : "100vw",
+      height: isDesktop ? 844 : "100dvh",
+      overflow: "hidden",
+      background: "#f6f4ef",
+      borderRadius: isDesktop ? 30 : 0,
+      boxShadow: isDesktop
+        ? "0 25px 70px rgba(0,0,0,.25)"
+        : "none",
+    },
+    acceptanceTimerCard: {
+      display: "flex",
+      alignItems: "center",
+      gap: ms(12),
+      marginTop: ms(12),
+      padding: ms(13),
+      border: "1px solid #fcd34d",
+      borderRadius: ms(21),
+      background:
+        "linear-gradient(135deg, #fffbeb, #fef3c7)",
+      boxShadow:
+        "0 12px 26px rgba(146,64,14,.12)",
+    },
+    
+    acceptanceTimerCardExpired: {
+      borderColor: "#fecaca",
+      background:
+        "linear-gradient(135deg, #fff7f7, #fee2e2)",
+      boxShadow:
+        "0 12px 26px rgba(185,28,28,.08)",
+    },
+    
+    acceptanceTimerIcon: {
+      width: ms(46),
+      height: ms(46),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: ms(16),
+      background:
+        "linear-gradient(135deg, #f59e0b, #ea580c)",
+      color: "white",
+      fontSize: ms(24),
+      fontWeight: 950,
+      boxShadow:
+        "0 10px 22px rgba(234,88,12,.24)",
+    },
+    
+    acceptanceTimerIconExpired: {
+      background:
+        "linear-gradient(135deg, #ef4444, #b91c1c)",
+      boxShadow:
+        "0 10px 22px rgba(239,68,68,.20)",
+    },
+    
+    acceptanceTimerContent: {
+      minWidth: 0,
+      flex: 1,
+    },
+    
+    acceptanceTimerLabel: {
+      display: "block",
+      color: "#92400e",
+      fontSize: ms(6.8),
+      letterSpacing: ms(.9),
+      fontWeight: 950,
+    },
+    
+    acceptanceTimerLabelExpired: {
+      color: "#b91c1c",
+    },
+    
+    acceptanceTimerValue: {
+      display: "block",
+      marginTop: ms(3),
+      color: "#78350f",
+      fontSize: ms(21),
+      lineHeight: 1,
+      letterSpacing: ms(1),
+      fontWeight: 950,
+    },
+    
+    acceptanceExpiredTitle: {
+      display: "block",
+      marginTop: ms(4),
+      color: "#991b1b",
+      fontSize: ms(12),
+      lineHeight: 1.1,
+      fontWeight: 950,
+    },
+    
+    acceptanceTimerDescription: {
+      margin: `${ms(6)}px 0 0`,
+      color: "#92400e",
+      fontSize: ms(7.5),
+      lineHeight: 1.35,
+      fontWeight: 650,
+    },
+    
+    acceptanceTimerDescriptionExpired: {
+      color: "#991b1b",
+    },
+    
+    expiredPill: {
+      background: "#fee2e2",
+      color: "#b91c1c",
+    },
+    
+    quoteCardExpired: {
+      filter: "saturate(.72)",
+      opacity: 0.84,
+    },
+    
+    bestRateBadgeExpired: {
+      borderColor: "rgba(239,68,68,.35)",
+      background: "rgba(239,68,68,.16)",
+      color: "#fecaca",
+    },
+    
+    expiredFooterHint: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(6),
+      marginBottom: ms(7),
+      color: "#b91c1c",
+      fontSize: ms(7.8),
+      fontWeight: 900,
+    },
+    
+    expiredFooterButton: {
+      width: "100%",
+      minHeight: ms(48),
+      border: "1px solid #fecaca",
+      borderRadius: ms(18),
+      background:
+        "linear-gradient(135deg, #ef4444, #b91c1c)",
+      color: "white",
+      fontSize: ms(10),
+      fontWeight: 950,
+      opacity: 0.82,
+    },
+
+    scrollArea: {
+      width: "100%",
+      height: "100%",
+      overflowY: "auto",
+      overflowX: "hidden",
+      scrollBehavior: "smooth",
+      WebkitOverflowScrolling: "touch",
+    },
+
+    header: {
+      position: "sticky",
+      top: 0,
+      zIndex: 40,
+      padding: `${ms(short ? 8 : 11)}px ${ms(
+        tiny ? 10 : 13
+      )}px ${ms(12)}px`,
+      overflow: "hidden",
+      color: "white",
+      backgroundImage: HEADER_BG_IMAGE
+        ? `linear-gradient(
+            135deg,
+            rgba(5,4,3,.58),
+            rgba(28,25,23,.46) 55%,
+            rgba(120,53,15,.34)
+          ),
+          url("${HEADER_BG_IMAGE}")`
+        : "radial-gradient(circle at 84% 10%, rgba(245,158,11,.45), transparent 30%), linear-gradient(135deg, #080706, #1c1917 54%, #78350f)",
+      backgroundSize: "cover",
+      backgroundPosition: "center 42%",
+      backgroundRepeat: "no-repeat",
+    },
+
+    headerShade: {
+      position: "absolute",
+      inset: 0,
+      background:
+        "linear-gradient(to bottom, rgba(0,0,0,.02), rgba(0,0,0,.32))",
+      pointerEvents: "none",
+    },
+
+    headerGrid: {
+      position: "absolute",
+      inset: 0,
+      opacity: 0.24,
+      pointerEvents: "none",
+      backgroundImage:
+        "linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px)",
+      backgroundSize: `${ms(30)}px ${ms(
+        30
+      )}px`,
+    },
+
+    topBar: {
+      position: "relative",
+      zIndex: 2,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: ms(8),
+    },
+
+    backButton: {
+      width: ms(32),
+      height: ms(32),
+      display: "grid",
+      placeItems: "center",
+      padding: 0,
+      border:
+        "1px solid rgba(255,255,255,.18)",
+      borderRadius: ms(12),
+      background: "rgba(255,255,255,.11)",
+      color: "white",
+      fontSize: ms(23),
+      lineHeight: 1,
+      cursor: "pointer",
+    },
+
+    requestBadge: {
+      padding: `${ms(5)}px ${ms(10)}px`,
+      borderRadius: 999,
+      border:
+        "1px solid rgba(245,158,11,.45)",
+      background: "rgba(245,158,11,.17)",
+      color: "#fde68a",
+      fontSize: ms(7.7),
+      letterSpacing: ms(1.2),
+      fontWeight: 950,
+    },
+
+    helpButton: {
+      minWidth: ms(43),
+      height: ms(30),
+      padding: `0 ${ms(9)}px`,
+      border:
+        "1px solid rgba(255,255,255,.18)",
+      borderRadius: 999,
+      background: "rgba(255,255,255,.11)",
+      color: "white",
+      fontSize: ms(9),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+
+    heroRow: {
+      position: "relative",
+      zIndex: 2,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: ms(12),
+      marginTop: ms(14),
+    },
+
+    eyebrow: {
+      margin: 0,
+      color: "#fde68a",
+      fontSize: ms(7.1),
+      letterSpacing: ms(1.25),
+      fontWeight: 950,
+    },
+
+    title: {
+      margin: `${ms(6)}px 0 0`,
+      fontSize: ms(short ? 23 : 28),
+      lineHeight: 1.02,
+      letterSpacing: -0.7,
+      fontWeight: 950,
+    },
+
+    heroText: {
+      maxWidth: ms(220),
+      margin: `${ms(8)}px 0 0`,
+      color: "#e7e5e4",
+      fontSize: ms(8.7),
+      lineHeight: 1.35,
+      fontWeight: 650,
+    },
+
+    rateIcon: {
+      width: ms(51),
+      height: ms(51),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: ms(20),
+      background:
+        "linear-gradient(135deg, #f59e0b, #ea580c)",
+      color: "white",
+      fontSize: ms(27),
+      fontWeight: 950,
+      boxShadow:
+        "0 15px 30px rgba(234,88,12,.32)",
+      flexShrink: 0,
+    },
+
+    rateIconScanning: {
+      animation:
+        "scannerIconPulse 1.8s ease-in-out infinite",
+    },
+
+    content: {
+      padding: `${ms(13)}px ${ms(
+        tiny ? 9 : 13
+      )}px 0`,
+      color: "#111827",
+      background:
+        "linear-gradient(180deg, #fff, #f6f4ef 58%, #efede8)",
+    },
+
+    trackerCard: {
+      padding: `${ms(12)}px ${ms(
+        8
+      )}px ${ms(10)}px`,
+      border: "1px solid #e7e5e4",
+      borderRadius: ms(20),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    trackerHeading: {
+      margin: `0 0 ${ms(11)}px`,
+      textAlign: "center",
+      fontSize: ms(11),
+      fontWeight: 950,
+    },
+
+    trackerViewport: {
+      width: "100%",
+      overflowX: "auto",
+      overflowY: "hidden",
+      scrollbarWidth: "none",
+      paddingBottom: ms(3),
+    },
+
+    tracker: {
+      minWidth: ms(455),
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "center",
+    },
+
+    statusStep: {
+      width: ms(86),
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      flexShrink: 0,
+      textAlign: "center",
+    },
+
+    statusStepWide: {
+      width: ms(112),
+    },
+
+    statusCircle: {
+      width: ms(25),
+      height: ms(25),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: "50%",
+      fontSize: ms(10),
+      fontWeight: 950,
+    },
+
+    statusCircleGreen: {
+      background: "#22c55e",
+      color: "white",
+      boxShadow:
+        "0 6px 14px rgba(34,197,94,.22)",
+    },
+
+    statusCircleOrange: {
+      background: "#f59e0b",
+      color: "white",
+      boxShadow:
+        "0 6px 14px rgba(245,158,11,.24)",
+      animation:
+        "scannerIconPulse 1.8s ease-in-out infinite",
+    },
+
+    statusCircleRed: {
+      background: "#ef4444",
+      color: "white",
+      boxShadow:
+        "0 6px 14px rgba(239,68,68,.22)",
+    },
+
+    statusCircleWaiting: {
+      border: "2px solid #d6d3d1",
+      background: "#f5f5f4",
+      color: "#a8a29e",
+      boxShadow: "none",
+    },
+
+    statusLabel: {
+      marginTop: ms(6),
+      fontSize: ms(7),
+      lineHeight: 1.16,
+      fontWeight: 850,
+    },
+
+    statusLabelGreen: {
+      color: "#166534",
+    },
+
+    statusLabelOrange: {
+      color: "#92400e",
+    },
+
+    statusLabelRed: {
+      color: "#b91c1c",
+    },
+
+    statusLabelWaiting: {
+      color: "#a8a29e",
+    },
+
+    statusConnector: {
+      width: ms(22),
+      height: ms(4),
+      marginTop: ms(10.5),
+      borderRadius: 999,
+      flexShrink: 0,
+    },
+
+    rateNotice: {
+      display: "flex",
+      gap: ms(10),
+      marginTop: ms(11),
+      padding: ms(12),
+      border: "1px solid #fde68a",
+      borderRadius: ms(19),
+      background:
+        "linear-gradient(135deg, #fffbeb, #fef3c7)",
+      boxShadow:
+        "0 10px 22px rgba(146,64,14,.08)",
+    },
+
+    noticeIcon: {
+      width: ms(36),
+      height: ms(36),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: ms(14),
+      background: "#22c55e",
+      color: "white",
+      fontSize: ms(18),
+      fontWeight: 950,
+      flexShrink: 0,
+    },
+
+    noticeIconChecking: {
+      background:
+        "linear-gradient(135deg, #f59e0b, #ea580c)",
+      animation:
+        "scannerIconPulse 1.8s ease-in-out infinite",
+    },
+
+    noticeTitle: {
+      color: "#78350f",
+      fontSize: ms(10.1),
+    },
+
+    noticeText: {
+      margin: `${ms(4)}px 0 0`,
+      color: "#92400e",
+      fontSize: ms(8.1),
+      lineHeight: 1.35,
+      fontWeight: 650,
+    },
+
+    scanningCard: {
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr)",
+      alignItems: "center",
+      gap: ms(14),
+      marginTop: ms(12),
+      padding: ms(14),
+      overflow: "hidden",
+      border:
+        "1px solid rgba(245,158,11,.24)",
+      borderRadius: ms(22),
+      background:
+        "linear-gradient(135deg, #17100b, #3f2414 58%, #78350f)",
+      color: "white",
+      boxShadow:
+        "0 16px 34px rgba(120,53,15,.18)",
+    },
+
+    scannerArea: {
+      width: ms(92),
+      height: ms(92),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+    },
+
+    scannerRingOuter: {
+      position: "relative",
+      width: ms(82),
+      height: ms(82),
+      display: "grid",
+      placeItems: "center",
+      overflow: "hidden",
+      border:
+        "1px solid rgba(251,191,36,.36)",
+      borderRadius: "50%",
+      background:
+        "radial-gradient(circle, rgba(245,158,11,.18), rgba(245,158,11,.04) 54%, transparent 55%)",
+      boxShadow:
+        "0 0 30px rgba(245,158,11,.18), inset 0 0 25px rgba(245,158,11,.10)",
+    },
+
+    scannerGridLineOne: {
+      position: "absolute",
+      left: "50%",
+      top: 0,
+      bottom: 0,
+      width: 1,
+      background:
+        "rgba(251,191,36,.16)",
+    },
+
+    scannerGridLineTwo: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: "50%",
+      height: 1,
+      background:
+        "rgba(251,191,36,.16)",
+    },
+
+    scannerRingMiddle: {
+      width: "66%",
+      height: "66%",
+      display: "grid",
+      placeItems: "center",
+      border:
+        "1px solid rgba(251,191,36,.30)",
+      borderRadius: "50%",
+    },
+
+    scannerRingInner: {
+      width: "52%",
+      height: "52%",
+      display: "grid",
+      placeItems: "center",
+      border:
+        "1px solid rgba(251,191,36,.28)",
+      borderRadius: "50%",
+      background: "rgba(245,158,11,.12)",
+    },
+
+    scannerCentre: {
+      width: ms(25),
+      height: ms(25),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: "50%",
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: ms(13),
+      fontWeight: 950,
+      boxShadow:
+        "0 8px 18px rgba(234,88,12,.32)",
+    },
+
+    scannerBeam: {
+      position: "absolute",
+      left: "50%",
+      top: "50%",
+      width: "48%",
+      height: "48%",
+      borderRadius: "100% 0 0 0",
+      background:
+        "linear-gradient(45deg, rgba(245,158,11,.40), transparent 72%)",
+      transformOrigin: "0 0",
+      animation:
+        "radarSweep 2.4s linear infinite",
+    },
+
+    sellerDot: {
+      position: "absolute",
+      width: ms(6),
+      height: ms(6),
+      borderRadius: "50%",
+      background: "#22c55e",
+      boxShadow:
+        "0 0 9px rgba(34,197,94,.95)",
+      animation:
+        "sellerDotPulse 1.5s ease-in-out infinite",
+    },
+
+    sellerDotOne: {
+      left: "21%",
+      top: "28%",
+    },
+
+    sellerDotTwo: {
+      right: "18%",
+      top: "32%",
+      animationDelay: ".35s",
+    },
+
+    sellerDotThree: {
+      left: "34%",
+      bottom: "17%",
+      animationDelay: ".7s",
+    },
+
+    sellerDotFour: {
+      right: "26%",
+      bottom: "25%",
+      animationDelay: "1s",
+    },
+
+    scanningText: {
+      minWidth: 0,
+    },
+
+    scanningEyebrow: {
+      color: "#fbbf24",
+      fontSize: ms(6.8),
+      letterSpacing: ms(1.05),
+      fontWeight: 950,
+    },
+
+    scanningTitle: {
+      margin: `${ms(5)}px 0 0`,
+      color: "white",
+      fontSize: ms(14),
+      lineHeight: 1.08,
+      fontWeight: 950,
+    },
+
+    scanningDescription: {
+      margin: `${ms(6)}px 0 0`,
+      color: "#d6d3d1",
+      fontSize: ms(8),
+      lineHeight: 1.4,
+      fontWeight: 650,
+    },
+
+    sellerProgressCard: {
+      marginTop: ms(12),
+      padding: ms(13),
+      border: "1px solid #e7e5e4",
+      borderRadius: ms(21),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    sellerProgressHeader: {
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: ms(10),
+    },
+
+    progressEyebrow: {
+      color: "#b45309",
+      fontSize: ms(6.8),
+      letterSpacing: ms(1),
+      fontWeight: 950,
+    },
+
+    progressTitle: {
+      margin: `${ms(4)}px 0 0`,
+      color: "#111827",
+      fontSize: ms(11),
+      fontWeight: 950,
+    },
+
+    progressPercentage: {
+      minWidth: ms(38),
+      height: ms(29),
+      display: "grid",
+      placeItems: "center",
+      padding: `0 ${ms(7)}px`,
+      borderRadius: 999,
+      background: "#fffbeb",
+      color: "#b45309",
+      fontSize: ms(8),
+      fontWeight: 950,
+    },
+
+    sellerProgressTrack: {
+      height: ms(7),
+      marginTop: ms(11),
+      overflow: "hidden",
+      borderRadius: 999,
+      background: "#f1f0ee",
+    },
+
+    sellerProgressFill: {
+      height: "100%",
+      borderRadius: 999,
+      background:
+        "linear-gradient(90deg,#f59e0b,#ea580c)",
+      boxShadow:
+        "0 0 12px rgba(245,158,11,.28)",
+      transition: "width 500ms ease",
+    },
+
+    sellerMetricGrid: {
+      display: "grid",
+      gridTemplateColumns: "repeat(3,1fr)",
+      gap: ms(7),
+      marginTop: ms(11),
+    },
+
+    sellerMetric: {
+      display: "flex",
+      flexDirection: "column",
+      gap: ms(3),
+      minWidth: 0,
+      padding: ms(8),
+      border: "1px solid #eeeae6",
+      borderRadius: ms(13),
+      background: "#fafaf9",
+      color: "#78716c",
+      fontSize: ms(7),
+    },
+
+    countdownCard: {
+      display: "flex",
+      alignItems: "center",
+      gap: ms(12),
+      marginTop: ms(12),
+      padding: ms(13),
+      border: "1px solid #fde68a",
+      borderRadius: ms(21),
+      background:
+        "linear-gradient(135deg,#fffbeb,#fef3c7)",
+      boxShadow:
+        "0 10px 22px rgba(146,64,14,.08)",
+    },
+
+    countdownIcon: {
+      width: ms(43),
+      height: ms(43),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: ms(15),
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: ms(23),
+      fontWeight: 950,
+    },
+
+    countdownContent: {
+      minWidth: 0,
+    },
+
+    countdownLabel: {
+      display: "block",
+      color: "#92400e",
+      fontSize: ms(6.8),
+      letterSpacing: ms(0.85),
+      fontWeight: 950,
+    },
+
+    countdownValue: {
+      display: "block",
+      marginTop: ms(3),
+      color: "#78350f",
+      fontSize: ms(20),
+      lineHeight: 1,
+      letterSpacing: ms(1),
+      fontWeight: 950,
+    },
+
+    countdownExpired: {
+      display: "block",
+      marginTop: ms(4),
+      color: "#b45309",
+      fontSize: ms(11),
+      fontWeight: 950,
+    },
+
+    countdownDescription: {
+      margin: `${ms(6)}px 0 0`,
+      color: "#92400e",
+      fontSize: ms(7.5),
+      lineHeight: 1.35,
+      fontWeight: 650,
+    },
+
+    comparisonCard: {
+      marginTop: ms(12),
+      padding: ms(13),
+      border: "1px solid #e7e5e4",
+      borderRadius: ms(21),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    comparisonHeader: {
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: ms(8),
+      marginBottom: ms(8),
+    },
+
+    comparisonTitle: {
+      margin: `${ms(4)}px 0 0`,
+      fontSize: ms(11),
+      fontWeight: 950,
+    },
+
+    liveBadge: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: ms(4),
+      padding: `${ms(5)}px ${ms(8)}px`,
+      borderRadius: 999,
+      background: "#ecfdf5",
+      color: "#15803d",
+      fontSize: ms(7),
+      fontWeight: 950,
+    },
+
+    liveBadgeDot: {
+      width: ms(6),
+      height: ms(6),
+      borderRadius: "50%",
+      background: "#22c55e",
+      boxShadow:
+        "0 0 7px rgba(34,197,94,.75)",
+      animation:
+        "sellerDotPulse 1.5s ease-in-out infinite",
+    },
+
+    comparisonRow: {
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr) auto",
+      alignItems: "center",
+      gap: ms(8),
+      padding: `${ms(8)}px 0`,
+      borderBottom:
+        "1px solid #eeeae6",
+    },
+
+    comparisonRowLast: {
+      borderBottom: 0,
+    },
+
+    comparisonIcon: {
+      width: ms(25),
+      height: ms(25),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: ms(9),
+      fontSize: ms(10),
+      fontWeight: 950,
+    },
+
+    comparisonIconDone: {
+      background: "#dcfce7",
+      color: "#15803d",
+    },
+
+    comparisonIconActive: {
+      background: "#fef3c7",
+      color: "#b45309",
+      animation:
+        "scannerIconPulse 1.8s ease-in-out infinite",
+    },
+
+    comparisonIconWaiting: {
+      background: "#f5f5f4",
+      color: "#a8a29e",
+    },
+
+    comparisonLabel: {
+      minWidth: 0,
+      color: "#292524",
+      fontSize: ms(8.4),
+      fontWeight: 800,
+    },
+
+    comparisonStatus: {
+      padding: `${ms(4)}px ${ms(7)}px`,
+      borderRadius: 999,
+      fontSize: ms(6.9),
+      fontWeight: 950,
+    },
+
+    comparisonStatusDone: {
+      background: "#ecfdf5",
+      color: "#15803d",
+    },
+
+    comparisonStatusActive: {
+      background: "#fffbeb",
+      color: "#b45309",
+    },
+
+    comparisonStatusWaiting: {
+      background: "#f5f5f4",
+      color: "#78716c",
+    },
+
+    notificationCard: {
+      display: "flex",
+      alignItems: "center",
+      gap: ms(10),
+      marginTop: ms(12),
+      padding: ms(12),
+      border: "1px solid #dbeafe",
+      borderRadius: ms(19),
+      background: "#eff6ff",
+    },
+
+    notificationIcon: {
+      width: ms(36),
+      height: ms(36),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: ms(13),
+      background: "#dbeafe",
+      fontSize: ms(17),
+    },
+
+    notificationTitle: {
+      color: "#1e3a8a",
+      fontSize: ms(9),
+    },
+
+    notificationText: {
+      margin: `${ms(4)}px 0 0`,
+      color: "#1d4ed8",
+      fontSize: ms(7.5),
+      lineHeight: 1.35,
+    },
+
+    sectionHeading: {
+      display: "flex",
+      alignItems: "flex-end",
+      justifyContent: "space-between",
+      gap: ms(9),
+      marginTop: ms(16),
+      marginBottom: ms(9),
+    },
+
+    sectionEyebrow: {
+      margin: 0,
+      color: "#b45309",
+      fontSize: ms(7.3),
+      letterSpacing: ms(1.15),
+      fontWeight: 950,
+    },
+
+    sectionTitle: {
+      margin: `${ms(3)}px 0 0`,
+      fontSize: ms(15),
+      fontWeight: 950,
+    },
+
+    validPill: {
+      padding: `${ms(5)}px ${ms(8)}px`,
+      borderRadius: 999,
+      background: "#ecfdf5",
+      color: "#15803d",
+      fontSize: ms(7.7),
+      fontWeight: 950,
+    },
+
+    requestPill: {
+      padding: `${ms(5)}px ${ms(8)}px`,
+      borderRadius: 999,
+      background: "#fffbeb",
+      color: "#b45309",
+      fontSize: ms(7.7),
+      fontWeight: 950,
+    },
+
+    quoteCard: {
+      position: "relative",
+      overflow: "hidden",
+      padding: ms(15),
+      borderRadius: ms(22),
+      background:
+        "linear-gradient(135deg, #020617, #292524)",
+      color: "white",
+      boxShadow:
+        "0 17px 36px rgba(0,0,0,.18)",
+    },
+
+    quoteGlow: {
+      position: "absolute",
+      right: ms(-30),
+      top: ms(-35),
+      width: ms(105),
+      height: ms(105),
+      borderRadius: "50%",
+      background:
+        "rgba(245,158,11,.25)",
+      filter: `blur(${ms(20)}px)`,
+    },
+
+    quoteTopRow: {
+      position: "relative",
+      zIndex: 2,
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: ms(10),
+    },
+
+    quoteLabel: {
+      margin: 0,
+      color: "#d6d3d1",
+      fontSize: ms(9.3),
+    },
+
+    quoteValueRow: {
+      display: "flex",
+      alignItems: "flex-end",
+      gap: ms(3),
+      marginTop: ms(5),
+    },
+
+    rupeeSymbol: {
+      marginBottom: ms(4),
+      color: "#fbbf24",
+      fontSize: ms(18),
+      fontWeight: 950,
+    },
+
+    quoteValue: {
+      fontSize: ms(38),
+      lineHeight: 1,
+    },
+
+    perTon: {
+      marginBottom: ms(4),
+      color: "#d6d3d1",
+      fontSize: ms(9.5),
+      fontWeight: 800,
+    },
+
+    bestRateBadge: {
+      padding: `${ms(6)}px ${ms(9)}px`,
+      border:
+        "1px solid rgba(245,158,11,.35)",
+      borderRadius: 999,
+      background: "rgba(245,158,11,.16)",
+      color: "#fde68a",
+      fontSize: ms(7.6),
+      fontWeight: 950,
+    },
+
+    quoteMetaGrid: {
+      position: "relative",
+      zIndex: 2,
+      display: "grid",
+      gridTemplateColumns: "repeat(3, 1fr)",
+      gap: ms(7),
+      marginTop: ms(13),
+    },
+
+    quoteMetaItem: {
+      display: "flex",
+      flexDirection: "column",
+      gap: ms(3),
+      minWidth: 0,
+      padding: ms(8),
+      borderRadius: ms(13),
+      background:
+        "rgba(255,255,255,.08)",
+      color: "#d6d3d1",
+      fontSize: ms(7.2),
+    },
+
+    estimatedRow: {
+      position: "relative",
+      zIndex: 2,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: ms(8),
+      marginTop: ms(10),
+      padding: ms(9),
+      borderRadius: ms(12),
+      background:
+        "rgba(255,255,255,.1)",
+      color: "#e7e5e4",
+      fontSize: ms(8.4),
+    },
+
+    tableCard: {
+      overflow: "hidden",
+      border: "1px solid #e7e5e4",
+      borderRadius: ms(20),
+      background:
+        "rgba(255,255,255,.96)",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.055)",
+    },
+
+    tableHeader: {
+      display: "grid",
+      gridTemplateColumns:
+        "1.55fr .85fr .65fr",
+      gap: ms(6),
+      padding: `${ms(9)}px ${ms(11)}px`,
+      background: "#1c1917",
+      color: "#fde68a",
+      fontSize: ms(7.5),
+      fontWeight: 950,
+    },
+
+    tableRow: {
+      display: "grid",
+      gridTemplateColumns:
+        "1.55fr .85fr .65fr",
+      alignItems: "center",
+      gap: ms(6),
+      padding: `${ms(11)}px`,
+      fontSize: ms(8.5),
+    },
+
+    productCell: {
+      display: "flex",
+      alignItems: "center",
+      gap: ms(7),
+      minWidth: 0,
+      lineHeight: 1.15,
+    },
+
+    productIcon: {
+      width: ms(27),
+      height: ms(27),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: ms(10),
+      background: "#fef3c7",
+      flexShrink: 0,
+    },
+
+    vehicleCell: {
+      display: "grid",
+      gridTemplateColumns: "auto auto",
+      justifyContent: "start",
+      columnGap: ms(3),
+      minWidth: 0,
+    },
+
+    qtyCell: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "flex-end",
+      gap: ms(1),
+      color: "#92400e",
+    },
+
+    tableDivider: {
+      height: 1,
+      margin: `0 ${ms(11)}px`,
+      background: "#eeeae6",
+    },
+
+    deliveryCard: {
+      display: "flex",
+      alignItems: "center",
+      gap: ms(9),
+      marginTop: ms(12),
+      padding: ms(12),
+      border: "1px solid #e7e5e4",
+      borderRadius: ms(20),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    deliveryIcon: {
+      width: ms(38),
+      height: ms(38),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: ms(14),
+      background: "#fffbeb",
+      fontSize: ms(19),
+      flexShrink: 0,
+    },
+
+    detailLabel: {
+      display: "block",
+      color: "#78716c",
+      fontSize: ms(7.8),
+    },
+
+    deliveryDate: {
+      display: "block",
+      marginTop: ms(3),
+      fontSize: ms(11.2),
+    },
+
+    deliveryStatus: {
+      padding: `${ms(5)}px ${ms(8)}px`,
+      borderRadius: 999,
+      background: "#ecfdf5",
+      color: "#15803d",
+      fontSize: ms(7.6),
+      fontWeight: 950,
+    },
+
+    acceptedCard: {
+      display: "flex",
+      gap: ms(9),
+      marginTop: ms(12),
+      padding: ms(12),
+      border: "1px solid #bbf7d0",
+      borderRadius: ms(18),
+      background: "#f0fdf4",
+      color: "#166534",
+      fontSize: ms(8.4),
+      lineHeight: 1.35,
+    },
+
+    acceptedIcon: {
+      width: ms(30),
+      height: ms(30),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: ms(11),
+      background: "#22c55e",
+      color: "white",
+      fontWeight: 950,
+      flexShrink: 0,
+    },
+
+    rejectedCard: {
+      display: "flex",
+      gap: ms(9),
+      marginTop: ms(12),
+      padding: ms(12),
+      border: "1px solid #fecaca",
+      borderRadius: ms(18),
+      background: "#fff7f7",
+      color: "#991b1b",
+      fontSize: ms(8.4),
+      lineHeight: 1.35,
+    },
+
+    rejectedIcon: {
+      width: ms(30),
+      height: ms(30),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: ms(11),
+      background: "#ef4444",
+      color: "white",
+      fontWeight: 950,
+      flexShrink: 0,
+    },
+
+    testReadyButton: {
+      width: "100%",
+      minHeight: ms(40),
+      marginTop: ms(14),
+      border: "1px dashed #d97706",
+      borderRadius: ms(15),
+      background: "#fffbeb",
+      color: "#92400e",
+      fontSize: ms(8),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+
+    testCheckingButton: {
+      width: "100%",
+      minHeight: ms(40),
+      marginTop: ms(14),
+      border: "1px dashed #a8a29e",
+      borderRadius: ms(15),
+      background: "#fafaf9",
+      color: "#57534e",
+      fontSize: ms(8),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+
+    bottomSpacer: {
+      height: ms(128),
+    },
+
+    fixedFooter: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 30,
+      padding: `${ms(8)}px ${ms(
+        13
+      )}px calc(env(safe-area-inset-bottom, 0px) + ${ms(
+        10
+      )}px)`,
+      background:
+        "linear-gradient(to top, #f6f4ef 76%, rgba(246,244,239,.98) 90%, rgba(246,244,239,.82))",
+      borderTop:
+        "1px solid rgba(120,113,108,.12)",
+      boxShadow:
+        "0 -12px 30px rgba(0,0,0,.10)",
+    },
+
+    checkingFooterHint: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(6),
+      marginBottom: ms(7),
+      color: "#92400e",
+      fontSize: ms(7.8),
+      fontWeight: 800,
+    },
+
+    checkingFooterDot: {
+      width: ms(7),
+      height: ms(7),
+      borderRadius: "50%",
+      background: "#f59e0b",
+      boxShadow:
+        "0 0 8px rgba(245,158,11,.65)",
+      animation:
+        "sellerDotPulse 1.5s ease-in-out infinite",
+    },
+
+    checkingButton: {
+      width: "100%",
+      minHeight: ms(48),
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(8),
+      border: 0,
+      borderRadius: ms(18),
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: ms(10),
+      fontWeight: 950,
+      opacity: 1,
+    },
+
+    footerSpinner: {
+      display: "grid",
+      placeItems: "center",
+      width: ms(24),
+      height: ms(24),
+      borderRadius: "50%",
+      background:
+        "rgba(255,255,255,.16)",
+      animation:
+        "scannerIconPulse 1.8s ease-in-out infinite",
+    },
+
+    footerHint: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(5),
+      marginBottom: ms(7),
+      color: "#78716c",
+      fontSize: ms(7.8),
+      fontWeight: 700,
+    },
+
+    footerHintGreen: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(5),
+      marginBottom: ms(7),
+      color: "#15803d",
+      fontSize: ms(8),
+      fontWeight: 900,
+    },
+
+    footerHintRed: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(5),
+      marginBottom: ms(7),
+      color: "#b91c1c",
+      fontSize: ms(8),
+      fontWeight: 900,
+    },
+
+    footerButtons: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1.18fr",
+      gap: ms(8),
+    },
+
+    rejectButton: {
+      minHeight: ms(48),
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(6),
+      border: "1px solid #fecaca",
+      borderRadius: ms(18),
+      background: "#fff7f7",
+      color: "#b91c1c",
+      fontSize: ms(9.3),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    acceptButton: {
+      minHeight: ms(48),
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(6),
+      border: 0,
+      borderRadius: ms(18),
+      background:
+        "linear-gradient(135deg, #22c55e, #15803d)",
+      color: "white",
+      fontSize: ms(9.3),
+      fontWeight: 950,
+      boxShadow:
+        "0 12px 24px rgba(34,197,94,.22)",
+      cursor: "pointer",
+    },
+
+    nextPageButton: {
+      position: "relative",
+      width: "100%",
+      minHeight: ms(48),
+      border: 0,
+      borderRadius: ms(18),
+      background:
+        "linear-gradient(135deg, #22c55e, #15803d)",
+      color: "white",
+      fontSize: ms(10),
+      fontWeight: 950,
+      boxShadow:
+        "0 12px 24px rgba(34,197,94,.22)",
+      cursor: "pointer",
+    },
+
+    rejectedOnlyButton: {
+      width: "100%",
+      minHeight: ms(48),
+      border: 0,
+      borderRadius: ms(18),
+      background: "#ef4444",
+      color: "white",
+      fontSize: ms(10),
+      fontWeight: 950,
+      boxShadow:
+        "0 12px 24px rgba(239,68,68,.20)",
+    },
+
+    popupOverlay: {
+      position: "absolute",
+      inset: 0,
+      zIndex: 100,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: ms(18),
+      background: "rgba(2,6,23,.72)",
+      backdropFilter: "blur(8px)",
+    },
+
+    rejectPopup: {
+      width: "100%",
+      maxWidth: ms(280),
+      padding: `${ms(23)}px ${ms(
+        18
+      )}px ${ms(18)}px`,
+      borderRadius: ms(25),
+      border: "1px solid #fecaca",
+      background: "white",
+      textAlign: "center",
+      boxShadow:
+        "0 30px 80px rgba(0,0,0,.38)",
+    },
+
+    acceptPopup: {
+      position: "relative",
+      width: "100%",
+      maxWidth: ms(280),
+      overflow: "hidden",
+      padding: `${ms(25)}px ${ms(
+        18
+      )}px ${ms(18)}px`,
+      borderRadius: ms(25),
+      border: "1px solid #bbf7d0",
+      background:
+        "linear-gradient(145deg, white, #f0fdf4)",
+      textAlign: "center",
+      boxShadow:
+        "0 30px 80px rgba(0,0,0,.38)",
+    },
+
+    warningIcon: {
+      width: ms(58),
+      height: ms(58),
+      margin: "0 auto",
+      display: "grid",
+      placeItems: "center",
+      borderRadius: "50%",
+      background: "#fee2e2",
+      color: "#dc2626",
+      fontSize: ms(29),
+      fontWeight: 950,
+      boxShadow:
+        "0 0 0 7px rgba(239,68,68,.08)",
+    },
+
+    popupGlow: {
+      position: "absolute",
+      left: "50%",
+      top: ms(-65),
+      width: ms(170),
+      height: ms(130),
+      borderRadius: "50%",
+      background:
+        "rgba(34,197,94,.20)",
+      filter: `blur(${ms(28)}px)`,
+      transform: "translateX(-50%)",
+    },
+
+    greenTick: {
+      position: "relative",
+      zIndex: 2,
+      width: ms(62),
+      height: ms(62),
+      margin: "0 auto",
+      display: "grid",
+      placeItems: "center",
+      border: `${ms(5)}px solid #dcfce7`,
+      borderRadius: "50%",
+      background:
+        "linear-gradient(135deg, #22c55e, #15803d)",
+      color: "white",
+      fontSize: ms(30),
+      fontWeight: 950,
+    },
+
+    popupTitle: {
+      margin: `${ms(17)}px 0 0`,
+      color: "#111827",
+      fontSize: ms(19),
+      lineHeight: 1.06,
+      fontWeight: 950,
+    },
+
+    popupText: {
+      margin: `${ms(10)}px auto 0`,
+      maxWidth: ms(235),
+      color: "#57534e",
+      fontSize: ms(9),
+      lineHeight: 1.45,
+      fontWeight: 650,
+    },
+
+    popupButtons: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: ms(8),
+      marginTop: ms(17),
+    },
+
+    cancelButton: {
+      minHeight: ms(42),
+      border: "1px solid #e7e5e4",
+      borderRadius: ms(16),
+      background: "#fafaf9",
+      color: "#44403c",
+      fontSize: ms(9),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+
+    confirmRejectButton: {
+      minHeight: ms(42),
+      border: 0,
+      borderRadius: ms(16),
+      background: "#ef4444",
+      color: "white",
+      fontSize: ms(9),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    doneButton: {
+      position: "relative",
+      zIndex: 2,
+      width: "100%",
+      minHeight: ms(44),
+      marginTop: ms(17),
+      border: 0,
+      borderRadius: ms(17),
+      background:
+        "linear-gradient(135deg, #22c55e, #15803d)",
+      color: "white",
+      fontSize: ms(10.5),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+  };
+}
+
+const globalCss = `
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  background: #0b0907;
+  overflow: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.rate-page-scroll,
+.tracker-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.rate-page-scroll::-webkit-scrollbar,
+.tracker-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+body {
+  -webkit-text-size-adjust: 100%;
+}
+
+@keyframes radarSweep {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sellerDotPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.82);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+}
+
+@keyframes scannerIconPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.07);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+`;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+deliverystatus
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
+const BASE_W = 390;
+const BASE_H = 844;
+
+const ORDER_STAGES = [
+  {
+    id: "confirmed",
+    label: "Order confirmed",
+  },
+  {
+    id: "sellerAssigned",
+    label: "Seller assigned",
+  },
+  {
+    id: "vehicleAssigned",
+    label: "Vehicle assigned",
+  },
+  {
+    id: "loading",
+    label: "Material loading",
+  },
+  {
+    id: "inTransit",
+    label: "In transit",
+  },
+  {
+    id: "delivered",
+    label: "Delivered",
+  },
+];
+
+const VEHICLES = [
+  {
+    id: "vehicle-1",
+    number: "KA 01 AB 1234",
+    driver: "Ramesh Kumar",
+    contact: "+91 98765 43210",
+    capacity: "10 tons",
+    material: "20mm Crushed Stone",
+    status: "In transit",
+    loadingStatus: "Loaded",
+    progress: 100,
+  },
+  {
+    id: "vehicle-2",
+    number: "KA 02 CD 5678",
+    driver: "Suresh Patil",
+    contact: "+91 98765 43211",
+    capacity: "10 tons",
+    material: "20mm Crushed Stone",
+    status: "In transit",
+    loadingStatus: "Loading",
+    progress: 68,
+  },
+  {
+    id: "vehicle-3",
+    number: "KA 03 EF 9012",
+    driver: "Mahesh Rao",
+    contact: "+91 98765 43212",
+    capacity: "10 tons",
+    material: "40mm Crushed Stone",
+    status: "Dispatched",
+    loadingStatus: "Waiting",
+    progress: 20,
+  },
+];
+
+function useViewport() {
+  const [viewport, setViewport] = useState({
+    width:
+      typeof window !== "undefined"
+        ? window.innerWidth
+        : BASE_W,
+    height:
+      typeof window !== "undefined"
+        ? window.innerHeight
+        : BASE_H,
+  });
+
+  useEffect(() => {
+    const updateViewport = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    updateViewport();
+
+    window.addEventListener(
+      "resize",
+      updateViewport
+    );
+
+    window.addEventListener(
+      "orientationchange",
+      updateViewport
+    );
+
+    return () => {
+      window.removeEventListener(
+        "resize",
+        updateViewport
+      );
+
+      window.removeEventListener(
+        "orientationchange",
+        updateViewport
+      );
+    };
+  }, []);
+
+  return viewport;
+}
+
+export default function ActiveOrderPage({
+  goToPage4,
+  goToPage7,
+}) {
+  const viewport = useViewport();
+
+  const styles = useMemo(
+    () => createStyles(viewport),
+    [viewport.width, viewport.height]
+  );
+
+  /*
+    Frontend testing statuses:
+
+    confirmed
+    loading
+    inTransit
+    delivered
+
+    Later, the backend will provide this value.
+  */
+  const [orderStatus, setOrderStatus] =
+    useState("confirmed");
+
+  const [showStatusMenu, setShowStatusMenu] =
+    useState(false);
+
+  const [showIssuePanel, setShowIssuePanel] =
+    useState(false);
+  const [feedbackSubmitted, setFeedbackSubmitted] =
+    useState(false);
+
+    const [feedback, setFeedback] = useState({
+      overall: 0,
+      materialQuality: 0,
+      rateValue: 0,
+      transportation: 0,
+      bookingExperience: 0,
+      comments: "",
+    });
+    
+    const currentStageIndex = useMemo(() => {
+      if (orderStatus === "confirmed") {
+        return 2;
+      }
+    
+      if (orderStatus === "loading") {
+        return 3;
+      }
+    
+      if (orderStatus === "inTransit") {
+        return 4;
+      }
+    
+      if (orderStatus === "delivered") {
+        return 5;
+      }
+    
+      return 0;
+    }, [orderStatus]);
+    
+    const pageContent = useMemo(() => {
+      if (orderStatus === "loading") {
+        return {
+          eyebrow: "MATERIAL PREPARATION",
+          title: "Material Loading",
+          titleSecondLine: "in Progress",
+          description:
+            "Your stone material is being loaded into the assigned vehicles.",
+          icon: "⬆",
+          statusLabel: "Loading",
+          statusTone: "amber",
+        };
+      }
+    
+      if (orderStatus === "inTransit") {
+        return {
+          eyebrow: "DELIVERY IN PROGRESS",
+          title: "Your Order Is",
+          titleSecondLine: "on the Way",
+          description:
+            "The assigned vehicles have left the seller location and are travelling to your delivery site.",
+          icon: "🚚",
+          statusLabel: "In transit",
+          statusTone: "blue",
+        };
+      }
+    
+      if (orderStatus === "delivered") {
+        return {
+          eyebrow: "DELIVERY COMPLETED",
+          title: "Order Delivered",
+          titleSecondLine: "Successfully",
+          description:
+            "All assigned vehicles have completed delivery. Please review your experience.",
+          icon: "✓",
+          statusLabel: "Delivered",
+          statusTone: "green",
+        };
+      }
+    
+      return {
+        eyebrow: "ACTIVE ORDER",
+        title: "Your Order Is",
+        titleSecondLine: "Confirmed",
+        description:
+          "The seller and transport vehicles have been assigned. Material preparation will begin shortly.",
+        icon: "✓",
+        statusLabel: "Confirmed",
+        statusTone: "green",
+      };
+    }, [orderStatus]);
+
+  const updateRating = (name, value) => {
+    if (feedbackSubmitted) return;
+
+    setFeedback((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
+  };
+
+  const updateComments = (event) => {
+    if (feedbackSubmitted) return;
+
+    const value = event.target.value.slice(0, 500);
+
+    setFeedback((previous) => ({
+      ...previous,
+      comments: value,
+    }));
+  };
+
+  const submitFeedback = () => {
+    if (feedback.overall === 0) return;
+
+    setFeedbackSubmitted(true);
+  };
+
+  const callNumber = (number) => {
+    window.location.href = `tel:${number.replace(
+      /\s/g,
+      ""
+    )}`;
+  };
+
+  const getStageState = (index) => {
+    if (index < currentStageIndex) {
+      return "completed";
+    }
+
+    if (index === currentStageIndex) {
+      if (orderStatus === "delivered") {
+        return "completed";
+      }
+
+      return "active";
+    }
+
+    return "waiting";
+  };
+
+  return (
+    <div style={styles.page}>
+      <style>{globalCss}</style>
+
+      <main style={styles.phone}>
+        <header style={styles.header}>
+          <div style={styles.headerGrid} />
+          <div style={styles.headerShade} />
+
+          <div style={styles.topBar}>
+            <button
+              type="button"
+              style={styles.backButton}
+              onClick={goToPage4}
+              aria-label="Back to Home"
+            >
+              ‹
+            </button>
+
+            <div style={styles.orderBadge}>
+              ACTIVE ORDER
+            </div>
+
+            <button
+              type="button"
+              style={styles.helpButton}
+              onClick={() =>
+                setShowIssuePanel(true)
+              }
+            >
+              Help
+            </button>
+          </div>
+
+          <div style={styles.heroRow}>
+            <div style={styles.heroTextArea}>
+              <p style={styles.eyebrow}>
+                {pageContent.eyebrow}
+              </p>
+
+              <h1 style={styles.title}>
+                {pageContent.title}
+                <br />
+                {pageContent.titleSecondLine}
+              </h1>
+
+              <p style={styles.heroDescription}>
+                {pageContent.description}
+              </p>
+            </div>
+
+            <div
+              style={{
+                ...styles.heroIcon,
+                ...(pageContent.statusTone ===
+                "blue"
+                  ? styles.heroIconBlue
+                  : {}),
+                ...(pageContent.statusTone ===
+                "green"
+                  ? styles.heroIconGreen
+                  : {}),
+              }}
+            >
+              {pageContent.icon}
+            </div>
+          </div>
+
+          <div style={styles.headerSummary}>
+            <div style={styles.headerSummaryItem}>
+              <span>Order ID</span>
+              <b>SO-260705-01</b>
+            </div>
+
+            <div
+              style={styles.headerSummaryDivider}
+            />
+
+            <div style={styles.headerSummaryItem}>
+              <span>Quantity</span>
+              <b>30 tons</b>
+            </div>
+
+            <div
+              style={styles.headerSummaryDivider}
+            />
+
+            <div style={styles.headerSummaryItem}>
+              <span>Status</span>
+              <b>{pageContent.statusLabel}</b>
+            </div>
+          </div>
+        </header>
+
+        <section
+          className="active-order-scroll"
+          style={styles.scrollArea}
+        >
+          <section style={styles.content}>
+            <article style={styles.trackerCard}>
+              <div style={styles.trackerHeader}>
+                <div>
+                  <span
+                    style={styles.sectionEyebrow}
+                  >
+                    ORDER JOURNEY
+                  </span>
+
+                  <h2 style={styles.trackerTitle}>
+                    Delivery status
+                  </h2>
+                </div>
+
+                <span
+                  style={{
+                    ...styles.currentStatusPill,
+                    ...(orderStatus === "inTransit"
+                      ? styles.currentStatusPillBlue
+                      : {}),
+                    ...(orderStatus === "delivered"
+                      ? styles.currentStatusPillGreen
+                      : {}),
+                  }}
+                >
+                  {pageContent.statusLabel}
+                </span>
+              </div>
+
+              <div
+                className="tracker-horizontal-scroll"
+                style={styles.trackerScroller}
+              >
+                <div style={styles.tracker}>
+                  {ORDER_STAGES.map(
+                    (stage, index) => {
+                      const state =
+                        getStageState(index);
+
+                      return (
+                        <React.Fragment
+                          key={stage.id}
+                        >
+                          <OrderStatusStep
+                            styles={styles}
+                            label={stage.label}
+                            state={state}
+                          />
+
+                          {index <
+                            ORDER_STAGES.length -
+                              1 && (
+                            <div
+                              style={{
+                                ...styles.trackerConnector,
+                                ...(state ===
+                                "completed"
+                                  ? styles.trackerConnectorCompleted
+                                  : {}),
+                              }}
+                            />
+                          )}
+                        </React.Fragment>
+                      );
+                    }
+                  )}
+                </div>
+              </div>
+            </article>
+
+            <section style={styles.testingSection}>
+              <button
+                type="button"
+                style={styles.testingToggle}
+                onClick={() =>
+                  setShowStatusMenu(
+                    (previous) => !previous
+                  )
+                }
+              >
+                Test order statuses
+                <span>
+                  {showStatusMenu ? "▲" : "▼"}
+                </span>
+              </button>
+
+              {showStatusMenu && (
+                <div style={styles.testingButtons}>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOrderStatus("confirmed")
+                    }
+                    style={{
+                      ...styles.testingButton,
+                      ...(orderStatus ===
+                      "confirmed"
+                        ? styles.testingButtonActive
+                        : {}),
+                    }}
+                  >
+                    Confirmed
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOrderStatus("loading")
+                    }
+                    style={{
+                      ...styles.testingButton,
+                      ...(orderStatus === "loading"
+                        ? styles.testingButtonActive
+                        : {}),
+                    }}
+                  >
+                    Loading
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOrderStatus("inTransit")
+                    }
+                    style={{
+                      ...styles.testingButton,
+                      ...(orderStatus ===
+                      "inTransit"
+                        ? styles.testingButtonActive
+                        : {}),
+                    }}
+                  >
+                    In transit
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOrderStatus("delivered")
+                    }
+                    style={{
+                      ...styles.testingButton,
+                      ...(orderStatus ===
+                      "delivered"
+                        ? styles.testingButtonActive
+                        : {}),
+                    }}
+                  >
+                    Delivered
+                  </button>
+                </div>
+              )}
+            </section>
+
+            {orderStatus === "confirmed" && (
+              <ConfirmedContent
+                styles={styles}
+              />
+            )}
+
+            {orderStatus === "loading" && (
+              <LoadingContent
+                styles={styles}
+                vehicles={VEHICLES}
+              />
+            )}
+
+            {orderStatus === "inTransit" && (
+              <InTransitContent
+                styles={styles}
+                vehicles={VEHICLES}
+                callNumber={callNumber}
+                setShowIssuePanel={
+                  setShowIssuePanel
+                }
+              />
+            )}
+
+            {orderStatus === "delivered" && (
+              <DeliveredContent
+                styles={styles}
+                feedback={feedback}
+                updateRating={updateRating}
+                updateComments={updateComments}
+                submitFeedback={submitFeedback}
+                feedbackSubmitted={
+                  feedbackSubmitted
+                }
+              />
+            )}
+
+            <OrderSummary styles={styles} />
+
+            <div style={styles.bottomSpacer} />
+          </section>
+        </section>
+
+        <footer style={styles.fixedFooter}>
+          {orderStatus === "confirmed" && (
+            <>
+              <div style={styles.footerHint}>
+                <span
+                  style={styles.footerStatusDot}
+                />
+
+                <span>
+                  Waiting for material loading to
+                  begin
+                </span>
+              </div>
+
+              <button
+                type="button"
+                style={styles.footerMainButton}
+                onClick={() =>
+                  setShowIssuePanel(true)
+                }
+              >
+                Contact Support
+              </button>
+            </>
+          )}
+
+          {orderStatus === "loading" && (
+            <>
+              <div style={styles.footerHint}>
+                <span
+                  style={styles.footerStatusDot}
+                />
+
+                <span>
+                  Loading and quality checks are in
+                  progress
+                </span>
+              </div>
+
+              <button
+                type="button"
+                style={styles.footerMainButton}
+                onClick={() =>
+                  setShowIssuePanel(true)
+                }
+              >
+                Contact Support
+              </button>
+            </>
+          )}
+
+          {orderStatus === "inTransit" && (
+            <>
+              <div style={styles.footerHintBlue}>
+                <span
+                  style={styles.footerStatusDotBlue}
+                />
+
+                <span>
+                  Three assigned vehicles are on the
+                  way
+                </span>
+              </div>
+
+              <div style={styles.transitFooterButtons}>
+                <button
+                  type="button"
+                  style={styles.supportButton}
+                  onClick={() =>
+                    setShowIssuePanel(true)
+                  }
+                >
+                  Support
+                </button>
+
+                <button
+                  type="button"
+                  style={styles.trackButton}
+                >
+                  Track Delivery
+                </button>
+              </div>
+            </>
+          )}
+
+          {orderStatus === "delivered" &&
+            !feedbackSubmitted && (
+              <>
+                <div
+                  style={styles.footerHintGreen}
+                >
+                  <span>✓</span>
+
+                  <span>
+                    Delivery completed successfully
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  style={{
+                    ...styles.submitFeedbackButton,
+                    opacity:
+                      feedback.overall > 0
+                        ? 1
+                        : 0.5,
+                  }}
+                  disabled={feedback.overall === 0}
+                  onClick={submitFeedback}
+                >
+                  Submit Feedback
+                </button>
+              </>
+            )}
+
+          {orderStatus === "delivered" &&
+            feedbackSubmitted && (
+              <>
+                <div
+                  style={styles.footerHintGreen}
+                >
+                  <span>✓</span>
+
+                  <span>
+                    Feedback submitted successfully
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  style={styles.footerMainButton}
+                  onClick={goToPage4}
+                >
+                  Return to Home
+                </button>
+              </>
+            )}
+        </footer>
+
+        {showIssuePanel && (
+          <div style={styles.popupOverlay}>
+            <div style={styles.supportPopup}>
+              <div style={styles.supportPopupIcon}>
+                ?
+              </div>
+
+              <h2 style={styles.popupTitle}>
+                Need help with this order?
+              </h2>
+
+              <p style={styles.popupText}>
+                Contact StoneRate support for
+                delivery, material, seller or
+                transporter assistance.
+              </p>
+
+              <div style={styles.popupButtons}>
+                <button
+                  type="button"
+                  style={styles.popupCancelButton}
+                  onClick={() =>
+                    setShowIssuePanel(false)
+                  }
+                >
+                  Close
+                </button>
+
+                <button
+                  type="button"
+                  style={styles.popupCallButton}
+                  onClick={() =>
+                    callNumber("+91 98765 00000")
+                  }
+                >
+                  Call Support
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
+
+function OrderStatusStep({
+  styles,
+  label,
+  state,
+}) {
+  return (
+    <div style={styles.trackerStep}>
+      <div
+        style={{
+          ...styles.trackerCircle,
+          ...(state === "completed"
+            ? styles.trackerCircleCompleted
+            : {}),
+          ...(state === "active"
+            ? styles.trackerCircleActive
+            : {}),
+          ...(state === "waiting"
+            ? styles.trackerCircleWaiting
+            : {}),
+        }}
+      >
+        {state === "completed"
+          ? "✓"
+          : state === "active"
+          ? "•"
+          : ""}
+      </div>
+
+      <span
+        style={{
+          ...styles.trackerLabel,
+          ...(state === "completed"
+            ? styles.trackerLabelCompleted
+            : {}),
+          ...(state === "active"
+            ? styles.trackerLabelActive
+            : {}),
+        }}
+      >
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function ConfirmedContent({ styles }) {
+  return (
+    <>
+      <article style={styles.primaryStatusCard}>
+        <div style={styles.primaryStatusIcon}>
+          ✓
+        </div>
+
+        <div style={{ minWidth: 0 }}>
+          <span style={styles.cardEyebrow}>
+            ORDER CONFIRMED
+          </span>
+
+          <h2 style={styles.primaryStatusTitle}>
+            Preparing your order
+          </h2>
+
+          <p style={styles.primaryStatusText}>
+            The seller and transporter are
+            coordinating material preparation.
+            You’ll receive an update when loading
+            begins.
+          </p>
+        </div>
+      </article>
+
+      <div style={styles.sectionHeading}>
+        <div>
+          <span style={styles.sectionEyebrow}>
+            ASSIGNMENT DETAILS
+          </span>
+
+          <h2 style={styles.sectionTitle}>
+            Seller and transporter
+          </h2>
+        </div>
+
+        <span style={styles.verifiedPill}>
+          Verified
+        </span>
+      </div>
+
+      <article style={styles.assignmentCard}>
+        <div style={styles.assignmentHeader}>
+          <div style={styles.sellerIcon}>
+            S
+          </div>
+
+          <div style={styles.assignmentTitleArea}>
+            <span style={styles.assignmentLabel}>
+              ASSIGNED SELLER
+            </span>
+
+            <h3 style={styles.assignmentTitle}>
+              Verified Stone Supplier
+            </h3>
+
+            <p style={styles.assignmentSubtitle}>
+              Bengaluru Rural, Karnataka
+            </p>
+          </div>
+
+          <span style={styles.verifiedIcon}>
+            ✓
+          </span>
+        </div>
+
+        <div style={styles.assignmentInfoGrid}>
+          <InfoBox
+            styles={styles}
+            label="Material"
+            value="20mm and 40mm Stone"
+          />
+
+          <InfoBox
+            styles={styles}
+            label="Seller status"
+            value="Confirmed"
+          />
+        </div>
+      </article>
+
+      <article style={styles.assignmentCard}>
+        <div style={styles.assignmentHeader}>
+          <div style={styles.transporterIcon}>
+            🚚
+          </div>
+
+          <div style={styles.assignmentTitleArea}>
+            <span style={styles.assignmentLabel}>
+              ASSIGNED TRANSPORTER
+            </span>
+
+            <h3 style={styles.assignmentTitle}>
+              StoneRate Transport Partner
+            </h3>
+
+            <p style={styles.assignmentSubtitle}>
+              Three vehicles reserved
+            </p>
+          </div>
+
+          <span style={styles.verifiedIcon}>
+            ✓
+          </span>
+        </div>
+
+        <div style={styles.assignmentInfoGrid}>
+          <InfoBox
+            styles={styles}
+            label="Vehicles"
+            value="3 assigned"
+          />
+
+          <InfoBox
+            styles={styles}
+            label="Capacity"
+            value="30 tons"
+          />
+        </div>
+
+        <div style={styles.assignmentNotice}>
+          Driver and vehicle registration details
+          will appear before dispatch.
+        </div>
+      </article>
+    </>
+  );
+}
+
+function LoadingContent({
+  styles,
+  vehicles,
+}) {
+  const loadedVehicles = vehicles.filter(
+    (vehicle) =>
+      vehicle.loadingStatus === "Loaded"
+  ).length;
+
+  return (
+    <>
+      <article style={styles.loadingShowcase}>
+        <div style={styles.loadingScene}>
+          <div style={styles.loadingMaterialOne}>
+            ◆
+          </div>
+
+          <div style={styles.loadingMaterialTwo}>
+            ◆
+          </div>
+
+          <div style={styles.loadingMaterialThree}>
+            ◆
+          </div>
+
+          <div style={styles.loadingTruck}>
+            🚚
+          </div>
+
+          <div style={styles.loadingGround} />
+        </div>
+
+        <div style={styles.loadingShowcaseText}>
+          <span style={styles.cardEyebrow}>
+            LIVE LOADING UPDATE
+          </span>
+
+          <h2 style={styles.loadingTitle}>
+            Loading is underway
+          </h2>
+
+          <p style={styles.loadingText}>
+            The material is being loaded and checked
+            before dispatch.
+          </p>
+        </div>
+      </article>
+
+      <article style={styles.loadingProgressCard}>
+        <div style={styles.progressHeader}>
+          <div>
+            <span style={styles.sectionEyebrow}>
+              LOADING PROGRESS
+            </span>
+
+            <h3 style={styles.progressTitle}>
+              {loadedVehicles} of {vehicles.length}{" "}
+              vehicles ready
+            </h3>
+          </div>
+
+          <span style={styles.loadingLivePill}>
+            <span
+              style={styles.loadingLiveDot}
+            />
+            Live
+          </span>
+        </div>
+
+        <div style={styles.overallProgressTrack}>
+          <div
+            style={{
+              ...styles.overallProgressFill,
+              width: "63%",
+            }}
+          />
+        </div>
+
+        <div style={styles.loadingMeta}>
+          <span>Loading started at 10:20 AM</span>
+          <b>Estimated dispatch: 12:30 PM</b>
+        </div>
+      </article>
+
+      <div style={styles.sectionHeading}>
+        <div>
+          <span style={styles.sectionEyebrow}>
+            VEHICLE PREPARATION
+          </span>
+
+          <h2 style={styles.sectionTitle}>
+            Loading status
+          </h2>
+        </div>
+      </div>
+
+      <div style={styles.vehicleStack}>
+        {vehicles.map((vehicle, index) => (
+          <article
+            key={vehicle.id}
+            style={styles.loadingVehicleCard}
+          >
+            <div
+              style={styles.loadingVehicleHeader}
+            >
+              <div
+                style={styles.loadingVehicleNumber}
+              >
+                {index + 1}
+              </div>
+
+              <div
+                style={styles.loadingVehicleText}
+              >
+                <h3
+                  style={
+                    styles.loadingVehicleTitle
+                  }
+                >
+                  Vehicle {index + 1}
+                </h3>
+
+                <p
+                  style={
+                    styles.loadingVehicleSubtitle
+                  }
+                >
+                  {vehicle.material} •{" "}
+                  {vehicle.capacity}
+                </p>
+              </div>
+
+              <span
+                style={{
+                  ...styles.loadingStatusPill,
+                  ...(vehicle.loadingStatus ===
+                  "Loaded"
+                    ? styles.loadingStatusComplete
+                    : {}),
+                  ...(vehicle.loadingStatus ===
+                  "Waiting"
+                    ? styles.loadingStatusWaiting
+                    : {}),
+                }}
+              >
+                {vehicle.loadingStatus}
+              </span>
+            </div>
+
+            <div
+              style={
+                styles.vehicleProgressTrack
+              }
+            >
+              <div
+                style={{
+                  ...styles.vehicleProgressFill,
+                  width: `${vehicle.progress}%`,
+                  ...(vehicle.loadingStatus ===
+                  "Loaded"
+                    ? styles.vehicleProgressComplete
+                    : {}),
+                }}
+              />
+            </div>
+
+            <div style={styles.vehicleProgressText}>
+              <span>Preparation progress</span>
+              <b>{vehicle.progress}%</b>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div style={styles.qualityNotice}>
+        <div style={styles.qualityIcon}>
+          ✓
+        </div>
+
+        <div>
+          <b>Material quality check included</b>
+
+          <p>
+            Material type and vehicle quantity are
+            being checked before dispatch.
+          </p>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function InTransitContent({
+  styles,
+  vehicles,
+  callNumber,
+  setShowIssuePanel,
+}) {
+  return (
+    <>
+      <article style={styles.transitStatusCard}>
+        <div style={styles.transitAnimation}>
+          <div style={styles.roadLine} />
+          <div style={styles.movingTruck}>
+            🚚
+          </div>
+        </div>
+
+        <div style={styles.transitStatusText}>
+          <span style={styles.transitEyebrow}>
+            LIVE DELIVERY UPDATE
+          </span>
+
+          <h2 style={styles.transitTitle}>
+            Three vehicles in transit
+          </h2>
+
+          <p style={styles.transitText}>
+            Dispatched at 10:30 AM • Expected arrival
+            at 2:15 PM
+          </p>
+        </div>
+      </article>
+
+      <article style={styles.routeCard}>
+        <div style={styles.routeHeader}>
+          <div style={styles.routeIcon}>
+            ◎
+          </div>
+
+          <div style={styles.routeTitleArea}>
+            <span style={styles.routeLabel}>
+              DELIVERY ROUTE
+            </span>
+
+            <h3 style={styles.routeTitle}>
+              Seller location to your site
+            </h3>
+          </div>
+
+          <span style={styles.distancePill}>
+            42 km
+          </span>
+        </div>
+
+        <div style={styles.routeTrack}>
+          <span style={styles.routeStartDot} />
+
+          <div style={styles.routeProgressLine}>
+            <div
+              style={styles.routeProgressFill}
+            />
+          </div>
+
+          <span style={styles.routeEndDot} />
+        </div>
+
+        <div style={styles.routeLabels}>
+          <span>Dispatched</span>
+          <span>Delivery site</span>
+        </div>
+
+        <div style={styles.lastUpdated}>
+          Last updated 2 minutes ago
+        </div>
+      </article>
+
+      <div style={styles.sectionHeading}>
+        <div>
+          <span style={styles.sectionEyebrow}>
+            TRANSPORT DETAILS
+          </span>
+
+          <h2 style={styles.sectionTitle}>
+            Assigned vehicles
+          </h2>
+        </div>
+
+        <span style={styles.transitCountPill}>
+          3 vehicles
+        </span>
+      </div>
+
+      <div style={styles.vehicleStack}>
+        {vehicles.map((vehicle, index) => (
+          <article
+            key={vehicle.id}
+            style={styles.transitVehicleCard}
+          >
+            <div style={styles.vehicleCardHeader}>
+              <div style={styles.vehicleMainIcon}>
+                🚚
+              </div>
+
+              <div
+                style={styles.vehicleMainText}
+              >
+                <span
+                  style={styles.vehicleNumberLabel}
+                >
+                  VEHICLE {index + 1}
+                </span>
+
+                <h3
+                  style={styles.vehicleNumber}
+                >
+                  {vehicle.number}
+                </h3>
+              </div>
+
+              <span style={styles.inTransitPill}>
+                <span
+                  style={styles.inTransitDot}
+                />
+                {vehicle.status}
+              </span>
+            </div>
+
+            <div
+              style={styles.vehicleDetailsGrid}
+            >
+              <InfoBox
+                styles={styles}
+                label="Driver"
+                value={vehicle.driver}
+              />
+
+              <InfoBox
+                styles={styles}
+                label="Capacity"
+                value={vehicle.capacity}
+              />
+
+              <InfoBox
+                styles={styles}
+                label="Material"
+                value={vehicle.material}
+                wide
+              />
+            </div>
+
+            <div style={styles.vehicleActions}>
+              <button
+                type="button"
+                style={styles.callDriverButton}
+                onClick={() =>
+                  callNumber(vehicle.contact)
+                }
+              >
+                ☎ Call Driver
+              </button>
+
+              <button
+                type="button"
+                style={styles.reportIssueButton}
+                onClick={() =>
+                  setShowIssuePanel(true)
+                }
+              >
+                Report Issue
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function DeliveredContent({
+  styles,
+  feedback,
+  updateRating,
+  updateComments,
+  submitFeedback,
+  feedbackSubmitted,
+}) {
+  return (
+    <>
+      <article style={styles.deliveredShowcase}>
+        <div style={styles.deliverySuccessIcon}>
+          ✓
+        </div>
+
+        <div style={styles.deliveredText}>
+          <span style={styles.deliveredEyebrow}>
+            DELIVERY COMPLETED
+          </span>
+
+          <h2 style={styles.deliveredTitle}>
+            All vehicles delivered
+          </h2>
+
+          <p style={styles.deliveredDescription}>
+            Delivery was completed on 05 July 2026 at
+            3:45 PM.
+          </p>
+        </div>
+      </article>
+
+      <article style={styles.deliverySummaryCard}>
+        <div style={styles.deliverySummaryGrid}>
+          <SummaryMetric
+            styles={styles}
+            label="Delivered"
+            value="30 tons"
+          />
+
+          <SummaryMetric
+            styles={styles}
+            label="Vehicles"
+            value="3 of 3"
+          />
+
+          <SummaryMetric
+            styles={styles}
+            label="Final rate"
+            value="₹1,280/t"
+          />
+        </div>
+
+        <div style={styles.deliveryLocation}>
+          <div
+            style={
+              styles.deliveryLocationIcon
+            }
+          >
+            ◎
+          </div>
+
+          <div>
+            <span>Delivery location</span>
+            <b>
+              Buyer’s construction site,
+              Bengaluru
+            </b>
+          </div>
+        </div>
+      </article>
+
+      <div style={styles.sectionHeading}>
+        <div>
+          <span style={styles.sectionEyebrow}>
+            YOUR FEEDBACK
+          </span>
+
+          <h2 style={styles.sectionTitle}>
+            Rate your experience
+          </h2>
+        </div>
+
+        {!feedbackSubmitted && (
+          <span style={styles.optionalPill}>
+            1 minute
+          </span>
+        )}
+      </div>
+
+      {feedbackSubmitted ? (
+        <article
+          style={styles.feedbackSuccessCard}
+        >
+          <div
+            style={styles.feedbackSuccessIcon}
+          >
+            ✓
+          </div>
+
+          <h2
+            style={styles.feedbackSuccessTitle}
+          >
+            Thank you for your feedback
+          </h2>
+
+          <p
+            style={styles.feedbackSuccessText}
+          >
+            Your review helps StoneRate improve
+            seller quality, transportation and the
+            booking experience.
+          </p>
+        </article>
+      ) : (
+        <article style={styles.feedbackCard}>
+          <RatingField
+            styles={styles}
+            label="Overall Experience"
+            description="Your complete StoneRate experience"
+            value={feedback.overall}
+            onChange={(value) =>
+              updateRating("overall", value)
+            }
+            featured
+          />
+
+          <div style={styles.ratingDivider} />
+
+          <RatingField
+            styles={styles}
+            label="Material Quality"
+            description="Quality and condition of delivered stone"
+            value={feedback.materialQuality}
+            onChange={(value) =>
+              updateRating(
+                "materialQuality",
+                value
+              )
+            }
+          />
+
+          <div style={styles.ratingDivider} />
+
+          <RatingField
+            styles={styles}
+            label="Rate and Value"
+            description="Price competitiveness and transparency"
+            value={feedback.rateValue}
+            onChange={(value) =>
+              updateRating("rateValue", value)
+            }
+          />
+
+          <div style={styles.ratingDivider} />
+
+          <RatingField
+            styles={styles}
+            label="Transportation"
+            description="Delivery timing and driver coordination"
+            value={feedback.transportation}
+            onChange={(value) =>
+              updateRating(
+                "transportation",
+                value
+              )
+            }
+          />
+
+          <div style={styles.ratingDivider} />
+
+          <RatingField
+            styles={styles}
+            label="Booking Experience"
+            description="Ease of booking and status updates"
+            value={feedback.bookingExperience}
+            onChange={(value) =>
+              updateRating(
+                "bookingExperience",
+                value
+              )
+            }
+          />
+
+          <div style={styles.commentsSection}>
+            <div style={styles.commentsHeader}>
+              <label style={styles.commentsLabel}>
+                Additional Comments
+              </label>
+
+              <span
+                style={styles.characterCount}
+              >
+                {feedback.comments.length} / 500
+              </span>
+            </div>
+
+            <textarea
+              value={feedback.comments}
+              onChange={updateComments}
+              placeholder="Tell us what went well or what we can improve..."
+              style={styles.commentsTextarea}
+            />
+          </div>
+
+          <button
+            type="button"
+            style={{
+              ...styles.inlineSubmitButton,
+              opacity:
+                feedback.overall > 0
+                  ? 1
+                  : 0.5,
+            }}
+            disabled={feedback.overall === 0}
+            onClick={submitFeedback}
+          >
+            Submit Feedback
+          </button>
+        </article>
+      )}
+    </>
+  );
+}
+
+function RatingField({
+  styles,
+  label,
+  description,
+  value,
+  onChange,
+  featured,
+}) {
+  const ratingLabels = [
+    "",
+    "Poor",
+    "Fair",
+    "Good",
+    "Very Good",
+    "Excellent",
+  ];
+
+  return (
+    <div
+      style={{
+        ...styles.ratingField,
+        ...(featured
+          ? styles.ratingFieldFeatured
+          : {}),
+      }}
+    >
+      <div style={styles.ratingHeader}>
+        <div>
+          <h3 style={styles.ratingLabel}>
+            {label}
+          </h3>
+
+          <p style={styles.ratingDescription}>
+            {description}
+          </p>
+        </div>
+
+        {value > 0 && (
+          <span style={styles.ratingValuePill}>
+            {ratingLabels[value]}
+          </span>
+        )}
+      </div>
+
+      <div
+        style={styles.starRow}
+        role="radiogroup"
+        aria-label={label}
+      >
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            type="button"
+            style={{
+              ...styles.starButton,
+              ...(star <= value
+                ? styles.starButtonActive
+                : {}),
+            }}
+            onClick={() => onChange(star)}
+            aria-label={`${star} star rating`}
+          >
+            ★
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function InfoBox({
+  styles,
+  label,
+  value,
+  wide,
+}) {
+  return (
+    <div
+      style={{
+        ...styles.infoBox,
+        ...(wide ? styles.infoBoxWide : {}),
+      }}
+    >
+      <span>{label}</span>
+      <b>{value}</b>
+    </div>
+  );
+}
+
+function SummaryMetric({
+  styles,
+  label,
+  value,
+}) {
+  return (
+    <div style={styles.summaryMetric}>
+      <span>{label}</span>
+      <b>{value}</b>
+    </div>
+  );
+}
+
+function OrderSummary({ styles }) {
+  return (
+    <>
+      <div style={styles.sectionHeading}>
+        <div>
+          <span style={styles.sectionEyebrow}>
+            ORDER INFORMATION
+          </span>
+
+          <h2 style={styles.sectionTitle}>
+            Confirmed details
+          </h2>
+        </div>
+
+        <span style={styles.orderIdPill}>
+          SO-260705-01
+        </span>
+      </div>
+
+      <article style={styles.orderSummaryCard}>
+        <div style={styles.summaryRow}>
+          <span>Source rate request</span>
+          <b>SR-260705-01</b>
+        </div>
+
+        <div style={styles.summaryDivider} />
+
+        <div style={styles.summaryRow}>
+          <span>Material</span>
+          <b>20mm and 40mm Stone</b>
+        </div>
+
+        <div style={styles.summaryDivider} />
+
+        <div style={styles.summaryRow}>
+          <span>Total quantity</span>
+          <b>30 tons</b>
+        </div>
+
+        <div style={styles.summaryDivider} />
+
+        <div style={styles.summaryRow}>
+          <span>Confirmed rate</span>
+          <b>₹1,280 per ton</b>
+        </div>
+
+        <div style={styles.summaryDivider} />
+
+        <div style={styles.summaryRow}>
+          <span>Transport</span>
+          <b>Included</b>
+        </div>
+
+        <div style={styles.summaryDivider} />
+
+        <div style={styles.summaryRow}>
+          <span>Expected delivery</span>
+          <b>05 July 2026</b>
+        </div>
+      </article>
+    </>
+  );
+}
+
+function createStyles(viewport) {
+  const viewportWidth =
+    viewport.width || BASE_W;
+
+  const viewportHeight =
+    viewport.height || BASE_H;
+
+  const isDesktop = viewportWidth >= 700;
+
+  const appWidth = isDesktop
+    ? 390
+    : viewportWidth;
+
+  const appHeight = isDesktop
+    ? 844
+    : viewportHeight;
+
+  const scale = Math.max(
+    0.72,
+    Math.min(
+      1,
+      Math.min(
+        appWidth / BASE_W,
+        appHeight / BASE_H
+      )
+    )
+  );
+
+  const px = (value) =>
+    Math.max(1, Math.round(value * scale));
+  const FONT_SCALE = 1.4;
+
+    const font = (value) =>
+      Math.max(
+        1,
+        Math.round(value * scale * FONT_SCALE)
+      );
+    
+
+
+
+  const narrow = appWidth < 360;
+  const navFooterHeight = px(92);
+  const headerHeight = px(narrow ? 272 : 280);
+  const contentGap = px(0);
+
+  return {
+    page: {
+      width: "100vw",
+      height: "100dvh",
+      minHeight: "100dvh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: isDesktop
+        ? "center"
+        : "stretch",
+      margin: 0,
+      padding: isDesktop ? 10 : 0,
+      overflow: "hidden",
+      background: isDesktop
+        ? "#f4f1ea"
+        : "#0b0907",
+      fontFamily: "Arial, sans-serif",
+    },
+
+    phone: {
+      position: "relative",
+      width: isDesktop ? 390 : "100vw",
+      height: isDesktop ? 844 : "100dvh",
+      overflow: "hidden",
+      background: "#f6f4ef",
+      borderRadius: isDesktop ? 30 : 0,
+      boxShadow: isDesktop
+        ? "0 25px 70px rgba(0,0,0,.25)"
+        : "none",
+    },
+
+    header: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: 0,
+      zIndex: 30,
+      height: headerHeight,
+      padding: `${px(12)}px ${px(
+        narrow ? 12 : 15
+      )}px ${px(15)}px`,
+      overflow: "hidden",
+      color: "white",
+      background:
+        "radial-gradient(circle at 85% 8%, rgba(245,158,11,.42), transparent 31%), linear-gradient(135deg,#080706,#1c1917 54%,#78350f)",
+      boxShadow:
+        "0 16px 34px rgba(28,15,7,.20)",
+    },
+
+    headerGrid: {
+      position: "absolute",
+      inset: 0,
+      opacity: 0.22,
+      pointerEvents: "none",
+      backgroundImage:
+        "linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px)",
+      backgroundSize: `${px(30)}px ${px(
+        30
+      )}px`,
+    },
+
+    headerShade: {
+      position: "absolute",
+      inset: 0,
+      pointerEvents: "none",
+      background:
+        "linear-gradient(to bottom,rgba(0,0,0,.02),rgba(0,0,0,.28))",
+    },
+
+    topBar: {
+      position: "relative",
+      zIndex: 2,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: px(8),
+    },
+
+    backButton: {
+      width: px(34),
+      height: px(34),
+      display: "grid",
+      placeItems: "center",
+      padding: 0,
+      border:
+        "1px solid rgba(255,255,255,.18)",
+      borderRadius: px(12),
+      background: "rgba(255,255,255,.11)",
+      color: "white",
+      fontSize: font(24),
+      lineHeight: 1,
+      cursor: "pointer",
+    },
+
+    orderBadge: {
+      padding: `${px(6)}px ${px(11)}px`,
+      border:
+        "1px solid rgba(245,158,11,.45)",
+      borderRadius: 999,
+      background: "rgba(245,158,11,.17)",
+      color: "#fde68a",
+      fontSize: font(8),
+      letterSpacing: px(1),
+      fontWeight: 950,
+    },
+
+    helpButton: {
+      minWidth: px(45),
+      height: px(32),
+      padding: `0 ${px(10)}px`,
+      border:
+        "1px solid rgba(255,255,255,.18)",
+      borderRadius: 999,
+      background: "rgba(255,255,255,.11)",
+      color: "white",
+      fontSize: font(9),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+
+    heroRow: {
+      position: "relative",
+      zIndex: 2,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: px(12),
+      marginTop: px(16),
+    },
+
+    heroTextArea: {
+      minWidth: 0,
+    },
+
+    eyebrow: {
+      margin: 0,
+      color: "#fde68a",
+      fontSize: font(7),
+      letterSpacing: px(1.2),
+      fontWeight: 950,
+    },
+
+    title: {
+      margin: `${px(6)}px 0 0`,
+      color: "white",
+      fontSize: px(narrow ? 25 : 29),
+      lineHeight: 1.02,
+      letterSpacing: -0.7,
+      fontWeight: 950,
+    },
+
+    heroDescription: {
+      maxWidth: px(245),
+      margin: `${px(8)}px 0 0`,
+      color: "#e7e5e4",
+      fontSize: font(9),
+      lineHeight: 1.35,
+      fontWeight: 650,
+    },
+
+    heroIcon: {
+      width: px(54),
+      height: px(54),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: px(20),
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: font(25),
+      fontWeight: 950,
+      boxShadow:
+        "0 15px 30px rgba(234,88,12,.32)",
+      animation:
+        "statusIconPulse 2.2s ease-in-out infinite",
+    },
+
+    heroIconBlue: {
+      background:
+        "linear-gradient(135deg,#38bdf8,#1d4ed8)",
+      boxShadow:
+        "0 15px 30px rgba(29,78,216,.28)",
+    },
+
+    heroIconGreen: {
+      background:
+        "linear-gradient(135deg,#22c55e,#15803d)",
+      boxShadow:
+        "0 15px 30px rgba(34,197,94,.28)",
+    },
+
+    headerSummary: {
+      position: "relative",
+      zIndex: 2,
+      display: "grid",
+      gridTemplateColumns:
+        "1fr auto 1fr auto 1fr",
+      alignItems: "center",
+      marginTop: px(15),
+      padding: px(9),
+      border:
+        "1px solid rgba(255,255,255,.14)",
+      borderRadius: px(16),
+      background: "rgba(255,255,255,.11)",
+      backdropFilter: "blur(10px)",
+    },
+
+    headerSummaryItem: {
+      minWidth: 0,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: px(3),
+      color: "#e7e5e4",
+      textAlign: "center",
+      fontSize: font(7),
+    },
+
+    headerSummaryDivider: {
+      width: 1,
+      height: px(28),
+      background:
+        "rgba(255,255,255,.18)",
+    },
+
+    scrollArea: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: headerHeight + contentGap,
+      bottom: navFooterHeight,
+      overflowY: "auto",
+      overflowX: "hidden",
+      WebkitOverflowScrolling: "touch",
+      scrollbarWidth: "none",
+      background:
+        "linear-gradient(180deg,#fff,#f6f4ef 58%,#efede8)",
+    },
+
+    content: {
+      padding: `${px(13)}px ${px(
+        narrow ? 10 : 13
+      )}px 0`,
+      color: "#111827",
+    },
+
+    trackerCard: {
+      padding: px(12),
+      overflow: "hidden",
+      border: "1px solid #e7e5e4",
+      borderRadius: px(21),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    trackerHeader: {
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: px(8),
+      marginBottom: px(10),
+    },
+
+    sectionEyebrow: {
+      color: "#b45309",
+      fontSize: font(7),
+      letterSpacing: px(1),
+      fontWeight: 950,
+    },
+
+    trackerTitle: {
+      margin: `${px(4)}px 0 0`,
+      fontSize: font(13),
+      fontWeight: 950,
+    },
+
+    currentStatusPill: {
+      padding: `${px(5)}px ${px(8)}px`,
+      borderRadius: 999,
+      background: "#fffbeb",
+      color: "#b45309",
+      fontSize: font(7),
+      fontWeight: 950,
+      whiteSpace: "nowrap",
+    },
+
+    currentStatusPillBlue: {
+      background: "#eff6ff",
+      color: "#1d4ed8",
+    },
+
+    currentStatusPillGreen: {
+      background: "#ecfdf5",
+      color: "#15803d",
+    },
+
+    trackerScroller: {
+      width: "100%",
+      overflowX: "auto",
+      overflowY: "hidden",
+      paddingBottom: px(3),
+      scrollbarWidth: "none",
+    },
+
+    tracker: {
+      minWidth: px(610),
+      display: "flex",
+      alignItems: "flex-start",
+    },
+
+    trackerStep: {
+      width: px(78),
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      flexShrink: 0,
+      textAlign: "center",
+    },
+
+    trackerCircle: {
+      width: px(25),
+      height: px(25),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: "50%",
+      fontSize: font(10),
+      fontWeight: 950,
+    },
+
+    trackerCircleCompleted: {
+      background: "#22c55e",
+      color: "white",
+      boxShadow:
+        "0 6px 14px rgba(34,197,94,.22)",
+    },
+
+    trackerCircleActive: {
+      background: "#f59e0b",
+      color: "white",
+      boxShadow:
+        "0 0 0 5px rgba(245,158,11,.13)",
+      animation:
+        "activeStagePulse 1.7s ease-in-out infinite",
+    },
+
+    trackerCircleWaiting: {
+      border: "2px solid #d6d3d1",
+      background: "#f5f5f4",
+      color: "#a8a29e",
+    },
+
+    trackerLabel: {
+      marginTop: px(6),
+      color: "#a8a29e",
+      fontSize: font(6.5),
+      lineHeight: 1.15,
+      fontWeight: 750,
+    },
+
+    trackerLabelCompleted: {
+      color: "#166534",
+    },
+
+    trackerLabelActive: {
+      color: "#92400e",
+      fontWeight: 950,
+    },
+
+    trackerConnector: {
+      width: px(26),
+      height: px(4),
+      marginTop: px(10.5),
+      flexShrink: 0,
+      borderRadius: 999,
+      background: "#e7e5e4",
+    },
+
+    trackerConnectorCompleted: {
+      background: "#22c55e",
+    },
+
+    testingSection: {
+      marginTop: px(10),
+    },
+
+    testingToggle: {
+      width: "100%",
+      minHeight: px(34),
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: `0 ${px(11)}px`,
+      border: "1px dashed #d97706",
+      borderRadius: px(13),
+      background: "#fffbeb",
+      color: "#92400e",
+      fontSize: font(8),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+
+    testingButtons: {
+      display: "grid",
+      gridTemplateColumns: "repeat(4,1fr)",
+      gap: px(5),
+      marginTop: px(7),
+    },
+
+    testingButton: {
+      minWidth: 0,
+      minHeight: px(31),
+      padding: `0 ${px(4)}px`,
+      border: "1px solid #e7e5e4",
+      borderRadius: px(10),
+      background: "white",
+      color: "#57534e",
+      fontSize: font(6.5),
+      fontWeight: 850,
+      cursor: "pointer",
+    },
+
+    testingButtonActive: {
+      borderColor: "#f59e0b",
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+    },
+
+    primaryStatusCard: {
+      display: "flex",
+      alignItems: "center",
+      gap: px(12),
+      marginTop: px(12),
+      padding: px(14),
+      border: "1px solid #fde68a",
+      borderRadius: px(21),
+      background:
+        "linear-gradient(135deg,#fffbeb,#fef3c7)",
+      boxShadow:
+        "0 11px 25px rgba(146,64,14,.09)",
+    },
+
+    primaryStatusIcon: {
+      width: px(44),
+      height: px(44),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: px(16),
+      background:
+        "linear-gradient(135deg,#22c55e,#15803d)",
+      color: "white",
+      fontSize: font(21),
+      fontWeight: 950,
+    },
+
+    cardEyebrow: {
+      color: "#b45309",
+      fontSize: font(6.8),
+      letterSpacing: px(0.9),
+      fontWeight: 950,
+    },
+
+    primaryStatusTitle: {
+      margin: `${px(4)}px 0 0`,
+      color: "#78350f",
+      fontSize: font(12),
+      fontWeight: 950,
+    },
+
+    primaryStatusText: {
+      margin: `${px(5)}px 0 0`,
+      color: "#92400e",
+      fontSize: font(7.8),
+      lineHeight: 1.4,
+      fontWeight: 650,
+    },
+
+    sectionHeading: {
+      display: "flex",
+      alignItems: "flex-end",
+      justifyContent: "space-between",
+      gap: px(8),
+      marginTop: px(16),
+      marginBottom: px(9),
+    },
+
+    sectionTitle: {
+      margin: `${px(4)}px 0 0`,
+      fontSize: font(14),
+      fontWeight: 950,
+    },
+
+    verifiedPill: {
+      padding: `${px(5)}px ${px(8)}px`,
+      borderRadius: 999,
+      background: "#ecfdf5",
+      color: "#15803d",
+      fontSize: font(7),
+      fontWeight: 950,
+    },
+
+    assignmentCard: {
+      marginBottom: px(10),
+      padding: px(13),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(20),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    assignmentHeader: {
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr) auto",
+      alignItems: "center",
+      gap: px(9),
+    },
+
+    sellerIcon: {
+      width: px(39),
+      height: px(39),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: px(14),
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: font(16),
+      fontWeight: 950,
+    },
+
+    transporterIcon: {
+      width: px(39),
+      height: px(39),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: px(14),
+      background:
+        "linear-gradient(135deg,#38bdf8,#1d4ed8)",
+      color: "white",
+      fontSize: font(17),
+    },
+
+    assignmentTitleArea: {
+      minWidth: 0,
+    },
+
+    assignmentLabel: {
+      color: "#a8a29e",
+      fontSize: font(6.5),
+      letterSpacing: px(0.7),
+      fontWeight: 950,
+    },
+
+    assignmentTitle: {
+      margin: `${px(3)}px 0 0`,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      color: "#111827",
+      fontSize: font(10.5),
+      fontWeight: 950,
+    },
+
+    assignmentSubtitle: {
+      margin: `${px(3)}px 0 0`,
+      color: "#78716c",
+      fontSize: font(7.5),
+    },
+
+    verifiedIcon: {
+      width: px(25),
+      height: px(25),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: "50%",
+      background: "#dcfce7",
+      color: "#15803d",
+      fontSize: font(10),
+      fontWeight: 950,
+    },
+
+    assignmentInfoGrid: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: px(7),
+      marginTop: px(11),
+    },
+
+    infoBox: {
+      minWidth: 0,
+      display: "flex",
+      flexDirection: "column",
+      gap: px(3),
+      padding: px(8),
+      border: "1px solid #eeeae6",
+      borderRadius: px(13),
+      background: "#fafaf9",
+      color: "#78716c",
+      fontSize: font(7),
+    },
+
+    infoBoxWide: {
+      gridColumn: "1 / -1",
+    },
+
+    assignmentNotice: {
+      marginTop: px(9),
+      padding: px(9),
+      borderRadius: px(12),
+      background: "#eff6ff",
+      color: "#1d4ed8",
+      fontSize: font(7.3),
+      lineHeight: 1.35,
+      fontWeight: 700,
+    },
+
+    loadingShowcase: {
+      position: "relative",
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr)",
+      alignItems: "center",
+      gap: px(13),
+      marginTop: px(12),
+      padding: px(14),
+      overflow: "hidden",
+      border:
+        "1px solid rgba(245,158,11,.28)",
+      borderRadius: px(22),
+      background:
+        "linear-gradient(135deg,#17100b,#3f2414 58%,#78350f)",
+      color: "white",
+      boxShadow:
+        "0 16px 34px rgba(120,53,15,.18)",
+    },
+
+    loadingScene: {
+      position: "relative",
+      width: px(96),
+      height: px(78),
+      flexShrink: 0,
+      overflow: "hidden",
+    },
+
+    loadingTruck: {
+      position: "absolute",
+      right: px(4),
+      bottom: px(10),
+      zIndex: 3,
+      fontSize: font(38),
+      animation:
+        "truckBounce 1.8s ease-in-out infinite",
+    },
+
+    loadingMaterialOne: {
+      position: "absolute",
+      left: px(12),
+      top: px(8),
+      color: "#f59e0b",
+      fontSize: font(15),
+      animation:
+        "materialDrop 1.6s ease-in-out infinite",
+    },
+
+    loadingMaterialTwo: {
+      position: "absolute",
+      left: px(32),
+      top: px(4),
+      color: "#d97706",
+      fontSize: font(12),
+      animation:
+        "materialDrop 1.6s .35s ease-in-out infinite",
+    },
+
+    loadingMaterialThree: {
+      position: "absolute",
+      left: px(49),
+      top: px(12),
+      color: "#92400e",
+      fontSize: font(13),
+      animation:
+        "materialDrop 1.6s .7s ease-in-out infinite",
+    },
+
+    loadingGround: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom: px(8),
+      height: px(3),
+      borderRadius: 999,
+      background:
+        "rgba(251,191,36,.35)",
+    },
+
+    loadingShowcaseText: {
+      minWidth: 0,
+    },
+
+    loadingTitle: {
+      margin: `${px(5)}px 0 0`,
+      fontSize: font(14),
+      fontWeight: 950,
+    },
+
+    loadingText: {
+      margin: `${px(6)}px 0 0`,
+      color: "#d6d3d1",
+      fontSize: font(8),
+      lineHeight: 1.4,
+    },
+
+    loadingProgressCard: {
+      marginTop: px(12),
+      padding: px(13),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(21),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    progressHeader: {
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: px(8),
+    },
+
+    progressTitle: {
+      margin: `${px(4)}px 0 0`,
+      fontSize: font(11),
+      fontWeight: 950,
+    },
+
+    loadingLivePill: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: px(4),
+      padding: `${px(5)}px ${px(8)}px`,
+      borderRadius: 999,
+      background: "#fffbeb",
+      color: "#b45309",
+      fontSize: font(7),
+      fontWeight: 950,
+    },
+
+    loadingLiveDot: {
+      width: px(6),
+      height: px(6),
+      borderRadius: "50%",
+      background: "#f59e0b",
+      animation:
+        "activeStagePulse 1.7s ease-in-out infinite",
+    },
+
+    overallProgressTrack: {
+      height: px(7),
+      marginTop: px(11),
+      overflow: "hidden",
+      borderRadius: 999,
+      background: "#f1f0ee",
+    },
+
+    overallProgressFill: {
+      height: "100%",
+      borderRadius: 999,
+      background:
+        "linear-gradient(90deg,#f59e0b,#ea580c)",
+      transition: "width 500ms ease",
+    },
+
+    loadingMeta: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: px(8),
+      marginTop: px(9),
+      color: "#78716c",
+      fontSize: font(7),
+    },
+
+    vehicleStack: {
+      display: "grid",
+      gap: px(9),
+    },
+
+    loadingVehicleCard: {
+      padding: px(12),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(19),
+      background: "white",
+      boxShadow:
+        "0 9px 22px rgba(0,0,0,.045)",
+    },
+
+    loadingVehicleHeader: {
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr) auto",
+      alignItems: "center",
+      gap: px(8),
+    },
+
+    loadingVehicleNumber: {
+      width: px(32),
+      height: px(32),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: px(11),
+      background: "#fffbeb",
+      color: "#b45309",
+      fontSize: font(11),
+      fontWeight: 950,
+    },
+
+    loadingVehicleText: {
+      minWidth: 0,
+    },
+
+    loadingVehicleTitle: {
+      margin: 0,
+      fontSize: font(10),
+      fontWeight: 950,
+    },
+
+    loadingVehicleSubtitle: {
+      margin: `${px(3)}px 0 0`,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      color: "#78716c",
+      fontSize: font(7),
+    },
+
+    loadingStatusPill: {
+      padding: `${px(5)}px ${px(7)}px`,
+      borderRadius: 999,
+      background: "#fffbeb",
+      color: "#b45309",
+      fontSize: font(6.5),
+      fontWeight: 950,
+    },
+
+    loadingStatusComplete: {
+      background: "#ecfdf5",
+      color: "#15803d",
+    },
+
+    loadingStatusWaiting: {
+      background: "#f5f5f4",
+      color: "#78716c",
+    },
+
+    vehicleProgressTrack: {
+      height: px(5),
+      marginTop: px(10),
+      overflow: "hidden",
+      borderRadius: 999,
+      background: "#f1f0ee",
+    },
+
+    vehicleProgressFill: {
+      height: "100%",
+      borderRadius: 999,
+      background:
+        "linear-gradient(90deg,#f59e0b,#ea580c)",
+    },
+
+    vehicleProgressComplete: {
+      background:
+        "linear-gradient(90deg,#22c55e,#15803d)",
+    },
+
+    vehicleProgressText: {
+      display: "flex",
+      justifyContent: "space-between",
+      marginTop: px(6),
+      color: "#78716c",
+      fontSize: font(6.7),
+    },
+
+    qualityNotice: {
+      display: "flex",
+      gap: px(9),
+      marginTop: px(11),
+      padding: px(11),
+      border: "1px solid #bbf7d0",
+      borderRadius: px(17),
+      background: "#f0fdf4",
+      color: "#166534",
+      fontSize: font(7.5),
+      lineHeight: 1.35,
+    },
+
+    qualityIcon: {
+      width: px(29),
+      height: px(29),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: px(10),
+      background: "#22c55e",
+      color: "white",
+      fontWeight: 950,
+    },
+
+    transitStatusCard: {
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr)",
+      alignItems: "center",
+      gap: px(13),
+      marginTop: px(12),
+      padding: px(14),
+      overflow: "hidden",
+      border:
+        "1px solid rgba(56,189,248,.28)",
+      borderRadius: px(22),
+      background:
+        "linear-gradient(135deg,#071426,#0c4a6e 56%,#1d4ed8)",
+      color: "white",
+      boxShadow:
+        "0 16px 34px rgba(29,78,216,.18)",
+    },
+
+    transitAnimation: {
+      position: "relative",
+      width: px(92),
+      height: px(66),
+      overflow: "hidden",
+      borderRadius: px(16),
+      background:
+        "rgba(255,255,255,.07)",
+    },
+
+    roadLine: {
+      position: "absolute",
+      left: px(7),
+      right: px(7),
+      bottom: px(14),
+      height: px(3),
+      borderRadius: 999,
+      background:
+        "repeating-linear-gradient(90deg,#fde68a 0 12px,transparent 12px 22px)",
+    },
+
+    movingTruck: {
+      position: "absolute",
+      left: px(5),
+      bottom: px(17),
+      fontSize: font(34),
+      animation:
+        "driveTruck 3s ease-in-out infinite",
+    },
+
+    transitStatusText: {
+      minWidth: 0,
+    },
+
+    transitEyebrow: {
+      color: "#bae6fd",
+      fontSize: font(6.8),
+      letterSpacing: px(1),
+      fontWeight: 950,
+    },
+
+    transitTitle: {
+      margin: `${px(5)}px 0 0`,
+      fontSize: font(13),
+      fontWeight: 950,
+    },
+
+    transitText: {
+      margin: `${px(6)}px 0 0`,
+      color: "#dbeafe",
+      fontSize: font(7.5),
+      lineHeight: 1.35,
+    },
+
+    routeCard: {
+      marginTop: px(12),
+      padding: px(13),
+      border: "1px solid #dbeafe",
+      borderRadius: px(21),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    routeHeader: {
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr) auto",
+      alignItems: "center",
+      gap: px(9),
+    },
+
+    routeIcon: {
+      width: px(37),
+      height: px(37),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: px(13),
+      background: "#eff6ff",
+      color: "#1d4ed8",
+      fontSize: font(18),
+      fontWeight: 950,
+    },
+
+    routeTitleArea: {
+      minWidth: 0,
+    },
+
+    routeLabel: {
+      color: "#1d4ed8",
+      fontSize: font(6.5),
+      letterSpacing: px(0.8),
+      fontWeight: 950,
+    },
+
+    routeTitle: {
+      margin: `${px(4)}px 0 0`,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      fontSize: font(10),
+      fontWeight: 950,
+    },
+
+    distancePill: {
+      padding: `${px(5)}px ${px(8)}px`,
+      borderRadius: 999,
+      background: "#eff6ff",
+      color: "#1d4ed8",
+      fontSize: font(7),
+      fontWeight: 950,
+    },
+
+    routeTrack: {
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr) auto",
+      alignItems: "center",
+      marginTop: px(15),
+    },
+
+    routeStartDot: {
+      width: px(12),
+      height: px(12),
+      borderRadius: "50%",
+      background: "#22c55e",
+      boxShadow:
+        "0 0 0 4px rgba(34,197,94,.12)",
+    },
+
+    routeEndDot: {
+      width: px(12),
+      height: px(12),
+      border: "3px solid #1d4ed8",
+      borderRadius: "50%",
+      background: "white",
+    },
+
+    routeProgressLine: {
+      height: px(5),
+      overflow: "hidden",
+      background: "#dbeafe",
+    },
+
+    routeProgressFill: {
+      width: "68%",
+      height: "100%",
+      background:
+        "linear-gradient(90deg,#22c55e,#38bdf8,#1d4ed8)",
+    },
+
+    routeLabels: {
+      display: "flex",
+      justifyContent: "space-between",
+      marginTop: px(7),
+      color: "#64748b",
+      fontSize: font(6.7),
+      fontWeight: 750,
+    },
+
+    lastUpdated: {
+      marginTop: px(9),
+      padding: px(8),
+      borderRadius: px(11),
+      background: "#eff6ff",
+      color: "#1d4ed8",
+      textAlign: "center",
+      fontSize: font(7),
+      fontWeight: 800,
+    },
+
+    transitCountPill: {
+      padding: `${px(5)}px ${px(8)}px`,
+      borderRadius: 999,
+      background: "#eff6ff",
+      color: "#1d4ed8",
+      fontSize: font(7),
+      fontWeight: 950,
+    },
+
+    transitVehicleCard: {
+      padding: px(12),
+      border: "1px solid #dbeafe",
+      borderRadius: px(20),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    vehicleCardHeader: {
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr) auto",
+      alignItems: "center",
+      gap: px(8),
+    },
+
+    vehicleMainIcon: {
+      width: px(38),
+      height: px(38),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: px(13),
+      background:
+        "linear-gradient(135deg,#38bdf8,#1d4ed8)",
+      fontSize: font(18),
+    },
+
+    vehicleMainText: {
+      minWidth: 0,
+    },
+
+    vehicleNumberLabel: {
+      color: "#64748b",
+      fontSize: font(6.3),
+      letterSpacing: px(0.7),
+      fontWeight: 950,
+    },
+
+    vehicleNumber: {
+      margin: `${px(3)}px 0 0`,
+      fontSize: font(10.5),
+      fontWeight: 950,
+    },
+
+    inTransitPill: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: px(4),
+      padding: `${px(5)}px ${px(7)}px`,
+      borderRadius: 999,
+      background: "#eff6ff",
+      color: "#1d4ed8",
+      fontSize: font(6.5),
+      fontWeight: 950,
+    },
+
+    inTransitDot: {
+      width: px(5),
+      height: px(5),
+      borderRadius: "50%",
+      background: "#38bdf8",
+      animation:
+        "activeStagePulse 1.7s ease-in-out infinite",
+    },
+
+    vehicleDetailsGrid: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: px(7),
+      marginTop: px(10),
+    },
+
+    vehicleActions: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: px(7),
+      marginTop: px(10),
+    },
+
+    callDriverButton: {
+      minHeight: px(35),
+      border: 0,
+      borderRadius: px(12),
+      background:
+        "linear-gradient(135deg,#22c55e,#15803d)",
+      color: "white",
+      fontSize: font(7.5),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    reportIssueButton: {
+      minHeight: px(35),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(12),
+      background: "#fafaf9",
+      color: "#57534e",
+      fontSize: font(7.5),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+
+    deliveredShowcase: {
+      display: "flex",
+      alignItems: "center",
+      gap: px(13),
+      marginTop: px(12),
+      padding: px(15),
+      border: "1px solid #bbf7d0",
+      borderRadius: px(22),
+      background:
+        "linear-gradient(135deg,#f0fdf4,#dcfce7)",
+      boxShadow:
+        "0 13px 28px rgba(34,197,94,.10)",
+    },
+
+    deliverySuccessIcon: {
+      width: px(52),
+      height: px(52),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      border: `${px(4)}px solid #dcfce7`,
+      borderRadius: "50%",
+      background:
+        "linear-gradient(135deg,#22c55e,#15803d)",
+      color: "white",
+      fontSize: font(24),
+      fontWeight: 950,
+      boxShadow:
+        "0 12px 25px rgba(34,197,94,.22)",
+    },
+
+    deliveredText: {
+      minWidth: 0,
+    },
+
+    deliveredEyebrow: {
+      color: "#15803d",
+      fontSize: font(6.8),
+      letterSpacing: px(0.9),
+      fontWeight: 950,
+    },
+
+    deliveredTitle: {
+      margin: `${px(5)}px 0 0`,
+      color: "#166534",
+      fontSize: font(13),
+      fontWeight: 950,
+    },
+
+    deliveredDescription: {
+      margin: `${px(5)}px 0 0`,
+      color: "#166534",
+      fontSize: font(7.5),
+      lineHeight: 1.35,
+    },
+
+    deliverySummaryCard: {
+      marginTop: px(12),
+      padding: px(13),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(21),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    deliverySummaryGrid: {
+      display: "grid",
+      gridTemplateColumns: "repeat(3,1fr)",
+      gap: px(7),
+    },
+
+    summaryMetric: {
+      minWidth: 0,
+      display: "flex",
+      flexDirection: "column",
+      gap: px(3),
+      padding: px(9),
+      borderRadius: px(13),
+      background: "#f0fdf4",
+      color: "#166534",
+      fontSize: font(7),
+    },
+
+    deliveryLocation: {
+      display: "flex",
+      alignItems: "center",
+      gap: px(9),
+      marginTop: px(10),
+      padding: px(10),
+      border: "1px solid #eeeae6",
+      borderRadius: px(14),
+      color: "#78716c",
+      fontSize: font(7),
+    },
+
+    deliveryLocationIcon: {
+      width: px(32),
+      height: px(32),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: px(11),
+      background: "#fffbeb",
+      color: "#b45309",
+      fontSize: font(15),
+      fontWeight: 950,
+    },
+
+    optionalPill: {
+      padding: `${px(5)}px ${px(8)}px`,
+      borderRadius: 999,
+      background: "#f5f5f4",
+      color: "#78716c",
+      fontSize: font(7),
+      fontWeight: 900,
+    },
+
+    feedbackCard: {
+      padding: px(13),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(22),
+      background: "white",
+      boxShadow:
+        "0 12px 27px rgba(0,0,0,.06)",
+    },
+
+    ratingField: {
+      padding: `${px(4)}px 0`,
+    },
+
+    ratingFieldFeatured: {
+      padding: px(10),
+      borderRadius: px(15),
+      background: "#fffbeb",
+    },
+
+    ratingHeader: {
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: px(8),
+    },
+
+    ratingLabel: {
+      margin: 0,
+      fontSize: font(10),
+      fontWeight: 950,
+    },
+
+    ratingDescription: {
+      margin: `${px(3)}px 0 0`,
+      color: "#78716c",
+      fontSize: font(7),
+      lineHeight: 1.3,
+    },
+
+    ratingValuePill: {
+      flexShrink: 0,
+      padding: `${px(4)}px ${px(7)}px`,
+      borderRadius: 999,
+      background: "#fef3c7",
+      color: "#92400e",
+      fontSize: font(6.5),
+      fontWeight: 950,
+    },
+
+    starRow: {
+      display: "flex",
+      alignItems: "center",
+      gap: px(5),
+      marginTop: px(8),
+    },
+
+    starButton: {
+      width: px(35),
+      height: px(35),
+      display: "grid",
+      placeItems: "center",
+      padding: 0,
+      border: "1px solid #e7e5e4",
+      borderRadius: px(11),
+      background: "#fafaf9",
+      color: "#d6d3d1",
+      fontSize: font(18),
+      cursor: "pointer",
+      transition:
+        "transform 160ms ease,color 160ms ease,background 160ms ease",
+    },
+
+    starButtonActive: {
+      borderColor: "#f59e0b",
+      background: "#fffbeb",
+      color: "#f59e0b",
+      transform: "translateY(-2px)",
+      boxShadow:
+        "0 7px 14px rgba(245,158,11,.14)",
+    },
+
+    ratingDivider: {
+      height: 1,
+      margin: `${px(10)}px 0`,
+      background: "#eeeae6",
+    },
+
+    commentsSection: {
+      marginTop: px(13),
+      paddingTop: px(12),
+      borderTop: "1px solid #eeeae6",
+    },
+
+    commentsHeader: {
+      display: "flex",
+      justifyContent: "space-between",
+      gap: px(8),
+    },
+
+    commentsLabel: {
+      fontSize: font(9),
+      fontWeight: 950,
+    },
+
+    characterCount: {
+      color: "#a8a29e",
+      fontSize: font(6.5),
+    },
+
+    commentsTextarea: {
+      width: "100%",
+      minHeight: px(95),
+      marginTop: px(8),
+      padding: px(11),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(15),
+      outline: 0,
+      resize: "vertical",
+      background: "#fafaf9",
+      color: "#111827",
+      fontFamily: "Arial, sans-serif",
+      fontSize: font(8),
+      lineHeight: 1.45,
+    },
+
+    inlineSubmitButton: {
+      width: "100%",
+      minHeight: px(45),
+      marginTop: px(12),
+      border: 0,
+      borderRadius: px(16),
+      background:
+        "linear-gradient(135deg,#22c55e,#15803d)",
+      color: "white",
+      fontSize: font(9),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    feedbackSuccessCard: {
+      padding: px(20),
+      border: "1px solid #bbf7d0",
+      borderRadius: px(22),
+      background:
+        "linear-gradient(135deg,#f0fdf4,#dcfce7)",
+      textAlign: "center",
+    },
+
+    feedbackSuccessIcon: {
+      width: px(52),
+      height: px(52),
+      margin: "0 auto",
+      display: "grid",
+      placeItems: "center",
+      borderRadius: "50%",
+      background:
+        "linear-gradient(135deg,#22c55e,#15803d)",
+      color: "white",
+      fontSize: font(24),
+      fontWeight: 950,
+    },
+
+    feedbackSuccessTitle: {
+      margin: `${px(13)}px 0 0`,
+      color: "#166534",
+      fontSize: font(13),
+      fontWeight: 950,
+    },
+
+    feedbackSuccessText: {
+      maxWidth: px(280),
+      margin: `${px(7)}px auto 0`,
+      color: "#166534",
+      fontSize: font(7.8),
+      lineHeight: 1.45,
+    },
+
+    orderIdPill: {
+      padding: `${px(5)}px ${px(8)}px`,
+      borderRadius: 999,
+      background: "#fffbeb",
+      color: "#b45309",
+      fontSize: font(7),
+      fontWeight: 950,
+    },
+
+    orderSummaryCard: {
+      overflow: "hidden",
+      padding: px(12),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(20),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    summaryRow: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: px(12),
+      padding: `${px(8)}px 0`,
+      color: "#78716c",
+      fontSize: font(7.5),
+    },
+
+    summaryDivider: {
+      height: 1,
+      background: "#eeeae6",
+    },
+
+    bottomSpacer: {
+      height: px(24),
+    },
+
+    fixedFooter: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 40,
+      minHeight: navFooterHeight,
+      padding: `${px(8)}px ${px(
+        13
+      )}px calc(env(safe-area-inset-bottom,0px) + ${px(
+        10
+      )}px)`,
+      background:
+        "linear-gradient(to top,#f6f4ef 78%,rgba(246,244,239,.98))",
+      borderTop:
+        "1px solid rgba(120,113,108,.13)",
+      boxShadow:
+        "0 -12px 30px rgba(0,0,0,.10)",
+    },
+
+    footerHint: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: px(6),
+      marginBottom: px(7),
+      color: "#92400e",
+      fontSize: font(7),
+      fontWeight: 800,
+    },
+
+    footerStatusDot: {
+      width: px(7),
+      height: px(7),
+      borderRadius: "50%",
+      background: "#f59e0b",
+      animation:
+        "activeStagePulse 1.7s ease-in-out infinite",
+    },
+
+    footerHintBlue: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: px(6),
+      marginBottom: px(7),
+      color: "#1d4ed8",
+      fontSize: font(7),
+      fontWeight: 850,
+    },
+
+    footerStatusDotBlue: {
+      width: px(7),
+      height: px(7),
+      borderRadius: "50%",
+      background: "#38bdf8",
+      animation:
+        "activeStagePulse 1.7s ease-in-out infinite",
+    },
+
+    footerHintGreen: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: px(6),
+      marginBottom: px(7),
+      color: "#15803d",
+      fontSize: font(7),
+      fontWeight: 850,
+    },
+
+    footerMainButton: {
+      width: "100%",
+      minHeight: px(47),
+      border: 0,
+      borderRadius: px(17),
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: font(9),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    transitFooterButtons: {
+      display: "grid",
+      gridTemplateColumns: ".8fr 1.2fr",
+      gap: px(8),
+    },
+
+    supportButton: {
+      minHeight: px(47),
+      border: "1px solid #dbeafe",
+      borderRadius: px(17),
+      background: "white",
+      color: "#1d4ed8",
+      fontSize: font(9),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    trackButton: {
+      minHeight: px(47),
+      border: 0,
+      borderRadius: px(17),
+      background:
+        "linear-gradient(135deg,#38bdf8,#1d4ed8)",
+      color: "white",
+      fontSize: font(9),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    submitFeedbackButton: {
+      width: "100%",
+      minHeight: px(47),
+      border: 0,
+      borderRadius: px(17),
+      background:
+        "linear-gradient(135deg,#22c55e,#15803d)",
+      color: "white",
+      fontSize: font(9),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    popupOverlay: {
+      position: "absolute",
+      inset: 0,
+      zIndex: 100,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: px(18),
+      background: "rgba(2,6,23,.72)",
+      backdropFilter: "blur(8px)",
+    },
+
+    supportPopup: {
+      width: "100%",
+      maxWidth: px(310),
+      padding: px(20),
+      border: "1px solid #fde68a",
+      borderRadius: px(24),
+      background: "white",
+      textAlign: "center",
+      boxShadow:
+        "0 30px 80px rgba(0,0,0,.38)",
+    },
+
+    supportPopupIcon: {
+      width: px(56),
+      height: px(56),
+      margin: "0 auto",
+      display: "grid",
+      placeItems: "center",
+      borderRadius: "50%",
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: font(25),
+      fontWeight: 950,
+    },
+
+    popupTitle: {
+      margin: `${px(15)}px 0 0`,
+      color: "#111827",
+      fontSize: font(15),
+      fontWeight: 950,
+    },
+
+    popupText: {
+      margin: `${px(8)}px auto 0`,
+      color: "#57534e",
+      fontSize: font(8),
+      lineHeight: 1.45,
+    },
+
+    popupButtons: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: px(8),
+      marginTop: px(17),
+    },
+
+    popupCancelButton: {
+      minHeight: px(42),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(15),
+      background: "#fafaf9",
+      color: "#57534e",
+      fontSize: font(8),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+
+    popupCallButton: {
+      minHeight: px(42),
+      border: 0,
+      borderRadius: px(15),
+      background:
+        "linear-gradient(135deg,#22c55e,#15803d)",
+      color: "white",
+      fontSize: font(8),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+  };
+}
+
+const globalCss = `
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  background: #0b0907;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.active-order-scroll,
+.tracker-horizontal-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.active-order-scroll::-webkit-scrollbar,
+.tracker-horizontal-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+textarea::placeholder {
+  color: #a8a29e;
+}
+
+body {
+  -webkit-text-size-adjust: 100%;
+}
+
+@keyframes statusIconPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.07);
+  }
+}
+
+@keyframes activeStagePulse {
+  0%,
+  100% {
+    opacity: .65;
+    transform: scale(.9);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes truckBounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes materialDrop {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  35% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(35px, 42px) rotate(160deg);
+  }
+}
+
+@keyframes driveTruck {
+  0% {
+    transform: translateX(-44px);
+  }
+
+  45%,
+  60% {
+    transform: translateX(30px);
+  }
+
+  100% {
+    transform: translateX(105px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+`;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
