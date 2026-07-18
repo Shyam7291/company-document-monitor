@@ -595,6 +595,7 @@ const INITIAL_CONTACTED_SELLERS = 8;
 const TOTAL_MATCHED_SELLERS = 12;
 const INITIAL_SELLER_RESPONSES = 3;
 const SIX_HOURS_IN_SECONDS = 6 * 60 * 60;
+const FOUR_HOURS_IN_SECONDS = 20;
 
 function useViewport() {
   const [viewport, setViewport] = useState({
@@ -648,103 +649,141 @@ export default function RateDetailsPage({
     checking
     rateReady
   */
-  const [requestStatus, setRequestStatus] = useState(
-    INITIAL_REQUEST_STATUS
-  );
-
   /*
-    decision values:
-    pending
-    accepted
-    rejected
-  */
-  const [decision, setDecision] = useState("pending");
+  requestStatus values:
+  checking
+  rateReady
+*/
+const [requestStatus, setRequestStatus] = useState(
+  INITIAL_REQUEST_STATUS
+);
 
-  const [showRejectPopup, setShowRejectPopup] =
-    useState(false);
+/*
+  decision values:
+  pending
+  accepted
+  rejected
+*/
+const [decision, setDecision] = useState("pending");
 
-  const [showAcceptPopup, setShowAcceptPopup] =
-    useState(false);
+const [showRejectPopup, setShowRejectPopup] =
+  useState(false);
 
-  const [contactedSellers] = useState(
-    INITIAL_CONTACTED_SELLERS
-  );
+const [showAcceptPopup, setShowAcceptPopup] =
+  useState(false);
 
-  const [sellerResponses] = useState(
-    INITIAL_SELLER_RESPONSES
-  );
+const [contactedSellers] = useState(
+  INITIAL_CONTACTED_SELLERS
+);
 
-  const [remainingSeconds, setRemainingSeconds] =
-    useState(SIX_HOURS_IN_SECONDS);
+const [sellerResponses] = useState(
+  INITIAL_SELLER_RESPONSES
+);
 
-  const trackerRef = useRef(null);
+// Six-hour timer for finding the best rate
+const [remainingSeconds, setRemainingSeconds] =
+  useState(SIX_HOURS_IN_SECONDS);
 
-  const isChecking = requestStatus === "checking";
-  const isRateReady = requestStatus === "rateReady";
+// Four-hour timer for buyer acceptance
+const [
+  acceptanceRemainingSeconds,
+  setAcceptanceRemainingSeconds,
+] = useState(FOUR_HOURS_IN_SECONDS);
 
-  const orderItems = [
-    {
-      product: "20mm Crushed Stone",
-      vehicles: 2,
-      quantity: 20,
-    },
-    {
-      product: "40mm Crushed Stone",
-      vehicles: 1,
-      quantity: 10,
-    },
-  ];
+const trackerRef = useRef(null);
 
-  const totalVehicles = orderItems.reduce(
-    (sum, item) => sum + item.vehicles,
-    0
-  );
+const isChecking =
+  requestStatus === "checking";
 
-  const totalTons = orderItems.reduce(
-    (sum, item) => sum + item.quantity,
-    0
-  );
+const isRateReady =
+  requestStatus === "rateReady";
 
-  const sellerProgress = Math.min(
-    100,
-    Math.round(
-      (contactedSellers / TOTAL_MATCHED_SELLERS) * 100
-    )
-  );
+const isAcceptanceExpired =
+  isRateReady &&
+  acceptanceRemainingSeconds <= 0 &&
+  decision === "pending";
 
-  const countdownHours = String(
-    Math.floor(remainingSeconds / 3600)
-  ).padStart(2, "0");
+const orderItems = [
+  {
+    product: "20mm Crushed Stone",
+    vehicles: 2,
+    quantity: 20,
+  },
+  {
+    product: "40mm Crushed Stone",
+    vehicles: 1,
+    quantity: 10,
+  },
+];
 
-  const countdownMinutes = String(
-    Math.floor((remainingSeconds % 3600) / 60)
-  ).padStart(2, "0");
+const totalVehicles = orderItems.reduce(
+  (sum, item) => sum + item.vehicles,
+  0
+);
 
-  const countdownSeconds = String(
-    remainingSeconds % 60
-  ).padStart(2, "0");
+const totalTons = orderItems.reduce(
+  (sum, item) => sum + item.quantity,
+  0
+);
 
-  const countdownText = `${countdownHours}:${countdownMinutes}:${countdownSeconds}`;
+const sellerProgress = Math.min(
+  100,
+  Math.round(
+    (contactedSellers / TOTAL_MATCHED_SELLERS) * 100
+  )
+);
 
+// Six-hour checking countdown
+const countdownHours = String(
+  Math.floor(remainingSeconds / 3600)
+).padStart(2, "0");
+
+const countdownMinutes = String(
+  Math.floor((remainingSeconds % 3600) / 60)
+).padStart(2, "0");
+
+const countdownSeconds = String(
+  remainingSeconds % 60
+).padStart(2, "0");
+
+const countdownText =
+  `${countdownHours}:${countdownMinutes}:${countdownSeconds}`;
+
+// Four-hour rate acceptance countdown
+const acceptanceHours = String(
+  Math.floor(acceptanceRemainingSeconds / 3600)
+).padStart(2, "0");
+
+const acceptanceMinutes = String(
+  Math.floor(
+    (acceptanceRemainingSeconds % 3600) / 60
+  )
+).padStart(2, "0");
+
+const acceptanceSeconds = String(
+  acceptanceRemainingSeconds % 60
+).padStart(2, "0");
+
+const acceptanceCountdownText =
+  `${acceptanceHours}:${acceptanceMinutes}:${acceptanceSeconds}`;
   const finalStatus =
-    decision === "accepted"
-      ? {
-          label: "Accepted",
-          color: "green",
-          symbol: "✓",
-        }
-      : decision === "rejected"
-      ? {
-          label: "Rejected",
-          color: "red",
-          symbol: "×",
-        }
-      : {
-          label: "Waiting for your confirmation",
-          color: "orange",
-          symbol: "",
-        };
-
+  decision === "accepted"
+    ? {
+        label: "Accepted",
+        color: "green",
+        symbol: "✓",
+      }
+    : decision === "rejected"
+    ? {
+        label: "Rejected",
+        color: "red",
+        symbol: "×",
+      }
+    : {
+        label: "Waiting for your confirmation",
+        color: "orange",
+        symbol: "",
+      };  
   useEffect(() => {
     const timer = window.setTimeout(() => {
       const trackerElement = trackerRef.current;
@@ -770,6 +809,35 @@ export default function RateDetailsPage({
   }, [isChecking]);
 
   useEffect(() => {
+    if (
+      !isRateReady ||
+      decision !== "pending" ||
+      acceptanceRemainingSeconds <= 0
+    ) {
+      return;
+    }
+  
+    const acceptanceTimer = window.setInterval(() => {
+      setAcceptanceRemainingSeconds((current) => {
+        if (current <= 1) {
+          window.clearInterval(acceptanceTimer);
+          return 0;
+        }
+  
+        return current - 1;
+      });
+    }, 1000);
+  
+    return () => {
+      window.clearInterval(acceptanceTimer);
+    };
+  }, [
+    isRateReady,
+    decision,
+    acceptanceRemainingSeconds,
+  ]);
+
+  useEffect(() => {
     if (!isChecking) return;
 
     const countdownTimer = window.setInterval(() => {
@@ -789,23 +857,34 @@ export default function RateDetailsPage({
   }, [isChecking]);
 
   const acceptRate = () => {
+    if (isAcceptanceExpired) return;
+  
     setDecision("accepted");
     setShowAcceptPopup(true);
   };
 
   const rejectRate = () => {
+    if (isAcceptanceExpired) return;
+  
     setDecision("rejected");
     setShowRejectPopup(false);
   };
+  ``
 
   const showReadyStateForTesting = () => {
     setRequestStatus("rateReady");
     setDecision("pending");
+    setAcceptanceRemainingSeconds(
+      FOUR_HOURS_IN_SECONDS
+    );
   };
 
   const showCheckingStateForTesting = () => {
     setRequestStatus("checking");
     setDecision("pending");
+    setAcceptanceRemainingSeconds(
+      FOUR_HOURS_IN_SECONDS
+    );
     setShowAcceptPopup(false);
     setShowRejectPopup(false);
   };
@@ -1297,118 +1376,166 @@ export default function RateDetailsPage({
               </>
             )}
 
-            {isRateReady && (
-              <>
-                <div
-                  style={styles.sectionHeading}
-                >
-                  <div>
-                    <p
-                      style={
-                        styles.sectionEyebrow
-                      }
-                    >
-                      QUOTE DETAILS
-                    </p>
+{isRateReady && (
+  <>
+    {decision === "pending" && (
+      <article
+        style={{
+          ...styles.acceptanceTimerCard,
+          ...(isAcceptanceExpired
+            ? styles.acceptanceTimerCardExpired
+            : {}),
+        }}
+      >
+        <div
+          style={{
+            ...styles.acceptanceTimerIcon,
+            ...(isAcceptanceExpired
+              ? styles.acceptanceTimerIconExpired
+              : {}),
+          }}
+        >
+          {isAcceptanceExpired ? "!" : "◷"}
+        </div>
 
-                    <h2
-                      style={styles.sectionTitle}
-                    >
-                      Rate summary
-                    </h2>
-                  </div>
+        <div style={styles.acceptanceTimerContent}>
+          <span
+            style={{
+              ...styles.acceptanceTimerLabel,
+              ...(isAcceptanceExpired
+                ? styles.acceptanceTimerLabelExpired
+                : {}),
+            }}
+          >
+            {isAcceptanceExpired
+              ? "RESPONSE WINDOW CLOSED"
+              : "RATE RESERVED FOR"}
+          </span>
 
-                  <div style={styles.validPill}>
-                    Valid today
-                  </div>
-                </div>
+          {isAcceptanceExpired ? (
+            <strong
+              style={styles.acceptanceExpiredTitle}
+            >
+              Response time expired
+            </strong>
+          ) : (
+            <strong
+              style={styles.acceptanceTimerValue}
+            >
+              {acceptanceCountdownText}
+            </strong>
+          )}
 
-                <article style={styles.quoteCard}>
-                  <div style={styles.quoteGlow} />
+          <p
+            style={{
+              ...styles.acceptanceTimerDescription,
+              ...(isAcceptanceExpired
+                ? styles.acceptanceTimerDescriptionExpired
+                : {}),
+            }}
+          >
+            {isAcceptanceExpired
+              ? "No response was received before the four-hour deadline. This quote is no longer available for acceptance."
+              : "Please accept or reject this rate before the timer ends. Seller rates and availability may change afterward."}
+          </p>
+        </div>
+      </article>
+    )}
 
-                  <div
-                    style={styles.quoteTopRow}
-                  >
-                    <div>
-                      <p
-                        style={styles.quoteLabel}
-                      >
-                        Best available rate
-                      </p>
+    <div style={styles.sectionHeading}>
+      <div>
+        <p style={styles.sectionEyebrow}>
+          QUOTE DETAILS
+        </p>
 
-                      <div
-                        style={
-                          styles.quoteValueRow
-                        }
-                      >
-                        <span
-                          style={
-                            styles.rupeeSymbol
-                          }
-                        >
-                          ₹
-                        </span>
+        <h2 style={styles.sectionTitle}>
+          Rate summary
+        </h2>
+      </div>
 
-                        <b
-                          style={styles.quoteValue}
-                        >
-                          1,280
-                        </b>
+      <div
+        style={{
+          ...styles.validPill,
+          ...(isAcceptanceExpired
+            ? styles.expiredPill
+            : {}),
+        }}
+      >
+        {isAcceptanceExpired
+          ? "Expired"
+          : "Valid for 4 hours"}
+      </div>
+    </div>
 
-                        <span
-                          style={styles.perTon}
-                        >
-                          / ton
-                        </span>
-                      </div>
-                    </div>
+    <article
+      style={{
+        ...styles.quoteCard,
+        ...(isAcceptanceExpired
+          ? styles.quoteCardExpired
+          : {}),
+      }}
+    >
+      <div style={styles.quoteGlow} />
 
-                    <div
-                      style={styles.bestRateBadge}
-                    >
-                      BEST RATE
-                    </div>
-                  </div>
+      <div style={styles.quoteTopRow}>
+        <div>
+          <p style={styles.quoteLabel}>
+            Best available rate
+          </p>
 
-                  <div
-                    style={styles.quoteMetaGrid}
-                  >
-                    <div
-                      style={styles.quoteMetaItem}
-                    >
-                      <span>Total quantity</span>
-                      <b>{totalTons} tons</b>
-                    </div>
+          <div style={styles.quoteValueRow}>
+            <span style={styles.rupeeSymbol}>
+              ₹
+            </span>
 
-                    <div
-                      style={styles.quoteMetaItem}
-                    >
-                      <span>Vehicles</span>
-                      <b>
-                        {totalVehicles} vehicles
-                      </b>
-                    </div>
+            <b style={styles.quoteValue}>
+              1,280
+            </b>
 
-                    <div
-                      style={styles.quoteMetaItem}
-                    >
-                      <span>Transport</span>
-                      <b>Included</b>
-                    </div>
-                  </div>
+            <span style={styles.perTon}>
+              / ton
+            </span>
+          </div>
+        </div>
 
-                  <div
-                    style={styles.estimatedRow}
-                  >
-                    <span>
-                      Estimated material value
-                    </span>
+        <div
+          style={{
+            ...styles.bestRateBadge,
+            ...(isAcceptanceExpired
+              ? styles.bestRateBadgeExpired
+              : {}),
+          }}
+        >
+          {isAcceptanceExpired
+            ? "QUOTE EXPIRED"
+            : "BEST RATE"}
+        </div>
+      </div>
 
-                    <b>₹38,400</b>
-                  </div>
-                </article>
-              </>
-            )}
+      <div style={styles.quoteMetaGrid}>
+        <div style={styles.quoteMetaItem}>
+          <span>Total quantity</span>
+          <b>{totalTons} tons</b>
+        </div>
+
+        <div style={styles.quoteMetaItem}>
+          <span>Vehicles</span>
+          <b>{totalVehicles} vehicles</b>
+        </div>
+
+        <div style={styles.quoteMetaItem}>
+          <span>Transport</span>
+          <b>Included</b>
+        </div>
+      </div>
+
+      <div style={styles.estimatedRow}>
+        <span>Estimated material value</span>
+        <b>₹38,400</b>
+      </div>
+    </article>
+  </>
+)}
 
             <div style={styles.sectionHeading}>
               <div>
@@ -1600,8 +1727,9 @@ export default function RateDetailsPage({
             </>
           )}
 
-          {isRateReady &&
-            decision === "pending" && (
+{isRateReady &&
+  decision === "pending" &&
+  !isAcceptanceExpired && (
               <>
                 <div style={styles.footerHint}>
                   <span>🛡️</span>
@@ -1637,6 +1765,28 @@ export default function RateDetailsPage({
                 </div>
               </>
             )}
+
+{isRateReady &&
+  decision === "pending" &&
+  isAcceptanceExpired && (
+    <>
+      <div style={styles.expiredFooterHint}>
+        <span>!</span>
+
+        <span>
+          No response was received within four hours
+        </span>
+      </div>
+
+      <button
+        type="button"
+        style={styles.expiredFooterButton}
+        disabled
+      >
+        Response Time Expired
+      </button>
+    </>
+  )}  
 
           {isRateReady &&
             decision === "accepted" && (
@@ -1957,6 +2107,138 @@ function createStyles(viewport) {
       boxShadow: isDesktop
         ? "0 25px 70px rgba(0,0,0,.25)"
         : "none",
+    },
+    acceptanceTimerCard: {
+      display: "flex",
+      alignItems: "center",
+      gap: ms(12),
+      marginTop: ms(12),
+      padding: ms(13),
+      border: "1px solid #fcd34d",
+      borderRadius: ms(21),
+      background:
+        "linear-gradient(135deg, #fffbeb, #fef3c7)",
+      boxShadow:
+        "0 12px 26px rgba(146,64,14,.12)",
+    },
+    
+    acceptanceTimerCardExpired: {
+      borderColor: "#fecaca",
+      background:
+        "linear-gradient(135deg, #fff7f7, #fee2e2)",
+      boxShadow:
+        "0 12px 26px rgba(185,28,28,.08)",
+    },
+    
+    acceptanceTimerIcon: {
+      width: ms(46),
+      height: ms(46),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: ms(16),
+      background:
+        "linear-gradient(135deg, #f59e0b, #ea580c)",
+      color: "white",
+      fontSize: ms(24),
+      fontWeight: 950,
+      boxShadow:
+        "0 10px 22px rgba(234,88,12,.24)",
+    },
+    
+    acceptanceTimerIconExpired: {
+      background:
+        "linear-gradient(135deg, #ef4444, #b91c1c)",
+      boxShadow:
+        "0 10px 22px rgba(239,68,68,.20)",
+    },
+    
+    acceptanceTimerContent: {
+      minWidth: 0,
+      flex: 1,
+    },
+    
+    acceptanceTimerLabel: {
+      display: "block",
+      color: "#92400e",
+      fontSize: ms(6.8),
+      letterSpacing: ms(.9),
+      fontWeight: 950,
+    },
+    
+    acceptanceTimerLabelExpired: {
+      color: "#b91c1c",
+    },
+    
+    acceptanceTimerValue: {
+      display: "block",
+      marginTop: ms(3),
+      color: "#78350f",
+      fontSize: ms(21),
+      lineHeight: 1,
+      letterSpacing: ms(1),
+      fontWeight: 950,
+    },
+    
+    acceptanceExpiredTitle: {
+      display: "block",
+      marginTop: ms(4),
+      color: "#991b1b",
+      fontSize: ms(12),
+      lineHeight: 1.1,
+      fontWeight: 950,
+    },
+    
+    acceptanceTimerDescription: {
+      margin: `${ms(6)}px 0 0`,
+      color: "#92400e",
+      fontSize: ms(7.5),
+      lineHeight: 1.35,
+      fontWeight: 650,
+    },
+    
+    acceptanceTimerDescriptionExpired: {
+      color: "#991b1b",
+    },
+    
+    expiredPill: {
+      background: "#fee2e2",
+      color: "#b91c1c",
+    },
+    
+    quoteCardExpired: {
+      filter: "saturate(.72)",
+      opacity: 0.84,
+    },
+    
+    bestRateBadgeExpired: {
+      borderColor: "rgba(239,68,68,.35)",
+      background: "rgba(239,68,68,.16)",
+      color: "#fecaca",
+    },
+    
+    expiredFooterHint: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(6),
+      marginBottom: ms(7),
+      color: "#b91c1c",
+      fontSize: ms(7.8),
+      fontWeight: 900,
+    },
+    
+    expiredFooterButton: {
+      width: "100%",
+      minHeight: ms(48),
+      border: "1px solid #fecaca",
+      borderRadius: ms(18),
+      background:
+        "linear-gradient(135deg, #ef4444, #b91c1c)",
+      color: "white",
+      fontSize: ms(10),
+      fontWeight: 950,
+      opacity: 0.82,
     },
 
     scrollArea: {
