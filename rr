@@ -13721,21 +13721,33 @@ export default function OrdersPage({
                 ⌕
               </div>
 
-              <div style={styles.searchTextArea}>
-                <span style={styles.searchLabel}>
-                  SEARCH ORDERS
-                </span>
+              <div
+  style={{
+    ...styles.searchTextArea,
+    ...(query ? styles.searchTextAreaTyping : {}),
+  }}
+>
+  {!query && (
+    <span style={styles.searchLabel}>
+      SEARCH ORDERS
+    </span>
+  )}
 
-                <input
-                  type="search"
-                  value={query}
-                  onChange={(event) =>
-                    setQuery(event.target.value)
-                  }
-                  placeholder="Order ID, material or status"
-                  style={styles.searchInput}
-                />
-              </div>
+  <input
+    type="search"
+    value={query}
+    onChange={(event) =>
+      setQuery(event.target.value)
+    }
+    placeholder={
+      query ? "" : "Order ID, material or status"
+    }
+    style={{
+      ...styles.searchInput,
+      ...(query ? styles.searchInputTyping : {}),
+    }}
+  />
+</div>
 
               {query && (
                 <button
@@ -13782,8 +13794,18 @@ export default function OrdersPage({
          
 
           {showFilters && (
-  <div style={styles.filterPanel}>
-    <div style={styles.panelHeader}>
+  <>
+    <div
+      style={styles.filterOverlay}
+      onClick={() => setShowFilters(false)}
+      aria-hidden="true"
+    />
+
+    <div
+      style={styles.filterPanel}
+      onClick={(event) => event.stopPropagation()}
+    >
+      <div style={styles.panelHeader}>
       <div>
         <span style={styles.panelEyebrow}>
           ORDER FILTERS
@@ -14278,8 +14300,9 @@ export default function OrdersPage({
           ? "order"
           : "orders"}
       </button>
-    </div>
+      </div>
   </div>
+  </>
 )}
 
           
@@ -14891,13 +14914,21 @@ function createStyles(viewport) {
   );
 
   const px = (value) =>
-    Math.max(1, Math.round(value * scale));
+  Math.max(
+    1,
+    Math.round(value * scale)
+  );
 
-  const font = (value) =>
-    Math.max(
-      1,
-      Math.round(value * scale * 1.12)
-    );
+const FONT_SCALE = 1.4;
+
+const font = (value) =>
+  Math.max(
+    1,
+    Math.round(
+      value * scale * FONT_SCALE
+    )
+  );
+
 
   const narrow = appWidth < 360;
   const controlsHeight = px(72);
@@ -15450,6 +15481,12 @@ function createStyles(viewport) {
         "0 24px 55px rgba(0,0,0,.45)",
       backdropFilter: "blur(20px)",
     },
+    filterOverlay: {
+      position: "fixed",
+      inset: 0,
+      zIndex: 90,
+      background: "rgba(0, 0, 0, 0.22)",
+    },
     filterTabs: {
       display: "grid",
       gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
@@ -15998,7 +16035,7 @@ function createStyles(viewport) {
     heroTitle: {
       margin: `${px(6)}px 0 0`,
       color: "white",
-      fontSize: font(25),
+      fontSize: px(25),
       lineHeight: 1,
       letterSpacing: -0.7,
       fontWeight: 950,
@@ -16257,7 +16294,7 @@ function createStyles(viewport) {
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
       color: "#a8a29e",
-      fontSize: font(6.5),
+      fontSize: font(8),
       letterSpacing: px(0.5),
       fontWeight: 900,
     },
@@ -16275,7 +16312,7 @@ function createStyles(viewport) {
       borderRadius: 999,
       whiteSpace: "nowrap",
       textOverflow: "ellipsis",
-      fontSize: font(6.5),
+      fontSize: font(8),
       fontWeight: 950,
     },
 
@@ -16407,7 +16444,7 @@ function createStyles(viewport) {
 
     miniLabel: {
       marginTop: px(5),
-      fontSize: font(6),
+      fontSize: font(7.7),
       lineHeight: 1.15,
     },
 
@@ -16667,5 +16704,6 @@ body {
   -webkit-text-size-adjust: 100%;
 }
 `;
+
 
 
