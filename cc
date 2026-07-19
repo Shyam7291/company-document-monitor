@@ -1,4891 +1,462 @@
-import ViewportSize from "./ViewportSize.jsx";
+import React, { useState } from "react";
+import "./style.css";
+
+import Page1 from "./pages/Page1";
+import Page2 from "./pages/Page2";
+import Page3 from "./pages/Page3";
+import Page4 from "./pages/Page4";
+import Page5 from "./pages/Page5";
+import Page6 from "./pages/Page6";
+import Page7 from "./pages/Page7";
+import Page8 from "./pages/Page8";
+import Page9 from "./pages/Page9";
+import Page10 from "./pages/Page10";
+
+
+
+
+
+
+export default function App() {
+  const [currentPage, setCurrentPage] = useState("page1");
+  const [
+    ordersInitialFilter,
+    setOrdersInitialFilter,
+  ] = useState("all");
+  
+  const [
+    ordersInitialStatus,
+    setOrdersInitialStatus,
+  ] = useState("all");
+
+  const openOrdersPage = (
+    orderType = "all",
+    orderStatus = "all"
+  ) => {
+    setOrdersInitialFilter(orderType);
+    setOrdersInitialStatus(orderStatus);
+    setCurrentPage("page9");
+  };
+  if (currentPage === "page10") {
+    return (
+      <Page10
+        goToPage4={() =>
+          setCurrentPage("page4")
+        }
+        goToPage9={() =>
+          openOrdersPage("all", "all")
+        }
+      />
+    );
+  }
+  if (currentPage === "page9") {
+    return (
+      <Page9
+        key={`page9-${ordersInitialFilter}-${ordersInitialStatus}`}
+        initialOrderType={ordersInitialFilter}
+        initialOrderStatus={ordersInitialStatus}
+        goToPage4={() =>
+          setCurrentPage("page4")
+        }
+        goToPage7={() =>
+          setCurrentPage("page7")
+        }
+        goToPage8={() =>
+          setCurrentPage("page8")
+        }
+        goToProfile={() =>
+          setCurrentPage("page10")
+        }
+      />
+    );
+  }
+  if (currentPage === "page8") {
+    return (
+      <Page8
+        goToPage4={() => setCurrentPage("page4")}
+        goToPage7={() => setCurrentPage("page7")}
+      />
+    );
+  }
+  
+  if (currentPage === "page7") {
+    return (
+      <Page7
+        goToPage4={() => setCurrentPage("page4")}
+        goToPage8={() => setCurrentPage("page8")}
+      />
+    );
+  }
+  
+
+  if (currentPage === "page6") {
+    return (
+      <Page6
+        goToPage5={() => setCurrentPage("page5")}
+        goToPage7={() => setCurrentPage("page7")}
+      />
+    );
+  }
+   
+if (currentPage === "page5") {
+  return (
+    <Page5
+      goToPage4={() => setCurrentPage("page4")}
+      goToPage6={() => setCurrentPage("page6")}
+    />
+  );
+}
+
+if (currentPage === "page4") {
+  return (
+    <Page4
+      goToPlaceOrder={() =>
+        setCurrentPage("page5")
+      }
+      goToOrders={() =>
+        openOrdersPage("all", "all")
+      }
+      goToRateRequests={() =>
+        openOrdersPage("rate", "all")
+      }
+      goToActiveOrders={() =>
+        openOrdersPage("active", "all")
+      }
+      goToReorders={() =>
+        openOrdersPage(
+          "delivery",
+          "delivered"
+        )
+      }
+      goToProfile={() =>
+        setCurrentPage("page10")
+      }
+    />
+  );
+}
+
+
+  if (currentPage === "page3") {
+    return (
+      <Page3
+        goToPage1={() => setCurrentPage("page1")}
+        goToPage2={() => setCurrentPage("page2")}
+        goToPage4={() => setCurrentPage("page4")}
+      />
+    );
+  }
+
+  if (currentPage === "page2") {
+    return (
+      <Page2
+        goToPage1={() => setCurrentPage("page1")}
+        goToPage3={() => setCurrentPage("page3")}
+        goToPage4={() => setCurrentPage("page4")}
+      />
+    );
+  }
+
+  return (
+    <Page1
+      goToPage2={() => setCurrentPage("page2")}
+      goToPage3={() => setCurrentPage("page3")}
+    />
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+landingpage
 import React, { useEffect, useMemo, useState } from "react";
 
-const SHOW_DEVICE_LAB = false;
+export default function FullScreen3DFeatureCarouselLandingPage({
+  goToPage2,
+  goToPage3,
+}) {
+  const viewport = useViewport();
+  const styles = useMemo(() => createStyles(viewport), [viewport.width, viewport.height]);
 
-const ORIGINAL_BG_IMAGE =
-  "https://raw.githubusercontent.com/Shyam7291/company-document-monitor/main/you_acn_only_generate_the_sa.png";
-
-const BG_IMAGE = `https://wsrv.nl/?url=${encodeURIComponent(
-  ORIGINAL_BG_IMAGE
-)}&output=png&w=820&h=980&fit=cover`;
-
-const GLASS_CARD_IMAGE =
-  "https://cdn.jsdelivr.net/gh/Shyam7291/company-document-monitor@main/32454-removebg-preview.png";
-
-const BRAND_ORANGE = "#f59e0b";
-
-const DEVICES = [
-  { name: "iPhone SE", w: 375, h: 667 },
-  { name: "iPhone 12 Mini", w: 360, h: 780 },
-  { name: "iPhone 13 Mini", w: 375, h: 812 },
-  { name: "iPhone 12", w: 390, h: 844 },
-  { name: "iPhone 13", w: 390, h: 844 },
-  { name: "iPhone 14", w: 390, h: 844 },
-  { name: "iPhone 14 Pro", w: 393, h: 852 },
-  { name: "iPhone 14 Pro Max", w: 430, h: 932 },
-  { name: "iPhone 15", w: 393, h: 852 },
-  { name: "iPhone 15 Pro", w: 393, h: 852 },
-  { name: "iPhone 15 Pro Max", w: 430, h: 932 },
-  { name: "Galaxy S22", w: 360, h: 780 },
-  { name: "Galaxy S23", w: 360, h: 780 },
-  { name: "Galaxy S24", w: 412, h: 915 },
-  { name: "Galaxy S25 Ultra", w: 412, h: 891 },
-  { name: "Android Large", w: 430, h: 932 },
-];
-
-function BuyerHomeScreen({ labMode = false }) {
-  const buyerName = "Shyam";
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [rotation, setRotation] = useState(0);
-  const [contentHidden, setContentHidden] = useState(false);
-  const [hovered, setHovered] = useState(null);
-
-  const features = useMemo(
+  const slides = useMemo(
     () => [
       {
-        title: "Best Rate",
-        subtitle: "Comparison support from 1K+ sellers",
+        title: "Total Quantity",
+        subtitle: "Auto-calculated tonnage from selected materials and trucks.",
+        icon: "🚛",
+        main: "42t",
+        chip: "20mm + 40mm",
+        color: "#f59e0b",
+      },
+      {
+        title: "Best Rate Check",
+        subtitle: "Compare seller prices before buyer confirms the order.",
+        icon: "₹",
+        main: "Best",
+        chip: "Seller Rate",
+        color: "#22c55e",
+      },
+      {
+        title: "Multi Material",
+        subtitle: "Add separate trucks for every stone material type.",
         icon: "🪨",
+        main: "5+",
+        chip: "Materials",
+        color: "#a855f7",
       },
       {
-        title: "Pure Quality",
-        subtitle: "No mixing. Quality checked material",
-        icon: "🛡️",
-      },
-      {
-        title: "Zero Brokerage",
-        subtitle: "0% brokerage. No heavy middleman cost",
-        icon: "0%",
-      },
-      {
-        title: "Easy Transport",
-        subtitle: "Transport as per your availability",
-        icon: "🚚",
+        title: "Fast Order Flow",
+        subtitle: "Request, compare, confirm, dispatch, and track easily.",
+        icon: "📍",
+        main: "24h",
+        chip: "Follow-up",
+        color: "#38bdf8",
       },
     ],
     []
   );
 
-  const rotateToFeature = (nextIndex) => {
-    setContentHidden(true);
-    setRotation((current) => current + 180);
-
-    setTimeout(() => {
-      setActiveIndex(nextIndex);
-    }, 420);
-
-    setTimeout(() => {
-      setContentHidden(false);
-    }, 560);
-  };
+  const [activeSlide, setActiveSlide] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setContentHidden(true);
-      setRotation((current) => current + 180);
-
-      setTimeout(() => {
-        setActiveIndex((current) => (current + 1) % features.length);
-      }, 420);
-
-      setTimeout(() => {
-        setContentHidden(false);
-      }, 560);
-    }, 3000);
+      setActiveSlide((current) => (current + 1) % slides.length);
+    }, 2600);
 
     return () => clearInterval(timer);
-  }, [features.length]);
+  }, [slides.length]);
 
-  const active = features[activeIndex];
-
-  return (
-    <div className={labMode ? "phone labPhone" : "phone"}>
-      <section className="hero">
-        {React.createElement("img", {
-          className: "heroBg",
-          src: BG_IMAGE,
-          alt: "Quarry background",
-        })}
-
-        <div className="heroShade" />
-        <div className="bottomBlend" />
-        <div className="activeGlow" />
-
-        <nav className="topNav">
-          <button>≡</button>
-          <button>●</button>
-        </nav>
-
-        <div className="intro">
-          <h1>Hey {buyerName} 👋</h1>
-          <p>
-            Ready to order
-            <br />
-            good quality stone today?
-          </p>
-        </div>
-
-        <div className="featureWrap">
-          <div className="platform" />
-          <div className="ring" />
-
-          <article className="singleFeatureCard">
-            <div
-              className="glassSpinLayer"
-              style={{ transform: `rotateY(${rotation}deg)` }}
-            >
-              {React.createElement("img", {
-                className: "glassCardImage",
-                src: GLASS_CARD_IMAGE,
-                alt: "Glass feature card",
-              })}
-            </div>
-
-            <div
-              className={contentHidden ? "cardContent hidden" : "cardContent"}
-            >
-              <div className="featureIcon">{active.icon}</div>
-              <div className="stars">★★★★★</div>
-              <h2>{active.title}</h2>
-              <p>{active.subtitle}</p>
-            </div>
-
-            <button className="featureArrow">➜</button>
-          </article>
-        </div>
-
-        <div className="dots">
-          {features.map((feature, index) => (
-            <button
-              key={feature.title}
-              onClick={() => {
-                if (index !== activeIndex) rotateToFeature(index);
-              }}
-              className={index === activeIndex ? "dot active" : "dot"}
-            />
-          ))}
-        </div>
-      </section>
-
-      <section className="actions">
-        <button
-          className={hovered === "place" ? "place hover" : "place"}
-          onMouseEnter={() => setHovered("place")}
-          onMouseLeave={() => setHovered(null)}
-        >
-          <span>Place New Order</span>
-          <b>➜</b>
-        </button>
-
-        <div className="quickGrid">
-          <button
-            className={hovered === "active" ? "quick hover" : "quick"}
-            onMouseEnter={() => setHovered("active")}
-            onMouseLeave={() => setHovered(null)}
-          >
-            <h3>Active Order</h3>
-            <p>40mm Crushed Stone</p>
-            <small>32 tons</small>
-            <em>Track →</em>
-          </button>
-
-          <button
-            className={hovered === "repeat" ? "quick hover" : "quick"}
-            onMouseEnter={() => setHovered("repeat")}
-            onMouseLeave={() => setHovered(null)}
-          >
-            <h3>Last Order</h3>
-            <p>20mm Stone</p>
-            <small>2 trucks • 20 tons</small>
-            <em>Repeat →</em>
-          </button>
-        </div>
-      </section>
-
-      <nav className="bottomNav">
-        <button className="active">
-          <span>🏠</span>
-          <b>Home</b>
-        </button>
-        <button>
-          <span>📦</span>
-          <b>My Orders</b>
-        </button>
-        <button>
-          <span>👤</span>
-          <b>Profile</b>
-        </button>
-      </nav>
-    </div>
-  );
-}
-
-function DeviceLab() {
-  const zoom = 0.45;
-
-  return (
-    <div className="deviceLabPage">
-      <style>{css}</style>
-
-      <header className="labHeader">
-        <h1>StoneRate Device Fit Lab</h1>
-        <p>Preview the screen across multiple phone sizes.</p>
-      </header>
-
-      <div className="deviceGrid">
-        {DEVICES.map((device) => (
-          <div
-            className="deviceShell"
-            key={device.name}
-            style={{
-              width: device.w * zoom,
-              height: device.h * zoom + 44,
-            }}
-          >
-            <div className="deviceName">
-              {device.name} — {device.w}×{device.h}
-            </div>
-
-            <div
-              className="deviceViewport"
-              style={{
-                width: device.w,
-                height: device.h,
-                transform: `scale(${zoom})`,
-              }}
-            >
-              <BuyerHomeScreen labMode />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export default function App() {
-  if (SHOW_DEVICE_LAB) {
-    return <DeviceLab />;
-  }
-
-  return (
-    <div className="page">
-      <style>{css}</style>
-
-      {/* Uncomment only when you want to check viewport size */}
-      {/* <ViewportSize /> */}
-
-      <BuyerHomeScreen />
-    </div>
-  );
-}
-
-const css = `
-* {
-  box-sizing: border-box;
-}
-
-html,
-body,
-#root {
-  margin: 0;
-  width: 100%;
-  min-height: 100%;
-}
-
-.page {
-  width: 100vw;
-  height: 100dvh;
-  min-height: 100dvh;
-  background: #050505;
-  display: block;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-  overflow: hidden;
-}
-
-.phone {
-  width: 100vw;
-  height: 100dvh;
-  min-width: 0;
-  min-height: 0;
-  max-width: none;
-  max-height: none;
-  aspect-ratio: auto;
-  background: #050505;
-  border-radius: 0;
-  overflow: hidden;
-  display: grid;
-  grid-template-rows: 56% 31% 13%;
-  box-shadow: none;
-  container-type: size;
-}
-
-@media (min-width: 700px) {
-  .page {
-    background: #f4f1ea;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 8px;
-  }
-
-  .phone {
-    width: 390px;
-    height: 844px;
-    border-radius: 32px;
-    box-shadow: 0 30px 80px rgba(0,0,0,.28);
-  }
-}
-
-.labPhone {
-  width: 100%;
-  height: 100%;
-  max-height: none;
-  border-radius: 0;
-  box-shadow: none;
-}
-
-.hero {
-  position: relative;
-  height: 100%;
-  overflow: hidden;
-  color: white;
-  padding:
-    calc(env(safe-area-inset-top, 0px) + 3.6cqw)
-    5cqw
-    2cqw;
-  background: #111;
-}
-
-.heroBg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center center;
-  transform: translateY(-2%) scale(1.12);
-  transform-origin: center center;
-  z-index: 0;
-}
-
-.heroShade {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(
-    to bottom,
-    rgba(0,0,0,.14),
-    rgba(0,0,0,.02) 42%,
-    rgba(0,0,0,.13) 74%
-  );
-  pointer-events: none;
-}
-
-.bottomBlend {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 18%;
-  z-index: 2;
-  background: linear-gradient(to bottom, transparent, #050505 94%);
-  pointer-events: none;
-}
-
-.activeGlow {
-  position: absolute;
-  left: 50%;
-  top: 53%;
-  width: 48cqw;
-  height: 24cqh;
-  transform: translateX(-50%);
-  border-radius: 50%;
-  filter: blur(7cqw);
-  opacity: .24;
-  z-index: 2;
-  background: #f59e0b;
-  animation: pulse 3s ease-in-out infinite;
-}
-
-.topNav,
-.intro,
-.featureWrap,
-.dots {
-  position: relative;
-  z-index: 5;
-}
-
-.topNav {
-  display: flex;
-  justify-content: space-between;
-}
-
-.topNav button {
-  width: 8.8cqw;
-  height: 8.8cqw;
-  border: 0;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, .50);
-  color: white;
-  font-size: 5.2cqw;
-  font-weight: 950;
-}
-
-.intro {
-  margin-top: 3cqw;
-  margin-left: 2cqw;
-  text-shadow: 0 1cqw 3cqw rgba(0, 0, 0, .75);
-}
-
-.intro h1 {
-  margin: 0;
-  color: #fde68a;
-  font-size: 7.2cqw;
-  line-height: 1;
-  font-weight: 950;
-}
-
-.intro p {
-  margin: 3cqw 0 0;
-  color: white;
-  font-size: 4.55cqw;
-  line-height: 1.12;
-  font-weight: 950;
-}
-
-.featureWrap {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 40%;
-  bottom: 8%;
-  height: auto;
-  perspective: 280cqw;
-  z-index: 5;
-}
-
-.singleFeatureCard {
-  position: absolute;
-  left: 50%;
-  top: -13%;
-  width: clamp(1px, 70cqw, 250px);
-  aspect-ratio: 120 / 120;
-  color: white;
-  text-align: center;
-  transform: translateX(-50%);
-  animation: floatCard 3.8s ease-in-out infinite;
-  overflow: visible;
-}
-
-.glassSpinLayer {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  transform-origin: center center;
-  transition: transform 1500ms cubic-bezier(.32,.72,.22,1);
-  will-change: transform;
-}
-
-.glassCardImage {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  z-index: 1;
-  filter: drop-shadow(0 3.5cqw 5cqw rgba(0,0,0,.24));
-}
-
-.cardContent {
-  position: absolute;
-  left: 50%;
-  top: 17%;
-  width: 58%;
-  max-height: 68%;
-  transform: translateX(-50%);
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  opacity: 1;
-  overflow: hidden;
-  transition: opacity 150ms ease, transform 150ms ease;
-}
-
-.cardContent.hidden {
-  opacity: 0;
-  transform: translateX(-50%) scale(.96);
-}
-
-.featureIcon {
-  width: 10cqw;
-  height: 10cqw;
-  border-radius: 5.8cqw;
-  color: #111827;
-  background: #f59e0b;
-  box-shadow: 0 0 7cqw #f59e0b;
-  display: grid;
-  place-items: center;
-  font-size: 6.8cqw;
-  font-weight: 950;
-}
-
-.stars {
-  margin-top: 4cqw;
-  font-size: 4cqw;
-  letter-spacing: .7cqw;
-  color: #f59e0b;
-}
-
-.cardContent h2 {
-  margin: 1cqw 0 0;
-  font-size: 4.5cqw;
-  line-height: 1.08;
-  font-weight: 950;
-  text-shadow: 0 1.5cqw 4cqw rgba(0,0,0,.55);
-}
-
-.cardContent p {
-  margin: 3cqw 0 0;
-  color: #fff7ed;
-  font-size: 3.4cqw;
-  line-height: 1.16;
-  font-weight: 750;
-  text-align: center;
-  text-shadow: 0 1.2cqw 3.2cqw rgba(0,0,0,.65);
-}
-
-.featureArrow {
-  position: absolute;
-  left: 50%;
-  bottom: -5.1cqw;
-  width: 12cqw;
-  height: 12cqw;
-  transform: translateX(-50%);
-  border: 0;
-  border-radius: 999px;
-  color: #ffffff;
-  background: #f59e0b;
-  font-size: 5.8cqw;
-  font-weight: 950;
-  z-index: 20;
-  display: grid;
-  place-items: center;
-  line-height: 1;
-  padding: 0;
-  margin: 0;
-  appearance: none;
-  -webkit-appearance: none;
-  box-shadow: 0 1.5cqw 4cqw rgba(245,158,11,.45);
-}
-
-.ring {
-  position: absolute;
-  left: 50%;
-  bottom: 3%;
-  width: 46cqw;
-  height: 8.6cqh;
-  border-radius: 50%;
-  border: .45cqw solid #f59e0b;
-  box-shadow: 0 0 4.8cqw #f59e0b;
-  transform: translateX(-50%) rotateX(68deg);
-}
-
-.platform {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  width: 39cqw;
-  height: 15%;
-  border-radius: 50%;
-  background: rgba(0,0,0,.36);
-  filter: blur(.8cqw);
-  transform: translateX(-50%);
-}
-
-.dots {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 2.5%;
-  display: flex;
-  justify-content: center;
-  gap: 2cqw;
-  z-index: 6;
-}
-
-.dot {
-  width: 2cqw;
-  height: 2cqw;
-  border-radius: 999px;
-  border: 0;
-  background: rgba(255,255,255,.76);
-}
-
-.dot.active {
-  width: 3cqw;
-  background: #f59e0b;
-}
-
-.actions {
-  height: 100%;
-  padding: 4% 5% 0;
-  background: #050505;
-  overflow: hidden;
-}
-
-.place {
-  width: 100%;
-  height: 23%;
-  min-height: 0;
-  border: 0;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #f59e0b, #f97316);
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 6% 0 11%;
-  font-size: 4.7cqw;
-  font-weight: 950;
-  box-shadow: 0 4.5cqw 8.5cqw rgba(245,158,11,.28);
-}
-
-.place.hover {
-  transform: translateY(-.8cqw) scale(1.012);
-}
-
-.quickGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(8px, 3cqw, 14px);
-  margin-top: 4%;
-  height: 58%;
-  min-height: 0;
-}
-
-.quick {
-  min-width: 0;
-  min-height: 0;
-  height: 100%;
-  padding: clamp(7px, 3.2cqw, 12px);
-  border-radius: clamp(14px, 4.7cqw, 20px);
-  border: 1px solid rgba(255,255,255,.12);
-  background:
-    radial-gradient(circle at top left, rgba(255,255,255,.13), transparent 42%),
-    linear-gradient(145deg, #1b1b1b 0%, #0b0b0b 100%);
-  color: #ffffff;
-  text-align: left;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
-}
-
-.quick.hover {
-  transform: translateY(-.8cqw);
-  background:
-    radial-gradient(circle at top left, rgba(245,158,11,.18), transparent 42%),
-    linear-gradient(145deg, #1c1710 0%, #0b0b0b 100%);
-}
-
-.quick h3 {
-  margin: 0;
-  color: #f59e0b;
-  font-size: clamp(10px, 3.5cqw, 14px);
-  line-height: 1.05;
-  font-weight: 950;
-  white-space: normal;
-  overflow: hidden;
-}
-
-.quick p,
-.quick small {
-  display: block;
-  margin-top: clamp(2px, 1.2cqw, 5px);
-  color: #e7e5e4;
-  font-size: clamp(8px, 2.45cqw, 11px);
-  line-height: 1.08;
-  font-weight: 750;
-  overflow-wrap: break-word;
-}
-
-.quick em {
-  display: block;
-  margin-top: auto;
-  padding-top: clamp(2px, 1.2cqw, 5px);
-  color: #f59e0b;
-  font-size: clamp(8px, 2.8cqw, 12px);
-  line-height: 1;
-  font-weight: 950;
-  font-style: normal;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.bottomNav {
-  height: calc(100% - env(safe-area-inset-bottom, 0px));
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2%;
-  margin:
-    0
-    6%
-    calc(env(safe-area-inset-bottom, 0px) + 3%);
-  padding: 2% 3%;
-  background: rgba(16,16,16,.92);
-  border-radius: 5cqw;
-  border: 1px solid rgba(255,255,255,.08);
-}
-
-.bottomNav button {
-  min-height: 0;
-  border: 0;
-  border-radius: 4cqw;
-  background: transparent;
-  color: #a8a29e;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: .4cqw;
-  font-weight: 900;
-}
-
-.bottomNav button.active {
-  color: #f59e0b;
-}
-
-.bottomNav span {
-  font-size: 4.1cqw;
-}
-
-.bottomNav b {
-  font-size: 2.8cqw;
-}
-
-.deviceLabPage {
-  width: 100%;
-  min-height: 100vh;
-  background: #111827;
-  color: white;
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  overflow: auto;
-}
-
-.labHeader {
-  margin-bottom: 18px;
-}
-
-.labHeader h1 {
-  margin: 0;
-  font-size: 26px;
-}
-
-.labHeader p {
-  margin: 8px 0 0;
-  color: #d1d5db;
-}
-
-.deviceGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 18px;
-  align-items: flex-start;
-}
-
-.deviceShell {
-  position: relative;
-  background: #020617;
-  border: 1px solid rgba(255,255,255,.14);
-  border-radius: 18px;
-  overflow: hidden;
-}
-
-.deviceName {
-  height: 42px;
-  display: flex;
-  align-items: center;
-  padding: 0 10px;
-  font-size: 11px;
-  font-weight: 800;
-  color: #fde68a;
-  background: rgba(0,0,0,.7);
-}
-
-.deviceViewport {
-  transform-origin: top left;
-  background: #050505;
-}
-
-@keyframes floatCard {
-  0%, 100% {
-    transform: translateX(-50%) translateY(0);
-  }
-  50% {
-    transform: translateX(-50%) translateY(-1.3cqw);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: translateX(-50%) scale(.92);
-    opacity: .22;
-  }
-  50% {
-    transform: translateX(-50%) scale(1.12);
-    opacity: .36;
-  }
-}
-`;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import React, { useEffect, useMemo, useState } from "react";
-const HEADER_BG_IMAGE =
-  "https://cdn.jsdelivr.net/gh/Shyam7291/company-document-monitor@main/Designer (1).png";
-export default function App() {
-  const viewport = useViewport();
-  const styles = useMemo(
-    () => createStyles(viewport),
-    [viewport.width, viewport.height]
-  );
-  
-  const vehicles = [
-    { id: "truck12", name: "12 Tyre Truck", capacity: 10, tag: "Small site" },
-    { id: "truck14", name: "14 Tyre Truck", capacity: 16, tag: "Popular" },
-    { id: "truck18", name: "18 Tyre Truck", capacity: 22, tag: "Bulk order" },
-    { id: "hyva", name: "Hyva", capacity: 18, tag: "Fast delivery" },
-  ];
-
-  const materials = [
-    "20mm Crushed Stone",
-    "40mm Crushed Stone",
-    "GSB",
-    "M-Sand",
-    "Stone Dust",
-  ];
-
-  const emptyVehicleQty = {
-    truck12: 0,
-    truck14: 0,
-    truck18: 0,
-    hyva: 0,
+  const getSlide = (offset) => {
+    return slides[(activeSlide + offset + slides.length) % slides.length];
   };
 
-  const [selectedMaterial, setSelectedMaterial] = useState(
-    "20mm Crushed Stone"
-  );
-
-  const [ordersByMaterial, setOrdersByMaterial] = useState({
-    "20mm Crushed Stone": { ...emptyVehicleQty },
-    "40mm Crushed Stone": { ...emptyVehicleQty },
-    GSB: { ...emptyVehicleQty },
-    "M-Sand": { ...emptyVehicleQty },
-    "Stone Dust": { ...emptyVehicleQty },
-  });
-
-  const [arrivalDate, setArrivalDate] = useState("2026-07-05");
-  const [contact, setContact] = useState("");
-  const [notes, setNotes] = useState(
-    "Please arrange best rate from nearby sellers."
-  );
-
-  const currentMaterialQty = ordersByMaterial[selectedMaterial];
-
-  const addVehicle = (vehicleId) => {
-    setOrdersByMaterial((previousOrders) => ({
-      ...previousOrders,
-      [selectedMaterial]: {
-        ...previousOrders[selectedMaterial],
-        [vehicleId]: previousOrders[selectedMaterial][vehicleId] + 1,
-      },
-    }));
-  };
-
-  const removeVehicle = (vehicleId) => {
-    setOrdersByMaterial((previousOrders) => ({
-      ...previousOrders,
-      [selectedMaterial]: {
-        ...previousOrders[selectedMaterial],
-        [vehicleId]: Math.max(0, previousOrders[selectedMaterial][vehicleId] - 1),
-      },
-    }));
-  };
-
-  const getMaterialTons = (materialName) => {
-    const materialQty = ordersByMaterial[materialName];
-
-    return vehicles.reduce(
-      (sum, vehicle) => sum + materialQty[vehicle.id] * vehicle.capacity,
-      0
-    );
-  };
-
-  const materialSummary = useMemo(() => {
-    return materials
-      .map((materialName) => ({
-        materialName,
-        tons: getMaterialTons(materialName),
-        vehicles: vehicles.reduce(
-          (sum, vehicle) =>
-            sum + ordersByMaterial[materialName][vehicle.id],
-          0
-        ),
-      }))
-      .filter((item) => item.tons > 0);
-  }, [ordersByMaterial]);
-
-  const totalTons = useMemo(() => {
-    return materialSummary.reduce((sum, item) => sum + item.tons, 0);
-  }, [materialSummary]);
-
-  const totalVehicles = useMemo(() => {
-    return materialSummary.reduce((sum, item) => sum + item.vehicles, 0);
-  }, [materialSummary]);
+  const centerSlide = getSlide(0);
+  const leftSlide = getSlide(-1);
+  const rightSlide = getSlide(1);
 
   return (
     <div style={styles.page}>
       <div style={styles.phone}>
-        <div style={styles.header}>
-          <p style={styles.eyebrow}>BEST RATE ORDER</p>
+        <section style={styles.hero}>
+          <div style={styles.bgOrbOne} />
+          <div style={styles.bgOrbTwo} />
+          <div style={styles.bgOrbThree} />
+          <div style={styles.gridOverlay} />
 
-          <div style={styles.headerRow}>
-            <div style={{ minWidth: 0 }}>
-              <h1 style={styles.title}>
-                Crushed Stone
-                <br />
-                Booking
-              </h1>
+          <nav style={styles.nav}>
+            <div style={styles.brandWrap}>
+              <div style={styles.logo3d}>🪨</div>
+              <div>
+                <p style={styles.brandName}>StoneRate</p>
+                <p style={styles.brandSub}>Crushed Stone Marketplace</p>
+              </div>
             </div>
 
-            
-          </div>
+            <button style={styles.skipBtn}>Skip</button>
+          </nav>
 
-          <div style={styles.trustGrid}>
-            <div style={styles.trustBox}>
-              <b style={styles.trustValue}>24h</b>
-              <span style={styles.trustText}>Rate check</span>
-            </div>
+          <div style={styles.heroText}>
+            <div style={styles.heroBadge}>SMART STONE BOOKING</div>
 
-            <div style={styles.trustBox}>
-              <b style={styles.trustValue}>Verified</b>
-              <span style={styles.trustText}>Sellers</span>
-            </div>
+            <h1 style={styles.mainTitle}>
+              Book Stone.
+              <br />
+              Get Best Rate.
+            </h1>
 
-            <div style={styles.trustBox}>
-              <b style={styles.trustValue}>Fast</b>
-              <span style={styles.trustText}>Dispatch</span>
-            </div>
-          </div>
-        </div>
-
-        <div style={styles.content}>
-          <div style={styles.card}>
-            <div style={styles.labelRow}>
-              <label style={styles.label}>📦 Material</label>
-              <span style={styles.badge}>Saved separately</span>
-            </div>
-
-            <select
-              style={styles.input}
-              value={selectedMaterial}
-              onChange={(event) => setSelectedMaterial(event.target.value)}
-            >
-              {materials.map((materialName) => (
-                <option key={materialName}>{materialName}</option>
-              ))}
-            </select>
-
-            <p style={styles.helperText}>
-              Select one material, add vehicles, then switch material. Previous
-              material quantity will stay saved.
+            <p style={styles.mainSub}>
+              Select material, choose trucks, and request seller rates in minutes.
             </p>
           </div>
 
-          <div style={styles.sectionHeader}>
-            <h2 style={styles.sectionTitle}>🚚 Select Vehicle</h2>
-            <span style={styles.smallText}>For {selectedMaterial}</span>
-          </div>
+          <div style={styles.carouselStage}>
+            <div style={styles.orbitLarge} />
+            <div style={styles.orbitSmall} />
 
-          <div style={styles.vehicleGrid}>
-            {vehicles.map((vehicle) => {
-              const qty = currentMaterialQty[vehicle.id];
-              const active = qty > 0;
-
-              return (
-                <div
-                  key={vehicle.id}
-                  style={{
-                    ...styles.vehicleCard,
-                    ...(active ? styles.vehicleCardActive : {}),
-                  }}
-                >
-                  {active && <div style={styles.check}>✓</div>}
-
-                  <div
-                    onClick={() => addVehicle(vehicle.id)}
-                    style={styles.vehicleInfo}
-                  >
-                    <b style={styles.vehicleName}>{vehicle.name}</b>
-                    <span style={styles.vehicleCapacity}>
-                      {vehicle.capacity} ton / vehicle
-                    </span>
-                    <span style={styles.tag}>{vehicle.tag}</span>
-                  </div>
-
-                  {active ? (
-                    <div style={styles.qtyBox}>
-                      <button
-                        style={styles.qtyBtn}
-                        onClick={() => removeVehicle(vehicle.id)}
-                      >
-                        −
-                      </button>
-
-                      <div style={styles.qtyCenter}>
-                        <b style={styles.qtyNumber}>{qty}</b>
-                        <span style={styles.qtyText}>vehicles</span>
-                      </div>
-
-                      <button
-                        style={{ ...styles.qtyBtn, ...styles.plusBtn }}
-                        onClick={() => addVehicle(vehicle.id)}
-                      >
-                        +
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      style={styles.addBtn}
-                      onClick={() => addVehicle(vehicle.id)}
-                    >
-                      + Add Vehicle
-                    </button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          <div style={styles.quantityCard}>
-            <div>
-              <p style={styles.quantityLabel}>Total Estimated Quantity</p>
-
-              <div style={styles.tonsRow}>
-                <b style={styles.tons}>{totalTons}</b>
-                <span style={styles.tonsText}>tons</span>
-              </div>
+            <div style={{ ...styles.sideCard, ...styles.leftCard }}>
+              <MiniFeatureCard slide={leftSlide} styles={styles} />
             </div>
 
-            <div style={styles.rupee}>₹</div>
-
-            <div style={styles.totalVehicleText}>
-              {totalVehicles > 0
-                ? `${totalVehicles} total vehicle${
-                    totalVehicles === 1 ? "" : "s"
-                  } selected`
-                : "Select material and vehicles to calculate total tons"}
+            <div style={{ ...styles.sideCard, ...styles.rightCard }}>
+              <MiniFeatureCard slide={rightSlide} styles={styles} />
             </div>
-
-            {materialSummary.length > 0 && (
-              <div style={styles.materialSummaryBox}>
-                {materialSummary.map((item) => (
-                  <div
-                    key={item.materialName}
-                    style={styles.materialSummaryRow}
-                  >
-                    <span style={styles.summaryMaterialName}>
-                      {item.materialName.replace(" Crushed Stone", "")}
-                    </span>
-                    <b>{item.tons} ton</b>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div style={styles.card}>
-            <div style={styles.field}>
-              <label style={styles.label}>📅 Date of Arrival</label>
-              <input
-                type="date"
-                style={styles.input}
-                value={arrivalDate}
-                onChange={(event) => setArrivalDate(event.target.value)}
-              />
-            </div>
-
-            <div style={styles.field}>
-              <label style={styles.label}>Buyer Contact Number</label>
-              <input
-                style={styles.input}
-                value={contact}
-                onChange={(event) => setContact(event.target.value)}
-                placeholder="Enter mobile number"
-              />
-            </div>
-
-            <div style={styles.field}>
-              <label style={styles.label}>Order Notes</label>
-              <textarea
-                style={styles.textarea}
-                value={notes}
-                onChange={(event) => setNotes(event.target.value)}
-              />
-            </div>
-          </div>
-
-          <div style={styles.infoBox}>
-            <div style={styles.infoIcon}>✓</div>
-
-            <div style={{ minWidth: 0 }}>
-              <b style={styles.infoTitle}>How this works</b>
-              <p style={styles.infoText}>
-                Buyer can add different vehicles for each material. Full vehicle
-                breakdown will appear on the confirmation page.
-              </p>
-            </div>
-          </div>
-
-          <button
-            style={{
-              ...styles.continueBtn,
-              opacity: totalVehicles === 0 ? 0.5 : 1,
-            }}
-            disabled={totalVehicles === 0}
-          >
-            Continue to Confirmation →
-          </button>
-
-          <p style={styles.footer}>
-            Final order request is submitted after confirmation.
-          </p>
-        </div>
-
-        <nav style={styles.bottomTabs}>
-          <button style={{ ...styles.tabBtn, ...styles.tabBtnActive }}>
-            <span style={styles.tabIcon}>🏠</span>
-            <b style={styles.tabText}>Home</b>
-          </button>
-
-          <button style={styles.tabBtn}>
-            <span style={styles.tabIcon}>📦</span>
-            <b style={styles.tabText}>My Orders</b>
-          </button>
-
-          <button style={styles.tabBtn}>
-            <span style={styles.tabIcon}>👤</span>
-            <b style={styles.tabText}>Profile</b>
-          </button>
-        </nav>
-      </div>
-    </div>
-  );
-}
-
-function useViewport() {
-  const [viewport, setViewport] = useState({
-    width: typeof window !== "undefined" ? window.innerWidth : 390,
-    height: typeof window !== "undefined" ? window.innerHeight : 844,
-  });
-
-  useEffect(() => {
-    const update = () => {
-      setViewport({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
-
-    update();
-    window.addEventListener("resize", update);
-
-    return () => {
-      window.removeEventListener("resize", update);
-    };
-  }, []);
-
-  return viewport;
-}
-
-function createStyles(viewport) {
-  const vw = viewport.width || 390;
-  const vh = viewport.height || 844;
-
-  const isDesktop = vw >= 700;
-  const phoneW = isDesktop ? 390 : vw;
-  const phoneH = isDesktop ? 844 : vh;
-
-  const scale = Math.max(
-    0.72,
-    Math.min(1, Math.min(phoneW / 390, phoneH / 844))
-  );
-
-  const narrow = phoneW < 360;
-  const veryNarrow = phoneW < 220;
-  const short = phoneH < 700;
-
-  const px = (value) => Math.round(value * scale);
-
-  return {
-    page: {
-      width: "100vw",
-      height: "100dvh",
-      minHeight: "100dvh",
-      background: isDesktop ? "#f4f1ea" : "#ffffff",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: isDesktop ? "center" : "stretch",
-      padding: isDesktop ? 16 : 0,
-      fontFamily: "Arial, sans-serif",
-      overflow: "hidden",
-      boxSizing: "border-box",
-    },
-
-    phone: {
-      width: isDesktop ? 390 : "100vw",
-      height: isDesktop ? 844 : "100dvh",
-      maxWidth: isDesktop ? 430 : "none",
-      background: "#ffffff",
-      borderRadius: isDesktop ? 32 : 0,
-      overflow: "hidden",
-      boxShadow: isDesktop ? "0 25px 60px rgba(0,0,0,0.18)" : "none",
-      boxSizing: "border-box",
-      display: "flex",
-      flexDirection: "column",
-    },
-
-    header: {
-      position: "relative",
-      color: "white",
-    
-      padding:
-        "clamp(13px, 3.8vw, 22px) clamp(12px, 4vw, 20px) clamp(13px, 4.2vw, 24px)",
-    
-        backgroundImage: HEADER_BG_IMAGE
-        ? `linear-gradient(
-            135deg,
-            rgba(8, 7, 6, 0.38),
-            rgba(28, 25, 23, 0.30) 52%,
-            rgba(120, 53, 15, 0.22)
-          ),
-          url("${HEADER_BG_IMAGE}")`
-        : `radial-gradient(
-            circle at 88% 8%,
-            rgba(245, 158, 11, 0.38),
-            transparent 32%
-          ),
-          linear-gradient(
-            135deg,
-            #080706,
-            #1c1917 52%,
-            #78350f
-          )`,
-    
-      backgroundSize: "cover",
-      backgroundPosition: "center 45%",
-      backgroundRepeat: "no-repeat",
-    
-      overflow: "hidden",
-      boxSizing: "border-box",
-    },
-
-    eyebrow: {
-      fontSize: px(11),
-      letterSpacing: narrow ? 2 : 3,
-      color: "#fde68a",
-      fontWeight: 700,
-      margin: 0,
-    },
-
-    headerRow: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      gap: px(10),
-    },
-
-    title: {
-      fontSize: px(short ? 30 : 34),
-      lineHeight: 1.1,
-      margin: `${px(10)}px 0 0`,
-      fontWeight: 900,
-      letterSpacing: -0.6,
-    },
-
-    truckIcon: {
-      fontSize: px(32),
-      background: "rgba(255,255,255,0.15)",
-      padding: px(14),
-      borderRadius: px(24),
-      flexShrink: 0,
-    },
-
-    trustGrid: {
-      display: "grid",
-      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-      gap: px(8),
-      marginTop: px(20),
-    },
-
-    trustBox: {
-      background: "rgba(255,255,255,0.13)",
-      borderRadius: px(18),
-      padding: px(10),
-      fontSize: px(12),
-      display: "flex",
-      flexDirection: "column",
-      gap: px(4),
-      minWidth: 0,
-      overflow: "hidden",
-    },
-
-    trustValue: {
-      fontSize: px(narrow ? 10 : 12),
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-    },
-
-    trustText: {
-      fontSize: px(narrow ? 9 : 11),
-      color: "#e7e5e4",
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-    },
-
-    content: {
-      flex: 1,
-      overflowY: "auto",
-      overflowX: "hidden",
-      WebkitOverflowScrolling: "touch",
-      padding: px(narrow ? 14 : 20),
-      paddingBottom: px(18),
-      borderRadius: `${px(28)}px ${px(28)}px 0 0`,
-      marginTop: px(-10),
-      background: "white",
-      boxSizing: "border-box",
-    },
-
-    card: {
-      background: "#fafaf9",
-      borderRadius: px(24),
-      padding: px(narrow ? 13 : 16),
-      marginBottom: px(18),
-      boxSizing: "border-box",
-    },
-
-    labelRow: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      gap: px(8),
-      marginBottom: px(10),
-    },
-
-    label: {
-      fontSize: px(14),
-      fontWeight: 800,
-      display: "block",
-      marginBottom: px(8),
-    },
-
-    badge: {
-      background: "#fef3c7",
-      color: "#92400e",
-      padding: `${px(5)}px ${px(10)}px`,
-      borderRadius: 999,
-      fontSize: px(10),
-      fontWeight: 800,
-      whiteSpace: "nowrap",
-      flexShrink: 0,
-    },
-
-    helperText: {
-      margin: `${px(10)}px 0 0`,
-      color: "#78716c",
-      fontSize: px(12),
-      lineHeight: 1.4,
-    },
-
-    input: {
-      width: "100%",
-      height: px(46),
-      padding: `0 ${px(13)}px`,
-      borderRadius: px(16),
-      border: "1px solid #e7e5e4",
-      fontSize: px(14),
-      boxSizing: "border-box",
-      background: "white",
-      color: "#111827",
-      outline: "none",
-    },
-
-    sectionHeader: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "flex-start",
-      gap: px(8),
-      marginBottom: px(12),
-    },
-
-    sectionTitle: {
-      fontSize: px(16),
-      fontWeight: 900,
-      margin: 0,
-      whiteSpace: "nowrap",
-    },
-
-    smallText: {
-      fontSize: px(11),
-      color: "#64748b",
-      textAlign: "right",
-      lineHeight: 1.25,
-      maxWidth: "50%",
-    },
-
-    vehicleGrid: {
-      display: "grid",
-      gridTemplateColumns: veryNarrow
-        ? "1fr"
-        : "repeat(2, minmax(0, 1fr))",
-      gap: px(narrow ? 6 : 8),
-      marginBottom: px(16),
-    },
-
-    vehicleCard: {
-      position: "relative",
-      background: "white",
-      border: "1px solid #e7e5e4",
-      borderRadius: px(18),
-      padding: px(narrow ? 8 : 10),
-      boxShadow: "0 8px 20px rgba(0,0,0,0.04)",
-      minWidth: 0,
-      overflow: "hidden",
-      boxSizing: "border-box",
-    },
-
-    vehicleCardActive: {
-      borderColor: "#b45309",
-      background: "linear-gradient(135deg, #fffbeb, #f5f5f4)",
-    },
-
-    check: {
-      position: "absolute",
-      right: px(10),
-      top: px(10),
-      background: "#b45309",
-      color: "white",
-      width: px(22),
-      height: px(22),
-      borderRadius: "50%",
-      display: "grid",
-      placeItems: "center",
-      fontSize: px(13),
-      fontWeight: 900,
-      zIndex: 2,
-    },
-
-    vehicleInfo: {
-      cursor: "pointer",
-      minWidth: 0,
-    },
-
-    vehicleName: {
-      display: "block",
-      fontSize: px(narrow ? 10 : 12),
-      paddingRight: px(22),
-      lineHeight: 1.15,
-      minHeight: px(narrow ? 24 : 28),
-    },
-
-    vehicleCapacity: {
-      display: "block",
-      marginTop: px(3),
-      color: "#64748b",
-      fontSize: px(narrow ? 9 : 10),
-      lineHeight: 1.2,
-    },
-
-    tag: {
-      display: "inline-block",
-      marginTop: px(narrow ? 8 : 10),
-      background: "#fef3c7",
-      color: "#92400e",
-      padding: `${px(4)}px ${px(7)}px`,
-      borderRadius: 999,
-      fontSize: px(narrow ? 8 : 9),
-      fontWeight: 800,
-      maxWidth: "100%",
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-    },
-
-    addBtn: {
-      width: "100%",
-      marginTop: px(10),
-      minHeight: px(narrow ? 28 : 30),
-      border: 0,
-      borderRadius: px(12),
-      background: "#f59e0b",
-      color: "white",
-      fontSize: px(narrow ? 10 : 11),
-      fontWeight: 800,
-      cursor: "pointer",
-      padding: `0 ${px(4)}px`,
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-    },
-
-    qtyBox: {
-      marginTop: px(12),
-      padding: px(7),
-      borderRadius: px(16),
-      background: "white",
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      gap: px(5),
-    },
-
-    qtyBtn: {
-      width: px(30),
-      height: px(30),
-      border: 0,
-      borderRadius: px(12),
-      background: "#f5f5f4",
-      fontWeight: 900,
-      fontSize: px(18),
-      cursor: "pointer",
-      flexShrink: 0,
-    },
-
-    plusBtn: {
-      background: "#d97706",
-      color: "white",
-    },
-
-    qtyCenter: {
-      textAlign: "center",
-      minWidth: 0,
-    },
-
-    qtyNumber: {
-      display: "block",
-      fontSize: px(18),
-      lineHeight: 1,
-    },
-
-    qtyText: {
-      fontSize: px(9),
-      color: "#64748b",
-    },
-
-    quantityCard: {
-      position: "relative",
-      background: "linear-gradient(135deg, #020617, #292524)",
-      color: "white",
-      borderRadius: px(26),
-      padding: px(narrow ? 16 : 20),
-      marginBottom: px(18),
-      boxShadow: "0 16px 35px rgba(0,0,0,0.18)",
-      overflow: "hidden",
-    },
-
-    quantityLabel: {
-      color: "#d6d3d1",
-      fontSize: px(13),
-      margin: 0,
-      paddingRight: px(58),
-    },
-
-    tonsRow: {
-      display: "flex",
-      alignItems: "flex-end",
-      gap: px(8),
-      marginTop: px(4),
-    },
-
-    tons: {
-      fontSize: px(narrow ? 44 : 52),
-      lineHeight: 1,
-    },
-
-    tonsText: {
-      marginBottom: px(6),
-      color: "#d6d3d1",
-      fontWeight: 700,
-      fontSize: px(13),
-    },
-
-    rupee: {
-      position: "absolute",
-      right: px(18),
-      top: px(18),
-      width: px(44),
-      height: px(44),
-      borderRadius: px(16),
-      background: "rgba(255,255,255,0.12)",
-      color: "#fbbf24",
-      display: "grid",
-      placeItems: "center",
-      fontSize: px(24),
-      fontWeight: 900,
-    },
-
-    totalVehicleText: {
-      marginTop: px(14),
-      background: "rgba(255,255,255,0.1)",
-      padding: px(12),
-      borderRadius: px(16),
-      fontSize: px(12),
-      color: "#e7e5e4",
-      lineHeight: 1.35,
-    },
-
-    materialSummaryBox: {
-      marginTop: px(12),
-      padding: px(12),
-      borderRadius: px(16),
-      background: "rgba(255,255,255,0.08)",
-    },
-
-    materialSummaryRow: {
-      display: "flex",
-      justifyContent: "space-between",
-      gap: px(10),
-      fontSize: px(13),
-      padding: `${px(6)}px 0`,
-      borderBottom: "1px solid rgba(255,255,255,0.08)",
-    },
-
-    summaryMaterialName: {
-      minWidth: 0,
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-    },
-
-    field: {
-      marginBottom: px(16),
-    },
-
-    textarea: {
-      width: "100%",
-      minHeight: px(90),
-      padding: px(13),
-      borderRadius: px(16),
-      border: "1px solid #e7e5e4",
-      fontSize: px(14),
-      boxSizing: "border-box",
-      resize: "vertical",
-      outline: "none",
-      fontFamily: "Arial, sans-serif",
-    },
-
-    infoBox: {
-      display: "flex",
-      gap: px(12),
-      background: "#fffbeb",
-      borderRadius: px(24),
-      padding: px(16),
-      marginBottom: px(18),
-      boxSizing: "border-box",
-    },
-
-    infoIcon: {
-      width: px(36),
-      height: px(36),
-      borderRadius: px(14),
-      background: "#d97706",
-      color: "white",
-      display: "grid",
-      placeItems: "center",
-      fontWeight: 900,
-      flexShrink: 0,
-    },
-
-    infoTitle: {
-      fontSize: px(14),
-    },
-
-    infoText: {
-      fontSize: px(12),
-      color: "#57534e",
-      lineHeight: 1.5,
-      margin: `${px(5)}px 0 0`,
-    },
-
-    continueBtn: {
-      width: "100%",
-      minHeight: px(56),
-      border: 0,
-      borderRadius: px(24),
-      background: "linear-gradient(135deg, #020617, #92400e)",
-      color: "white",
-      fontSize: px(16),
-      fontWeight: 900,
-      cursor: "pointer",
-      padding: `0 ${px(12)}px`,
-    },
-
-    footer: {
-      textAlign: "center",
-      color: "#64748b",
-      fontSize: px(12),
-      marginTop: px(14),
-      marginBottom: px(8),
-    },
-
-    bottomTabs: {
-      flexShrink: 0,
-      height: px(72),
-      margin: `0 ${px(14)}px ${px(10)}px`,
-      padding: `${px(8)}px ${px(10)}px`,
-      borderRadius: px(24),
-      background: "rgba(16,16,16,0.96)",
-      border: "1px solid rgba(255,255,255,0.08)",
-      display: "grid",
-      gridTemplateColumns: "repeat(3, 1fr)",
-      gap: px(6),
-      boxShadow: "0 -10px 28px rgba(0,0,0,0.18)",
-    },
-
-    tabBtn: {
-      border: 0,
-      borderRadius: px(18),
-      background: "transparent",
-      color: "#a8a29e",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: px(3),
-      fontWeight: 900,
-      cursor: "pointer",
-      minWidth: 0,
-    },
-
-    tabBtnActive: {
-      color: "#f59e0b",
-    },
-
-    tabIcon: {
-      fontSize: px(18),
-      lineHeight: 1,
-    },
-
-    tabText: {
-      fontSize: px(10),
-      lineHeight: 1,
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-    },
-  };
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-oder confirmation
-import React, { useEffect, useMemo, useState } from "react";
-
-const BASE_W = 206;
-const BASE_H = 445;
-const HEADER_BG_IMAGE = ""; // Add your quarry/mining image URL here.
-
-function useViewport() {
-  const [viewport, setViewport] = useState({
-    width: typeof window !== "undefined" ? window.innerWidth : 390,
-    height: typeof window !== "undefined" ? window.innerHeight : 844,
-  });
-
-  useEffect(() => {
-    const update = () =>
-      setViewport({ width: window.innerWidth, height: window.innerHeight });
-
-    update();
-    window.addEventListener("resize", update);
-    window.addEventListener("orientationchange", update);
-
-    return () => {
-      window.removeEventListener("resize", update);
-      window.removeEventListener("orientationchange", update);
-    };
-  }, []);
-
-  return viewport;
-}
-
-export default function App() {
-  const viewport = useViewport();
-  const styles = useMemo(
-    () => createStyles(viewport),
-    [viewport.width, viewport.height]
-  );
-
-  const [confirmed, setConfirmed] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-
-  const orderItems = [
-    { product: "20mm Crushed Stone", vehicles: 2, quantity: 20 },
-    { product: "40mm Crushed Stone", vehicles: 1, quantity: 10 },
-  ];
-
-  const totalVehicles = orderItems.reduce(
-    (sum, item) => sum + item.vehicles,
-    0
-  );
-  const totalTons = orderItems.reduce(
-    (sum, item) => sum + item.quantity,
-    0
-  );
-
-  const handleSubmit = () => {
-    if (!confirmed) return;
-    setSubmitted(true);
-  };
-
-  return (
-    <div style={styles.page}>
-      <style>{globalCss}</style>
-
-      <main style={styles.phone}>
-        <div style={styles.scrollArea}>
-          <section style={styles.header}>
-            <div style={styles.headerShade} />
-            <div style={styles.headerGrid} />
-
-            <div style={styles.topBar}>
-              <button type="button" style={styles.backButton} aria-label="Go back">
-                ‹
-              </button>
-              <div style={styles.stepBadge}>FINAL REVIEW</div>
-              <button type="button" style={styles.editHeaderButton}>
-                Edit
-              </button>
-            </div>
-
-            <div style={styles.heroRow}>
-              <div style={{ minWidth: 0 }}>
-                <p style={styles.eyebrow}>ORDER CONFIRMATION</p>
-                <h1 style={styles.title}>Review Your<br />Stone Request</h1>
-                <p style={styles.heroSubtext}>
-                  Check the product, vehicle quantity and delivery date before
-                  raising the rate enquiry.
-                </p>
-              </div>
-              <div style={styles.heroIcon}>✓</div>
-            </div>
-
-            <div style={styles.summaryStrip}>
-              <div style={styles.summaryItem}><b>2</b><span>Products</span></div>
-              <div style={styles.summaryDivider} />
-              <div style={styles.summaryItem}><b>{totalVehicles}</b><span>Vehicles</span></div>
-              <div style={styles.summaryDivider} />
-              <div style={styles.summaryItem}><b>{totalTons}t</b><span>Total qty.</span></div>
-            </div>
-          </section>
-
-          <section style={styles.content}>
-            <div style={styles.noticeCard}>
-              <div style={styles.noticeIcon}>₹</div>
-              <div style={{ minWidth: 0 }}>
-                <b style={styles.noticeTitle}>Rate enquiry only</b>
-                <p style={styles.noticeText}>
-                  No payment is required now. StoneRate will check the best
-                  available rate and contact you for approval.
-                </p>
-              </div>
-            </div>
-
-            <div style={styles.sectionTitleRow}>
-              <div>
-                <p style={styles.sectionEyebrow}>ORDER INFORMATION</p>
-                <h2 style={styles.sectionTitle}>Order summary</h2>
-              </div>
-              <button type="button" style={styles.editOrderButton}>Edit order</button>
-            </div>
-
-            <article style={styles.tableCard}>
-              <div style={styles.tableHeader}>
-                <span>Product</span>
-                <span>Vehicle</span>
-                <span>Qty.</span>
-              </div>
-
-              {orderItems.map((item, index) => (
-                <div key={item.product}>
-                  {index > 0 && <div style={styles.tableDivider} />}
-                  <div style={styles.tableRow}>
-                    <div style={styles.productCell}>
-                      <span style={styles.productIcon}>🪨</span>
-                      <b>{item.product}</b>
-                    </div>
-                    <div style={styles.vehicleCell}>
-                      <span style={styles.smallTruck}>🚚</span>
-                      <b>{item.vehicles}</b>
-                      <span>{item.vehicles === 1 ? "vehicle" : "vehicles"}</span>
-                    </div>
-                    <div style={styles.qtyCell}>
-                      <b>{item.quantity}</b>
-                      <span>tons</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              <div style={styles.tableTotalRow}>
-                <b>Total</b>
-                <span>{totalVehicles} vehicles</span>
-                <strong>{totalTons} tons</strong>
-              </div>
-            </article>
-
-            <article style={styles.deliveryCard}>
-              <div style={styles.calendarIcon}>📅</div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={styles.detailLabel}>Expected delivery date</p>
-                <h3 style={styles.deliveryDate}>05 July 2026</h3>
-                <span style={styles.deliveryCaption}>
-                  Delivery timing will be reconfirmed after rate approval.
-                </span>
-              </div>
-              <button type="button" style={styles.changeButton}>Change</button>
-            </article>
-
-            <article style={styles.processCard}>
-              <p style={styles.processTitle}>What happens next?</p>
-              <div style={styles.processSteps}>
-                <div style={styles.processStep}>
-                  <div style={styles.processNumber}>1</div>
-                  <div><b>Enquiry submitted</b><span>Your requirement reaches StoneRate.</span></div>
-                </div>
-                <div style={styles.processLine} />
-                <div style={styles.processStep}>
-                  <div style={styles.processNumber}>2</div>
-                  <div><b>Best rate checked</b><span>Nearby verified sellers are contacted.</span></div>
-                </div>
-                <div style={styles.processLine} />
-                <div style={styles.processStep}>
-                  <div style={styles.processNumber}>3</div>
-                  <div><b>You confirm the rate</b><span>The request becomes an active order afterward.</span></div>
-                </div>
-              </div>
-            </article>
-
-            <button
-              type="button"
-              style={styles.agreementCard}
-              onClick={() => setConfirmed((value) => !value)}
-            >
-              <span style={{ ...styles.checkbox, ...(confirmed ? styles.checkboxActive : {}) }}>
-                {confirmed ? "✓" : ""}
-              </span>
-              <span style={styles.agreementText}>
-                I confirm that the product, vehicle quantity and expected
-                delivery date shown above are correct.
-              </span>
-            </button>
-
-            {submitted && (
-              <div style={styles.successCard}>
-                <div style={styles.successIcon}>✓</div>
-                <div>
-                  <b>Rate enquiry raised successfully</b>
-                  <p>The request is waiting for rate confirmation. You will be notified when the best rate is ready.</p>
-                </div>
-              </div>
-            )}
-
-            <div style={styles.bottomSpacer} />
-          </section>
-        </div>
-
-        <footer style={styles.fixedFooter}>
-          <div style={styles.footerHint}>
-            <span>🛡️</span>
-            <span>No payment is collected at this stage</span>
-          </div>
-          <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={!confirmed || submitted}
-            style={{
-              ...styles.primaryButton,
-              opacity: confirmed && !submitted ? 1 : 0.52,
-            }}
-          >
-            <span style={styles.primaryIcon}>✦</span>
-            <span>{submitted ? "Enquiry Submitted" : "Place Order & Raise Enquiry"}</span>
-            <b style={styles.primaryArrow}>›</b>
-          </button>
-        </footer>
-        {submitted && (
-  <div style={styles.popupOverlay}>
-    <div style={styles.popupCard}>
-      <div style={styles.popupGlow} />
-
-      <div style={styles.greenTick}>✓</div>
-
-      <h2 style={styles.popupTitle}>
-        Order Raised for
-        <br />
-        Rate Enquiry
-      </h2>
-
-      <p style={styles.popupText}>
-        Your order request has been submitted successfully. StoneRate will
-        check the best available rate and notify you once the rate is ready.
-      </p>
-
-      <div style={styles.popupStatus}>
-        <span style={styles.popupStatusDot} />
-        Waiting for rate confirmation
-      </div>
-
-      <button
-        type="button"
-        style={styles.popupButton}
-        onClick={() => setSubmitted(false)}
-      >
-        Done
-      </button>
-    </div>
-  </div>
-)}
-      </main>
-    </div>
-  );
-}
-
-function createStyles(viewport) {
-  const vw = viewport.width || 390;
-  const vh = viewport.height || 844;
-  const isDesktop = vw >= 700;
-  const appW = isDesktop ? 390 : vw;
-  const appH = isDesktop ? 844 : vh;
-  const rawScale = Math.min(appW / BASE_W, appH / BASE_H);
-  const scale = Math.max(0.86, Math.min(2.05, rawScale));
-  const ms = (value, factor = 0.55) => Math.round(value + (value * scale - value) * factor);
-  const tiny = appW <= 230;
-  const short = appH <= 620;
-
-  return {
-    page: {
-      width: "100vw", height: "100dvh", minHeight: "100dvh",
-      display: "flex", justifyContent: "center", alignItems: isDesktop ? "center" : "stretch",
-      margin: 0, padding: isDesktop ? 10 : 0, overflow: "hidden",
-      background: isDesktop ? "#f4f1ea" : "#0b0907", fontFamily: "Arial, sans-serif",
-      boxSizing: "border-box",
-    },
-    phone: {
-      position: "relative", width: isDesktop ? 390 : "100vw", height: isDesktop ? 844 : "100dvh",
-      overflow: "hidden", background: "#f6f4ef", borderRadius: isDesktop ? 30 : 0,
-      boxShadow: isDesktop ? "0 25px 70px rgba(0,0,0,.25)" : "none", boxSizing: "border-box",
-    },
-    scrollArea: {
-      width: "100%", height: "100%", overflowY: "auto", overflowX: "hidden",
-      WebkitOverflowScrolling: "touch", boxSizing: "border-box",
-    },
-    header: {
-      position: "relative", padding: `${ms(short ? 12 : 16)}px ${ms(tiny ? 11 : 15)}px ${ms(19)}px`,
-      overflow: "hidden", color: "white", boxSizing: "border-box",
-      backgroundImage: HEADER_BG_IMAGE
-        ? `linear-gradient(135deg, rgba(5,4,3,.55), rgba(28,25,23,.46) 55%, rgba(120,53,15,.35)), url("${HEADER_BG_IMAGE}")`
-        : "radial-gradient(circle at 84% 10%, rgba(245,158,11,.45), transparent 30%), linear-gradient(135deg, #080706, #1c1917 54%, #78350f)",
-      backgroundSize: "cover", backgroundPosition: "center 42%", backgroundRepeat: "no-repeat",
-    },
-    headerShade: { position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,.02), rgba(0,0,0,.3))", pointerEvents: "none" },
-    headerGrid: { position: "absolute", inset: 0, opacity: 0.24, pointerEvents: "none", backgroundImage: "linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px)", backgroundSize: `${ms(30)}px ${ms(30)}px` },
-    topBar: { position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "space-between", gap: ms(8) },
-    backButton: { width: ms(32), height: ms(32), display: "grid", placeItems: "center", border: "1px solid rgba(255,255,255,.18)", borderRadius: ms(12), background: "rgba(255,255,255,.11)", color: "white", fontSize: ms(23), lineHeight: 1, cursor: "pointer" },
-    stepBadge: { padding: `${ms(5)}px ${ms(10)}px`, borderRadius: 999, border: "1px solid rgba(245,158,11,.45)", background: "rgba(245,158,11,.17)", color: "#fde68a", fontSize: ms(7.7), letterSpacing: ms(1.2), fontWeight: 950 },
-    editHeaderButton: { minWidth: ms(43), height: ms(30), padding: `0 ${ms(9)}px`, border: "1px solid rgba(255,255,255,.18)", borderRadius: 999, background: "rgba(255,255,255,.11)", color: "white", fontSize: ms(9), fontWeight: 900, cursor: "pointer" },
-    heroRow: { position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "space-between", gap: ms(12), marginTop: ms(14) },
-    eyebrow: { margin: 0, color: "#fde68a", fontSize: ms(7.2), letterSpacing: ms(1.7), fontWeight: 950 },
-    title: { margin: `${ms(6)}px 0 0`, fontSize: ms(short ? 23 : 28), lineHeight: 1.02, letterSpacing: -0.7, fontWeight: 950 },
-    heroSubtext: { maxWidth: ms(220), margin: `${ms(8)}px 0 0`, color: "#e7e5e4", fontSize: ms(8.7), lineHeight: 1.35, fontWeight: 650 },
-    heroIcon: { width: ms(51), height: ms(51), display: "grid", placeItems: "center", borderRadius: ms(20), background: "linear-gradient(135deg, #f59e0b, #ea580c)", boxShadow: "0 15px 30px rgba(234,88,12,.32)", fontSize: ms(25), fontWeight: 950, flexShrink: 0 },
-    summaryStrip: { position: "relative", zIndex: 2, display: "grid", gridTemplateColumns: "1fr auto 1fr auto 1fr", alignItems: "center", marginTop: ms(15), padding: ms(8), border: "1px solid rgba(255,255,255,.13)", borderRadius: ms(16), background: "rgba(255,255,255,.12)", backdropFilter: "blur(10px)" },
-    summaryItem: { display: "flex", flexDirection: "column", alignItems: "center", gap: ms(2), minWidth: 0, fontSize: ms(7.7), textAlign: "center" },
-    summaryDivider: { width: 1, height: ms(27), background: "rgba(255,255,255,.17)" },
-    content: { padding: `${ms(13)}px ${ms(tiny ? 9 : 13)}px 0`, color: "#111827", background: "linear-gradient(180deg, #fff, #f6f4ef 58%, #efede8)", boxSizing: "border-box" },
-    noticeCard: { display: "flex", gap: ms(10), padding: ms(12), border: "1px solid #fde68a", borderRadius: ms(19), background: "linear-gradient(135deg, #fffbeb, #fef3c7)", boxShadow: "0 10px 22px rgba(146,64,14,.08)" },
-    noticeIcon: { width: ms(36), height: ms(36), display: "grid", placeItems: "center", borderRadius: ms(14), background: "#f59e0b", color: "white", fontSize: ms(18), fontWeight: 950, flexShrink: 0 },
-    noticeTitle: { color: "#78350f", fontSize: ms(10.5) },
-    noticeText: { margin: `${ms(4)}px 0 0`, color: "#92400e", fontSize: ms(8.2), lineHeight: 1.35, fontWeight: 650 },
-    sectionTitleRow: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: ms(9), marginTop: ms(16), marginBottom: ms(9) },
-    sectionEyebrow: { margin: 0, color: "#b45309", fontSize: ms(7.3), letterSpacing: ms(1.15), fontWeight: 950 },
-    sectionTitle: { margin: `${ms(3)}px 0 0`, fontSize: ms(15), fontWeight: 950 },
-    editOrderButton: { padding: 0, border: 0, background: "transparent", color: "#b45309", fontSize: ms(8.7), fontWeight: 900, cursor: "pointer", whiteSpace: "nowrap" },
-    tableCard: { overflow: "hidden", border: "1px solid #e7e5e4", borderRadius: ms(20), background: "rgba(255,255,255,.96)", boxShadow: "0 10px 24px rgba(0,0,0,.055)" },
-    tableHeader: { display: "grid", gridTemplateColumns: "1.55fr .85fr .65fr", gap: ms(6), padding: `${ms(9)}px ${ms(11)}px`, background: "#1c1917", color: "#fde68a", fontSize: ms(7.5), letterSpacing: ms(.6), fontWeight: 950 },
-    tableRow: { display: "grid", gridTemplateColumns: "1.55fr .85fr .65fr", alignItems: "center", gap: ms(6), padding: `${ms(11)}px`, fontSize: ms(8.6) },
-    productCell: { display: "flex", alignItems: "center", gap: ms(7), minWidth: 0, lineHeight: 1.15 },
-    productIcon: { width: ms(27), height: ms(27), display: "grid", placeItems: "center", borderRadius: ms(10), background: "#fef3c7", flexShrink: 0 },
-    vehicleCell: { display: "grid", gridTemplateColumns: "auto auto", justifyContent: "start", alignItems: "center", columnGap: ms(3), minWidth: 0 },
-    smallTruck: { gridRow: "1 / span 2", marginRight: ms(2), fontSize: ms(13) },
-    qtyCell: { display: "flex", flexDirection: "column", alignItems: "flex-end", gap: ms(1), color: "#92400e" },
-    tableDivider: { height: 1, margin: `0 ${ms(11)}px`, background: "#eeeae6" },
-    tableTotalRow: { display: "grid", gridTemplateColumns: "1.55fr .85fr .65fr", gap: ms(6), padding: `${ms(9)}px ${ms(11)}px`, background: "#fffbeb", color: "#78350f", fontSize: ms(8.2), alignItems: "center" },
-    deliveryCard: { display: "flex", alignItems: "center", gap: ms(9), marginTop: ms(12), padding: ms(12), border: "1px solid #e7e5e4", borderRadius: ms(20), background: "white", boxShadow: "0 10px 24px rgba(0,0,0,.05)" },
-    calendarIcon: { width: ms(38), height: ms(38), display: "grid", placeItems: "center", borderRadius: ms(14), background: "#fffbeb", fontSize: ms(19), flexShrink: 0 },
-    detailLabel: { margin: 0, color: "#78716c", fontSize: ms(7.8) },
-    deliveryDate: { margin: `${ms(3)}px 0 0`, fontSize: ms(11.3), fontWeight: 950 },
-    deliveryCaption: { display: "block", marginTop: ms(3), color: "#78716c", fontSize: ms(7.2), lineHeight: 1.25 },
-    changeButton: { padding: `${ms(5)}px ${ms(8)}px`, border: "1px solid #fde68a", borderRadius: 999, background: "#fffbeb", color: "#b45309", fontSize: ms(7.8), fontWeight: 900, cursor: "pointer" },
-    processCard: { marginTop: ms(12), padding: ms(13), border: "1px solid #e7e5e4", borderRadius: ms(20), background: "rgba(255,255,255,.88)" },
-    processTitle: { margin: 0, fontSize: ms(11), fontWeight: 950 },
-    processSteps: { marginTop: ms(10) },
-    processStep: { display: "flex", alignItems: "flex-start", gap: ms(9), fontSize: ms(8.3) },
-    processNumber: { width: ms(22), height: ms(22), display: "grid", placeItems: "center", borderRadius: ms(8), background: "#f59e0b", color: "white", fontSize: ms(9), fontWeight: 950, flexShrink: 0 },
-    processLine: { width: 2, height: ms(10), marginLeft: ms(10), background: "#fde68a" },
-    agreementCard: { width: "100%", display: "flex", alignItems: "flex-start", gap: ms(9), marginTop: ms(12), padding: ms(11), border: "1px solid #fde68a", borderRadius: ms(17), background: "#fffbeb", textAlign: "left", cursor: "pointer" },
-    checkbox: { width: ms(21), height: ms(21), display: "grid", placeItems: "center", border: "2px solid #d97706", borderRadius: ms(7), background: "white", color: "white", fontSize: ms(11), fontWeight: 950, flexShrink: 0 },
-    checkboxActive: { background: "#d97706" },
-    agreementText: { color: "#78350f", fontSize: ms(8.4), lineHeight: 1.35, fontWeight: 750 },
-    successCard: { display: "flex", gap: ms(9), marginTop: ms(12), padding: ms(12), border: "1px solid #bbf7d0", borderRadius: ms(18), background: "#f0fdf4", color: "#166534", fontSize: ms(8.5), lineHeight: 1.35 },
-    successIcon: { width: ms(30), height: ms(30), display: "grid", placeItems: "center", borderRadius: ms(11), background: "#22c55e", color: "white", fontWeight: 950, flexShrink: 0 },
-    bottomSpacer: { height: ms(116) },
-    fixedFooter: { position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 30, padding: `${ms(8)}px ${ms(13)}px calc(env(safe-area-inset-bottom, 0px) + ${ms(10)}px)`, background: "linear-gradient(to top, #f6f4ef 76%, rgba(246,244,239,.98) 90%, rgba(246,244,239,.82))", borderTop: "1px solid rgba(120,113,108,.12)", boxShadow: "0 -12px 30px rgba(0,0,0,.10)" },
-    footerHint: { display: "flex", alignItems: "center", justifyContent: "center", gap: ms(5), marginBottom: ms(7), color: "#78716c", fontSize: ms(7.8), fontWeight: 700 },
-    primaryButton: { position: "relative", width: "100%", minHeight: ms(52), display: "flex", alignItems: "center", justifyContent: "center", gap: ms(8), border: 0, borderRadius: ms(21), background: "linear-gradient(135deg, #f59e0b, #ea580c)", color: "white", fontSize: ms(11.7), fontWeight: 950, boxShadow: "0 15px 30px rgba(234,88,12,.3)", cursor: "pointer" },
-    primaryIcon: { width: ms(26), height: ms(26), display: "grid", placeItems: "center", borderRadius: ms(9), background: "rgba(255,255,255,.18)" },
-    popupOverlay: {
-      position: "absolute",
-      inset: 0,
-      zIndex: 100,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: ms(18),
-      background: "rgba(2, 6, 23, 0.72)",
-      backdropFilter: "blur(8px)",
-    },
-    
-    popupCard: {
-      position: "relative",
-      width: "100%",
-      maxWidth: ms(280),
-      overflow: "hidden",
-      padding: `${ms(25)}px ${ms(18)}px ${ms(18)}px`,
-      border: "1px solid rgba(255,255,255,0.18)",
-      borderRadius: ms(26),
-      background:
-        "linear-gradient(145deg, rgba(255,255,255,0.98), rgba(240,253,244,0.97))",
-      boxShadow:
-        "0 30px 80px rgba(0,0,0,0.38), 0 0 45px rgba(34,197,94,0.16)",
-      textAlign: "center",
-    },
-    
-    popupGlow: {
-      position: "absolute",
-      left: "50%",
-      top: ms(-65),
-      width: ms(170),
-      height: ms(130),
-      borderRadius: "50%",
-      background: "rgba(34,197,94,0.20)",
-      filter: `blur(${ms(28)}px)`,
-      transform: "translateX(-50%)",
-      pointerEvents: "none",
-    },
-    
-    greenTick: {
-      position: "relative",
-      zIndex: 2,
-      width: ms(62),
-      height: ms(62),
-      margin: "0 auto",
-      display: "grid",
-      placeItems: "center",
-      border: `${ms(5)}px solid #dcfce7`,
-      borderRadius: "50%",
-      background: "linear-gradient(135deg, #22c55e, #15803d)",
-      color: "white",
-      fontSize: ms(30),
-      fontWeight: 950,
-      boxShadow:
-        "0 14px 30px rgba(34,197,94,0.30), 0 0 0 7px rgba(34,197,94,0.08)",
-    },
-    
-    popupTitle: {
-      position: "relative",
-      zIndex: 2,
-      margin: `${ms(18)}px 0 0`,
-      color: "#111827",
-      fontSize: ms(20),
-      lineHeight: 1.06,
-      fontWeight: 950,
-      letterSpacing: -0.5,
-    },
-    
-    popupText: {
-      position: "relative",
-      zIndex: 2,
-      margin: `${ms(11)}px auto 0`,
-      maxWidth: ms(235),
-      color: "#57534e",
-      fontSize: ms(9.2),
-      lineHeight: 1.45,
-      fontWeight: 650,
-    },
-    
-    popupStatus: {
-      position: "relative",
-      zIndex: 2,
-      width: "fit-content",
-      margin: `${ms(14)}px auto 0`,
-      padding: `${ms(7)}px ${ms(11)}px`,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: ms(6),
-      border: "1px solid #bbf7d0",
-      borderRadius: 999,
-      background: "#f0fdf4",
-      color: "#166534",
-      fontSize: ms(8.5),
-      fontWeight: 900,
-    },
-    
-    popupStatusDot: {
-      width: ms(7),
-      height: ms(7),
-      borderRadius: "50%",
-      background: "#22c55e",
-      boxShadow: "0 0 0 4px rgba(34,197,94,0.12)",
-    },
-    
-    popupButton: {
-      position: "relative",
-      zIndex: 2,
-      width: "100%",
-      minHeight: ms(44),
-      marginTop: ms(17),
-      border: 0,
-      borderRadius: ms(17),
-      background: "linear-gradient(135deg, #22c55e, #15803d)",
-      color: "white",
-      fontSize: ms(11),
-      fontWeight: 950,
-      cursor: "pointer",
-      boxShadow: "0 12px 24px rgba(34,197,94,0.24)",
-    },
-    primaryArrow: { position: "absolute", right: ms(17), fontSize: ms(24), fontWeight: 400 },
-  };
-}
-
-const globalCss = `
-* { box-sizing: border-box; }
-html, body, #root { margin: 0; width: 100%; height: 100%; min-height: 100%; background: #0b0907; overflow: hidden; }
-button, input, select, textarea { font: inherit; }
-body { -webkit-text-size-adjust: 100%; }
-`;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-rate status page
-import React, { useEffect, useMemo, useRef, useState } from "react";
-
-const BASE_W = 206;
-const BASE_H = 445;
-const HEADER_BG_IMAGE = ""; // Add quarry/mining image URL here.
-
-function useViewport() {
-  const [viewport, setViewport] = useState({
-    width: typeof window !== "undefined" ? window.innerWidth : 390,
-    height: typeof window !== "undefined" ? window.innerHeight : 844,
-  });
-
-  useEffect(() => {
-    const update = () => setViewport({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    });
-
-    update();
-    window.addEventListener("resize", update);
-    window.addEventListener("orientationchange", update);
-
-    return () => {
-      window.removeEventListener("resize", update);
-      window.removeEventListener("orientationchange", update);
-    };
-  }, []);
-
-  return viewport;
-}
-
-export default function App() {
-  const viewport = useViewport();
-  const styles = useMemo(
-    () => createStyles(viewport),
-    [viewport.width, viewport.height]
-  );
-
-  // pending | accepted | rejected
-  const [decision, setDecision] = useState("pending");
-  const [showRejectPopup, setShowRejectPopup] = useState(false);
-  const [showAcceptPopup, setShowAcceptPopup] = useState(false);
-  const trackerRef = useRef(null);
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      const trackerElement = trackerRef.current;
-  
-      if (!trackerElement) return;
-  
-      trackerElement.scrollTo({
-        left: trackerElement.scrollWidth - trackerElement.clientWidth,
-        behavior: "smooth",
-      });
-    }, 350);
-  
-    return () => window.clearTimeout(timer);
-  }, []);
-  const orderItems = [
-    { product: "20mm Crushed Stone", vehicles: 2, quantity: 20 },
-    { product: "40mm Crushed Stone", vehicles: 1, quantity: 10 },
-  ];
-
-  const totalVehicles = orderItems.reduce((sum, item) => sum + item.vehicles, 0);
-  const totalTons = orderItems.reduce((sum, item) => sum + item.quantity, 0);
-
-  const finalStatus =
-    decision === "accepted"
-      ? { label: "Accepted", color: "green", symbol: "✓" }
-      : decision === "rejected"
-      ? { label: "Rejected", color: "red", symbol: "×" }
-      : { label: "Waiting for your confirmation", color: "orange", symbol: "" };
-
-  const acceptRate = () => {
-    setDecision("accepted");
-    setShowAcceptPopup(true);
-  };
-
-  const rejectRate = () => {
-    setDecision("rejected");
-    setShowRejectPopup(false);
-  };
-
-  return (
-    <div style={styles.page}>
-      <style>{globalCss}</style>
-
-      <main style={styles.phone}>
-        <div style={styles.scrollArea}>
-          <header style={styles.header}>
-            <div style={styles.headerShade} />
-            <div style={styles.headerGrid} />
-
-            <div style={styles.topBar}>
-              <button style={styles.backButton}>‹</button>
-              <div style={styles.requestBadge}>RATE REQUEST</div>
-              <button style={styles.helpButton}>Help</button>
-            </div>
-
-            <div style={styles.heroRow}>
-              <div style={{ minWidth: 0 }}>
-                <p style={styles.eyebrow}>REQUEST ID: SR-260705-01</p>
-                <h1 style={styles.title}>Your Best Rate<br />Is Ready</h1>
-                <p style={styles.heroText}>
-                  Review the quote and accept or reject the seller rate.
-                </p>
-              </div>
-              <div style={styles.rateIcon}>₹</div>
-            </div>
-          </header>
-
-          <section style={styles.content}>
-            <article style={styles.trackerCard}>
-              <p style={styles.trackerHeading}>Rate request status</p>
-
-              <div ref={trackerRef} style={styles.trackerViewport}>
-
-                <div style={styles.tracker}>
-                  <StatusStep
-                    styles={styles}
-                    label="Request submitted"
-                    state="done"
-                  />
-                  <StatusConnector styles={styles} state="done" />
-
-                  <StatusStep
-                    styles={styles}
-                    label="Checking with sellers"
-                    state="done"
-                  />
-                  <StatusConnector styles={styles} state="done" />
-
-                  <StatusStep
-                    styles={styles}
-                    label="Best rate provided"
-                    state="done"
-                  />
-                  <StatusConnector
-                    styles={styles}
-                    state={finalStatus.color}
-                  />
-
-                  <StatusStep
-                    styles={styles}
-                    label={finalStatus.label}
-                    state={finalStatus.color}
-                    symbol={finalStatus.symbol}
-                    wide
-                  />
-                </div>
-              </div>
-            </article>
-
-            <div style={styles.rateNotice}>
-              <div style={styles.noticeIcon}>✓</div>
-              <div style={{ minWidth: 0 }}>
-                <b style={styles.noticeTitle}>
-                  Best rate provided
-                </b>
-                <p style={styles.noticeText}>
-                  The quote is waiting for your confirmation.
-                </p>
-              </div>
-            </div>
-
-            <div style={styles.sectionHeading}>
-              <div>
-                <p style={styles.sectionEyebrow}>QUOTE DETAILS</p>
-                <h2 style={styles.sectionTitle}>Rate summary</h2>
-              </div>
-              <div style={styles.validPill}>Valid today</div>
-            </div>
-
-            <article style={styles.quoteCard}>
-              <div style={styles.quoteGlow} />
-              <div style={styles.quoteTopRow}>
-                <div>
-                  <p style={styles.quoteLabel}>Best available rate</p>
-                  <div style={styles.quoteValueRow}>
-                    <span style={styles.rupeeSymbol}>₹</span>
-                    <b style={styles.quoteValue}>1,280</b>
-                    <span style={styles.perTon}>/ ton</span>
-                  </div>
-                </div>
-                <div style={styles.bestRateBadge}>BEST RATE</div>
-              </div>
-
-              <div style={styles.quoteMetaGrid}>
-                <div style={styles.quoteMetaItem}>
-                  <span>Total quantity</span>
-                  <b>{totalTons} tons</b>
-                </div>
-                <div style={styles.quoteMetaItem}>
-                  <span>Vehicles</span>
-                  <b>{totalVehicles} vehicles</b>
-                </div>
-                <div style={styles.quoteMetaItem}>
-                  <span>Transport</span>
-                  <b>Included</b>
-                </div>
-              </div>
-
-              <div style={styles.estimatedRow}>
-                <span>Estimated material value</span>
-                <b>₹38,400</b>
-              </div>
-            </article>
-
-            <article style={styles.tableCard}>
-              <div style={styles.tableHeader}>
-                <span>Product</span>
-                <span>Vehicle</span>
-                <span>Qty.</span>
-              </div>
-
-              {orderItems.map((item, index) => (
-                <React.Fragment key={item.product}>
-                  {index > 0 && <div style={styles.tableDivider} />}
-                  <div style={styles.tableRow}>
-                    <div style={styles.productCell}>
-                      <span style={styles.productIcon}>🪨</span>
-                      <b>{item.product}</b>
-                    </div>
-                    <div style={styles.vehicleCell}>
-                      <span>🚚</span>
-                      <b>{item.vehicles}</b>
-                      <small>{item.vehicles === 1 ? "vehicle" : "vehicles"}</small>
-                    </div>
-                    <div style={styles.qtyCell}>
-                      <b>{item.quantity}</b>
-                      <span>tons</span>
-                    </div>
-                  </div>
-                </React.Fragment>
-              ))}
-            </article>
-
-            <article style={styles.deliveryCard}>
-              <div style={styles.deliveryIcon}>📅</div>
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <span style={styles.detailLabel}>Expected delivery</span>
-                <b style={styles.deliveryDate}>05 July 2026</b>
-              </div>
-              <div style={styles.deliveryStatus}>Scheduled</div>
-            </article>
-
-            {decision === "accepted" && (
-              <div style={styles.acceptedCard}>
-                <div style={styles.acceptedIcon}>✓</div>
-                <div>
-                  <b>Rate accepted</b>
-                  <p>Continue to the supplier-details page to review and confirm the seller.</p>
-                </div>
-              </div>
-            )}
-
-            {decision === "rejected" && (
-              <div style={styles.rejectedCard}>
-                <div style={styles.rejectedIcon}>×</div>
-                <div>
-                  <b>Rate rejected</b>
-                  <p>This quote will not be used to place the order.</p>
-                </div>
-              </div>
-            )}
-
-            <div style={styles.bottomSpacer} />
-          </section>
-        </div>
-
-        <footer style={styles.fixedFooter}>
-          {decision === "pending" && (
-            <>
-              <div style={styles.footerHint}>
-                <span>🛡️</span>
-                <span>Choose whether to accept or reject this rate</span>
-              </div>
-              <div style={styles.footerButtons}>
-                <button
-                  type="button"
-                  onClick={() => setShowRejectPopup(true)}
-                  style={styles.rejectButton}
-                >
-                  <span>×</span>
-                  Reject Rate
-                </button>
-                <button
-                  type="button"
-                  onClick={acceptRate}
-                  style={styles.acceptButton}
-                >
-                  <span>✓</span>
-                  Accept Rate
-                </button>
-              </div>
-            </>
-          )}
-
-          {decision === "accepted" && (
-            <>
-              <div style={styles.footerHintGreen}>
-                <span>✓</span>
-                <span>Rate accepted successfully</span>
-              </div>
-              <button type="button" style={styles.nextPageButton}>
-                Continue to Supplier Details
-                <b>›</b>
-              </button>
-            </>
-          )}
-
-          {decision === "rejected" && (
-            <>
-              <div style={styles.footerHintRed}>
-                <span>×</span>
-                <span>This rate has been rejected</span>
-              </div>
-              <button type="button" style={styles.rejectedOnlyButton} disabled>
-                Rate Rejected
-              </button>
-            </>
-          )}
-        </footer>
-
-        {showRejectPopup && (
-          <div style={styles.popupOverlay}>
-            <div style={styles.rejectPopup}>
-              <div style={styles.warningIcon}>!</div>
-              <h2 style={styles.popupTitle}>Reject this rate?</h2>
-              <p style={styles.popupText}>
-                The quote will be marked as rejected and will not be used to place this order.
-              </p>
-              <div style={styles.popupButtons}>
-                <button
-                  type="button"
-                  onClick={() => setShowRejectPopup(false)}
-                  style={styles.cancelButton}
-                >
-                  Keep Rate
-                </button>
-                <button
-                  type="button"
-                  onClick={rejectRate}
-                  style={styles.confirmRejectButton}
-                >
-                  Yes, Reject
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {showAcceptPopup && (
-          <div style={styles.popupOverlay}>
-            <div style={styles.acceptPopup}>
-              <div style={styles.popupGlow} />
-              <div style={styles.greenTick}>✓</div>
-              <h2 style={styles.popupTitle}>Rate Accepted</h2>
-              <p style={styles.popupText}>
-                The best rate has been accepted. Supplier details can now be reviewed on the next page.
-              </p>
-              <button
-                type="button"
-                onClick={() => setShowAcceptPopup(false)}
-                style={styles.doneButton}
-              >
-                Done
-              </button>
-            </div>
-          </div>
-        )}
-      </main>
-    </div>
-  );
-}
-
-function StatusStep({ styles, label, state, symbol, wide }) {
-  const circleStyle =
-    state === "done" || state === "green"
-      ? styles.statusCircleGreen
-      : state === "red"
-      ? styles.statusCircleRed
-      : styles.statusCircleOrange;
-
-  const labelStyle =
-    state === "done" || state === "green"
-      ? styles.statusLabelGreen
-      : state === "red"
-      ? styles.statusLabelRed
-      : styles.statusLabelOrange;
-
-  return (
-    <div style={{ ...styles.statusStep, ...(wide ? styles.statusStepWide : {}) }}>
-      <div style={{ ...styles.statusCircle, ...circleStyle }}>
-        {state === "done" ? "✓" : symbol}
-      </div>
-      <span style={{ ...styles.statusLabel, ...labelStyle }}>{label}</span>
-    </div>
-  );
-}
-
-function StatusConnector({ styles, state }) {
-  const color =
-    state === "done" || state === "green"
-      ? "#22c55e"
-      : state === "red"
-      ? "linear-gradient(to right, #22c55e, #ef4444)"
-      : "linear-gradient(to right, #22c55e, #f59e0b)";
-
-  return <div style={{ ...styles.statusConnector, background: color }} />;
-}
-
-function createStyles(viewport) {
-  const vw = viewport.width || 390;
-  const vh = viewport.height || 844;
-  const isDesktop = vw >= 700;
-  const appW = isDesktop ? 390 : vw;
-  const appH = isDesktop ? 844 : vh;
-  const rawScale = Math.min(appW / BASE_W, appH / BASE_H);
-  const scale = Math.max(0.86, Math.min(2.05, rawScale));
-  const ms = (value, factor = 0.55) =>
-    Math.round(value + (value * scale - value) * factor);
-  const tiny = appW <= 230;
-  const short = appH <= 620;
-
-  return {
-    page: {
-      width: "100vw", height: "100dvh", minHeight: "100dvh",
-      display: "flex", justifyContent: "center", alignItems: isDesktop ? "center" : "stretch",
-      margin: 0, padding: isDesktop ? 10 : 0, overflow: "hidden",
-      background: isDesktop ? "#f4f1ea" : "#0b0907", fontFamily: "Arial, sans-serif",
-    },
-    phone: {
-      position: "relative", width: isDesktop ? 390 : "100vw", height: isDesktop ? 844 : "100dvh",
-      overflow: "hidden", background: "#f6f4ef", borderRadius: isDesktop ? 30 : 0,
-      boxShadow: isDesktop ? "0 25px 70px rgba(0,0,0,.25)" : "none",
-    },
-    scrollArea: { width: "100%", height: "100%", overflowY: "auto", overflowX: "hidden",
-    scrollBehavior: "smooth",
-  WebkitOverflowScrolling: "touch" },
-    
-header: {
-  position: "sticky",
-  top: 0,
-  zIndex: 40,
- padding: `${ms(short ? 8 : 11)}px ${ms(tiny ? 10 : 13)}px ${ms(12)}px`,
-      overflow: "hidden", color: "white",
-      backgroundImage: HEADER_BG_IMAGE
-        ? `linear-gradient(135deg, rgba(5,4,3,.58), rgba(28,25,23,.46) 55%, rgba(120,53,15,.34)), url("${HEADER_BG_IMAGE}")`
-        : "radial-gradient(circle at 84% 10%, rgba(245,158,11,.45), transparent 30%), linear-gradient(135deg, #080706, #1c1917 54%, #78350f)",
-      backgroundSize: "cover", backgroundPosition: "center 42%", backgroundRepeat: "no-repeat",
-    },
-    headerShade: { position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,.02), rgba(0,0,0,.32))", pointerEvents: "none" },
-    headerGrid: { position: "absolute", inset: 0, opacity: .24, pointerEvents: "none", backgroundImage: "linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px)", backgroundSize: `${ms(30)}px ${ms(30)}px` },
-    topBar: { position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "space-between", gap: ms(8) },
-    backButton: { width: ms(32), height: ms(32), display: "grid", placeItems: "center", border: "1px solid rgba(255,255,255,.18)", borderRadius: ms(12), background: "rgba(255,255,255,.11)", color: "white", fontSize: ms(23), cursor: "pointer" },
-    requestBadge: { padding: `${ms(5)}px ${ms(10)}px`, borderRadius: 999, border: "1px solid rgba(245,158,11,.45)", background: "rgba(245,158,11,.17)", color: "#fde68a", fontSize: ms(7.7), letterSpacing: ms(1.2), fontWeight: 950 },
-    helpButton: { minWidth: ms(43), height: ms(30), padding: `0 ${ms(9)}px`, border: "1px solid rgba(255,255,255,.18)", borderRadius: 999, background: "rgba(255,255,255,.11)", color: "white", fontSize: ms(9), fontWeight: 900, cursor: "pointer" },
-    heroRow: { position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "space-between", gap: ms(12), marginTop: ms(14) },
-    eyebrow: { margin: 0, color: "#fde68a", fontSize: ms(7.1), letterSpacing: ms(1.25), fontWeight: 950 },
-    title: { margin: `${ms(6)}px 0 0`, fontSize: ms(short ? 23 : 28), lineHeight: 1.02, letterSpacing: -.7, fontWeight: 950 },
-    heroText: { maxWidth: ms(220), margin: `${ms(8)}px 0 0`, color: "#e7e5e4", fontSize: ms(8.7), lineHeight: 1.35, fontWeight: 650 },
-    rateIcon: { width: ms(51), height: ms(51), display: "grid", placeItems: "center", borderRadius: ms(20), background: "linear-gradient(135deg, #f59e0b, #ea580c)", color: "white", fontSize: ms(27), fontWeight: 950, boxShadow: "0 15px 30px rgba(234,88,12,.32)", flexShrink: 0 },
-    content: { padding: `${ms(13)}px ${ms(tiny ? 9 : 13)}px 0`, color: "#111827", background: "linear-gradient(180deg, #fff, #f6f4ef 58%, #efede8)" },
-    trackerCard: { padding: `${ms(12)}px ${ms(8)}px ${ms(10)}px`, border: "1px solid #e7e5e4", borderRadius: ms(20), background: "white", boxShadow: "0 10px 24px rgba(0,0,0,.05)" },
-    trackerHeading: { margin: `0 0 ${ms(11)}px`, textAlign: "center", fontSize: ms(11), fontWeight: 950 },
-    trackerViewport: { width: "100%", overflowX: "auto", overflowY: "hidden", scrollbarWidth: "none", paddingBottom: ms(3) },
-    tracker: { minWidth: ms(455), display: "flex", alignItems: "flex-start", justifyContent: "center" },
-    statusStep: { width: ms(86), display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0, textAlign: "center" },
-    statusStepWide: { width: ms(112) },
-    statusCircle: { width: ms(25), height: ms(25), display: "grid", placeItems: "center", borderRadius: "50%", fontSize: ms(10), fontWeight: 950 },
-    statusCircleGreen: { background: "#22c55e", color: "white", boxShadow: "0 6px 14px rgba(34,197,94,.22)" },
-    statusCircleOrange: { background: "#f59e0b", color: "white", boxShadow: "0 6px 14px rgba(245,158,11,.24)" },
-    statusCircleRed: { background: "#ef4444", color: "white", boxShadow: "0 6px 14px rgba(239,68,68,.22)" },
-    statusLabel: { marginTop: ms(6), fontSize: ms(7), lineHeight: 1.16, fontWeight: 850 },
-    statusLabelGreen: { color: "#166534" },
-    statusLabelOrange: { color: "#92400e" },
-    statusLabelRed: { color: "#b91c1c" },
-    statusConnector: { width: ms(22), height: ms(4), marginTop: ms(10.5), borderRadius: 999, flexShrink: 0 },
-    rateNotice: { display: "flex", gap: ms(10), marginTop: ms(11), padding: ms(12), border: "1px solid #fde68a", borderRadius: ms(19), background: "linear-gradient(135deg, #fffbeb, #fef3c7)", boxShadow: "0 10px 22px rgba(146,64,14,.08)" },
-    noticeIcon: { width: ms(36), height: ms(36), display: "grid", placeItems: "center", borderRadius: ms(14), background: "#22c55e", color: "white", fontSize: ms(18), fontWeight: 950, flexShrink: 0 },
-    noticeTitle: { color: "#78350f", fontSize: ms(10.1) },
-    noticeText: { margin: `${ms(4)}px 0 0`, color: "#92400e", fontSize: ms(8.1), lineHeight: 1.35, fontWeight: 650 },
-    sectionHeading: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: ms(9), marginTop: ms(16), marginBottom: ms(9) },
-    sectionEyebrow: { margin: 0, color: "#b45309", fontSize: ms(7.3), letterSpacing: ms(1.15), fontWeight: 950 },
-    sectionTitle: { margin: `${ms(3)}px 0 0`, fontSize: ms(15), fontWeight: 950 },
-    validPill: { padding: `${ms(5)}px ${ms(8)}px`, borderRadius: 999, background: "#ecfdf5", color: "#15803d", fontSize: ms(7.7), fontWeight: 950 },
-    quoteCard: { position: "relative", overflow: "hidden", padding: ms(15), borderRadius: ms(22), background: "linear-gradient(135deg, #020617, #292524)", color: "white", boxShadow: "0 17px 36px rgba(0,0,0,.18)" },
-    quoteGlow: { position: "absolute", right: ms(-30), top: ms(-35), width: ms(105), height: ms(105), borderRadius: "50%", background: "rgba(245,158,11,.25)", filter: `blur(${ms(20)}px)` },
-    quoteTopRow: { position: "relative", zIndex: 2, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: ms(10) },
-    quoteLabel: { margin: 0, color: "#d6d3d1", fontSize: ms(9.3) },
-    quoteValueRow: { display: "flex", alignItems: "flex-end", gap: ms(3), marginTop: ms(5) },
-    rupeeSymbol: { marginBottom: ms(4), color: "#fbbf24", fontSize: ms(18), fontWeight: 950 },
-    quoteValue: { fontSize: ms(38), lineHeight: 1 },
-    perTon: { marginBottom: ms(4), color: "#d6d3d1", fontSize: ms(9.5), fontWeight: 800 },
-    bestRateBadge: { padding: `${ms(6)}px ${ms(9)}px`, border: "1px solid rgba(245,158,11,.35)", borderRadius: 999, background: "rgba(245,158,11,.16)", color: "#fde68a", fontSize: ms(7.6), fontWeight: 950 },
-    quoteMetaGrid: { position: "relative", zIndex: 2, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: ms(7), marginTop: ms(13) },
-    quoteMetaItem: { display: "flex", flexDirection: "column", gap: ms(3), minWidth: 0, padding: ms(8), borderRadius: ms(13), background: "rgba(255,255,255,.08)", color: "#d6d3d1", fontSize: ms(7.2) },
-    estimatedRow: { position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "space-between", gap: ms(8), marginTop: ms(10), padding: ms(9), borderRadius: ms(12), background: "rgba(255,255,255,.1)", color: "#e7e5e4", fontSize: ms(8.4) },
-    tableCard: { marginTop: ms(12), overflow: "hidden", border: "1px solid #e7e5e4", borderRadius: ms(20), background: "rgba(255,255,255,.96)", boxShadow: "0 10px 24px rgba(0,0,0,.055)" },
-    tableHeader: { display: "grid", gridTemplateColumns: "1.55fr .85fr .65fr", gap: ms(6), padding: `${ms(9)}px ${ms(11)}px`, background: "#1c1917", color: "#fde68a", fontSize: ms(7.5), fontWeight: 950 },
-    tableRow: { display: "grid", gridTemplateColumns: "1.55fr .85fr .65fr", alignItems: "center", gap: ms(6), padding: `${ms(11)}px`, fontSize: ms(8.5) },
-    productCell: { display: "flex", alignItems: "center", gap: ms(7), minWidth: 0, lineHeight: 1.15 },
-    productIcon: { width: ms(27), height: ms(27), display: "grid", placeItems: "center", borderRadius: ms(10), background: "#fef3c7", flexShrink: 0 },
-    vehicleCell: { display: "grid", gridTemplateColumns: "auto auto", justifyContent: "start", columnGap: ms(3), minWidth: 0 },
-    qtyCell: { display: "flex", flexDirection: "column", alignItems: "flex-end", gap: ms(1), color: "#92400e" },
-    tableDivider: { height: 1, margin: `0 ${ms(11)}px`, background: "#eeeae6" },
-    deliveryCard: { display: "flex", alignItems: "center", gap: ms(9), marginTop: ms(12), padding: ms(12), border: "1px solid #e7e5e4", borderRadius: ms(20), background: "white", boxShadow: "0 10px 24px rgba(0,0,0,.05)" },
-    deliveryIcon: { width: ms(38), height: ms(38), display: "grid", placeItems: "center", borderRadius: ms(14), background: "#fffbeb", fontSize: ms(19), flexShrink: 0 },
-    detailLabel: { display: "block", color: "#78716c", fontSize: ms(7.8) },
-    deliveryDate: { display: "block", marginTop: ms(3), fontSize: ms(11.2) },
-    deliveryStatus: { padding: `${ms(5)}px ${ms(8)}px`, borderRadius: 999, background: "#ecfdf5", color: "#15803d", fontSize: ms(7.6), fontWeight: 950 },
-    acceptedCard: { display: "flex", gap: ms(9), marginTop: ms(12), padding: ms(12), border: "1px solid #bbf7d0", borderRadius: ms(18), background: "#f0fdf4", color: "#166534", fontSize: ms(8.4), lineHeight: 1.35 },
-    acceptedIcon: { width: ms(30), height: ms(30), display: "grid", placeItems: "center", borderRadius: ms(11), background: "#22c55e", color: "white", fontWeight: 950, flexShrink: 0 },
-    rejectedCard: { display: "flex", gap: ms(9), marginTop: ms(12), padding: ms(12), border: "1px solid #fecaca", borderRadius: ms(18), background: "#fff7f7", color: "#991b1b", fontSize: ms(8.4), lineHeight: 1.35 },
-    rejectedIcon: { width: ms(30), height: ms(30), display: "grid", placeItems: "center", borderRadius: ms(11), background: "#ef4444", color: "white", fontWeight: 950, flexShrink: 0 },
-    bottomSpacer: { height: ms(128) },
-    fixedFooter: { position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 30, padding: `${ms(8)}px ${ms(13)}px calc(env(safe-area-inset-bottom, 0px) + ${ms(10)}px)`, background: "linear-gradient(to top, #f6f4ef 76%, rgba(246,244,239,.98) 90%, rgba(246,244,239,.82))", borderTop: "1px solid rgba(120,113,108,.12)", boxShadow: "0 -12px 30px rgba(0,0,0,.10)" },
-    footerHint: { display: "flex", alignItems: "center", justifyContent: "center", gap: ms(5), marginBottom: ms(7), color: "#78716c", fontSize: ms(7.8), fontWeight: 700 },
-    footerHintGreen: { display: "flex", alignItems: "center", justifyContent: "center", gap: ms(5), marginBottom: ms(7), color: "#15803d", fontSize: ms(8), fontWeight: 900 },
-    footerHintRed: { display: "flex", alignItems: "center", justifyContent: "center", gap: ms(5), marginBottom: ms(7), color: "#b91c1c", fontSize: ms(8), fontWeight: 900 },
-    footerButtons: { display: "grid", gridTemplateColumns: "1fr 1.18fr", gap: ms(8) },
-    rejectButton: { minHeight: ms(48), display: "flex", alignItems: "center", justifyContent: "center", gap: ms(6), border: "1px solid #fecaca", borderRadius: ms(18), background: "#fff7f7", color: "#b91c1c", fontSize: ms(9.3), fontWeight: 950, cursor: "pointer" },
-    acceptButton: { minHeight: ms(48), display: "flex", alignItems: "center", justifyContent: "center", gap: ms(6), border: 0, borderRadius: ms(18), background: "linear-gradient(135deg, #22c55e, #15803d)", color: "white", fontSize: ms(9.3), fontWeight: 950, boxShadow: "0 12px 24px rgba(34,197,94,.22)", cursor: "pointer" },
-    nextPageButton: { position: "relative", width: "100%", minHeight: ms(48), border: 0, borderRadius: ms(18), background: "linear-gradient(135deg, #22c55e, #15803d)", color: "white", fontSize: ms(10), fontWeight: 950, boxShadow: "0 12px 24px rgba(34,197,94,.22)", cursor: "pointer" },
-    rejectedOnlyButton: { width: "100%", minHeight: ms(48), border: 0, borderRadius: ms(18), background: "#ef4444", color: "white", fontSize: ms(10), fontWeight: 950, boxShadow: "0 12px 24px rgba(239,68,68,.20)" },
-    popupOverlay: { position: "absolute", inset: 0, zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: ms(18), background: "rgba(2,6,23,.72)", backdropFilter: "blur(8px)" },
-    rejectPopup: { width: "100%", maxWidth: ms(280), padding: `${ms(23)}px ${ms(18)}px ${ms(18)}px`, borderRadius: ms(25), border: "1px solid #fecaca", background: "white", textAlign: "center", boxShadow: "0 30px 80px rgba(0,0,0,.38)" },
-    acceptPopup: { position: "relative", width: "100%", maxWidth: ms(280), overflow: "hidden", padding: `${ms(25)}px ${ms(18)}px ${ms(18)}px`, borderRadius: ms(25), border: "1px solid #bbf7d0", background: "linear-gradient(145deg, white, #f0fdf4)", textAlign: "center", boxShadow: "0 30px 80px rgba(0,0,0,.38)" },
-    warningIcon: { width: ms(58), height: ms(58), margin: "0 auto", display: "grid", placeItems: "center", borderRadius: "50%", background: "#fee2e2", color: "#dc2626", fontSize: ms(29), fontWeight: 950, boxShadow: "0 0 0 7px rgba(239,68,68,.08)" },
-    popupGlow: { position: "absolute", left: "50%", top: ms(-65), width: ms(170), height: ms(130), borderRadius: "50%", background: "rgba(34,197,94,.20)", filter: `blur(${ms(28)}px)`, transform: "translateX(-50%)" },
-    greenTick: { position: "relative", zIndex: 2, width: ms(62), height: ms(62), margin: "0 auto", display: "grid", placeItems: "center", border: `${ms(5)}px solid #dcfce7`, borderRadius: "50%", background: "linear-gradient(135deg, #22c55e, #15803d)", color: "white", fontSize: ms(30), fontWeight: 950 },
-    popupTitle: { margin: `${ms(17)}px 0 0`, color: "#111827", fontSize: ms(19), lineHeight: 1.06, fontWeight: 950 },
-    popupText: { margin: `${ms(10)}px auto 0`, maxWidth: ms(235), color: "#57534e", fontSize: ms(9), lineHeight: 1.45, fontWeight: 650 },
-    popupButtons: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: ms(8), marginTop: ms(17) },
-    cancelButton: { minHeight: ms(42), border: "1px solid #e7e5e4", borderRadius: ms(16), background: "#fafaf9", color: "#44403c", fontSize: ms(9), fontWeight: 900, cursor: "pointer" },
-    confirmRejectButton: { minHeight: ms(42), border: 0, borderRadius: ms(16), background: "#ef4444", color: "white", fontSize: ms(9), fontWeight: 950, cursor: "pointer" },
-    doneButton: { position: "relative", zIndex: 2, width: "100%", minHeight: ms(44), marginTop: ms(17), border: 0, borderRadius: ms(17), background: "linear-gradient(135deg, #22c55e, #15803d)", color: "white", fontSize: ms(10.5), fontWeight: 950, cursor: "pointer" },
-  };
-}
-
-const globalCss = `
-* { box-sizing: border-box; }
-html, body, #root { margin: 0; width: 100%; height: 100%; min-height: 100%; background: #0b0907; overflow: hidden; }
-button, input, select, textarea { font: inherit; }
-body { -webkit-text-size-adjust: 100%; }
-`;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-recent order 
-import React, { useEffect, useMemo, useState } from "react";
-
-const BASE_W = 206;
-const BASE_H = 445;
-const HEADER_BG_IMAGE = "";
-
-function useViewport() {
-  const [viewport, setViewport] = useState({
-    width: typeof window !== "undefined" ? window.innerWidth : 390,
-    height: typeof window !== "undefined" ? window.innerHeight : 844,
-  });
-
-  useEffect(() => {
-    const update = () => {
-      setViewport({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
-
-    update();
-
-    window.addEventListener("resize", update);
-    window.addEventListener("orientationchange", update);
-
-    return () => {
-      window.removeEventListener("resize", update);
-      window.removeEventListener("orientationchange", update);
-    };
-  }, []);
-
-  return viewport;
-}
-
-const ORDERS = [
-  {
-    id: "SR-260711-04",
-    type: "rate",
-    title: "20mm + 40mm Crushed Stone",
-    subtitle: "30 tons • 3 vehicles",
-    date: "11 Jul 2026",
-    value: "₹1,280 / ton",
-    status: "Best rate ready",
-    tone: "active",
-    progress: 3,
-    stages: ["Submitted", "Checking", "Rate ready", "Confirm"],
-  },
-  {
-    id: "SR-260709-02",
-    type: "delivery",
-    title: "40mm Crushed Stone",
-    subtitle: "22 tons • 1 vehicle",
-    date: "09 Jul 2026",
-    value: "Order confirmed",
-    status: "In route",
-    tone: "active",
-    progress: 3,
-    stages: ["Ordered", "Dispatched", "In route", "Delivered"],
-  },
-  {
-    id: "SR-260707-01",
-    type: "rate",
-    title: "M-Sand",
-    subtitle: "18 tons • 1 vehicle",
-    date: "07 Jul 2026",
-    value: "₹1,050 / ton",
-    status: "Rejected",
-    tone: "rejected",
-    progress: 4,
-    stages: ["Submitted", "Checking", "Rate ready", "Rejected"],
-  },
-];
-
-export default function App() {
-  const viewport = useViewport();
-
-  const styles = useMemo(
-    () => createStyles(viewport),
-    [viewport.width, viewport.height]
-  );
-
-  const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState("All");
-  const [showSort, setShowSort] = useState(false);
-  const [sortOrder, setSortOrder] = useState("Newest first");
-  const [activeNav, setActiveNav] = useState("Orders");
-
-  const filters = [
-    "All",
-    "Rate requests",
-    "Delivery orders",
-    "Pending",
-    "Rejected",
-  ];
-
-  const filteredOrders = useMemo(() => {
-    const search = query.trim().toLowerCase();
-
-    let result = ORDERS.filter((order) => {
-      const searchMatch =
-        !search ||
-        order.id.toLowerCase().includes(search) ||
-        order.title.toLowerCase().includes(search);
-
-      const filterMatch =
-        filter === "All" ||
-        (filter === "Rate requests" && order.type === "rate") ||
-        (filter === "Delivery orders" && order.type === "delivery") ||
-        (filter === "Pending" && order.tone === "active") ||
-        (filter === "Rejected" && order.tone === "rejected");
-
-      return searchMatch && filterMatch;
-    });
-
-    if (sortOrder === "Oldest first") {
-      result = [...result].reverse();
-    }
-
-    if (sortOrder === "Rejected first") {
-      result = [...result].sort((a, b) => {
-        if (a.tone === b.tone) return 0;
-        return a.tone === "rejected" ? -1 : 1;
-      });
-    }
-
-    return result;
-  }, [query, filter, sortOrder]);
-
-  const totalOrders = ORDERS.length;
-
-  const totalRateRequests = ORDERS.filter(
-    (order) => order.type === "rate"
-  ).length;
-
-  const totalInRoute = ORDERS.filter(
-    (order) => order.status === "In route"
-  ).length;
-
-  return (
-    <div style={styles.page}>
-      <style>{globalCss}</style>
-
-      <main style={styles.phone}>
-        <header style={styles.fixedControls}>
-          <div style={styles.combinedControlsCard}>
-            <div style={styles.searchShell}>
-              <button
-                type="button"
-                style={styles.backButton}
-                aria-label="Go back"
-                onClick={() => window.history.back()}
-              >
-                ‹
-              </button>
-
-              <label style={styles.searchBox}>
-                <span style={styles.searchIcon}>⌕</span>
-
-                <div style={styles.searchTextArea}>
-                  <span style={styles.searchLabel}>SEARCH ORDERS</span>
-
-                  <input
-                    value={query}
-                    onChange={(event) => setQuery(event.target.value)}
-                    placeholder="Order ID or material"
-                    style={styles.searchInput}
-                  />
-                </div>
-
-                {query && (
-                  <button
-                    type="button"
-                    onClick={() => setQuery("")}
-                    style={styles.clearButton}
-                    aria-label="Clear search"
-                  >
-                    ×
-                  </button>
-                )}
-              </label>
-
-              <button
-                type="button"
-                onClick={() => setShowSort((value) => !value)}
-                style={{
-                  ...styles.sortButton,
-                  ...(showSort ? styles.sortButtonActive : {}),
-                }}
-                aria-label="Sort orders"
-              >
-                <span style={styles.sortIcon}>⇅</span>
-              </button>
-            </div>
-
-            <div className="filter-scroll" style={styles.filterScroller}>
-              {filters.map((item) => (
-                <button
-                  type="button"
-                  key={item}
-                  onClick={() => setFilter(item)}
-                  style={{
-                    ...styles.filterChip,
-                    ...(filter === item ? styles.filterChipActive : {}),
-                  }}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-
-            {showSort && (
-              <div style={styles.sortPanel}>
-                <span style={styles.sortLabel}>SORT ORDERS</span>
-
-                {[
-                  "Newest first",
-                  "Oldest first",
-                  "Rejected first",
-                ].map((option) => (
-                  <button
-                    type="button"
-                    key={option}
-                    onClick={() => {
-                      setSortOrder(option);
-                      setShowSort(false);
-                    }}
-                    style={{
-                      ...styles.sortOption,
-                      ...(sortOrder === option
-                        ? styles.sortOptionActive
-                        : {}),
-                    }}
-                  >
-                    <span>{option}</span>
-
-                    {sortOrder === option && <b>✓</b>}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </header>
-
-        <section
-          className="orders-scroll-area"
-          style={styles.ordersScrollArea}
-        >
-          <section style={styles.hero}>
-            <div style={styles.heroShade} />
-            <div style={styles.heroGrid} />
-
-            <div style={styles.heroContent}>
-              <p style={styles.eyebrow}>ORDER CENTRE</p>
-
-              <h1 style={styles.title}>Recent Orders</h1>
-
-              <p style={styles.heroText}>
-                Track rate requests, deliveries and rejected quotes.
-              </p>
-            </div>
-
-            <div style={styles.orderSummaryTable}>
-              <div style={styles.orderSummaryCell}>
-                <b>{totalOrders}</b>
-                <span>Total orders</span>
-              </div>
-
-              <div style={styles.orderSummaryDivider} />
-
-              <div style={styles.orderSummaryCell}>
-                <b>{totalRateRequests}</b>
-                <span>Rate requests</span>
-              </div>
-
-              <div style={styles.orderSummaryDivider} />
-
-              <div style={styles.orderSummaryCell}>
-                <b>{totalInRoute}</b>
-                <span>In route</span>
-              </div>
-            </div>
-          </section>
-
-          <div style={styles.activityArea}>
-            <div style={styles.resultsHeader}>
-              <div>
-                <p style={styles.resultsEyebrow}>RECENT ACTIVITY</p>
-
-                <h2 style={styles.resultsTitle}>
-                  {filteredOrders.length}{" "}
-                  {filteredOrders.length === 1 ? "order" : "orders"}
-                </h2>
-              </div>
-
-              <span style={styles.sortText}>{sortOrder}</span>
-            </div>
-
-            <div style={styles.orderStack}>
-              {filteredOrders.map((order) => (
-                <OrderCard
-                  key={order.id}
-                  order={order}
-                  styles={styles}
-                />
-              ))}
-
-              {filteredOrders.length === 0 && (
-                <div style={styles.emptyCard}>
-                  <div style={styles.emptyIcon}>⌕</div>
-
-                  <b>No matching orders</b>
-
-                  <p>Try another order ID, material name or filter.</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-
-        <nav style={styles.bottomNav}>
-  {[
-    { name: "Home", icon: "⌂" },
-    { name: "Orders", icon: "▣" },
-    { name: "Profile", icon: "●" },
-  ].map((item) => {
-    const active = activeNav === item.name;
-
-    return (
-      <button
-        type="button"
-        key={item.name}
-        onClick={() => setActiveNav(item.name)}
-        style={{
-          ...styles.navButton,
-          ...(active ? styles.navButtonActive : {}),
-        }}
-      >
-        {active && <span style={styles.activeIndicator} />}
-
-        <span
-          style={{
-            ...styles.navIconBox,
-            ...(active ? styles.navIconBoxActive : {}),
-          }}
-        >
-          <span style={styles.navIcon}>{item.icon}</span>
-        </span>
-
-        <span
-          style={{
-            ...styles.navLabel,
-            ...(active ? styles.navLabelActive : {}),
-          }}
-        >
-          {item.name}
-        </span>
-      </button>
-    );
-  })}
-</nav>
-
-      </main>
-    </div>
-  );
-}
-
-function OrderCard({ order, styles }) {
-  const rejected = order.tone === "rejected";
-  const delivery = order.type === "delivery";
-
-  return (
-    <article
-      style={{
-        ...styles.orderCard,
-        ...(rejected ? styles.orderCardRejected : {}),
-      }}
-    >
-      <div
-        style={{
-          ...styles.cardGlow,
-          background: rejected
-            ? "rgba(239,68,68,.16)"
-            : delivery
-            ? "rgba(59,130,246,.14)"
-            : "rgba(34,197,94,.14)",
-        }}
-      />
-
-      <div
-        style={{
-          ...styles.cardAccent,
-          background: rejected
-            ? "linear-gradient(to bottom, #ef4444, #991b1b)"
-            : delivery
-            ? "linear-gradient(to bottom, #38bdf8, #1d4ed8)"
-            : "linear-gradient(to bottom, #22c55e, #15803d)",
-        }}
-      />
-
-      <div style={styles.orderTopRow}>
-        <div
-          style={{
-            ...styles.orderTypeIcon,
-            ...(delivery ? styles.deliveryTypeIcon : {}),
-            ...(rejected ? styles.rejectedTypeIcon : {}),
-          }}
-        >
-          {delivery ? "🚚" : "₹"}
-        </div>
-
-        <div style={styles.orderMainContent}>
-          <div style={styles.orderMetaLine}>
-            <span style={styles.orderId}>{order.id}</span>
 
             <div
               style={{
-                ...styles.statusPill,
-                ...(rejected
-                  ? styles.statusPillRejected
-                  : delivery
-                  ? styles.statusPillDelivery
-                  : styles.statusPillActive),
+                ...styles.mainCard3d,
+                boxShadow: `0 ${styles.dynamic.shadowY}px ${styles.dynamic.shadowBlur}px ${centerSlide.color}40`,
+                borderColor: `${centerSlide.color}aa`,
               }}
             >
-              <span
-                style={{
-                  ...styles.statusDot,
-                  background: rejected
-                    ? "#ef4444"
-                    : delivery
-                    ? "#38bdf8"
-                    : "#22c55e",
-                }}
-              />
+              <div style={styles.mockTopBar} />
 
-              <span style={styles.statusText}>{order.status}</span>
+              <div style={styles.mainMetricCard}>
+                <div style={{ minWidth: 0 }}>
+                  <p style={styles.mockLabel}>{centerSlide.title}</p>
+                  <p style={styles.mockValue}>{centerSlide.main}</p>
+                </div>
+
+                <div style={{ ...styles.mockIcon, background: centerSlide.color }}>
+                  {centerSlide.icon}
+                </div>
+              </div>
+
+              <div style={styles.featureTextCard}>
+                <span style={{ ...styles.mockDot, background: centerSlide.color }} />
+                <div style={{ minWidth: 0 }}>
+                  <p style={styles.mockTextStrong}>{centerSlide.chip}</p>
+                  <p style={styles.mockTextLight}>{centerSlide.subtitle}</p>
+                </div>
+              </div>
+
+              <div style={styles.previewCardDark}>
+                <span style={styles.mockDotAmber} />
+                <div style={{ minWidth: 0 }}>
+                  <p style={styles.mockTextStrongWhite}>Live 3D Preview</p>
+                  <p style={styles.mockTextLightWhite}>Features slide automatically</p>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ ...styles.floatChipTop, color: centerSlide.color }}>
+              {centerSlide.chip}
+            </div>
+
+            <div style={styles.floatChipLeft}>Buyer App</div>
+
+            <div style={{ ...styles.floatIcon, background: centerSlide.color }}>
+              {centerSlide.icon}
             </div>
           </div>
 
-          <h3 style={styles.orderTitle}>{order.title}</h3>
-
-          <p style={styles.orderSubtitle}>{order.subtitle}</p>
-        </div>
-      </div>
-
-      <div style={styles.orderInfoGrid}>
-        <div style={styles.infoCell}>
-          <span>Request date</span>
-          <b>{order.date}</b>
-        </div>
-
-        <div style={styles.infoCell}>
-          <span>{delivery ? "Current state" : "Quoted rate"}</span>
-          <b>{order.value}</b>
-        </div>
-      </div>
-
-      <div style={styles.cardProgressArea}>
-        <p style={styles.progressCaption}>
-          {delivery ? "DELIVERY PROGRESS" : "RATE REQUEST PROGRESS"}
-        </p>
-
-        <div
-          className="progress-scroll"
-          style={styles.progressScroller}
-        >
-          <div style={styles.miniTracker}>
-            {order.stages.map((stage, index) => {
-              const completed = index < order.progress;
-              const current = index === order.progress - 1;
-
-              const finalRejected =
-                rejected && index === order.stages.length - 1;
-
-              return (
-                <React.Fragment key={stage}>
-                  <div style={styles.miniStep}>
-                    <div
-                      style={{
-                        ...styles.miniCircle,
-
-                        background: finalRejected
-                          ? "#ef4444"
-                          : completed
-                          ? delivery
-                            ? "#38bdf8"
-                            : "#22c55e"
-                          : "#e7e5e4",
-
-                        color: completed ? "white" : "#a8a29e",
-
-                        boxShadow: current
-                          ? finalRejected
-                            ? "0 0 0 4px rgba(239,68,68,.12)"
-                            : delivery
-                            ? "0 0 0 4px rgba(56,189,248,.12)"
-                            : "0 0 0 4px rgba(34,197,94,.12)"
-                          : "none",
-                      }}
-                    >
-                      {finalRejected ? "×" : completed ? "✓" : ""}
-                    </div>
-
-                    <span
-                      style={{
-                        ...styles.miniLabel,
-
-                        color: finalRejected
-                          ? "#b91c1c"
-                          : completed
-                          ? delivery
-                            ? "#0369a1"
-                            : "#166534"
-                          : "#a8a29e",
-
-                        fontWeight: current ? 950 : 750,
-                      }}
-                    >
-                      {stage}
-                    </span>
-                  </div>
-
-                  {index < order.stages.length - 1 && (
-                    <div
-                      style={{
-                        ...styles.miniConnector,
-
-                        background:
-                          index < order.progress - 1
-                            ? delivery
-                              ? "#38bdf8"
-                              : "#22c55e"
-                            : finalRejected
-                            ? "linear-gradient(to right, #22c55e, #ef4444)"
-                            : "#e7e5e4",
-                      }}
-                    />
-                  )}
-                </React.Fragment>
-              );
-            })}
+          <div style={styles.slideTitleBlock}>
+            <h2 style={styles.slideTitle}>{centerSlide.title}</h2>
+            <p style={styles.slideSub}>{centerSlide.subtitle}</p>
           </div>
-        </div>
-      </div>
 
-      <div style={styles.orderFooter}>
-        <span
-          style={{
-            ...styles.orderTypeLabel,
-            color: rejected
-              ? "#b91c1c"
-              : delivery
-              ? "#0369a1"
-              : "#15803d",
-          }}
-        >
-          {delivery
-            ? "Delivery order"
-            : rejected
-            ? "Rejected rate request"
-            : "Active rate request"}
-        </span>
+          <div style={styles.dotsRow}>
+            {slides.map((slide, index) => (
+              <button
+                key={slide.title}
+                onClick={() => setActiveSlide(index)}
+                style={{
+                  ...styles.dot,
+                  ...(index === activeSlide
+                    ? { ...styles.activeDot, background: slide.color }
+                    : {}),
+                }}
+              />
+            ))}
+          </div>
 
-        <button
-          type="button"
-          style={{
-            ...styles.viewButton,
-            ...(rejected ? styles.viewButtonRejected : {}),
-            ...(delivery ? styles.viewButtonDelivery : {}),
-          }}
-        >
-          View details <b>›</b>
-        </button>
+          <div style={styles.authCard}>
+  <button style={styles.signInBtn}
+  onClick={goToPage3}>
+    Sign In
+  </button>
+
+  <button
+    style={styles.signUpBtn}
+    onClick={goToPage2}
+  >
+    Create Account
+  </button>
+</div>
+`
+        </section>
       </div>
-    </article>
+    </div>
   );
 }
 
-function createStyles(viewport) {
-  const vw = viewport.width || 390;
-  const vh = viewport.height || 844;
-
-  const isDesktop = vw >= 700;
-
-  const appW = isDesktop ? 390 : vw;
-  const appH = isDesktop ? 844 : vh;
-
-  const rawScale = Math.min(appW / BASE_W, appH / BASE_H);
-  const scale = Math.max(0.86, Math.min(2.05, rawScale));
-
-  const ms = (value, factor = 0.55) =>
-    Math.round(value + (value * scale - value) * factor);
-
-  const tiny = appW <= 230;
-  const short = appH <= 620;
-
-  const navHeight = ms(58);
-  const controlsHeight = ms(short ? 103 : 113);
-  const heroHeight = ms(short ? 122 : 142);
-
-  const themedSurface = HEADER_BG_IMAGE
-    ? `linear-gradient(
-        180deg,
-        rgba(8,7,6,.78) 0%,
-        rgba(28,25,23,.72) 48%,
-        rgba(95,37,8,.68) 100%
-      ),
-      url("${HEADER_BG_IMAGE}")`
-    : `radial-gradient(
-        circle at 88% 7%,
-        rgba(245,158,11,.34),
-        transparent 34%
-      ),
-      linear-gradient(
-        180deg,
-        #080706 0%,
-        #171310 46%,
-        #371707 72%,
-        #5f2508 100%
-      )`;
-
-  return {
-    page: {
-      width: "100vw",
-      height: "100dvh",
-      minHeight: "100dvh",
-
-      display: "flex",
-      justifyContent: "center",
-      alignItems: isDesktop ? "center" : "stretch",
-
-      margin: 0,
-      padding: isDesktop ? 10 : 0,
-      overflow: "hidden",
-
-      background: isDesktop ? "#f4f1ea" : "#0b0907",
-      fontFamily: "Arial, sans-serif",
-    },
-
-    phone: {
-      position: "relative",
-
-      width: isDesktop ? 390 : "100vw",
-      height: isDesktop ? 844 : "100dvh",
-
-      overflow: "hidden",
-
-      backgroundColor: "#080706",
-      backgroundImage: themedSurface,
-      backgroundSize: "cover",
-      backgroundPosition: "center top",
-      backgroundRepeat: "no-repeat",
-
-      borderRadius: isDesktop ? 30 : 0,
-
-      boxShadow: isDesktop
-        ? "0 25px 70px rgba(0,0,0,.25)"
-        : "none",
-    },
-
-    fixedControls: {
-      position: "absolute",
-      left: 0,
-      right: 0,
-      top: 0,
-      zIndex: 40,
-
-      height: controlsHeight,
-      padding: `${ms(6)}px ${ms(tiny ? 2 : 4)}px`,
-
-      overflow: "visible",
-      color: "white",
-
-      background:
-        "radial-gradient(circle at 88% 0%, rgba(245,158,11,.28), transparent 34%), linear-gradient(180deg, #080706 0%, #171310 52%, #3f1b08 100%)",
-
-      borderBottom: "1px solid rgba(245,158,11,.18)",
-      boxShadow: "0 12px 28px rgba(28,25,23,.24)",
-    },
-
-    combinedControlsCard: {
-      position: "relative",
-
-      width: "100%",
-      height: "100%",
-
-      padding: `${ms(6)}px ${ms(6)}px ${ms(5)}px`,
-
-      border: "1px solid rgba(255,255,255,.12)",
-      borderRadius: ms(20),
-
-      background:
-        "linear-gradient(145deg, rgba(255,255,255,.095), rgba(255,255,255,.035))",
-
-      boxShadow:
-        "inset 0 1px 0 rgba(255,255,255,.12), 0 10px 24px rgba(0,0,0,.14)",
-
-      backdropFilter: "blur(14px)",
-    },
-
-    searchShell: {
-      display: "grid",
-      gridTemplateColumns: "auto minmax(0, 1fr) auto",
-      gap: ms(6),
-      alignItems: "stretch",
-    },
-
-    backButton: {
-      width: ms(42),
-      minHeight: ms(42),
-
-      display: "grid",
-      placeItems: "center",
-
-      padding: 0,
-
-      border: "1px solid rgba(255,255,255,.16)",
-      borderRadius: ms(15),
-
-      background: "rgba(255,255,255,.09)",
-      color: "white",
-
-      fontSize: ms(24),
-      lineHeight: 1,
-      fontWeight: 700,
-
-      boxShadow: "inset 0 1px 0 rgba(255,255,255,.14)",
-      backdropFilter: "blur(12px)",
-
-      cursor: "pointer",
-    },
-
-    searchBox: {
-      position: "relative",
-
-      minWidth: 0,
-      minHeight: ms(42),
-
-      display: "flex",
-      alignItems: "center",
-
-      gap: ms(8),
-      padding: `0 ${ms(9)}px`,
-
-      overflow: "hidden",
-
-      border: "1px solid rgba(255,255,255,.16)",
-      borderRadius: ms(15),
-
-      background: "rgba(255,255,255,.09)",
-
-      boxShadow: "inset 0 1px 0 rgba(255,255,255,.14)",
-      backdropFilter: "blur(12px)",
-    },
-
-    searchIcon: {
-      width: ms(28),
-      height: ms(28),
-
-      display: "grid",
-      placeItems: "center",
-
-      flexShrink: 0,
-
-      borderRadius: ms(10),
-
-      background: "rgba(245,158,11,.16)",
-      color: "#fbbf24",
-
-      fontSize: ms(18),
-      fontWeight: 950,
-
-      boxShadow:
-        "inset 0 0 0 1px rgba(245,158,11,.22)",
-    },
-
-    searchTextArea: {
-      minWidth: 0,
-      flex: 1,
-
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-
-      gap: ms(1),
-    },
-
-    searchLabel: {
-      color: "#fde68a",
-
-      fontSize: ms(5.7),
-      letterSpacing: ms(.65),
-      lineHeight: 1,
-      fontWeight: 950,
-    },
-
-    searchInput: {
-      width: "100%",
-      minWidth: 0,
-
-      padding: 0,
-      border: 0,
-      outline: 0,
-
-      background: "transparent",
-
-      color: "white",
-      caretColor: "#f59e0b",
-
-      fontSize: ms(8.5),
-      lineHeight: 1.2,
-      fontWeight: 800,
-    },
-
-    clearButton: {
-      width: ms(22),
-      height: ms(22),
-
-      display: "grid",
-      placeItems: "center",
-
-      flexShrink: 0,
-
-      padding: 0,
-      border: 0,
-      borderRadius: "50%",
-
-      background: "rgba(255,255,255,.14)",
-      color: "white",
-
-      fontSize: ms(13),
-      fontWeight: 900,
-
-      cursor: "pointer",
-    },
-
-    sortButton: {
-      position: "relative",
-
-      width: ms(42),
-      minHeight: ms(42),
-
-      display: "grid",
-      placeItems: "center",
-
-      border: "1px solid rgba(245,158,11,.38)",
-      borderRadius: ms(15),
-
-      background:
-        "linear-gradient(145deg, #f59e0b, #ea580c)",
-
-      color: "white",
-
-      boxShadow:
-        "0 10px 22px rgba(234,88,12,.30), inset 0 1px 0 rgba(255,255,255,.25)",
-
-      cursor: "pointer",
-    },
-
-    sortButtonActive: {
-      transform: "scale(.96)",
-
-      boxShadow:
-        "0 6px 15px rgba(234,88,12,.26), inset 0 0 0 2px rgba(255,255,255,.18)",
-    },
-
-    sortIcon: {
-      fontSize: ms(19),
-      lineHeight: 1,
-      fontWeight: 950,
-    },
-
-    filterScroller: {
-      width: "100%",
-
-      display: "flex",
-      alignItems: "center",
-
-      gap: ms(6),
-      marginTop: ms(6),
-
-      padding: `0 ${ms(1)}px ${ms(2)}px`,
-
-      overflowX: "auto",
-      overflowY: "hidden",
-
-      scrollbarWidth: "none",
-      msOverflowStyle: "none",
-      scrollSnapType: "x proximity",
-    },
-
-    filterChip: {
-      flexShrink: 0,
-
-      minHeight: ms(30),
-      padding: `0 ${ms(10)}px`,
-
-      border: "1px solid rgba(255,255,255,.14)",
-      borderRadius: 999,
-
-      background: "rgba(255,255,255,.08)",
-      color: "#e7e5e4",
-
-      fontSize: ms(7.7),
-      fontWeight: 900,
-
-      backdropFilter: "blur(10px)",
-
-      cursor: "pointer",
-      scrollSnapAlign: "start",
-    },
-
-    filterChipActive: {
-      borderColor: "#f59e0b",
-
-      background:
-        "linear-gradient(135deg, #f59e0b, #ea580c)",
-
-      color: "white",
-
-      boxShadow:
-        "0 8px 18px rgba(245,158,11,.24)",
-    },
-
-    sortPanel: {
-      position: "absolute",
-
-      top: `calc(100% + ${ms(6)}px)`,
-      left: ms(5),
-      right: ms(5),
-
-      zIndex: 80,
-
-      padding: ms(9),
-
-      border: "1px solid rgba(245,158,11,.22)",
-      borderRadius: ms(17),
-
-      background: "rgba(28,25,23,.98)",
-      color: "white",
-
-      boxShadow: "0 18px 38px rgba(0,0,0,.32)",
-      backdropFilter: "blur(16px)",
-    },
-
-    sortLabel: {
-      display: "block",
-      marginBottom: ms(6),
-
-      color: "#fde68a",
-
-      fontSize: ms(7.3),
-      letterSpacing: ms(.7),
-      fontWeight: 950,
-    },
-
-    sortOption: {
-      width: "100%",
-      minHeight: ms(33),
-
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-
-      padding: `0 ${ms(9)}px`,
-
-      border: 0,
-      borderRadius: ms(11),
-
-      background: "transparent",
-      color: "#e7e5e4",
-
-      fontSize: ms(8.5),
-      fontWeight: 800,
-
-      cursor: "pointer",
-    },
-
-    sortOptionActive: {
-      background: "rgba(245,158,11,.16)",
-      color: "#fbbf24",
-    },
-
-    ordersScrollArea: {
-      position: "absolute",
-      left: 0,
-      right: 0,
-
-      top: controlsHeight,
-      bottom: navHeight,
-
-      overflowY: "auto",
-      overflowX: "hidden",
-
-      scrollbarWidth: "none",
-      msOverflowStyle: "none",
-
-      padding: 0,
-
-      background: "transparent",
-
-      WebkitOverflowScrolling: "touch",
-      scrollBehavior: "smooth",
-    },
-
-    hero: {
-      position: "relative",
-
-      minHeight: heroHeight,
-      margin: 0,
-
-      padding: `${ms(14)}px ${ms(tiny ? 12 : 16)}px ${ms(13)}px`,
-
-      overflow: "hidden",
-
-      color: "white",
-      borderRadius: 0,
-
-      background:
-        "radial-gradient(circle at 85% 10%, rgba(251,191,36,.30), transparent 35%), linear-gradient(135deg, #17100b 0%, #3f2414 55%, #92400e 100%)",
-
-      borderBottom:
-        "1px solid rgba(245,158,11,.14)",
-
-      boxShadow:
-        "0 14px 30px rgba(28,25,23,.16)",
-    },
-
-    heroShade: {
-      position: "absolute",
-      inset: 0,
-
-      background:
-        "linear-gradient(to bottom, rgba(0,0,0,.02), rgba(0,0,0,.10))",
-
-      pointerEvents: "none",
-    },
-
-    heroGrid: {
-      position: "absolute",
-      inset: 0,
-
-      opacity: .24,
-      pointerEvents: "none",
-
-      backgroundImage:
-        "linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px)",
-
-      backgroundSize: `${ms(30)}px ${ms(30)}px`,
-    },
-
-    heroContent: {
-      position: "relative",
-      zIndex: 2,
-    },
-
-    eyebrow: {
-      margin: 0,
-
-      color: "#fde68a",
-
-      fontSize: ms(6.8),
-      letterSpacing: ms(1.35),
-      fontWeight: 950,
-    },
-
-    title: {
-      margin: `${ms(4)}px 0 0`,
-
-      fontSize: ms(short ? 23 : 27),
-      lineHeight: 1,
-      fontWeight: 950,
-      letterSpacing: -.6,
-    },
-
-    heroText: {
-      maxWidth: ms(250),
-
-      margin: `${ms(5)}px 0 0`,
-
-      color: "#e7e5e4",
-
-      fontSize: ms(7.5),
-      lineHeight: 1.25,
-      fontWeight: 650,
-    },
-
-    orderSummaryTable: {
-      position: "relative",
-      zIndex: 2,
-
-      display: "grid",
-      gridTemplateColumns:
-        "1fr auto 1fr auto 1fr",
-
-      alignItems: "stretch",
-
-      marginTop: ms(13),
-      padding: ms(8),
-
-      border:
-        "1px solid rgba(255,255,255,.15)",
-
-      borderRadius: ms(16),
-
-      background: "rgba(255,255,255,.11)",
-      backdropFilter: "blur(12px)",
-    },
-
-    orderSummaryCell: {
-      minWidth: 0,
-
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-
-      gap: ms(2),
-
-      color: "white",
-      textAlign: "center",
-
-      fontSize: ms(7),
-    },
-
-    orderSummaryDivider: {
-      width: 1,
-      minHeight: ms(28),
-
-      background:
-        "rgba(255,255,255,.18)",
-    },
-
-    activityArea: {
-      minHeight: "100%",
-
-      padding: `${ms(14)}px 0 ${ms(14)}px`,
-
-      background:
-        "linear-gradient(180deg, #f9f8f5 0%, #f6f4ef 48%, #efede8 100%)",
-    },
-
-    resultsHeader: {
-      display: "flex",
-      alignItems: "flex-end",
-      justifyContent: "space-between",
-
-      gap: ms(8),
-
-      margin: `0 ${ms(tiny ? 9 : 13)}px ${ms(10)}px`,
-    },
-
-    resultsEyebrow: {
-      margin: 0,
-
-      color: "#b45309",
-
-      fontSize: ms(7.1),
-      letterSpacing: ms(1.1),
-      fontWeight: 950,
-    },
-
-    resultsTitle: {
-      margin: `${ms(3)}px 0 0`,
-
-      fontSize: ms(14),
-      fontWeight: 950,
-    },
-
-    sortText: {
-      color: "#78716c",
-
-      fontSize: ms(7.5),
-      fontWeight: 750,
-    },
-
-    orderStack: {
-      display: "grid",
-
-      gap: ms(12),
-      padding: `0 ${ms(tiny ? 9 : 13)}px`,
-    },
-
-    orderCard: {
-      position: "relative",
-      overflow: "hidden",
-
-      padding: ms(13),
-
-      border:
-        "1px solid rgba(231,229,228,.9)",
-
-      borderRadius: ms(23),
-
-      background:
-        "linear-gradient(145deg, rgba(255,255,255,.99), rgba(250,250,249,.96))",
-
-      boxShadow:
-        "0 16px 34px rgba(28,25,23,.09), inset 0 1px 0 white",
-    },
-
-    orderCardRejected: {
-      borderColor: "#fecaca",
-
-      background:
-        "linear-gradient(145deg, #fff, #fff7f7)",
-    },
-
-    cardGlow: {
-      position: "absolute",
-
-      right: ms(-28),
-      top: ms(-34),
-
-      width: ms(105),
-      height: ms(105),
-
-      borderRadius: "50%",
-
-      filter: `blur(${ms(24)}px)`,
-      pointerEvents: "none",
-    },
-
-    cardAccent: {
-      position: "absolute",
-
-      left: 0,
-      top: ms(15),
-      bottom: ms(15),
-
-      width: ms(4),
-
-      borderRadius:
-        "0 999px 999px 0",
-    },
-
-    orderTopRow: {
-      position: "relative",
-      zIndex: 2,
-
-      display: "grid",
-
-      gridTemplateColumns:
-        `${ms(tiny ? 34 : 39)}px minmax(0, 1fr)`,
-
-      alignItems: "start",
-
-      gap: ms(tiny ? 7 : 9),
-
-      width: "100%",
-    },
-
-    orderMainContent: {
-      minWidth: 0,
-      width: "100%",
-    },
-
-    orderMetaLine: {
-      width: "100%",
-      minWidth: 0,
-
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-
-      gap: ms(5),
-    },
-
-    orderTypeIcon: {
-      width: ms(tiny ? 34 : 39),
-      height: ms(tiny ? 34 : 39),
-
-      display: "grid",
-      placeItems: "center",
-
-      borderRadius: ms(15),
-
-      background:
-        "linear-gradient(145deg, #fffbeb, #fef3c7)",
-
-      color: "#b45309",
-
-      fontSize: ms(tiny ? 16 : 19),
-      fontWeight: 950,
-
-      boxShadow:
-        "0 8px 18px rgba(180,83,9,.10)",
-
-      flexShrink: 0,
-    },
-
-    deliveryTypeIcon: {
-      background:
-        "linear-gradient(145deg, #eff6ff, #dbeafe)",
-
-      color: "#0369a1",
-    },
-
-    rejectedTypeIcon: {
-      background:
-        "linear-gradient(145deg, #fff7f7, #fee2e2)",
-
-      color: "#b91c1c",
-    },
-
-    orderId: {
-      minWidth: 0,
-
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-
-      color: "#a8a29e",
-
-      fontSize: ms(6.9),
-      letterSpacing: ms(.6),
-      fontWeight: 900,
-    },
-
-    orderTitle: {
-      width: "100%",
-
-      margin: `${ms(5)}px 0 0`,
-
-      color: "#111827",
-
-      fontSize: ms(tiny ? 9.8 : 10.8),
-      lineHeight: 1.08,
-      fontWeight: 950,
-
-      letterSpacing: tiny ? -0.25 : -0.15,
-
-      overflowWrap: "normal",
-      wordBreak: "normal",
-    },
-
-    orderSubtitle: {
-      margin: `${ms(4)}px 0 0`,
-
-      color: "#78716c",
-
-      fontSize: ms(7.7),
-      lineHeight: 1.2,
-      fontWeight: 700,
-    },
-
-    statusPill: {
-      position: "relative",
-      zIndex: 2,
-
-      minWidth: 0,
-      maxWidth: tiny ? ms(92) : ms(120),
-      minHeight: ms(23),
-
-      display: "inline-flex",
-      alignItems: "center",
-      justifyContent: "center",
-
-      gap: ms(4),
-
-      padding:
-        `${ms(4)}px ${ms(tiny ? 6 : 8)}px`,
-
-      borderRadius: 999,
-
-      fontSize: ms(tiny ? 6.3 : 7),
-      lineHeight: 1,
-      fontWeight: 950,
-
-      whiteSpace: "nowrap",
-      flexShrink: 1,
-    },
-
-    statusText: {
-      minWidth: 0,
-
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-    },
-
-    statusPillActive: {
-      background: "#ecfdf5",
-      color: "#15803d",
-    },
-
-    statusPillDelivery: {
-      background: "#eff6ff",
-      color: "#0369a1",
-    },
-
-    statusPillRejected: {
-      background: "#fee2e2",
-      color: "#b91c1c",
-    },
-
-    statusDot: {
-      width: ms(6),
-      height: ms(6),
-
-      flexShrink: 0,
-
-      borderRadius: "50%",
-
-      boxShadow:
-        "0 0 0 3px rgba(34,197,94,.10)",
-    },
-
-    orderInfoGrid: {
-      position: "relative",
-      zIndex: 2,
-
-      display: "grid",
-      gridTemplateColumns: "1fr 1fr",
-
-      gap: ms(7),
-      marginTop: ms(10),
-    },
-
-    infoCell: {
-      display: "flex",
-      flexDirection: "column",
-
-      gap: ms(3),
-      padding: ms(8),
-
-      border: "1px solid #eeeae6",
-      borderRadius: ms(13),
-
-      background:
-        "rgba(250,250,249,.86)",
-
-      color: "#78716c",
-
-      fontSize: ms(7.1),
-    },
-
-    cardProgressArea: {
-      position: "relative",
-      zIndex: 2,
-
-      margin:
-        `${ms(11)}px ${ms(-4)}px 0`,
-
-      padding:
-        `${ms(9)}px ${ms(4)}px ${ms(4)}px`,
-
-      borderTop: "1px solid #eeeae6",
-    },
-
-    progressCaption: {
-      margin: `0 0 ${ms(8)}px`,
-
-      color: "#a8a29e",
-
-      fontSize: ms(6.6),
-      letterSpacing: ms(.8),
-      fontWeight: 950,
-    },
-
-    progressScroller: {
-      overflowX: "auto",
-      overflowY: "hidden",
-
-      scrollbarWidth: "none",
-      msOverflowStyle: "none",
-
-      paddingBottom: ms(2),
-    },
-
-    miniTracker: {
-      minWidth: ms(350),
-
-      display: "flex",
-      alignItems: "flex-start",
-      justifyContent: "center",
-    },
-
-    miniStep: {
-      width: ms(72),
-
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-
-      flexShrink: 0,
-
-      textAlign: "center",
-    },
-
-    miniCircle: {
-      width: ms(20),
-      height: ms(20),
-
-      display: "grid",
-      placeItems: "center",
-
-      borderRadius: "50%",
-
-      fontSize: ms(8),
-      fontWeight: 950,
-    },
-
-    miniLabel: {
-      marginTop: ms(5),
-
-      fontSize: ms(6.4),
-      lineHeight: 1.15,
-    },
-
-    miniConnector: {
-      width: ms(20),
-      height: ms(3),
-
-      marginTop: ms(8.5),
-
-      borderRadius: 999,
-      flexShrink: 0,
-    },
-
-    orderFooter: {
-      position: "relative",
-      zIndex: 2,
-
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-
-      gap: ms(8),
-      marginTop: ms(10),
-    },
-
-    orderTypeLabel: {
-      fontSize: ms(7.2),
-      fontWeight: 900,
-    },
-
-    viewButton: {
-      minHeight: ms(32),
-
-      padding: `0 ${ms(11)}px`,
-
-      border: 0,
-      borderRadius: 999,
-
-      background:
-        "linear-gradient(135deg, #1c1917, #44403c)",
-
-      color: "white",
-
-      fontSize: ms(8),
-      fontWeight: 950,
-
-      boxShadow:
-        "0 8px 16px rgba(28,25,23,.16)",
-
-      cursor: "pointer",
-    },
-
-    viewButtonDelivery: {
-      background:
-        "linear-gradient(135deg, #0284c7, #1d4ed8)",
-    },
-
-    viewButtonRejected: {
-      background:
-        "linear-gradient(135deg, #ef4444, #b91c1c)",
-    },
-
-    emptyCard: {
-      padding: ms(24),
-
-      border: "1px dashed #d6d3d1",
-      borderRadius: ms(20),
-
-      background: "rgba(255,255,255,.7)",
-
-      textAlign: "center",
-      color: "#57534e",
-
-      fontSize: ms(9),
-    },
-
-    emptyIcon: {
-      width: ms(42),
-      height: ms(42),
-
-      margin: `0 auto ${ms(8)}px`,
-
-      display: "grid",
-      placeItems: "center",
-
-      borderRadius: ms(15),
-
-      background: "#fffbeb",
-      color: "#b45309",
-
-      fontSize: ms(22),
-    },
-
-    bottomNav: {
-      position: "absolute",
-      left: 0,
-      right: 0,
-      bottom: 0,
-      zIndex: 40,
-    
-      minHeight: navHeight,
-    
-      display: "grid",
-      gridTemplateColumns: "repeat(3, 1fr)",
-      alignItems: "stretch",
-    
-      padding: `${ms(5)}px ${ms(8)}px calc(env(safe-area-inset-bottom, 0px) + ${ms(
-        5
-      )}px)`,
-    
-      borderTop: "1px solid rgba(251,191,36,.20)",
-    
-      background:
-        "radial-gradient(circle at 50% 0%, rgba(245,158,11,.16), transparent 46%), linear-gradient(135deg, #21140d 0%, #352013 52%, #4b250d 100%)",
-    
-      boxShadow:
-        "0 -14px 34px rgba(28,15,7,.30), inset 0 1px 0 rgba(255,255,255,.07)",
-    
-      backdropFilter: "blur(18px)",
-    },
-    
-    navButton: {
-      minHeight: 0,
-
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-
-      gap: ms(1),
-
-      border: 0,
-      borderRadius: ms(12),
-
-      background: "transparent",
-      color: "#a8a29e",
-
-      fontSize: ms(7.2),
-
-      cursor: "pointer",
-    },
-
-    navButtonActive: {
-      background:
-        "rgba(245,158,11,.14)",
-
-      color: "#f59e0b",
-
-      boxShadow:
-        "inset 0 0 0 1px rgba(245,158,11,.18)",
-    },
-
-    navIcon: {
-      fontSize: ms(15),
-      lineHeight: 1,
-    },
-  };
+function MiniFeatureCard({ slide, styles }) {
+  return (
+    <div style={styles.miniInner}>
+      <div style={{ ...styles.miniIcon, background: slide.color }}>{slide.icon}</div>
+      <p style={styles.miniMain}>{slide.main}</p>
+      <p style={styles.miniChip}>{slide.chip}</p>
+    </div>
+  );
 }
-
-const globalCss = `
-* {
-  box-sizing: border-box;
-}
-
-html,
-body,
-#root {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  min-height: 100%;
-  background: #0b0907;
-  overflow: hidden;
-}
-
-button,
-input,
-select,
-textarea {
-  font: inherit;
-}
-
-input::placeholder {
-  color: rgba(255,255,255,.62);
-  opacity: 1;
-}
-
-.orders-scroll-area,
-.filter-scroll,
-.progress-scroll {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.orders-scroll-area::-webkit-scrollbar,
-.filter-scroll::-webkit-scrollbar,
-.progress-scroll::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
-}
-
-body {
-  -webkit-text-size-adjust: 100%;
-}
-`;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-profile
-import React, { useEffect, useMemo, useState } from "react";
-
-const BASE_W = 206;
-const BASE_H = 445;
-const PROFILE_BG_IMAGE ="https://cdn.jsdelivr.net/gh/Shyam7291/company-document-monitor@main/1783841473662.png";
-
-const INITIAL_PROFILE = {
-  name: "Arjun Kumar",
-  shopName: "AK Stone Building Materials",
-  email: "arjun@akstone.in",
-  phone: "9876543210",
-  alternatePhone: "9123456780",
-  address: "Plot 18, Quarry Link Road, Hoskote Industrial Area",
-  pincode: "562114",
-  city: "Bengaluru",
-  state: "Karnataka",
-};
-const requiredFields = [
-  { key: "name", label: "Full Name" },
-  { key: "shopName", label: "Shop Name" },
-  { key: "phone", label: "Phone Number" },
-  { key: "address", label: "Address" },
-  { key: "pincode", label: "Pincode" },
-  { key: "city", label: "City" },
-  { key: "state", label: "State" },
-];
-
-const allProfileFields = [
-  "name",
-  "shopName",
-  "email",
-  "phone",
-  "alternatePhone",
-  "address",
-  "pincode",
-  "city",
-  "state",
-];
-
 
 function useViewport() {
   const [viewport, setViewport] = useState({
@@ -4894,1568 +465,604 @@ function useViewport() {
   });
 
   useEffect(() => {
-    const update = () =>
-      setViewport({ width: window.innerWidth, height: window.innerHeight });
+    const update = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
 
     update();
     window.addEventListener("resize", update);
-    window.addEventListener("orientationchange", update);
-
-    return () => {
-      window.removeEventListener("resize", update);
-      window.removeEventListener("orientationchange", update);
-    };
+    return () => window.removeEventListener("resize", update);
   }, []);
 
   return viewport;
 }
 
-export default function App() {
-  const viewport = useViewport();
-  const styles = useMemo(
-    () => createStyles(viewport),
-    [viewport.width, viewport.height]
-  );
-
-  const [profile, setProfile] = useState(INITIAL_PROFILE);
-  const [draft, setDraft] = useState(INITIAL_PROFILE);
-  const [editing, setEditing] = useState(false);
-  const [focused, setFocused] = useState(null);
-  const [saved, setSaved] = useState(false);
-  const [activeNav, setActiveNav] = useState("Profile");
-  const closeValidationPopup = () => {
-    const fieldToFocus = validationPopup.field;
-  
-    setValidationPopup({
-      visible: false,
-      field: "",
-      message: "",
-    });
-  
-    if (fieldToFocus) {
-      setFocused(fieldToFocus);
-  
-      window.setTimeout(() => {
-        const fieldElement = document.querySelector(
-          `[data-profile-field="${fieldToFocus}"]`
-        );
-  
-        if (fieldElement) {
-          fieldElement.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
-  
-          fieldElement.focus();
-        }
-      }, 150);
-    }
-  };
-  const [validationPopup, setValidationPopup] = useState({
-    visible: false,
-    field: "",
-    message: "",
-  });
-
-  const shown = editing ? draft : profile;
-  
-
-const requiredFields = [
-  { key: "name", label: "Full Name" },
-  { key: "shopName", label: "Shop Name" },
-  { key: "phone", label: "Phone Number" },
-  { key: "address", label: "Address" },
-  { key: "pincode", label: "Pincode" },
-  { key: "city", label: "City" },
-  { key: "state", label: "State" },
-];
-
-const allProfileFields = [
-  "name",
-  "shopName",
-  "email",
-  "phone",
-  "alternatePhone",
-  "address",
-  "pincode",
-  "city",
-  "state",
-];
-
-const completedFieldCount = allProfileFields.filter((field) => {
-  const value = shown[field];
-
-  return typeof value === "string" && value.trim() !== "";
-}).length;
-
-const profileCompletion = Math.round(
-  (completedFieldCount / allProfileFields.length) * 100
-);
-  const initials = shown.name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase();
-
-    const changeField = (field, value) => {
-      let cleanedValue = value;
-    
-      // Phone fields: numeric only, maximum 10 digits
-      if (field === "phone" || field === "alternatePhone") {
-        cleanedValue = value.replace(/\D/g, "").slice(0, 10);
-      }
-    
-      // Pincode: numeric only, maximum 6 digits
-      if (field === "pincode") {
-        cleanedValue = value.replace(/\D/g, "").slice(0, 6);
-      }
-    
-      // Name and shop name: alphabets and spaces only
-      if (field === "name" || field === "shopName") {
-        cleanedValue = value
-          .replace(/[^a-zA-Z ]/g, "")
-          .replace(/\s{2,}/g, " ");
-      }
-    
-      // City and state: alphabets and spaces only
-      if (field === "city" || field === "state") {
-        cleanedValue = value
-          .replace(/[^a-zA-Z ]/g, "")
-          .replace(/\s{2,}/g, " ");
-      }
-    
-      setDraft((current) => ({
-        ...current,
-        [field]: cleanedValue,
-      }));
-    };
-
-  const beginEdit = () => {
-    setDraft(profile);
-    setEditing(true);
-  };
-
-  const cancelEdit = () => {
-    setDraft(profile);
-    setEditing(false);
-    setFocused(null);
-  };
-
-  const saveChanges = () => {
-    const firstEmptyRequiredField = requiredFields.find(({ key }) => {
-      const value = draft[key];
-  
-      return typeof value !== "string" || value.trim() === "";
-    });
-  
-    if (firstEmptyRequiredField) {
-      setValidationPopup({
-        visible: true,
-        field: firstEmptyRequiredField.key,
-        message: `${firstEmptyRequiredField.label} cannot be blank.`,
-      });
-  
-      return;
-    }
-  
-    if (!/^[A-Za-z ]+$/.test(draft.name.trim())) {
-      setValidationPopup({
-        visible: true,
-        field: "name",
-        message: "Full Name can contain alphabets only.",
-      });
-  
-      return;
-    }
-  
-    if (!/^[A-Za-z ]+$/.test(draft.shopName.trim())) {
-      setValidationPopup({
-        visible: true,
-        field: "shopName",
-        message: "Shop Name can contain alphabets only.",
-      });
-  
-      return;
-    }
-  
-    if (!/^\d{10}$/.test(draft.phone)) {
-      setValidationPopup({
-        visible: true,
-        field: "phone",
-        message: "Phone Number must contain exactly 10 digits.",
-      });
-  
-      return;
-    }
-  
-    if (
-      draft.alternatePhone.trim() !== "" &&
-      !/^\d{10}$/.test(draft.alternatePhone)
-    ) {
-      setValidationPopup({
-        visible: true,
-        field: "alternatePhone",
-        message: "Alternate Phone must contain exactly 10 digits.",
-      });
-  
-      return;
-    }
-  
-    if (!/^\d{6}$/.test(draft.pincode)) {
-      setValidationPopup({
-        visible: true,
-        field: "pincode",
-        message: "Pincode must contain exactly 6 digits.",
-      });
-  
-      return;
-    }
-  
-    const cleanedProfile = {
-      name: draft.name.trim(),
-      shopName: draft.shopName.trim(),
-      email: draft.email.trim(),
-      phone: draft.phone.trim(),
-      alternatePhone: draft.alternatePhone.trim(),
-      address: draft.address.trim(),
-      pincode: draft.pincode.trim(),
-      city: draft.city.trim(),
-      state: draft.state.trim(),
-    };
-  
-    setProfile(cleanedProfile);
-    setDraft(cleanedProfile);
-    setEditing(false);
-    setFocused(null);
-    setSaved(true);
-  
-    window.setTimeout(() => {
-      setSaved(false);
-    }, 2200);
-  };
-
-  return (
-    <div style={styles.page}>
-      <style>{globalCss}</style>
-
-      <main style={styles.phone}>
-        <header style={styles.hero}>
-          <div style={styles.heroGlow} />
-          <div style={styles.heroGrid} />
-
-          
-           <div style={styles.topRow}>
-  <button
-    type="button"
-    style={{
-      ...styles.circleButton,
-      ...styles.backCircleButton,
-    }}
-    onClick={() => window.history.back()}
-    aria-label="Go back"
-  >
-    <span style={styles.backArrow}>‹</span>
-  </button>
-
-  <div style={styles.brandPill}>
-    <span>🪨</span>
-    <b>StoneRate</b>
-  </div>
-
-  <button
-    type="button"
-    style={{
-      ...styles.circleButton,
-      ...styles.notificationButton,
-    }}
-    aria-label="Notifications"
-  >
-    <span style={styles.bellIcon}>🔔</span>
-    <span style={styles.notificationDot} />
-  </button>
-</div>
-
-        </header>
-
-        <section style={styles.profileSurface}>
-          <div style={styles.avatarWrap}>
-            <div style={styles.avatarRing}>
-              <div style={styles.avatar}>{initials || "BP"}</div>
-            </div>
-
-            <button type="button" style={styles.cameraButton} aria-label="Change profile picture">
-              ◉
-            </button>
-          </div>
-
-          <div style={styles.identityBlock}>
-            <div style={styles.nameLine}>
-              <h1 style={styles.name}>{shown.name}</h1>
-              <span style={styles.verifiedIcon}>✓</span>
-            </div>
-            <p style={styles.email}>{shown.email}</p>
-            <p style={styles.shop}>{shown.shopName}</p>
-          </div>
-
-          <div style={styles.profileCompletion}>
-          <div style={styles.completionTop}>
-  <span>PROFILE COMPLETION</span>
-  <b>{profileCompletion}%</b>
-</div>
-
-<div style={styles.progressTrack}>
-  <div
-    style={{
-      ...styles.progressFill,
-      width: `${profileCompletion}%`,
-    }}
-  />
-</div>
-          </div>
-
-          <div className="profile-content-scroll" style={styles.contentScroll}>
-            <section style={styles.detailCard}>
-              <ProfileRow
-                styles={styles}
-                icon="👤"
-                label="Full Name"
-                field="name"
-                value={shown.name}
-                editing={editing}
-                focused={focused}
-                setFocused={setFocused}
-                onChange={changeField}
-              />
-
-              <ProfileRow
-                styles={styles}
-                icon="◆"
-                label="Shop Name"
-                field="shopName"
-                value={shown.shopName}
-                editing={editing}
-                focused={focused}
-                setFocused={setFocused}
-                onChange={changeField}
-              />
-
-              <ProfileRow
-                styles={styles}
-                icon="✉"
-                label="Mail ID"
-                field="email"
-                type="email"
-                value={shown.email}
-                editing={editing}
-                focused={focused}
-                setFocused={setFocused}
-                onChange={changeField}
-              />
-            </section>
-
-            <section style={styles.detailCard}>
-            <ProfileRow
-  styles={styles}
-  icon="☎"
-  label="Phone Number"
-  field="phone"
-  value={shown.phone}
-  editing={editing}
-  focused={focused}
-  setFocused={setFocused}
-  onChange={changeField}
-  verified
-  prefix="+91"
-  inputMode="numeric"
-  maxLength={10}
-/>
-
-<ProfileRow
-  styles={styles}
-  icon="☏"
-  label="Alternate Phone (Optional)"
-  field="alternatePhone"
-  value={shown.alternatePhone}
-  editing={editing}
-  focused={focused}
-  setFocused={setFocused}
-  onChange={changeField}
-  prefix="+91"
-  inputMode="numeric"
-  maxLength={10}
-/>
-            </section>
-
-            <section style={styles.addressCard}>
-              <div style={styles.addressHeading}>
-                <div style={styles.addressHeadingIcon}>⌖</div>
-                <div>
-                  <p style={styles.addressKicker}>DELIVERY LOCATION</p>
-                  <h2 style={styles.addressTitle}>Business Address</h2>
-                </div>
-                <span style={styles.defaultPill}>Default</span>
-              </div>
-
-              <ProfileRow
-                styles={styles}
-                icon="⌂"
-                label="Address"
-                field="address"
-                value={shown.address}
-                editing={editing}
-                focused={focused}
-                setFocused={setFocused}
-                onChange={changeField}
-                multiline
-              />
-
-              <div style={styles.twoColumns}>
-              <ProfileRow
-  styles={styles}
-  icon="#"
-  label="Pincode"
-  field="pincode"
-  value={shown.pincode}
-  editing={editing}
-  focused={focused}
-  setFocused={setFocused}
-  onChange={changeField}
-  compact
-  inputMode="numeric"
-  maxLength={6}
-/>
-                <ProfileRow
-                  styles={styles}
-                  icon="⌾"
-                  label="City"
-                  field="city"
-                  value={shown.city}
-                  editing={editing}
-                  focused={focused}
-                  setFocused={setFocused}
-                  onChange={changeField}
-                  compact
-                />
-              </div>
-
-              <ProfileRow
-                styles={styles}
-                icon="◇"
-                label="State"
-                field="state"
-                value={shown.state}
-                editing={editing}
-                focused={focused}
-                setFocused={setFocused}
-                onChange={changeField}
-              />
-            </section>
-
-            <div style={styles.securityNote}>
-              <div style={styles.securityIcon}>🛡</div>
-              <div>
-                <b>Your information is protected</b>
-                <p>Details are used only for rate enquiries and order delivery.</p>
-              </div>
-            </div>
-
-            {!editing ? (
-              <button type="button" style={styles.primaryButton} onClick={beginEdit}>
-                <span>✎</span>
-                Edit Profile
-              </button>
-            ) : (
-              <div style={styles.editButtons}>
-                <button type="button" style={styles.cancelButton} onClick={cancelEdit}>
-                  Cancel
-                </button>
-                <button type="button" style={styles.primaryButton} onClick={saveChanges}>
-                  <span>✓</span>
-                  Save Profile
-                </button>
-              </div>
-            )}
-
-            <div style={styles.bottomSpace} />
-          </div>
-        </section>
-
-        <nav style={styles.bottomNav}>
-          {[
-            { name: "Home", icon: "⌂" },
-            { name: "Orders", icon: "▣" },
-            { name: "Profile", icon: "●" },
-          ].map((item) => {
-            const active = activeNav === item.name;
-
-            return (
-              <button
-                type="button"
-                key={item.name}
-                onClick={() => setActiveNav(item.name)}
-                style={{
-                  ...styles.navButton,
-                  ...(active ? styles.navButtonActive : {}),
-                }}
-              >
-                {active && <span style={styles.activeMarker} />}
-                <span
-                  style={{
-                    ...styles.navIcon,
-                    ...(active ? styles.navIconActive : {}),
-                  }}
-                >
-                  {item.icon}
-                </span>
-                <span
-                  style={{
-                    ...styles.navText,
-                    ...(active ? styles.navTextActive : {}),
-                  }}
-                >
-                  {item.name}
-                </span>
-              </button>
-            );
-          })}
-        </nav>
-
-        {saved && (
-          <div style={styles.toast}>
-            <span>✓</span>
-            Profile updated successfully
-          </div>
-        )}
-        {validationPopup.visible && (
-  <div style={styles.validationOverlay}>
-    <div style={styles.validationPopup}>
-      <div style={styles.validationGlow} />
-
-      <div style={styles.warningCircle}>!</div>
-
-      <p style={styles.validationKicker}>REQUIRED INFORMATION</p>
-
-      <h2 style={styles.validationTitle}>
-        Complete Your Profile
-      </h2>
-
-      <p style={styles.validationMessage}>
-        {validationPopup.message}
-      </p>
-
-      <div style={styles.validationHint}>
-        <span style={styles.validationHintIcon}>✎</span>
-
-        <span>
-          Please enter this information before saving your profile.
-        </span>
-      </div>
-
-      <button
-        type="button"
-        style={styles.validationButton}
-        onClick={closeValidationPopup}
-      >
-        Fill Required Field
-      </button>
-    </div>
-  </div>
-)}
-      </main>
-    </div>
-  );
-}
-
-function ProfileRow({
-  styles,
-  icon,
-  label,
-  field,
-  value,
-  editing,
-  focused,
-  setFocused,
-  onChange,
-  type = "text",
-  multiline = false,
-  compact = false,
-  verified = false,
-  prefix = "",
-  inputMode,
-  maxLength,
-}) {
-  const isFocused = focused === field;
-
-  return (
-    <div
-      style={{
-        ...styles.profileRow,
-        ...(compact ? styles.profileRowCompact : {}),
-        ...(isFocused ? styles.profileRowFocused : {}),
-      }}
-    >
-      <div style={styles.rowIcon}>{icon}</div>
-
-      <div style={styles.rowContent}>
-        <span style={styles.rowLabel}>{label}</span>
-
-        {editing ? (
-          multiline ? (
-            
-<textarea
-  data-profile-field={field}
-  rows={2}
-  value={value}
-  onChange={(event) => onChange(field, event.target.value)}
-  onFocus={() => setFocused(field)}
-  onBlur={() => setFocused(null)}
-  style={styles.rowTextarea}
-/>
-
-          ) : (
-            
-<div style={styles.inputValueWrap}>
-  {prefix && <span style={styles.fixedPrefix}>{prefix}</span>}
-
-  <input
-    data-profile-field={field}
-    type={type}
-    value={value}
-    inputMode={inputMode}
-    maxLength={maxLength}
-    onChange={(event) => onChange(field, event.target.value)}
-    onFocus={() => setFocused(field)}
-    onBlur={() => setFocused(null)}
-    style={styles.rowInput}
-  />
-</div>
-
-          )
-        ) : (
-          <b
-  style={{
-    ...styles.rowValue,
-    ...(compact ? styles.rowValueCompact : {}),
-  }}
->
-  {prefix ? `${prefix} ${value}` : value}
-</b>
-        )}
-      </div>
-
-      {verified ? (
-        <span style={styles.rowVerified}>✓</span>
-      ) : !editing ? (
-        <span style={styles.rowArrow}>›</span>
-      ) : (
-        <span style={styles.editMark}>✎</span>
-      )}
-    </div>
-  );
-}
-
 function createStyles(viewport) {
   const vw = viewport.width || 390;
   const vh = viewport.height || 844;
-  const isDesktop = vw >= 700;
-  const appW = isDesktop ? 390 : vw;
-  const appH = isDesktop ? 844 : vh;
-  const rawScale = Math.min(appW / BASE_W, appH / BASE_H);
-  const scale = Math.max(0.86, Math.min(2.05, rawScale));
-  const ms = (value, factor = 0.55) =>
-    Math.round(value + (value * scale - value) * factor);
-  const tiny = appW <= 230;
-  const navHeight = ms(63);
-  const heroHeight = ms(127);
 
+  const isDesktop = false;
+  const mobileW = vw;
+  const mobileH = vh;
+
+  const scale = Math.max(
+    0.58,
+    Math.min(1, Math.min(mobileW / 390, mobileH / 844))
+  );
+
+  const tightHeight = mobileH < 700;
+  const veryTightHeight = mobileH < 560;
+  const tinyWidth = mobileW < 340;
+
+  const px = (value) => Math.round(value * scale);
+
+  const cardW = veryTightHeight ? px(178) : px(220);
+  const cardH = veryTightHeight ? px(210) : px(260);
+
+  const sideW = veryTightHeight ? px(88) : px(118);
+  const sideH = veryTightHeight ? px(112) : px(150);
 
   return {
+    dynamic: {
+      shadowY: px(34),
+      shadowBlur: px(70),
+    },
+
     page: {
       width: "100vw",
       height: "100dvh",
       minHeight: "100dvh",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: isDesktop ? "center" : "stretch",
-      padding: isDesktop ? 10 : 0,
+      background: "#020617",
+      display: "block",
       margin: 0,
-      overflow: "hidden",
-      background:
-        "radial-gradient(circle at 50% 0%, rgba(245,158,11,.18), transparent 35%), #17110d",
+      padding: 0,
       fontFamily: "Arial, sans-serif",
-    },
-    phone: {
-      position: "relative",
-      width: isDesktop ? 390 : "100vw",
-      height: isDesktop ? 844 : "100dvh",
       overflow: "hidden",
-      background: "#f7f4ef",
-      borderRadius: isDesktop ? 30 : 0,
-      boxShadow: isDesktop ? "0 28px 80px rgba(0,0,0,.34)" : "none",
-    },
-    hero: {
-      position: "absolute",
-      left: 0,
-      right: 0,
-      top: 0,
-      zIndex: 2,
-      height: heroHeight,
-      padding: `${ms(3)}px ${ms(tiny ? 10 : 14)}px`,
-      overflow: "hidden",
-      color: "white",
-    
-      backgroundImage: PROFILE_BG_IMAGE
-        ? `linear-gradient(
-            135deg,
-            rgba(2, 6, 23, 0.25),
-            rgba(28, 25, 23, 0.18) 55%,
-            rgba(146, 64, 14, 0.10)
-          ),
-          url("${PROFILE_BG_IMAGE}")`
-        : `radial-gradient(
-            circle at 86% 8%,
-            rgba(251, 191, 36, 0.34),
-            transparent 30%
-          ),
-          radial-gradient(
-            circle at 8% 95%,
-            rgba(249, 115, 22, 0.18),
-            transparent 34%
-          ),
-          linear-gradient(
-            145deg,
-            #020617 0%,
-            #1c1917 54%,
-            #92400e 100%
-          )`,
-    
-      backgroundSize: "cover",
-      backgroundPosition: "center top",
-      backgroundRepeat: "no-repeat",
-    },
-    validationOverlay: {
-      position: "absolute",
-      inset: 0,
-      zIndex: 200,
-    
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    
-      padding: ms(18),
-    
-      background: "rgba(2, 6, 23, 0.72)",
-      backdropFilter: "blur(9px)",
-    },
-    
-    validationPopup: {
-      position: "relative",
-    
-      width: "100%",
-      maxWidth: ms(280),
-    
-      overflow: "hidden",
-    
-      padding: `${ms(24)}px ${ms(17)}px ${ms(17)}px`,
-    
-      border: "1px solid rgba(245,158,11,.28)",
-      borderRadius: ms(25),
-    
-      background:
-        "linear-gradient(145deg, rgba(255,255,255,.99), rgba(255,251,235,.98))",
-    
-      textAlign: "center",
-    
-      boxShadow:
-        "0 30px 80px rgba(0,0,0,.38), 0 0 45px rgba(245,158,11,.14)",
-    },
-    
-    validationGlow: {
-      position: "absolute",
-    
-      left: "50%",
-      top: ms(-60),
-    
-      width: ms(170),
-      height: ms(125),
-    
-      borderRadius: "50%",
-    
-      background: "rgba(245,158,11,.22)",
-      filter: `blur(${ms(28)}px)`,
-    
-      transform: "translateX(-50%)",
-      pointerEvents: "none",
-    },
-    
-    warningCircle: {
-      position: "relative",
-      zIndex: 2,
-    
-      width: ms(59),
-      height: ms(59),
-    
-      margin: "0 auto",
-    
-      display: "grid",
-      placeItems: "center",
-    
-      border: `${ms(5)}px solid #fef3c7`,
-      borderRadius: "50%",
-    
-      background:
-        "linear-gradient(145deg, #f59e0b, #ea580c)",
-    
-      color: "white",
-    
-      fontSize: ms(27),
-      fontWeight: 950,
-    
-      boxShadow:
-        "0 14px 28px rgba(234,88,12,.27), 0 0 0 7px rgba(245,158,11,.08)",
-    },
-    
-    validationKicker: {
-      position: "relative",
-      zIndex: 2,
-    
-      margin: `${ms(15)}px 0 0`,
-    
-      color: "#b45309",
-    
-      fontSize: ms(6.8),
-      letterSpacing: ms(1.1),
-      fontWeight: 950,
-    },
-    
-    validationTitle: {
-      position: "relative",
-      zIndex: 2,
-    
-      margin: `${ms(5)}px 0 0`,
-    
-      color: "#1c1917",
-    
-      fontSize: ms(18),
-      lineHeight: 1.08,
-      fontWeight: 950,
-      letterSpacing: -0.35,
-    },
-    
-    validationMessage: {
-      position: "relative",
-      zIndex: 2,
-    
-      margin: `${ms(9)}px auto 0`,
-    
-      color: "#92400e",
-    
-      fontSize: ms(9.2),
-      lineHeight: 1.4,
-      fontWeight: 900,
-    },
-    
-    validationHint: {
-      position: "relative",
-      zIndex: 2,
-    
-      display: "flex",
-      alignItems: "center",
-    
-      gap: ms(7),
-    
-      marginTop: ms(13),
-      padding: ms(9),
-    
-      border: "1px solid #fde68a",
-      borderRadius: ms(14),
-    
-      background: "#fffbeb",
-    
-      color: "#78716c",
-    
-      textAlign: "left",
-    
-      fontSize: ms(7.6),
-      lineHeight: 1.35,
-      fontWeight: 750,
-    },
-    
-    validationHintIcon: {
-      width: ms(27),
-      height: ms(27),
-    
-      display: "grid",
-      placeItems: "center",
-    
-      flexShrink: 0,
-    
-      borderRadius: ms(10),
-    
-      background: "#1c1917",
-      color: "#fbbf24",
-    
-      fontSize: ms(12),
-      fontWeight: 950,
-    },
-    
-    validationButton: {
-      position: "relative",
-      zIndex: 2,
-    
-      width: "100%",
-      minHeight: ms(45),
-    
-      marginTop: ms(15),
-    
-      border: 0,
-      borderRadius: ms(17),
-    
-      background:
-        "linear-gradient(135deg, #020617, #92400e)",
-    
-      color: "white",
-    
-      fontSize: ms(9.7),
-      fontWeight: 950,
-    
-      boxShadow:
-        "0 13px 27px rgba(146,64,14,.25)",
-    
-      cursor: "pointer",
+      boxSizing: "border-box",
     },
 
-    heroGlow: {
-      position: "absolute",
-      right: ms(-45),
-      top: ms(-65),
-      width: ms(170),
-      height: ms(170),
-      borderRadius: "50%",
-      background: "rgba(245,158,11,.20)",
-      filter: `blur(${ms(30)}px)`,
+    phone: {
+      width: "100vw",
+      height: "100dvh",
+      minWidth: 0,
+      minHeight: 0,
+      maxWidth: "none",
+      maxHeight: "none",
+      background: "#020617",
+      borderRadius: 0,
+      overflow: "hidden",
+      boxShadow: "none",
+      boxSizing: "border-box",
     },
-    heroGrid: {
+    hero: {
+      position: "relative",
+      width: "100%",
+      height: "100%",
+      padding: `${px(tightHeight ? 14 : 22)}px ${px(tinyWidth ? 14 : 20)}px ${px(tightHeight ? 14 : 24)}px`,
+      color: "white",
+      background:
+        "radial-gradient(circle at 20% 8%, rgba(245,158,11,0.38), transparent 28%), linear-gradient(145deg, #020617 0%, #1c1917 52%, #92400e 100%)",
+      overflow: "hidden",
+      boxSizing: "border-box",
+      display: "flex",
+      flexDirection: "column",
+    },
+
+    bgOrbOne: {
+      position: "absolute",
+      top: px(-75),
+      right: px(-80),
+      width: px(230),
+      height: px(230),
+      borderRadius: "50%",
+      background: "rgba(251,191,36,0.25)",
+      filter: `blur(${px(38)}px)`,
+    },
+
+    bgOrbTwo: {
+      position: "absolute",
+      bottom: px(170),
+      left: px(-95),
+      width: px(210),
+      height: px(210),
+      borderRadius: "50%",
+      background: "rgba(255,255,255,0.11)",
+      filter: `blur(${px(46)}px)`,
+    },
+
+    bgOrbThree: {
+      position: "absolute",
+      bottom: px(-70),
+      right: px(-50),
+      width: px(180),
+      height: px(180),
+      borderRadius: "50%",
+      background: "rgba(34,197,94,0.16)",
+      filter: `blur(${px(42)}px)`,
+    },
+
+    gridOverlay: {
       position: "absolute",
       inset: 0,
-      opacity: .25,
       backgroundImage:
-        "linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px)",
-      backgroundSize: `${ms(30)}px ${ms(30)}px`,
-      pointerEvents: "none",
+        "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
+      backgroundSize: `${px(34)}px ${px(34)}px`,
+      maskImage: "linear-gradient(to bottom, black, transparent 82%)",
     },
-    topRow: {
+
+    nav: {
       position: "relative",
-      zIndex: 5,
-    
-      display: "grid",
-      gridTemplateColumns: "1fr auto 1fr",
-      alignItems: "center",
-    
-      width: `calc(100% + ${ms(10)}px)`,
-      marginLeft: ms(-5),
-    
-      transform: `translateY(${ms(-3)}px)`,
-    },
-    circleButton: {
-      position: "relative",
-    
-      width: ms(34),
-      height: ms(34),
-    
-      display: "grid",
-      placeItems: "center",
-    
-      padding: 0,
-    
-      border: "1px solid rgba(255,255,255,.22)",
-      borderRadius: ms(12),
-    
-      background: "rgba(28,25,23,.52)",
-      color: "white",
-      
-      boxShadow:
-        "0 8px 18px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.15)",
-    
-      backdropFilter: "blur(12px)",
-      cursor: "pointer",
-    },
-    backCircleButton: {
-      justifySelf: "start",
-      transform: `translateX(${ms(-6)}px)`,
-    },
-    
-    notificationButton: {
-      justifySelf: "end",
-      transform: `translateX(${ms(5)}px)`,
-    },
-    notificationDot: {
-      position: "absolute",
-      right: ms(7),
-      top: ms(7),
-      width: ms(6),
-      height: ms(6),
-      border: "1px solid #1c1917",
-      borderRadius: "50%",
-      background: "#f59e0b",
-    },
-    brandPill: {
-      position: "relative",
-      zIndex: 5,
-    
-      display: "flex",
-      alignItems: "center",
-      gap: ms(5),
-    
-      padding: `${ms(6)}px ${ms(11)}px`,
-    
-      border: "1px solid rgba(251,191,36,.55)",
-      borderRadius: 999,
-    
-      background:
-        "linear-gradient(145deg, rgba(2,6,23,.92), rgba(28,25,23,.88))",
-    
-      color: "#fde68a",
-    
-      fontSize: ms(7.8),
-      fontWeight: 950,
-    
-      boxShadow:
-        "0 8px 20px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.12)",
-    
-      backdropFilter: "blur(12px)",
-    
-      transform: `translateY(${ms(-4)}px)`,
-    },
-    profileSurface: {
-      position: "absolute",
-      left: 0,
-      right: 0,
-      top: ms(70),
-      bottom: navHeight,
-      zIndex: 5,
-      borderRadius: `${ms(34)}px ${ms(34)}px 0 0`,
-      background:
-        "radial-gradient(circle at 90% 2%, rgba(245,158,11,.08), transparent 24%), linear-gradient(180deg, #fff 0%, #f8f5f0 55%, #efeae3 100%)",
-      boxShadow: "0 -12px 35px rgba(0,0,0,.18)",
-    },
-    avatarWrap: {
-      position: "absolute",
-      left: "50%",
-      top: ms(-42),
-      width: ms(88),
-      height: ms(88),
-      transform: "translateX(-50%)",
-    },
-    avatarRing: {
-      width: "100%",
-      height: "100%",
-      padding: ms(4),
-      borderRadius: "50%",
-    
-      background:
-        "linear-gradient(145deg, #fde68a, #f59e0b 45%, #ea580c 75%, #92400e)",
-    
-      boxShadow:
-        "0 14px 30px rgba(28,25,23,.24), " +
-        "0 0 0 3px rgba(255,255,255,.85), " +
-        "0 0 14px rgba(245,158,11,.80), " +
-        "0 0 28px rgba(234,88,12,.52), " +
-        "0 0 48px rgba(146,64,14,.28)",
-    
-      animation: "profileGlow 2.4s ease-in-out infinite",
-    },
-    avatar: {
-      width: "100%",
-      height: "100%",
-      display: "grid",
-      placeItems: "center",
-      borderRadius: "50%",
-      background:
-        "radial-gradient(circle at 35% 25%, rgba(255,255,255,.27), transparent 25%), linear-gradient(145deg, #f59e0b, #92400e)",
-      color: "white",
-      fontSize: ms(24),
-      fontWeight: 950,
-      letterSpacing: ms(1),
-    },
-    cameraButton: {
-      position: "absolute",
-      right: ms(-2),
-      bottom: ms(4),
-      width: ms(29),
-      height: ms(29),
-      display: "grid",
-      placeItems: "center",
-      padding: 0,
-      border: `${ms(3)}px solid white`,
-      borderRadius: "50%",
-      background: "linear-gradient(145deg, #1c1917, #44403c)",
-      color: "#fbbf24",
-      fontSize: ms(13),
-      boxShadow: "0 7px 15px rgba(0,0,0,.20)",
-      cursor: "pointer",
-    },
-    identityBlock: {
-      padding: `${ms(52)}px ${ms(14)}px 0`,
-      textAlign: "center",
-    },
-    nameLine: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: ms(5),
-    },
-    name: {
-      maxWidth: "78%",
-      margin: 0,
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-      color: "#1c1917",
-      fontSize: ms(tiny ? 17 : 20),
-      fontWeight: 950,
-      letterSpacing: -.35,
-    },
-    verifiedIcon: {
-      width: ms(18),
-      height: ms(18),
-      display: "grid",
-      placeItems: "center",
-      flexShrink: 0,
-      borderRadius: "50%",
-      background: "#f59e0b",
-      color: "white",
-      fontSize: ms(8),
-      fontWeight: 950,
-      boxShadow: "0 5px 12px rgba(245,158,11,.25)",
-    },
-    email: {
-      margin: `${ms(4)}px 0 0`,
-      color: "#8a817b",
-      fontSize: ms(7.7),
-      fontWeight: 750,
-    },
-    shop: {
-      maxWidth: "85%",
-      margin: `${ms(4)}px auto 0`,
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-      color: "#92400e",
-      fontSize: ms(7.4),
-      fontWeight: 900,
-    },
-    profileCompletion: {
-      width: `calc(100% - ${ms(26)}px)`,
-      margin: `${ms(10)}px auto 0`,
-      padding: ms(9),
-      border: "1px solid rgba(245,158,11,.16)",
-      borderRadius: ms(15),
-      background: "linear-gradient(145deg, #fffdf8, #fff7e7)",
-      boxShadow: "0 8px 20px rgba(146,64,14,.06)",
-    },
-    completionTop: {
+      zIndex: 3,
       display: "flex",
       justifyContent: "space-between",
-      color: "#92400e",
-      fontSize: ms(6.3),
-      letterSpacing: ms(.7),
-      fontWeight: 950,
+      alignItems: "center",
+      flexShrink: 0,
     },
-    progressTrack: {
-      height: ms(5),
-      marginTop: ms(6),
-      overflow: "hidden",
-      borderRadius: 999,
-      background: "#fde7bd",
-    },
-    progressFill: {
-      height: "100%",
+
+    brandWrap: {
+      display: "flex",
+      alignItems: "center",
+      gap: px(12),
       minWidth: 0,
-      borderRadius: 999,
-      background: "linear-gradient(90deg, #f59e0b, #ea580c)",
-      boxShadow: "0 0 12px rgba(245,158,11,.32)",
-      transition: "width 320ms ease",
     },
-    contentScroll: {
-      position: "absolute",
-      left: 0,
-      right: 0,
-      top: ms(142),
-      bottom: 0,
-      overflowY: "auto",
-      overflowX: "hidden",
-      padding: `${ms(9)}px ${ms(tiny ? 9 : 13)}px ${ms(16)}px`,
-      scrollbarWidth: "none",
-      WebkitOverflowScrolling: "touch",
-    },
-    detailCard: {
-      overflow: "hidden",
-      marginTop: ms(10),
-      border: "1px solid #eeeae4",
-      borderRadius: ms(20),
-      background: "rgba(255,255,255,.96)",
-      boxShadow: "0 13px 28px rgba(28,25,23,.07)",
-    },
-    addressCard: {
-      marginTop: ms(10),
-      padding: ms(10),
-      border: "1px solid rgba(245,158,11,.16)",
-      borderRadius: ms(20),
+
+    logo3d: {
+      width: px(tightHeight ? 42 : 50),
+      height: px(tightHeight ? 42 : 50),
+      borderRadius: px(18),
       background:
-        "radial-gradient(circle at 100% 0%, rgba(245,158,11,.08), transparent 30%), rgba(255,255,255,.97)",
-      boxShadow: "0 13px 28px rgba(28,25,23,.07)",
-    },
-    addressHeading: {
-      display: "flex",
-      alignItems: "center",
-      gap: ms(8),
-      marginBottom: ms(7),
-    },
-    addressHeadingIcon: {
-      width: ms(33),
-      height: ms(33),
+        "linear-gradient(145deg, rgba(255,255,255,0.24), rgba(255,255,255,0.08))",
       display: "grid",
       placeItems: "center",
+      fontSize: px(tightHeight ? 20 : 24),
+      boxShadow:
+        "inset 0 1px 0 rgba(255,255,255,0.3), 0 14px 26px rgba(0,0,0,0.25)",
       flexShrink: 0,
-      borderRadius: ms(12),
-      background: "linear-gradient(145deg, #fef3c7, #fde68a)",
-      color: "#92400e",
-      fontSize: ms(16),
-      fontWeight: 950,
     },
-    addressKicker: {
+
+    brandName: {
       margin: 0,
-      color: "#b45309",
-      fontSize: ms(5.8),
-      letterSpacing: ms(.8),
+      fontSize: px(tightHeight ? 15 : 18),
       fontWeight: 950,
-    },
-    addressTitle: {
-      margin: `${ms(2)}px 0 0`,
-      color: "#1c1917",
-      fontSize: ms(10),
-      fontWeight: 950,
-    },
-    defaultPill: {
-      marginLeft: "auto",
-      padding: `${ms(4)}px ${ms(7)}px`,
-      borderRadius: 999,
-      background: "#fffbeb",
-      color: "#92400e",
-      fontSize: ms(6.4),
-      fontWeight: 950,
-    },
-    profileRow: {
-      minWidth: 0,
-      minHeight: ms(50),
-      display: "flex",
-      alignItems: "center",
-      gap: ms(8),
-      padding: `${ms(8)}px ${ms(9)}px`,
-      borderBottom: "1px solid #eeeae4",
-      background: "transparent",
-      transition: "all 180ms ease",
-    },
-    profileRowCompact: {
-      minWidth: 0,
-      minHeight: ms(55),
-      padding: `${ms(7)}px ${ms(6)}px`,
-      gap: ms(5),
-      border: "1px solid #eeeae4",
-      borderRadius: ms(14),
-      background: "#fffdf9",
-    },
-    
-    profileRowFocused: {
-      borderColor: "rgba(245,158,11,.55)",
-      background: "#fffbeb",
-      boxShadow: "inset 0 0 0 2px rgba(245,158,11,.08)",
-    },
-    rowIcon: {
-      width: ms(32),
-      height: ms(32),
-      display: "grid",
-      placeItems: "center",
-      flexShrink: 0,
-      borderRadius: ms(11),
-      background: "linear-gradient(145deg, #fff7df, #fef3c7)",
-      color: "#b45309",
-      fontSize: ms(14),
-      fontWeight: 950,
-    },
-    rowContent: {
-      minWidth: 0,
-      flex: 1,
-    },
-    rowLabel: {
-      display: "block",
-      color: "#8a817b",
-      fontSize: ms(6.6),
-      fontWeight: 800,
-    },
-    rowValue: {
-      display: "block",
-      marginTop: ms(3),
-      overflowWrap: "anywhere",
-      color: "#292524",
-      fontSize: ms(8.4),
-      lineHeight: 1.22,
-      fontWeight: 900,
-    },
-    rowInput: {
-      width: "100%",
-      minWidth: 0,
-      marginTop: ms(3),
-      padding: 0,
-      border: 0,
-      outline: 0,
-      background: "transparent",
-      color: "#292524",
-      fontSize: ms(8.4),
-      fontWeight: 900,
-    },
-    rowTextarea: {
-      width: "100%",
-      minWidth: 0,
-      marginTop: ms(3),
-      padding: 0,
-      resize: "none",
-      border: 0,
-      outline: 0,
-      background: "transparent",
-      color: "#292524",
-      fontSize: ms(8.2),
-      lineHeight: 1.3,
-      fontWeight: 850,
-    },
-    rowArrow: {
-      color: "#b8afa7",
-      fontSize: ms(20),
       lineHeight: 1,
     },
-    rowVerified: {
-      width: ms(22),
-      height: ms(22),
-      display: "grid",
-      placeItems: "center",
-      flexShrink: 0,
-      borderRadius: "50%",
-      background: "#22c55e",
+
+    brandSub: {
+      margin: `${px(3)}px 0 0`,
+      color: "#d6d3d1",
+      fontSize: px(tightHeight ? 8 : 10),
+      fontWeight: 700,
+      whiteSpace: "nowrap",
+    },
+
+    skipBtn: {
+      border: "1px solid rgba(255,255,255,0.2)",
+      borderRadius: 999,
+      background: "rgba(255,255,255,0.1)",
       color: "white",
-      fontSize: ms(9),
-      fontWeight: 950,
-    },
-    editMark: {
-      color: "#f59e0b",
-      fontSize: ms(12),
-      fontWeight: 950,
-    },
-    twoColumns: {
-      display: "grid",
-      gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)",
-      alignItems: "stretch",
-      gap: ms(7),
-      margin: `${ms(6)}px 0`,
-    },
-    
-    securityNote: {
-      display: "flex",
-      alignItems: "center",
-      gap: ms(9),
-      marginTop: ms(10),
-      padding: ms(10),
-      border: "1px solid #fde68a",
-      borderRadius: ms(18),
-      background: "#fffbeb",
-      color: "#78350f",
-      fontSize: ms(7.2),
-    },
-    securityIcon: {
-      width: ms(34),
-      height: ms(34),
-      display: "grid",
-      placeItems: "center",
-      flexShrink: 0,
-      borderRadius: ms(13),
-      background: "linear-gradient(145deg, #1c1917, #44403c)",
-      color: "#fbbf24",
-      fontSize: ms(16),
-    },
-    primaryButton: {
-      width: "100%",
-      minHeight: ms(49),
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: ms(6),
-      marginTop: ms(12),
-      border: 0,
-      borderRadius: ms(22),
-      background: "linear-gradient(135deg, #020617, #92400e)",
-      color: "white",
-      fontSize: ms(10),
-      fontWeight: 950,
-      boxShadow: "0 15px 31px rgba(146,64,14,.25)",
-      cursor: "pointer",
-    },
-    editButtons: {
-      display: "grid",
-      gridTemplateColumns: ".8fr 1.45fr",
-      gap: ms(8),
-    },
-    cancelButton: {
-      minHeight: ms(49),
-      marginTop: ms(12),
-      border: "1px solid #e7e5e4",
-      borderRadius: ms(22),
-      background: "white",
-      color: "#57534e",
-      fontSize: ms(9),
+      padding: `${px(8)}px ${px(13)}px`,
+      fontSize: px(12),
       fontWeight: 900,
       cursor: "pointer",
+      flexShrink: 0,
     },
-    bottomSpace: {
-      height: ms(10),
-    },
-    bottomNav: {
-      position: "absolute",
-      left: 0,
-      right: 0,
-      bottom: 0,
-      zIndex: 30,
-      height: navHeight,
-      display: "grid",
-      gridTemplateColumns: "repeat(3,1fr)",
-      padding: `${ms(5)}px ${ms(8)}px calc(env(safe-area-inset-bottom, 0px) + ${ms(5)}px)`,
-      borderTop: "1px solid rgba(251,191,36,.20)",
-      background:
-        "radial-gradient(circle at 50% 0%, rgba(245,158,11,.16), transparent 46%), linear-gradient(135deg, #21140d 0%, #352013 52%, #4b250d 100%)",
-      boxShadow: "0 -14px 34px rgba(28,15,7,.30)",
-    },
-    navButton: {
+
+    heroText: {
       position: "relative",
-      minWidth: 0,
+      zIndex: 3,
+      textAlign: "center",
+      marginTop: px(veryTightHeight ? 14 : tightHeight ? 22 : 34),
+      flexShrink: 0,
+    },
+
+    heroBadge: {
+      display: "inline-block",
+      padding: `${px(6)}px ${px(11)}px`,
+      borderRadius: 999,
+      background: "rgba(245,158,11,0.16)",
+      border: "1px solid rgba(245,158,11,0.35)",
+      color: "#fde68a",
+      fontSize: px(veryTightHeight ? 8 : 10),
+      letterSpacing: veryTightHeight ? 1.1 : 1.8,
+      fontWeight: 950,
+    },
+
+    mainTitle: {
+      margin: `${px(veryTightHeight ? 10 : 16)}px 0 0`,
+      fontSize: px(veryTightHeight ? 27 : tightHeight ? 32 : 40),
+      lineHeight: 1.02,
+      fontWeight: 950,
+      letterSpacing: -1.1,
+    },
+
+    mainSub: {
+      margin: `${px(veryTightHeight ? 8 : 14)}px auto 0`,
+      maxWidth: px(330),
+      color: "#e7e5e4",
+      fontSize: px(veryTightHeight ? 10 : 13),
+      lineHeight: veryTightHeight ? 1.3 : 1.55,
+      fontWeight: 600,
+    },
+
+    carouselStage: {
+      position: "relative",
+      zIndex: 3,
+      height: veryTightHeight ? px(235) : tightHeight ? px(285) : px(355),
+      marginTop: px(veryTightHeight ? 12 : tightHeight ? 18 : 28),
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      perspective: 1200,
+      flexShrink: 0,
+    },
+
+    orbitLarge: {
+      position: "absolute",
+      width: px(340),
+      height: px(210),
+      borderRadius: "50%",
+      border: "1px solid rgba(255,255,255,0.16)",
+      transform: "rotateX(66deg) rotateZ(-12deg)",
+    },
+
+    orbitSmall: {
+      position: "absolute",
+      width: px(250),
+      height: px(250),
+      borderRadius: "50%",
+      border: "1px solid rgba(245,158,11,0.33)",
+      transform: "rotateX(64deg) rotateZ(12deg)",
+    },
+
+    mainCard3d: {
+      position: "relative",
+      zIndex: 4,
+      width: cardW,
+      height: cardH,
+      borderRadius: px(36),
+      background:
+        "linear-gradient(145deg, rgba(255,255,255,0.30), rgba(255,255,255,0.08))",
+      border: "1px solid rgba(255,255,255,0.28)",
+      backdropFilter: "blur(14px)",
+      transform: "rotateX(8deg) rotateY(-12deg) rotateZ(1deg)",
+      padding: px(veryTightHeight ? 12 : 18),
+      transition: "all 450ms ease",
+      boxSizing: "border-box",
+      overflow: "hidden",
+    },
+
+    sideCard: {
+      position: "absolute",
+      zIndex: 2,
+      width: sideW,
+      height: sideH,
+      borderRadius: px(28),
+      background:
+        "linear-gradient(145deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06))",
+      border: "1px solid rgba(255,255,255,0.16)",
+      backdropFilter: "blur(10px)",
+      boxShadow: "0 18px 34px rgba(0,0,0,0.24)",
+      overflow: "hidden",
+    },
+
+    leftCard: {
+      left: tinyWidth ? px(-8) : px(4),
+      transform: "rotateY(28deg) rotateZ(-8deg) scale(0.92)",
+      opacity: 0.75,
+    },
+
+    rightCard: {
+      right: tinyWidth ? px(-8) : px(4),
+      transform: "rotateY(-28deg) rotateZ(8deg) scale(0.92)",
+      opacity: 0.75,
+    },
+
+    miniInner: {
+      height: "100%",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      gap: ms(3),
-      padding: ms(3),
-      border: 0,
-      borderRadius: ms(15),
-      background: "transparent",
-      cursor: "pointer",
+      padding: px(12),
+      textAlign: "center",
+      boxSizing: "border-box",
     },
-    navButtonActive: {
-      background:
-        "linear-gradient(145deg, rgba(245,158,11,.22), rgba(234,88,12,.10))",
-      boxShadow: "inset 0 0 0 1px rgba(251,191,36,.24)",
-    },
-    activeMarker: {
-      position: "absolute",
-      top: ms(-5),
-      left: "50%",
-      width: ms(25),
-      height: ms(3),
-      borderRadius: 999,
-      background: "linear-gradient(90deg,#fbbf24,#f97316)",
-      boxShadow: "0 0 12px rgba(245,158,11,.70)",
-      transform: "translateX(-50%)",
-    },
-    navIcon: {
-      width: ms(28),
-      height: ms(26),
+
+    miniIcon: {
+      width: px(42),
+      height: px(42),
+      borderRadius: px(16),
       display: "grid",
       placeItems: "center",
-      border: "1px solid rgba(255,255,255,.07)",
-      borderRadius: ms(9),
-      background: "rgba(255,255,255,.06)",
-      color: "#d6c3b5",
-      fontSize: ms(15),
-      fontWeight: 900,
+      fontSize: px(22),
+      boxShadow: "0 12px 22px rgba(0,0,0,0.24)",
     },
-    navIconActive: {
-      borderColor: "rgba(251,191,36,.35)",
-      background: "linear-gradient(145deg,#f59e0b,#ea580c)",
-      color: "white",
-      boxShadow: "0 8px 17px rgba(234,88,12,.30)",
-    },
-    navText: {
-      color: "#c4afa0",
-      fontSize: ms(7.1),
-      fontWeight: 800,
-    },
-    navTextActive: {
-      color: "#fbbf24",
+
+    miniMain: {
+      margin: `${px(13)}px 0 0`,
+      fontSize: px(22),
       fontWeight: 950,
     },
-    toast: {
-      position: "absolute",
-      left: "50%",
-      bottom: navHeight + ms(12),
-      zIndex: 80,
+
+    miniChip: {
+      margin: `${px(4)}px 0 0`,
+      color: "#d6d3d1",
+      fontSize: px(10),
+      fontWeight: 700,
+    },
+
+    mockTopBar: {
+      width: px(70),
+      height: px(7),
+      borderRadius: 999,
+      background: "rgba(255,255,255,0.58)",
+      marginBottom: px(veryTightHeight ? 10 : 18),
+    },
+
+    mainMetricCard: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: px(veryTightHeight ? 10 : 14),
+      borderRadius: px(22),
+      background: "rgba(0,0,0,0.22)",
+      gap: px(8),
+    },
+
+    mockLabel: {
+      margin: 0,
+      color: "#d6d3d1",
+      fontSize: px(veryTightHeight ? 9 : 11),
+      fontWeight: 700,
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    mockValue: {
+      margin: `${px(5)}px 0 0`,
+      color: "white",
+      fontSize: px(veryTightHeight ? 24 : 30),
+      fontWeight: 950,
+      lineHeight: 1,
+    },
+
+    mockIcon: {
+      width: px(veryTightHeight ? 38 : 46),
+      height: px(veryTightHeight ? 38 : 46),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: px(17),
+      fontSize: px(veryTightHeight ? 20 : 24),
+      transition: "all 450ms ease",
+      flexShrink: 0,
+    },
+
+    featureTextCard: {
+      marginTop: px(veryTightHeight ? 8 : 12),
       display: "flex",
       alignItems: "center",
-      gap: ms(7),
-      padding: `${ms(9)}px ${ms(13)}px`,
-      border: "1px solid #bbf7d0",
-      borderRadius: 999,
-      background: "rgba(240,253,244,.98)",
-      color: "#166534",
-      fontSize: ms(8),
+      gap: px(10),
+      padding: px(veryTightHeight ? 9 : 12),
+      borderRadius: px(18),
+      background: "rgba(255,255,255,0.20)",
+      minHeight: 0,
+    },
+
+    previewCardDark: {
+      marginTop: px(veryTightHeight ? 7 : 10),
+      display: "flex",
+      alignItems: "center",
+      gap: px(10),
+      padding: px(veryTightHeight ? 9 : 12),
+      borderRadius: px(18),
+      background: "rgba(0,0,0,0.22)",
+      minHeight: 0,
+    },
+
+    mockDot: {
+      width: px(12),
+      height: px(12),
+      borderRadius: "50%",
+      flexShrink: 0,
+    },
+
+    mockDotAmber: {
+      width: px(12),
+      height: px(12),
+      borderRadius: "50%",
+      background: "#f59e0b",
+      flexShrink: 0,
+    },
+
+    mockTextStrong: {
+      margin: 0,
+      color: "white",
+      fontSize: px(veryTightHeight ? 10 : 12),
       fontWeight: 950,
-      boxShadow: "0 14px 30px rgba(0,0,0,.18)",
-      transform: "translateX(-50%)",
       whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    mockTextLight: {
+      margin: `${px(3)}px 0 0`,
+      color: "#e7e5e4",
+      fontSize: px(veryTightHeight ? 8 : 10),
+      lineHeight: 1.25,
+      fontWeight: 700,
+      display: "-webkit-box",
+      WebkitLineClamp: veryTightHeight ? 2 : 3,
+      WebkitBoxOrient: "vertical",
+      overflow: "hidden",
+    },
+
+    mockTextStrongWhite: {
+      margin: 0,
+      color: "white",
+      fontSize: px(veryTightHeight ? 10 : 12),
+      fontWeight: 950,
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    mockTextLightWhite: {
+      margin: `${px(3)}px 0 0`,
+      color: "#d6d3d1",
+      fontSize: px(veryTightHeight ? 8 : 10),
+      fontWeight: 700,
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    floatChipTop: {
+      position: "absolute",
+      top: px(veryTightHeight ? 18 : 36),
+      right: px(veryTightHeight ? 10 : 26),
+      zIndex: 5,
+      padding: `${px(8)}px ${px(11)}px`,
+      borderRadius: px(18),
+      background: "rgba(255,255,255,0.93)",
+      fontSize: px(veryTightHeight ? 9 : 12),
+      fontWeight: 950,
+      boxShadow: "0 16px 30px rgba(0,0,0,0.25)",
+      transition: "all 450ms ease",
+      maxWidth: px(120),
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    floatChipLeft: {
+      position: "absolute",
+      bottom: px(veryTightHeight ? 36 : 56),
+      left: px(veryTightHeight ? 10 : 26),
+      zIndex: 5,
+      padding: `${px(8)}px ${px(11)}px`,
+      borderRadius: px(18),
+      background: "rgba(255,255,255,0.92)",
+      color: "#92400e",
+      fontSize: px(veryTightHeight ? 9 : 12),
+      fontWeight: 950,
+      boxShadow: "0 16px 30px rgba(0,0,0,0.24)",
+    },
+
+    floatIcon: {
+      position: "absolute",
+      bottom: px(veryTightHeight ? 68 : 94),
+      right: px(veryTightHeight ? 14 : 30),
+      zIndex: 5,
+      width: px(veryTightHeight ? 42 : 54),
+      height: px(veryTightHeight ? 42 : 54),
+      borderRadius: px(20),
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(veryTightHeight ? 22 : 28),
+      boxShadow: "0 18px 32px rgba(0,0,0,0.28)",
+      transition: "all 450ms ease",
+    },
+
+    slideTitleBlock: {
+      position: "relative",
+      zIndex: 4,
+      textAlign: "center",
+      marginTop: px(veryTightHeight ? -2 : -4),
+      minHeight: veryTightHeight ? px(50) : px(76),
+      flexShrink: 0,
+    },
+
+    slideTitle: {
+      margin: 0,
+      color: "white",
+      fontSize: px(veryTightHeight ? 17 : 22),
+      fontWeight: 950,
+      lineHeight: 1.05,
+    },
+
+    slideSub: {
+      margin: `${px(veryTightHeight ? 5 : 8)}px auto 0`,
+      maxWidth: px(310),
+      color: "#d6d3d1",
+      fontSize: px(veryTightHeight ? 9 : 12),
+      lineHeight: veryTightHeight ? 1.25 : 1.45,
+      fontWeight: 650,
+      display: "-webkit-box",
+      WebkitLineClamp: veryTightHeight ? 2 : 3,
+      WebkitBoxOrient: "vertical",
+      overflow: "hidden",
+    },
+
+    dotsRow: {
+      position: "relative",
+      zIndex: 4,
+      display: "flex",
+      justifyContent: "center",
+      gap: px(8),
+      marginTop: px(veryTightHeight ? 5 : 8),
+      marginBottom: px(veryTightHeight ? 10 : 20),
+      flexShrink: 0,
+    },
+
+    dot: {
+      width: px(8),
+      height: px(8),
+      borderRadius: 999,
+      border: 0,
+      background: "rgba(255,255,255,0.32)",
+      cursor: "pointer",
+      transition: "all 250ms ease",
+      padding: 0,
+    },
+
+    activeDot: {
+      width: px(30),
+    },
+
+    authCard: {
+      position: "relative",
+      zIndex: 4,
+      padding: px(veryTightHeight ? 10 : 14),
+      borderRadius: px(28),
+      background: "rgba(255,255,255,0.12)",
+      border: "1px solid rgba(255,255,255,0.18)",
+      backdropFilter: "blur(12px)",
+      flexShrink: 0,
+      marginTop: "auto",
+    },
+
+    signInBtn: {
+      width: "100%",
+      height: px(veryTightHeight ? 44 : 54),
+      border: 0,
+      borderRadius: px(21),
+      background: "#f59e0b",
+      color: "#111827",
+      fontSize: px(veryTightHeight ? 14 : 16),
+      fontWeight: 950,
+      cursor: "pointer",
+      boxShadow: "0 16px 30px rgba(245,158,11,0.30)",
+    },
+
+    signUpBtn: {
+      width: "100%",
+      height: px(veryTightHeight ? 42 : 52),
+      marginTop: px(veryTightHeight ? 7 : 10),
+      borderRadius: px(21),
+      border: "1px solid rgba(255,255,255,0.22)",
+      background: "rgba(255,255,255,0.12)",
+      color: "white",
+      fontSize: px(veryTightHeight ? 13 : 15),
+      fontWeight: 900,
+      cursor: "pointer",
     },
   };
 }
 
-const globalCss = `
-* { box-sizing: border-box; }
-html, body, #root {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  min-height: 100%;
-  overflow: hidden;
-  background: #17110d;
-}
-@keyframes profileGlow {
-  0%,
-  100% {
-    box-shadow:
-      0 14px 30px rgba(28,25,23,.24),
-      0 0 0 3px rgba(255,255,255,.85),
-      0 0 14px rgba(245,158,11,.65),
-      0 0 27px rgba(234,88,12,.42),
-      0 0 42px rgba(146,64,14,.22);
-  }
-
-  50% {
-    box-shadow:
-      0 17px 34px rgba(28,25,23,.28),
-      0 0 0 3px rgba(255,255,255,.95),
-      0 0 19px rgba(251,191,36,.92),
-      0 0 36px rgba(234,88,12,.64),
-      0 0 57px rgba(146,64,14,.34);
-  }
-}
-button, input, textarea { font: inherit; }
-.profile-content-scroll {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-.profile-content-scroll::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
-}
-body { -webkit-text-size-adjust: 100%; }
-`;
 
 
 
@@ -6497,7 +1104,22 @@ body { -webkit-text-size-adjust: 100%; }
 
 
 
-signup
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+createaccount
 import React, {
   createContext,
   useContext,
@@ -6524,7 +1146,13 @@ const EMPTY_FORM = {
   plantAddress: "",
 };
 
-export default function SignupRoleCardsSlideFormPageWithValidation() {
+export default function CreateAccountPage
+({
+  goToPage1,
+  goToPage3,
+  goToPage4,
+}) {
+
   const [selectedRole, setSelectedRole] = useState(null);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedFrequency, setSelectedFrequency] = useState("");
@@ -6670,6 +1298,7 @@ export default function SignupRoleCardsSlideFormPageWithValidation() {
 
   const handleSubmit = () => {
     if (!isFormComplete) return;
+    goToPage4();
 
     const submissionData = {
       role: selectedRole,
@@ -6704,10 +1333,14 @@ export default function SignupRoleCardsSlideFormPageWithValidation() {
                 </div>
               </div>
 
-              <button type="button" style={styles.backBtn}>
-                Back
-              </button>
-            </nav>
+              <button
+  type="button"
+  style={styles.backBtn}
+  onClick={goToPage1}
+>
+  Back
+</button>
+</nav>
 
             <div style={styles.headerText}>
               <div style={styles.heroBadge}>SIGN UP</div>
@@ -6839,23 +1472,34 @@ export default function SignupRoleCardsSlideFormPageWithValidation() {
                 </p>
               </div>
 
-              <button
-                type="button"
-                disabled={!isFormComplete}
-                onClick={handleSubmit}
-                style={{
-                  ...styles.submitBtn,
-                  ...(isFormComplete
-                    ? styles.submitBtnBright
-                    : styles.submitBtnDisabled),
-                }}
-              >
-                Create Account
-              </button>
+             
+<button
+  type="button"
+  disabled={!isFormComplete}
+  onClick={handleSubmit}
+  style={{
+    ...styles.submitBtn,
+    ...(isFormComplete
+      ? styles.submitBtnBright
+      : styles.submitBtnDisabled),
+  }}
+>
+  Create Account
+</button>
 
-              <p style={styles.signInText}>
-                Already have an account? <b>Sign In</b>
-              </p>
+<div style={styles.signInRow}>
+  <span style={styles.signInText}>
+    Already have an account?
+  </span>
+
+  <button
+    type="button"
+    style={styles.signInLink}
+    onClick={goToPage3}
+  >
+    Sign In
+  </button>
+</div>
             </div>
           </section>
         </div>
@@ -8059,15 +2703,72 @@ function createStyles(viewport, selectedRole) {
       boxShadow: "0 18px 38px rgba(146,64,14,0.28)",
     },
 
+    signInRow: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      flexWrap: "wrap",
+      gap: px(5),
+      marginTop: px(14),
+    },
+    
     signInText: {
-      margin: `${px(14)}px 0 0`,
-      textAlign: "center",
       color: "#78716c",
       fontSize: px(13),
+      lineHeight: 1.2,
       fontWeight: 850,
     },
+    
+    signInLink: {
+      padding: `${px(4)}px ${px(7)}px`,
+    
+      border: 0,
+      borderRadius: px(8),
+    
+      background: "rgbargba(255,255,255,0.16)",
+      color: "#b45309",
+    
+      fontSize: px(13),
+      lineHeight: 1.2,
+      fontWeight: 950,
+    
+      textDecoration: "underline",
+      textUnderlineOffset: px(3),
+    
+      cursor: "pointer",
+    },
+  
   };
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -8099,7 +2800,13 @@ function createStyles(viewport, selectedRole) {
 signin
 import React, { useEffect, useMemo, useState } from "react";
 
-export default function FinalSignInOTPPageWithChangeMobileNumber() {
+export default function FinalSignInOTPPageWithChangeMobileNumber
+({
+  goToPage1,
+  goToPage2,
+  goToPage4,
+}) {
+
   const viewport = useViewport();
 
   const styles = useMemo(
@@ -8173,9 +2880,13 @@ export default function FinalSignInOTPPageWithChangeMobileNumber() {
               </div>
             </div>
 
-            <button type="button" style={styles.backBtn}>
-              Back
-            </button>
+            <button
+  type="button"
+  style={styles.backBtn}
+  onClick={goToPage1}
+>
+  Back
+</button>
           </nav>
 
           <div style={styles.heroText}>
@@ -8434,49 +3145,59 @@ export default function FinalSignInOTPPageWithChangeMobileNumber() {
             </div>
 
             {!otpVisible ? (
-              <button
-                type="button"
-                disabled={!isMobileValid}
-                onClick={handleNext}
-                onMouseEnter={() => setHoveredButton("next")}
-                onMouseLeave={() => setHoveredButton(null)}
-                style={{
-                  ...styles.primaryBtn,
-                  ...(isMobileValid
-                    ? styles.primaryActive
-                    : styles.primaryDisabled),
-                  transform:
-                    hoveredButton === "next" && isMobileValid
-                      ? "translateY(-3px) scale(1.015)"
-                      : "none",
-                }}
-              >
-                Next
-              </button>
-            ) : (
-              <button
-                type="button"
-                disabled={!isOtpValid}
-                onMouseEnter={() => setHoveredButton("verify")}
-                onMouseLeave={() => setHoveredButton(null)}
-                style={{
-                  ...styles.primaryBtn,
-                  ...(isOtpValid
-                    ? styles.primaryActive
-                    : styles.primaryDisabled),
-                  transform:
-                    hoveredButton === "verify" && isOtpValid
-                      ? "translateY(-3px) scale(1.015)"
-                      : "none",
-                }}
-              >
-                Verify &amp; Sign In
-              </button>
-            )}
+  <button
+    type="button"
+    disabled={!isMobileValid}
+    onClick={handleNext}
+    onMouseEnter={() => setHoveredButton("next")}
+    onMouseLeave={() => setHoveredButton(null)}
+    style={{
+      ...styles.primaryBtn,
+      ...(isMobileValid
+        ? styles.primaryActive
+        : styles.primaryDisabled),
+      transform:
+        hoveredButton === "next" && isMobileValid
+          ? "translateY(-3px) scale(1.015)"
+          : "none",
+    }}
+  >
+    Next
+  </button>
+) : (
+  <button
+    type="button"
+    disabled={!isOtpValid}
+    onClick={goToPage4}
+    onMouseEnter={() => setHoveredButton("verify")}
+    onMouseLeave={() => setHoveredButton(null)}
+    style={{
+      ...styles.primaryBtn,
+      ...(isOtpValid
+        ? styles.primaryActive
+        : styles.primaryDisabled),
+      transform:
+        hoveredButton === "verify" && isOtpValid
+          ? "translateY(-3px) scale(1.015)"
+          : "none",
+    }}
+  >
+    Verify &amp; Sign In
+  </button>
+)}
+            <div style={styles.createAccountRow}>
+  <span style={styles.newAccountText}>
+    New to StoneRate?
+  </span>
 
-            <p style={styles.createText}>
-              New to StoneRate? <b>Create Account</b>
-            </p>
+  <button
+    type="button"
+    style={styles.createAccountLink}
+    onClick={goToPage2}
+  >
+    Create Account
+  </button>
+</div>
           </div>
         </section>
       </div>
@@ -9309,12 +4030,14500 @@ function createStyles(viewport) {
       cursor: "pointer",
     },
 
-    createText: {
-      margin: `${px(20)}px 0 0`,
-      textAlign: "center",
+    createAccountRow: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      flexWrap: "wrap",
+    
+      gap: px(5),
+      marginTop: px(20),
+    },
+    
+    newAccountText: {
       color: "#78716c",
+    
       fontSize: px(13),
+      lineHeight: 1.2,
       fontWeight: 850,
+    },
+    
+    createAccountLink: {
+      padding: `${px(5)}px ${px(8)}px`,
+    
+      border: "1px solid rgba(245,158,11,0.28)",
+      borderRadius: px(9),
+    
+      background:
+        "linear-gradient(145deg, rgba(245,158,11,0.16), rgba(234,88,12,0.08))",
+    
+      color: "#b45309",
+    
+      fontSize: px(13),
+      lineHeight: 1.2,
+      fontWeight: 950,
+    
+      textDecoration: "underline",
+      textUnderlineOffset: px(3),
+    
+      boxShadow:
+        "0 5px 12px rgba(146,64,14,0.08)",
+    
+      cursor: "pointer",
+    
+      transition:
+        "background 180ms ease, color 180ms ease, transform 180ms ease",
     },
   };
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+buyerhomepage
+import React, { useEffect, useMemo, useState } from "react";
+
+const ORIGINAL_BG_IMAGE =
+  "https://raw.githubusercontent.com/Shyam7291/company-document-monitor/main/you_acn_only_generate_the_sa.png";
+
+const BG_IMAGE = `https://wsrv.nl/?url=${encodeURIComponent(
+  ORIGINAL_BG_IMAGE
+)}&output=png&w=820&h=980&fit=cover`;
+
+const GLASS_CARD_IMAGE =
+  "https://cdn.jsdelivr.net/gh/Shyam7291/company-document-monitor@main/32454-removebg-preview.png";
+
+const FEATURES = [
+  { title: "Best Rate", subtitle: "Comparison support\nfrom 1K+ sellers", icon: "🪨", color: "#f59e0b" },
+  { title: "Pure Quality", subtitle: "No mixing,Quality\nchecked material", icon: "🛡️", color: "#22c55e" },
+  { title: "Zero Brokerage", subtitle: "0% brokerage. No middleman cost", icon: "0%", color: "#f59e0b" },
+  { title: "Easy Transport", subtitle: "Transport as per your availability", icon: "🚚", color: "#38bdf8" },
+];
+
+export default function BuyerHomePage({
+  goToRateDetailsPage,
+  goToPlaceOrder,
+  goToOrders,
+  goToProfile,
+  goToNotifications,
+  goToRateRequests,
+  goToActiveOrders,
+  goToReorders,
+  goToOrderHistory,
+  goToHowToUse,
+  goToHelpSupport,
+  goToSettings,
+  goToAbout,
+}) {
+  const viewport = useViewport();
+  const styles = useMemo(() => createStyles(viewport), [viewport.width, viewport.height]);
+  const buyerName = "Shyam";
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [rotation, setRotation] = useState(0);
+  const [contentHidden, setContentHidden] = useState(false);
+  const [activeNav, setActiveNav] = useState("Home");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const active = FEATURES[activeIndex];
+
+  const rotateToFeature = (nextIndex) => {
+    if (nextIndex === activeIndex) return;
+    setContentHidden(true);
+    setRotation((current) => current + 180);
+    window.setTimeout(() => setActiveIndex(nextIndex), 390);
+    window.setTimeout(() => setContentHidden(false), 520);
+  };
+
+  useEffect(() => {
+    let changeTimer;
+    let revealTimer;
+    const carouselTimer = window.setInterval(() => {
+      setContentHidden(true);
+      setRotation((current) => current + 180);
+      changeTimer = window.setTimeout(() => {
+        setActiveIndex((current) => (current + 1) % FEATURES.length);
+      }, 390);
+      revealTimer = window.setTimeout(() => setContentHidden(false), 520);
+    }, 3000);
+    return () => {
+      window.clearInterval(carouselTimer);
+      window.clearTimeout(changeTimer);
+      window.clearTimeout(revealTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
+  const handleNavigation = (name) => {
+    setActiveNav(name);
+    if (name === "Orders" && goToOrders) goToOrders();
+    if (name === "Profile" && goToProfile) goToProfile();
+  };
+
+  const handleMenuAction = (action) => {
+    setMenuOpen(false);
+    if (typeof action === "function") action();
+  };
+
+  return (
+    <div style={styles.page}>
+      <style>{globalCss}</style>
+      <main style={styles.phone}>
+        <header style={styles.fixedTopBar}>
+          <button
+            type="button"
+            style={{ ...styles.topMenuButton, ...(menuOpen ? styles.topMenuButtonActive : {}) }}
+            onClick={() => setMenuOpen(true)}
+            aria-label="Open menu"
+            aria-expanded={menuOpen}
+          >
+            <span style={styles.menuIcon}>☰</span>
+          </button>
+
+          <div style={styles.fixedBrand}>
+            <span style={styles.fixedBrandLogo}>◆</span>
+            <div style={styles.fixedBrandText}>
+              <b style={styles.fixedBrandName}>StoneRate</b>
+              <span style={styles.fixedBrandSub}>Stone Marketplace</span>
+            </div>
+          </div>
+
+          <button type="button" style={styles.topNotificationButton} onClick={goToNotifications} aria-label="Notifications">
+            <span style={styles.fixedBellIcon}>🔔</span>
+            <span style={styles.fixedNotificationDot} />
+          </button>
+        </header>
+
+        <section className="buyer-page-scroll" style={styles.pageScrollArea}>
+          <section style={styles.hero}>
+            <img src={BG_IMAGE} alt="Quarry background" style={styles.heroBg} />
+            <div style={styles.heroShade} />
+            <div style={styles.heroGrid} />
+            <div style={styles.bottomBlend} />
+            <div style={{ ...styles.activeGlow, background: active.color }} />
+
+            <div style={styles.intro}>
+              <h1 style={styles.greeting}>Hey {buyerName} 👋</h1>
+              <p style={styles.introText}>Ready to order good-quality stone today?</p>
+            </div>
+
+            <div style={styles.featureWrap}>
+              <article style={styles.singleFeatureCard}>
+                <div style={{ ...styles.ring, borderColor: active.color, boxShadow: `0 0 20px ${active.color}aa` }} />
+                <div style={styles.platform} />
+                <div style={{ ...styles.glassSpinLayer, transform: `rotateY(${rotation}deg)` }}>
+                  <img src={GLASS_CARD_IMAGE} alt="Glass feature card" style={styles.glassCardImage} />
+                </div>
+                <div style={{ ...styles.cardContent, ...(contentHidden ? styles.cardContentHidden : {}) }}>
+                  <div style={{ ...styles.featureIcon, background: active.color, boxShadow: `0 0 26px ${active.color}88` }}>{active.icon}</div>
+                  <div style={{ ...styles.stars, color: active.color }}>★★★★★</div>
+                  <h2 style={styles.featureTitle}>{active.title}</h2>
+                  <p style={styles.featureSubtitle}>{active.subtitle}</p>
+                </div>
+                <button
+                  type="button"
+                  style={{ ...styles.featureArrow, background: active.color, boxShadow: `0 8px 24px ${active.color}88` }}
+                  aria-label={`Open ${active.title}`}
+                >
+                  ➜
+                </button>
+              </article>
+            </div>
+
+            <div style={styles.dots}>
+              {FEATURES.map((feature, index) => (
+                <button
+                  type="button"
+                  key={feature.title}
+                  aria-label={`Show ${feature.title}`}
+                  onClick={() => rotateToFeature(index)}
+                  style={{ ...styles.dot, ...(index === activeIndex ? { ...styles.activeDot, background: feature.color } : {}) }}
+                />
+              ))}
+            </div>
+          </section>
+
+          <section style={styles.contentArea}>
+            <div style={styles.sheetHandle} />
+            <div style={styles.contentGlowOne} />
+            <div style={styles.contentGlowTwo} />
+
+            <button type="button" style={styles.placeOrderCard} onClick={goToPlaceOrder}>
+              <div style={styles.placeOrderIcon}>＋</div>
+              <div style={styles.placeOrderText}>
+                <span style={styles.cardEyebrow}>START A NEW REQUEST</span>
+                <strong style={styles.placeOrderTitle}>Place New Order</strong>
+                <span style={styles.placeOrderSub}>Select material, trucks and delivery location</span>
+              </div>
+              <span style={styles.placeOrderArrow}>➜</span>
+            </button>
+
+            <div style={styles.sectionHeading}>
+              <div>
+                <span style={styles.sectionKicker}>QUICK ACCESS</span>
+                <h2 style={styles.sectionTitle}>Your order centre</h2>
+              </div>
+              <button type="button" style={styles.viewAllButton} onClick={goToOrders}>View all</button>
+            </div>
+
+            <div style={styles.quickGrid}>
+              <button type="button" style={styles.activeOrderCard} onClick={goToActiveOrders}>
+                <div style={styles.cardAmbientGreen} />
+                <div style={styles.activeCardHeader}>
+                  <div style={styles.activeStatusRow}>
+                    <div style={styles.livePill}><span style={styles.liveDot} /><span>Live</span></div>
+                  </div>
+                  <div style={styles.activeTitleRow}>
+                    <div style={styles.quickIconGreen}>🚚</div>
+                    <div style={styles.quickHeaderText}>
+                      <h3 style={styles.quickHeaderTitle}>Active Order</h3>
+                      <span style={styles.quickHeaderSubtitle}>In route</span>
+                    </div>
+                  </div>
+                </div>
+                <div style={styles.quickCardBody}>
+                  <h4 style={styles.materialTitle}>40mm Crushed Stone</h4>
+                  <p style={styles.quickDescription}>32 tons • 2 vehicles</p>
+                </div>
+                <div style={styles.miniProgressTrack}><div style={styles.miniProgressFill} /></div>
+                <div style={styles.quickFooter}><span>Delivery progress</span><b>Track ➜</b></div>
+              </button>
+
+              <button type="button" style={styles.repeatOrderCard}>
+                <div style={styles.cardAmbientAmber} />
+                <div style={styles.reorderCardHeader}>
+                  <div style={styles.reorderStatusRow}><span style={styles.lastOrderPill}>9 Jul</span></div>
+                  <div style={styles.activeTitleRow}>
+                    <div style={styles.quickIconAmber}>↻</div>
+                    <div style={styles.quickHeaderText}>
+                      <h3 style={styles.quickHeaderTitle}>Reorder</h3>
+                      <span style={styles.quickHeaderSubtitle}>Last order</span>
+                    </div>
+                  </div>
+                </div>
+                <div style={styles.quickCardBody}>
+                  <h4 style={styles.materialTitle}>20mm Stone</h4>
+                  <p style={styles.quickDescription}>20 tons • 2 trucks</p>
+                </div>
+                <div style={styles.reorderInfo}>
+                  <span style={styles.reorderInfoIcon}>✓</span>
+                  <div style={styles.reorderInfoText}>
+                    <b style={styles.reorderTitle}>Last order delivered</b>
+                    <small style={styles.reorderSubtitle}>Tap to order the same material</small>
+                  </div>
+                </div>
+                <div style={styles.quickFooter}><span>Previous order</span><b>Repeat ➜</b></div>
+              </button>
+            </div>
+
+            <div style={styles.insightCard}>
+              <div style={styles.insightIcon}>₹</div>
+              <div style={styles.insightText}>
+                <span style={styles.insightKicker}>TODAY&apos;S BUYER INSIGHT</span>
+                <strong style={styles.insightTitle}>Compare rates before confirming</strong>
+                <p style={styles.insightDescription}>Request a fresh quotation from verified sellers near your site.</p>
+              </div>
+              <button type="button" style={styles.insightButton} aria-label="View buyer insight">›</button>
+            </div>
+            <div style={styles.contentBottomSpace} />
+          </section>
+        </section>
+
+        <nav style={styles.bottomNav}>
+          {[{ name: "Home", icon: "⌂" }, { name: "Orders", icon: "▣" }, { name: "Profile", icon: "●" }].map((item) => {
+            const selected = activeNav === item.name;
+            return (
+              <button
+                type="button"
+                key={item.name}
+                onClick={() => handleNavigation(item.name)}
+                style={{ ...styles.navButton, ...(selected ? styles.navButtonActive : {}) }}
+              >
+                {selected && <span style={styles.activeIndicator} />}
+                <span style={{ ...styles.navIconBox, ...(selected ? styles.navIconBoxActive : {}) }}>{item.icon}</span>
+                <span style={{ ...styles.navLabel, ...(selected ? styles.navLabelActive : {}) }}>{item.name}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+        <div
+          style={{ ...styles.menuOverlay, ...(menuOpen ? styles.menuOverlayOpen : {}) }}
+          onClick={() => setMenuOpen(false)}
+          aria-hidden={!menuOpen}
+        />
+
+        <aside style={{ ...styles.menuDrawer, ...(menuOpen ? styles.menuDrawerOpen : {}) }} aria-hidden={!menuOpen}>
+          <div className="drawer-scroll" style={styles.drawerScroll}>
+            <div style={styles.drawerHeader}>
+              <div style={styles.drawerUserBlock}>
+                <div style={styles.drawerUserIcon}>S</div>
+                <div style={styles.drawerUserText}>
+                  <span style={styles.drawerGreeting}>Hello, {buyerName}</span>
+                  <span style={styles.drawerAccountType}>Buyer Account</span>
+                </div>
+              </div>
+              <button type="button" style={styles.drawerCloseButton} onClick={() => setMenuOpen(false)} aria-label="Close menu">×</button>
+            </div>
+
+            <button type="button" style={styles.drawerPrimaryAction} onClick={() => handleMenuAction(goToPlaceOrder)}>
+              <span style={styles.drawerPrimaryIcon}>＋</span>
+              <span style={styles.drawerPrimaryText}>
+                <b style={styles.drawerItemTitle}>Place New Order</b>
+                <small style={styles.drawerItemSubtitle}>Request material and seller rates</small>
+              </span>
+              <span style={styles.drawerPrimaryArrow}>➜</span>
+            </button>
+
+            <div style={styles.drawerSection}>
+              <p style={styles.drawerSectionLabel}>QUICK ACTIONS</p>
+              <div style={styles.drawerMenuGroup}>
+                <DrawerItem styles={styles} icon="🚚" iconStyle={styles.drawerGreenIcon} title="Active Order" subtitle="Track your current delivery" onClick={() => handleMenuAction(goToActiveOrders)} end={<span style={styles.drawerLivePill}><span style={styles.drawerLiveDot} />Live</span>} />
+                <DrawerItem
+  styles={styles}
+  icon="↻"
+  iconStyle={styles.drawerAmberIcon}
+  title="Reorder"
+  subtitle="Repeat your last order"
+  onClick={() => handleMenuAction(goToReorders)}
+  end={
+    <span style={styles.drawerItemArrow}>
+      ›
+    </span>
+  }
+/>
+                <DrawerItem styles={styles} icon="₹" iconStyle={styles.drawerOrangeIcon} title="Rate Requests" subtitle="Compare seller quotations" onClick={() => handleMenuAction(goToRateRequests)} end={<span style={styles.drawerItemArrow}>›</span>} />
+                <DrawerItem styles={styles} icon="▣" iconStyle={styles.drawerNeutralIcon} title="Order History" subtitle="Delivered and cancelled orders" onClick={() => handleMenuAction(goToOrderHistory)} end={<span style={styles.drawerItemArrow}>›</span>} />
+                <DrawerItem styles={styles} icon="🔔" iconStyle={styles.drawerAmberIcon} title="Notifications" subtitle="Order and rate updates" onClick={() => handleMenuAction(goToNotifications)} end={<span style={styles.notificationCount}>3</span>} />
+              </div>
+            </div>
+
+            <div style={styles.drawerSection}>
+              <p style={styles.drawerSectionLabel}>APP AND SUPPORT</p>
+              <div style={styles.drawerSupportGroup}>
+                <SupportItem styles={styles} icon="▶" label="How to Use StoneRate" onClick={() => handleMenuAction(goToHowToUse)} />
+                <SupportItem styles={styles} icon="?" label="Help and Support" onClick={() => handleMenuAction(goToHelpSupport)} />
+                <SupportItem styles={styles} icon="⚙" label="Settings" onClick={() => handleMenuAction(goToSettings)} />
+                <SupportItem styles={styles} icon="ⓘ" label="About StoneRate" onClick={() => handleMenuAction(goToAbout)} />
+              </div>
+            </div>
+
+            <div style={styles.drawerFooter}>
+              <span style={styles.drawerFooterLogo}>◆</span>
+              <div style={styles.drawerFooterText}>
+                <b style={styles.drawerFooterTitle}>StoneRate</b>
+                <small style={styles.drawerFooterSubtitle}>Smart stone booking</small>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </main>
+    </div>
+  );
+}
+
+function DrawerItem({ styles, icon, iconStyle, title, subtitle, onClick, end }) {
+  return (
+    <button type="button" style={styles.drawerMenuItem} onClick={onClick}>
+      <span style={{ ...styles.drawerMenuIcon, ...iconStyle }}>{icon}</span>
+      <span style={styles.drawerMenuText}>
+        <b style={styles.drawerItemTitle}>{title}</b>
+        <small style={styles.drawerItemSubtitle}>{subtitle}</small>
+      </span>
+      {end}
+    </button>
+  );
+}
+
+function SupportItem({ styles, icon, label, onClick }) {
+  return (
+    <button type="button" style={styles.drawerSupportItem} onClick={onClick}>
+      <span style={styles.drawerSupportIcon}>{icon}</span>
+      <span>{label}</span>
+      <span style={styles.drawerItemArrow}>›</span>
+    </button>
+  );
+}
+
+function useViewport() {
+  const [viewport, setViewport] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 390,
+    height: typeof window !== "undefined" ? window.innerHeight : 844,
+  });
+  useEffect(() => {
+    const update = () => setViewport({ width: window.innerWidth, height: window.innerHeight });
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("orientationchange", update);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("orientationchange", update);
+    };
+  }, []);
+  return viewport;
+}
+
+function createStyles(viewport) {
+  const viewportWidth = viewport.width || 390;
+  const viewportHeight = viewport.height || 844;
+  const isDesktop = viewportWidth >= 700;
+  const appWidth = isDesktop ? 390 : viewportWidth;
+  const appHeight = isDesktop ? 844 : viewportHeight;
+  const scale = Math.max(0.68, Math.min(1, Math.min(appWidth / 390, appHeight / 844)));
+  const px = (value) => Math.round(value * scale);
+  const clamp = (minimum, preferred, maximum) => Math.round(Math.max(minimum, Math.min(maximum, preferred)));
+  const narrow = appWidth < 360;
+  const veryNarrow = appWidth < 320;
+  const short = appHeight < 700;
+  const veryShort = appHeight < 590;
+  const topBarHeight = px(58);
+  const navHeight = px(66);
+  const heroHeight = clamp(390, appHeight * (short ? 0.56 : 0.55), 470);
+  const glassCardSize = clamp(veryNarrow ? 185 : 195, appWidth * 0.84, 300);
+  const greetingSize = clamp(21, appWidth * 0.068, 28);
+  const introTextSize = clamp(12, appWidth * 0.039, 16);
+  const featureIconSize = clamp(34, glassCardSize * 0.19, 42);
+  const featureIconFontSize = clamp(19, glassCardSize * 0.11, 25);
+  const starsSize = clamp(10, glassCardSize * 0.062, 14);
+  const featureTitleSize = clamp(12, glassCardSize * 0.05, 15);
+  const featureSubtitleSize = clamp(9, glassCardSize * 0.049, 11);
+  const featureArrowSize = clamp(38, glassCardSize * 0.2, 44);
+
+  return {
+    page: { width: "100vw", height: "100dvh", minHeight: "100dvh", display: "flex", justifyContent: "center", alignItems: isDesktop ? "center" : "stretch", padding: isDesktop ? 10 : 0, margin: 0, overflow: "hidden", background: isDesktop ? "#f4f1ea" : "#080706", fontFamily: "Arial, sans-serif" },
+    phone: { position: "relative", width: isDesktop ? 390 : "100vw", height: isDesktop ? 844 : "100dvh", overflow: "hidden", background: "#120c08", borderRadius: isDesktop ? 32 : 0, boxShadow: isDesktop ? "0 30px 80px rgba(0,0,0,.30)" : "none" },
+    fixedTopBar: { position: "absolute", left: 0, right: 0, top: 0, zIndex: 100, height: topBarHeight, display: "grid", gridTemplateColumns: "auto minmax(0,1fr) auto", alignItems: "center", gap: px(9), padding: `${px(7)}px ${px(narrow ? 10 : 14)}px`, borderBottom: "1px solid rgba(251,191,36,.17)", background: "radial-gradient(circle at 88% 0%, rgba(245,158,11,.24), transparent 36%), linear-gradient(135deg, rgba(10,7,6,.98), rgba(48,25,12,.97))", boxShadow: "0 12px 30px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.05)", backdropFilter: "blur(20px)" },
+    topMenuButton: { justifySelf: "start", width: px(38), height: px(38), display: "grid", placeItems: "center", padding: 0, border: "1px solid rgba(255,255,255,.14)", borderRadius: px(14), background: "linear-gradient(145deg, rgba(255,255,255,.11), rgba(255,255,255,.035))", color: "white", boxShadow: "0 8px 18px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.09)", cursor: "pointer" },
+    topMenuButtonActive: { borderColor: "rgba(251,191,36,.55)", background: "linear-gradient(145deg, rgba(245,158,11,.30), rgba(146,64,14,.18))", color: "#fde68a", boxShadow: "0 0 18px rgba(245,158,11,.20), inset 0 1px 0 rgba(255,255,255,.12)" },
+    menuIcon: { display: "block", fontSize: px(17), lineHeight: 1, fontWeight: 950 },
+    fixedBrand: { minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: px(7) },
+    fixedBrandLogo: { width: px(narrow ? 31 : 34), height: px(narrow ? 31 : 34), display: "grid", placeItems: "center", flexShrink: 0, border: "1px solid rgba(251,191,36,.42)", borderRadius: px(12), background: "linear-gradient(145deg, #f59e0b, #92400e)", color: "white", fontSize: px(narrow ? 13 : 15), lineHeight: 1, fontWeight: 950, boxShadow: "0 8px 17px rgba(245,158,11,.28), inset 0 1px 0 rgba(255,255,255,.22)" },
+    fixedBrandText: { minWidth: 0, display: "flex", flexDirection: "column" },
+    fixedBrandName: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#ffffff", fontSize: clamp(12, appWidth * 0.035, 14), lineHeight: 1, fontWeight: 950, letterSpacing: -0.2 },
+    fixedBrandSub: { marginTop: px(3), overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#fde68a", fontSize: clamp(6, appWidth * 0.018, 7.4), lineHeight: 1, fontWeight: 800 },
+    topNotificationButton: { position: "relative", justifySelf: "end", width: px(38), height: px(38), display: "grid", placeItems: "center", padding: 0, border: "1px solid rgba(251,191,36,.20)", borderRadius: px(14), background: "linear-gradient(145deg, rgba(245,158,11,.16), rgba(255,255,255,.035))", color: "white", boxShadow: "0 8px 18px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.09)", cursor: "pointer" },
+    fixedBellIcon: { display: "block", fontSize: px(14), lineHeight: 1 },
+    fixedNotificationDot: { position: "absolute", right: px(6), top: px(5), width: px(6), height: px(6), border: `${px(1)}px solid #29160d`, borderRadius: "50%", background: "#f59e0b", boxShadow: "0 0 8px rgba(245,158,11,.72)" },
+    pageScrollArea: { position: "absolute", left: 0, right: 0, top: topBarHeight, bottom: navHeight, overflowY: "auto", overflowX: "hidden", background: "#120c08", scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch", overscrollBehavior: "contain" },
+    hero: { position: "relative", zIndex: 2, width: "100%", height: heroHeight, overflow: "hidden", padding: `${px(14)}px ${px(narrow ? 14 : 18)}px`, color: "white", background: "#111" },
+    heroBg: { position: "absolute", inset: 0, zIndex: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 45%", transform: "scale(1)", transformOrigin: "center center", filter: "brightness(.88) contrast(1.06)" },
+    heroShade: { position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(to bottom, rgba(2,6,23,.18), rgba(28,25,23,.03) 40%, rgba(8,7,6,.32) 78%)", pointerEvents: "none" },
+    heroGrid: { position: "absolute", inset: 0, zIndex: 2, opacity: 0.16, pointerEvents: "none", backgroundImage: "linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px)", backgroundSize: `${px(32)}px ${px(32)}px` },
+    bottomBlend: { position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 3, height: "27%", background: "linear-gradient(to bottom, transparent 0%, rgba(30,18,11,.60) 58%, #321b0e 100%)", pointerEvents: "none" },
+    activeGlow: { position: "absolute", left: "50%", top: "55%", zIndex: 2, width: clamp(145, glassCardSize * 0.85, 190), height: clamp(105, glassCardSize * 0.6, 135), borderRadius: "50%", filter: `blur(${px(34)}px)`, opacity: 0.25, transform: "translateX(-50%)", animation: "pulseGlow 3s ease-in-out infinite" },
+    intro: { position: "relative", zIndex: 7, width: "100%", marginTop: narrow ? px(7) : px(10), marginLeft: narrow ? 0 : px(4), paddingRight: px(8), textShadow: "0 8px 24px rgba(0,0,0,.55)" },
+    greeting: { maxWidth: "92%", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#fde68a", fontSize: greetingSize, lineHeight: 1.02, fontWeight: 950, letterSpacing: -0.4 },
+    introText: { maxWidth: narrow ? "88%" : px(270), margin: `${px(5)}px 0 0`, color: "white", fontSize: introTextSize, lineHeight: 1.16, fontWeight: 900, textWrap: "balance" },
+    featureWrap: { position: "absolute", left: 0, right: 0, top: veryShort ? "31%" : short ? "30%" : "31%", bottom: veryShort ? "14%" : short ? "13%" : "12%", zIndex: 6, perspective: 1100, transform: `translateY(${px(veryShort ? -3 : short ? -5 : -8)}px)` },
+    singleFeatureCard: { position: "absolute", left: "50%", top: veryShort ? "-6%" : "-10%", width: glassCardSize, maxWidth: "62vw", aspectRatio: "1 / 1", color: "white", textAlign: "center", transform: "translateX(-50%)", animation: "floatCard 3.8s ease-in-out infinite", overflow: "visible", isolation: "isolate" },
+    glassSpinLayer: { position: "absolute", inset: 0, zIndex: 2, transformStyle: "preserve-3d", transformOrigin: "center center", transition: "transform 1500ms cubic-bezier(.32,.72,.22,1)" },
+    glassCardImage: { position: "absolute", inset: 0, zIndex: 1, width: "100%", height: "100%", objectFit: "contain", filter: "drop-shadow(0 14px 20px rgba(0,0,0,.27))" },
+    cardContent: { position: "absolute", left: "50%", top: veryNarrow ? "14%" : narrow ? "15%" : "17%", zIndex: 4, width: veryNarrow ? "66%" : narrow ? "64%" : "60%", maxHeight: "70%", display: "flex", flexDirection: "column", alignItems: "center", overflow: "hidden", opacity: 1, transform: "translateX(-50%)", transition: "opacity 150ms ease, transform 150ms ease" },
+    cardContentHidden: { opacity: 0, transform: "translateX(-50%) scale(.96)" },
+    featureIcon: { width: featureIconSize, height: featureIconSize, display: "grid", placeItems: "center", flexShrink: 0, borderRadius: "50%", color: "#111827", fontSize: featureIconFontSize, lineHeight: 1, fontWeight: 950 },
+    stars: { marginTop: clamp(9, glassCardSize * 0.06, 14), fontSize: starsSize, letterSpacing: clamp(1, glassCardSize * 0.009, 2), lineHeight: 1, whiteSpace: "nowrap" },
+    featureTitle: { width: "100%", margin: `${clamp(3, glassCardSize * 0.018, 4)}px 0 0`, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "white", fontSize: featureTitleSize, lineHeight: 1.05, fontWeight: 950, textShadow: "0 6px 17px rgba(0,0,0,.6)" },
+    featureSubtitle: { width: "100%", margin: `${clamp(6, glassCardSize * 0.04, 10)}px 0 0`, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", whiteSpace: "pre-line", textAlign: "center", overflowWrap: "normal", wordBreak: "normal", color: "#fff7ed", fontSize: featureSubtitleSize, lineHeight: 1.18, fontWeight: 750, textShadow: "0 5px 16px rgba(0,0,0,.65)" },
+    featureArrow: { position: "absolute", left: "50%", bottom: px(-18), zIndex: 20, width: featureArrowSize, height: featureArrowSize, display: "grid", placeItems: "center", padding: 0, border: `${px(2)}px solid rgba(255,255,255,.16)`, borderRadius: "50%", color: "white", fontSize: clamp(17, glassCardSize * 0.09, 20), lineHeight: 1, fontWeight: 950, transform: "translateX(-50%)", cursor: "pointer" },
+    ring: { position: "absolute", left: "50%", bottom: px(-34), zIndex: 0, width: clamp(145, glassCardSize * 0.68, 195), height: clamp(34, glassCardSize * 0.15, 45), border: `${px(2)}px solid #f59e0b`, borderRadius: "50%", background: "radial-gradient(ellipse at center, rgba(56,189,248,.11), transparent 68%)", transform: "translateX(-50%) rotateX(68deg)", transformOrigin: "center center", pointerEvents: "none" },
+    platform: { position: "absolute", left: "50%", bottom: px(-29), zIndex: 0, width: clamp(120, glassCardSize * 0.58, 165), height: clamp(22, glassCardSize * 0.1, 30), borderRadius: "50%", background: "rgba(0,0,0,.38)", filter: `blur(${px(4)}px)`, transform: "translateX(-50%)", pointerEvents: "none" },
+    dots: { position: "absolute", left: 0, right: 0, bottom: px(25), zIndex: 30, display: "flex", alignItems: "center", justifyContent: "center", gap: px(8), pointerEvents: "auto" },
+    dot: { width: px(8), height: px(8), flexShrink: 0, padding: 0, border: "1px solid rgba(255,255,255,.34)", borderRadius: 999, background: "rgba(255,255,255,.72)", boxShadow: "0 3px 8px rgba(0,0,0,.28)", cursor: "pointer", transition: "width 220ms ease, background 220ms ease, transform 220ms ease" },
+    activeDot: { width: px(24), borderColor: "rgba(251,191,36,.65)", boxShadow: "0 0 12px rgba(245,158,11,.54)", transform: "scaleY(1.05)" },
+    contentArea: { position: "relative", zIndex: 10, width: "100%", minHeight: px(500), marginTop: px(-12), overflow: "visible", padding: `${px(28)}px ${px(narrow ? 12 : 16)}px ${px(24)}px`, borderRadius: `${px(29)}px ${px(29)}px 0 0`, borderTop: "1px solid rgba(251,191,36,.18)", background: "radial-gradient(circle at 88% 0%, rgba(245,158,11,.18), transparent 28%), radial-gradient(circle at 0% 70%, rgba(234,88,12,.08), transparent 28%), linear-gradient(180deg, rgba(50,27,14,.99) 0%, #1e120b 16%, #150e0a 56%, #0e0a08 100%)", boxShadow: "0 -18px 40px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.05)", backdropFilter: "blur(18px)" },
+    sheetHandle: { position: "absolute", left: "50%", top: px(9), width: px(47), height: px(4), borderRadius: 999, background: "linear-gradient(90deg, rgba(255,255,255,.10), rgba(251,191,36,.72), rgba(255,255,255,.10))", boxShadow: "0 0 14px rgba(245,158,11,.32)", transform: "translateX(-50%)" },
+    contentGlowOne: { position: "absolute", right: px(-65), top: px(55), width: px(170), height: px(170), borderRadius: "50%", background: "rgba(245,158,11,.08)", filter: `blur(${px(36)}px)`, pointerEvents: "none" },
+    contentGlowTwo: { position: "absolute", left: px(-70), bottom: px(50), width: px(160), height: px(160), borderRadius: "50%", background: "rgba(234,88,12,.07)", filter: `blur(${px(38)}px)`, pointerEvents: "none" },
+    placeOrderCard: { position: "relative", zIndex: 2, width: "100%", minHeight: px(75), display: "grid", gridTemplateColumns: "auto minmax(0,1fr) auto", alignItems: "center", gap: px(11), padding: `${px(12)}px ${px(14)}px`, border: "1px solid rgba(251,191,36,.35)", borderRadius: px(23), overflow: "hidden", textAlign: "left", background: "radial-gradient(circle at 85% 15%, rgba(251,191,36,.22), transparent 35%), linear-gradient(135deg, #3b1e0d 0%, #7c2d12 56%, #f97316 130%)", color: "white", boxShadow: "0 17px 35px rgba(146,64,14,.28), inset 0 1px 0 rgba(255,255,255,.13)", cursor: "pointer" },
+    placeOrderIcon: { width: px(43), height: px(43), display: "grid", placeItems: "center", border: "1px solid rgba(255,255,255,.18)", borderRadius: px(15), background: "rgba(255,255,255,.13)", color: "#fde68a", fontSize: px(25), fontWeight: 700, backdropFilter: "blur(10px)" },
+    placeOrderText: { minWidth: 0, display: "flex", flexDirection: "column", gap: px(3) },
+    cardEyebrow: { color: "#fde68a", fontSize: px(7), letterSpacing: px(0.8), fontWeight: 950 },
+    placeOrderTitle: { color: "white", fontSize: px(16), lineHeight: 1, fontWeight: 950 },
+    placeOrderSub: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#fed7aa", fontSize: px(9), fontWeight: 700 },
+    placeOrderArrow: { width: px(34), height: px(34), display: "grid", placeItems: "center", borderRadius: "50%", background: "rgba(255,255,255,.14)", color: "white", fontSize: px(16), fontWeight: 950 },
+    sectionHeading: { position: "relative", zIndex: 2, display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: px(8), marginTop: px(16), marginBottom: px(9) },
+    sectionKicker: { color: "#f59e0b", fontSize: px(7), letterSpacing: px(0.9), fontWeight: 950 },
+    sectionTitle: { margin: `${px(3)}px 0 0`, color: "white", fontSize: px(15), fontWeight: 950 },
+    viewAllButton: { minHeight: px(29), padding: `0 ${px(9)}px`, border: "1px solid rgba(245,158,11,.28)", borderRadius: 999, background: "rgba(245,158,11,.10)", color: "#fbbf24", fontSize: px(8), fontWeight: 950, cursor: "pointer" },
+    quickGrid: { position: "relative", zIndex: 2, display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", alignItems: "stretch", gap: px(10) },
+    activeOrderCard: { position: "relative", display: "block", verticalAlign: "top", width: "100%", minWidth: 0, minHeight: px(narrow ? 170 : 178), overflow: "hidden", padding: `${px(8)}px ${px(10)}px ${px(10)}px`, border: "1px solid rgba(34,197,94,.30)", borderRadius: px(21), background: "radial-gradient(circle at 100% 0%, rgba(34,197,94,.18), transparent 38%), linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.025))", color: "white", textAlign: "left", boxShadow: "0 14px 28px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.08)", backdropFilter: "blur(14px)", appearance: "none", WebkitAppearance: "none", cursor: "pointer" },
+    repeatOrderCard: { position: "relative", display: "block", verticalAlign: "top", width: "100%", minWidth: 0, minHeight: px(narrow ? 170 : 178), overflow: "hidden", padding: `${px(8)}px ${px(10)}px ${px(10)}px`, border: "1px solid rgba(245,158,11,.30)", borderRadius: px(21), background: "radial-gradient(circle at 100% 0%, rgba(245,158,11,.18), transparent 38%), linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.025))", color: "white", textAlign: "left", boxShadow: "0 14px 28px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.08)", backdropFilter: "blur(14px)", appearance: "none", WebkitAppearance: "none", cursor: "pointer" },
+    cardAmbientGreen: { position: "absolute", right: px(-35), top: px(-45), width: px(105), height: px(105), borderRadius: "50%", background: "rgba(34,197,94,.13)", filter: `blur(${px(24)}px)`, pointerEvents: "none" },
+    cardAmbientAmber: { position: "absolute", right: px(-35), top: px(-45), width: px(105), height: px(105), borderRadius: "50%", background: "rgba(245,158,11,.15)", filter: `blur(${px(24)}px)`, pointerEvents: "none" },
+    activeCardHeader: { position: "relative", zIndex: 3, width: "100%", minWidth: 0, paddingTop: px(34) },
+    reorderCardHeader: { position: "relative", zIndex: 3, width: "100%", minWidth: 0, paddingTop: px(24) },
+    activeStatusRow: { position: "absolute", top: 0, right: 0, zIndex: 5, width: "auto", display: "flex", alignItems: "center", justifyContent: "flex-end" },
+    reorderStatusRow: { position: "absolute", top: 0, right: 0, zIndex: 5, width: "auto", display: "flex", alignItems: "center", justifyContent: "flex-end" },
+    activeTitleRow: { position: "relative", zIndex: 3, width: "100%", minWidth: 0, display: "grid", gridTemplateColumns: "auto minmax(0, 1fr)", alignItems: "center", gap: px(8) },
+    quickHeaderText: { minWidth: 0 },
+    quickHeaderTitle: { margin: 0, color: "#ffffff", fontSize: px(narrow ? 13 : 15), lineHeight: 1.05, fontWeight: 950, letterSpacing: -0.2, whiteSpace: "nowrap" },
+    quickHeaderSubtitle: { display: "block", marginTop: px(4), color: "#a8a29e", fontSize: px(narrow ? 7 : 8), lineHeight: 1, fontWeight: 750, whiteSpace: "nowrap" },
+    quickIconGreen: { width: px(37), height: px(37), display: "grid", placeItems: "center", flexShrink: 0, border: "1px solid rgba(134,239,172,.28)", borderRadius: px(13), background: "linear-gradient(145deg, #22c55e, #15803d)", color: "white", fontSize: px(17), fontWeight: 950, boxShadow: "0 8px 18px rgba(34,197,94,.28), inset 0 1px 0 rgba(255,255,255,.20)" },
+    quickIconAmber: { width: px(37), height: px(37), display: "grid", placeItems: "center", flexShrink: 0, border: "1px solid rgba(251,191,36,.30)", borderRadius: px(13), background: "linear-gradient(145deg, #f59e0b, #ea580c)", color: "white", fontSize: px(20), lineHeight: 1, fontWeight: 950, boxShadow: "0 8px 18px rgba(245,158,11,.28), inset 0 1px 0 rgba(255,255,255,.20)" },
+    livePill: { width: "max-content", minWidth: px(54), display: "inline-flex", alignItems: "center", justifyContent: "center", gap: px(4), padding: `${px(5)}px ${px(10)}px`, border: "1px solid rgba(34,197,94,.38)", borderRadius: 999, background: "linear-gradient(145deg, rgba(34,197,94,.28), rgba(21,128,61,.18))", color: "#86efac", fontSize: px(narrow ? 7.5 : 8.5), lineHeight: 1, fontWeight: 950, whiteSpace: "nowrap", boxShadow: "0 5px 14px rgba(34,197,94,.17), inset 0 1px 0 rgba(255,255,255,.10)" },
+    liveDot: { width: px(6), height: px(6), flexShrink: 0, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 9px rgba(34,197,94,.90)" },
+    lastOrderPill: { width: "max-content", minWidth: px(48), display: "inline-flex", alignItems: "center", justifyContent: "center", padding: `${px(5)}px ${px(9)}px`, border: "1px solid rgba(245,158,11,.30)", borderRadius: 999, background: "linear-gradient(145deg, rgba(245,158,11,.22), rgba(234,88,12,.12))", color: "#fbbf24", fontSize: px(narrow ? 7.5 : 8.5), lineHeight: 1, fontWeight: 950, whiteSpace: "nowrap", boxShadow: "0 5px 14px rgba(245,158,11,.12)" },
+    quickCardBody: { position: "relative", zIndex: 2, marginTop: px(10) },
+    materialTitle: { margin: 0, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", color: "white", fontSize: px(narrow ? 11 : 12.5), lineHeight: 1.14, fontWeight: 950 },
+    quickDescription: { position: "relative", zIndex: 2, margin: `${px(5)}px 0 0`, color: "#d6d3d1", fontSize: px(8), lineHeight: 1.2, fontWeight: 750 },
+    miniProgressTrack: { position: "relative", zIndex: 2, height: px(4), marginTop: px(10), overflow: "hidden", borderRadius: 999, background: "rgba(255,255,255,.10)" },
+    miniProgressFill: { width: "72%", height: "100%", borderRadius: 999, background: "linear-gradient(90deg, #22c55e, #86efac)" },
+    reorderInfo: { position: "relative", zIndex: 2, display: "flex", alignItems: "center", gap: px(6), marginTop: px(9), padding: px(7), border: "1px solid rgba(245,158,11,.13)", borderRadius: px(11), background: "rgba(245,158,11,.08)", color: "white", textAlign: "left" },
+    reorderInfoIcon: { width: px(21), height: px(21), display: "grid", placeItems: "center", flexShrink: 0, borderRadius: "50%", background: "#f59e0b", color: "white", fontSize: px(8), fontWeight: 950 },
+    reorderInfoText: { minWidth: 0 },
+    reorderTitle: { display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#fde68a", fontSize: px(8), lineHeight: 1, fontWeight: 950 },
+    reorderSubtitle: { display: "block", marginTop: px(3), overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#a8a29e", fontSize: px(6.5), lineHeight: 1, fontWeight: 750 },
+    quickFooter: { position: "absolute", left: px(12), right: px(12), bottom: px(11), zIndex: 2, display: "flex", alignItems: "center", justifyContent: "space-between", gap: px(5), color: "#a8a29e", fontSize: px(7.2), fontWeight: 800 },
+    insightCard: { position: "relative", zIndex: 2, display: "grid", gridTemplateColumns: "auto minmax(0,1fr) auto", alignItems: "center", gap: px(9), marginTop: px(11), padding: px(11), border: "1px solid rgba(245,158,11,.18)", borderRadius: px(19), background: "linear-gradient(145deg, rgba(245,158,11,.11), rgba(255,255,255,.035))", boxShadow: "0 12px 24px rgba(0,0,0,.16)" },
+    insightIcon: { width: px(38), height: px(38), display: "grid", placeItems: "center", borderRadius: px(14), background: "linear-gradient(145deg,#f59e0b,#ea580c)", color: "white", fontSize: px(19), fontWeight: 950 },
+    insightText: { minWidth: 0, color: "white" },
+    insightKicker: { display: "block", color: "#fbbf24", fontSize: px(6.5), letterSpacing: px(0.65), fontWeight: 950 },
+    insightTitle: { display: "block", marginTop: px(3), color: "white", fontSize: px(11), lineHeight: 1.1, fontWeight: 950 },
+    insightDescription: { margin: `${px(4)}px 0 0`, color: "#d6d3d1", fontSize: px(8), lineHeight: 1.25, fontWeight: 700 },
+    insightButton: { width: px(30), height: px(30), display: "grid", placeItems: "center", border: "1px solid rgba(255,255,255,.10)", borderRadius: "50%", background: "rgba(255,255,255,.07)", color: "#fbbf24", fontSize: px(20), cursor: "pointer" },
+    contentBottomSpace: { height: px(10) },
+    bottomNav: { position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 100, height: navHeight, display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: px(4), padding: `${px(5)}px ${px(8)}px calc(env(safe-area-inset-bottom,0px) + ${px(5)}px)`, borderTop: "1px solid rgba(251,191,36,.18)", background: "radial-gradient(circle at 50% 0%, rgba(245,158,11,.17), transparent 47%), linear-gradient(135deg, rgba(33,20,13,.99), rgba(75,37,13,.99))", boxShadow: "0 -14px 34px rgba(28,15,7,.34), inset 0 1px 0 rgba(255,255,255,.05)", backdropFilter: "blur(20px)" },
+    navButton: { position: "relative", minWidth: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: px(3), padding: px(3), border: 0, borderRadius: px(15), background: "transparent", cursor: "pointer" },
+    navButtonActive: { background: "linear-gradient(145deg,rgba(245,158,11,.22),rgba(234,88,12,.10))", boxShadow: "inset 0 0 0 1px rgba(251,191,36,.24)" },
+    activeIndicator: { position: "absolute", left: "50%", top: px(-5), width: px(25), height: px(3), borderRadius: 999, background: "linear-gradient(90deg,#fbbf24,#f97316)", boxShadow: "0 0 12px rgba(245,158,11,.70)", transform: "translateX(-50%)" },
+    navIconBox: { width: px(28), height: px(26), display: "grid", placeItems: "center", border: "1px solid rgba(255,255,255,.07)", borderRadius: px(9), background: "rgba(255,255,255,.06)", color: "#d6c3b5", fontSize: px(15), fontWeight: 900 },
+    navIconBoxActive: { borderColor: "rgba(251,191,36,.35)", background: "linear-gradient(145deg,#f59e0b,#ea580c)", color: "white", boxShadow: "0 8px 17px rgba(234,88,12,.30)" },
+    navLabel: { maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#c4afa0", fontSize: px(7.2), fontWeight: 800 },
+    navLabelActive: { color: "#fbbf24", fontWeight: 950 },
+
+    menuOverlay: { position: "absolute", inset: 0, zIndex: 190, background: "rgba(3,2,2,.70)", backdropFilter: "blur(3px)", opacity: 0, visibility: "hidden", transition: "opacity 280ms ease, visibility 280ms ease", pointerEvents: "none" },
+    menuOverlayOpen: { opacity: 1, visibility: "visible", pointerEvents: "auto" },
+    menuDrawer: { position: "absolute", left: 0, top: 0, bottom: 0, zIndex: 200, width: narrow ? "88%" : "84%", maxWidth: px(330), overflow: "hidden", borderRight: "1px solid rgba(251,191,36,.24)", borderRadius: `0 ${px(28)}px ${px(28)}px 0`, background: "radial-gradient(circle at 15% 0%, rgba(245,158,11,.20), transparent 26%), radial-gradient(circle at 100% 75%, rgba(234,88,12,.10), transparent 30%), linear-gradient(160deg, #120c08 0%, #21130c 48%, #0d0907 100%)", boxShadow: "25px 0 60px rgba(0,0,0,.48), inset -1px 0 0 rgba(255,255,255,.04)", transform: "translateX(-105%)", transition: "transform 360ms cubic-bezier(.22,.75,.22,1)", pointerEvents: "none" },
+    menuDrawerOpen: { transform: "translateX(0)", pointerEvents: "auto" },
+    drawerScroll: { position: "relative", width: "100%", height: "100%", overflowY: "auto", overflowX: "hidden", padding: `${px(15)}px ${px(14)}px calc(env(safe-area-inset-bottom, 0px) + ${px(18)}px)`, WebkitOverflowScrolling: "touch" },
+    drawerHeader: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: px(10), paddingBottom: px(14), borderBottom: "1px solid rgba(255,255,255,.08)" },
+    drawerUserBlock: { minWidth: 0, display: "flex", alignItems: "center", gap: px(10) },
+    drawerUserIcon: { width: px(43), height: px(43), display: "grid", placeItems: "center", flexShrink: 0, border: "1px solid rgba(251,191,36,.38)", borderRadius: px(15), background: "linear-gradient(145deg, #f59e0b, #9a3412)", color: "white", fontSize: px(17), fontWeight: 950, boxShadow: "0 10px 22px rgba(245,158,11,.22), inset 0 1px 0 rgba(255,255,255,.20)" },
+    drawerUserText: { minWidth: 0, display: "flex", flexDirection: "column" },
+    drawerGreeting: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "white", fontSize: px(15), lineHeight: 1, fontWeight: 950 },
+    drawerAccountType: { marginTop: px(5), color: "#d6c3b5", fontSize: px(8), lineHeight: 1, fontWeight: 750 },
+    drawerCloseButton: { width: px(34), height: px(34), display: "grid", placeItems: "center", flexShrink: 0, padding: 0, border: "1px solid rgba(255,255,255,.12)", borderRadius: px(12), background: "rgba(255,255,255,.06)", color: "#fde68a", fontSize: px(23), lineHeight: 1, fontWeight: 500, cursor: "pointer" },
+    drawerPrimaryAction: { position: "relative", width: "100%", display: "grid", gridTemplateColumns: "auto minmax(0,1fr) auto", alignItems: "center", gap: px(10), marginTop: px(15), padding: px(11), overflow: "hidden", border: "1px solid rgba(251,191,36,.39)", borderRadius: px(19), background: "radial-gradient(circle at 90% 0%, rgba(253,186,116,.28), transparent 36%), linear-gradient(135deg, #7c2d12, #ea580c)", color: "white", textAlign: "left", boxShadow: "0 14px 27px rgba(146,64,14,.25), inset 0 1px 0 rgba(255,255,255,.14)", cursor: "pointer" },
+    drawerPrimaryIcon: { width: px(39), height: px(39), display: "grid", placeItems: "center", border: "1px solid rgba(255,255,255,.16)", borderRadius: px(13), background: "rgba(255,255,255,.13)", color: "#fde68a", fontSize: px(23), fontWeight: 700 },
+    drawerPrimaryText: { minWidth: 0, display: "flex", flexDirection: "column" },
+    drawerPrimaryArrow: { width: px(29), height: px(29), display: "grid", placeItems: "center", borderRadius: "50%", background: "rgba(255,255,255,.13)", color: "white", fontSize: px(13), fontWeight: 950 },
+    drawerSection: { marginTop: px(17) },
+    drawerSectionLabel: { margin: `0 0 ${px(8)}px`, color: "#f59e0b", fontSize: px(7), letterSpacing: px(1.05), lineHeight: 1, fontWeight: 950 },
+    drawerMenuGroup: { display: "flex", flexDirection: "column", gap: px(7) },
+    drawerMenuItem: { position: "relative", width: "100%", minHeight: px(55), display: "grid", gridTemplateColumns: "auto minmax(0,1fr) auto", alignItems: "center", gap: px(9), padding: `${px(8)}px ${px(9)}px`, border: "1px solid rgba(255,255,255,.08)", borderRadius: px(16), background: "linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.025))", color: "white", textAlign: "left", boxShadow: "inset 0 1px 0 rgba(255,255,255,.04)", cursor: "pointer" },
+    drawerMenuIcon: { width: px(36), height: px(36), display: "grid", placeItems: "center", flexShrink: 0, borderRadius: px(12), color: "white", fontSize: px(16), lineHeight: 1, fontWeight: 950 },
+    drawerGreenIcon: { background: "linear-gradient(145deg, #22c55e, #15803d)", boxShadow: "0 7px 14px rgba(34,197,94,.18)" },
+    drawerAmberIcon: { background: "linear-gradient(145deg, #f59e0b, #d97706)", boxShadow: "0 7px 14px rgba(245,158,11,.18)" },
+    drawerOrangeIcon: { background: "linear-gradient(145deg, #f97316, #c2410c)", boxShadow: "0 7px 14px rgba(249,115,22,.18)" },
+    drawerNeutralIcon: { border: "1px solid rgba(255,255,255,.12)", background: "linear-gradient(145deg, #44403c, #1c1917)", boxShadow: "0 7px 14px rgba(0,0,0,.18)" },
+    drawerMenuText: { minWidth: 0, display: "flex", flexDirection: "column" },
+    drawerItemTitle: { display: "block", overflow: "hidden", color: "white", fontSize: px(11), lineHeight: 1.1, fontWeight: 950, textOverflow: "ellipsis", whiteSpace: "nowrap" },
+    drawerItemSubtitle: { display: "block", marginTop: px(4), overflow: "hidden", color: "#a8a29e", fontSize: px(7), lineHeight: 1.1, fontWeight: 700, textOverflow: "ellipsis", whiteSpace: "nowrap" },
+    drawerItemArrow: { display: "grid", placeItems: "center", width: px(25), height: px(25), borderRadius: "50%", background: "rgba(255,255,255,.055)", color: "#fbbf24", fontSize: px(17), fontWeight: 800 },
+    drawerLivePill: { display: "inline-flex", alignItems: "center", justifyContent: "center", gap: px(3), padding: `${px(4)}px ${px(7)}px`, border: "1px solid rgba(34,197,94,.28)", borderRadius: 999, background: "rgba(34,197,94,.12)", color: "#86efac", fontSize: px(7), lineHeight: 1, fontWeight: 950, whiteSpace: "nowrap" },
+    drawerLiveDot: { width: px(5), height: px(5), borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 7px rgba(34,197,94,.85)" },
+    notificationCount: { minWidth: px(23), height: px(23), display: "grid", placeItems: "center", padding: `0 ${px(5)}px`, borderRadius: 999, background: "linear-gradient(145deg, #f59e0b, #ea580c)", color: "white", fontSize: px(7), lineHeight: 1, fontWeight: 950, boxShadow: "0 6px 13px rgba(245,158,11,.20)" },
+    drawerSupportGroup: { overflow: "hidden", border: "1px solid rgba(255,255,255,.08)", borderRadius: px(17), background: "linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.018))" },
+    drawerSupportItem: { width: "100%", minHeight: px(44), display: "grid", gridTemplateColumns: "auto minmax(0,1fr) auto", alignItems: "center", gap: px(9), padding: `${px(8)}px ${px(10)}px`, border: 0, borderBottom: "1px solid rgba(255,255,255,.055)", background: "transparent", color: "#e7e5e4", textAlign: "left", fontSize: px(9), fontWeight: 850, cursor: "pointer" },
+    drawerSupportIcon: { width: px(28), height: px(28), display: "grid", placeItems: "center", border: "1px solid rgba(245,158,11,.18)", borderRadius: px(9), background: "rgba(245,158,11,.08)", color: "#fbbf24", fontSize: px(12), lineHeight: 1, fontWeight: 950 },
+    drawerFooter: { display: "flex", alignItems: "center", gap: px(8), marginTop: px(18), paddingTop: px(13), borderTop: "1px solid rgba(255,255,255,.07)", color: "white" },
+    drawerFooterLogo: { width: px(28), height: px(28), display: "grid", placeItems: "center", borderRadius: px(9), background: "linear-gradient(145deg, #f59e0b, #92400e)", color: "white", fontSize: px(10) },
+    drawerFooterText: { minWidth: 0, display: "flex", flexDirection: "column" },
+    drawerFooterTitle: { color: "white", fontSize: px(9), fontWeight: 950 },
+    drawerFooterSubtitle: { marginTop: px(3), color: "#a8a29e", fontSize: px(6) },
+  };
+}
+
+const globalCss = `
+* { box-sizing: border-box; }
+html, body, #root { margin: 0; width: 100%; height: 100%; min-height: 100%; overflow: hidden; background: #080706; }
+button, input, textarea { font: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+.buyer-page-scroll, .drawer-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+.buyer-page-scroll::-webkit-scrollbar, .drawer-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
+@keyframes floatCard { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-5px); } }
+@keyframes pulseGlow { 0%, 100% { transform: translateX(-50%) scale(.92); opacity: .20; } 50% { transform: translateX(-50%) scale(1.12); opacity: .34; } }
+body { -webkit-text-size-adjust: 100%; }
+`;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+placeorderpage
+import React, { useEffect, useMemo, useState } from "react";
+const HEADER_BG_IMAGE =
+  "https://cdn.jsdelivr.net/gh/Shyam7291/company-document-monitor@main/Designer (1).png";
+  export default function PlaceOrderPage({
+    goToPage4,
+    goToPage6,
+  }) {
+  const viewport = useViewport();
+  const styles = useMemo(
+    () => createStyles(viewport),
+    [viewport.width, viewport.height]
+  );
+  
+  const vehicles = [
+    { id: "truck12", name: "12 Tyre Truck", capacity: 10, tag: "Small site" },
+    { id: "truck14", name: "14 Tyre Truck", capacity: 16, tag: "Popular" },
+    { id: "truck18", name: "18 Tyre Truck", capacity: 22, tag: "Bulk order" },
+    { id: "hyva", name: "Hyva", capacity: 18, tag: "Fast delivery" },
+  ];
+
+  const materials = [
+    "20mm Crushed Stone",
+    "40mm Crushed Stone",
+    "GSB",
+    "M-Sand",
+    "Stone Dust",
+  ];
+
+  const emptyVehicleQty = {
+    truck12: 0,
+    truck14: 0,
+    truck18: 0,
+    hyva: 0,
+  };
+
+  const [selectedMaterial, setSelectedMaterial] = useState(
+    "20mm Crushed Stone"
+  );
+
+  const [ordersByMaterial, setOrdersByMaterial] = useState({
+    "20mm Crushed Stone": { ...emptyVehicleQty },
+    "40mm Crushed Stone": { ...emptyVehicleQty },
+    GSB: { ...emptyVehicleQty },
+    "M-Sand": { ...emptyVehicleQty },
+    "Stone Dust": { ...emptyVehicleQty },
+  });
+
+  const [arrivalDate, setArrivalDate] = useState("2026-07-05");
+  const [contact, setContact] = useState("");
+  const [notes, setNotes] = useState(
+    "Please arrange best rate from nearby sellers."
+  );
+
+  const currentMaterialQty = ordersByMaterial[selectedMaterial];
+
+  const addVehicle = (vehicleId) => {
+    setOrdersByMaterial((previousOrders) => ({
+      ...previousOrders,
+      [selectedMaterial]: {
+        ...previousOrders[selectedMaterial],
+        [vehicleId]: previousOrders[selectedMaterial][vehicleId] + 1,
+      },
+    }));
+  };
+
+  const removeVehicle = (vehicleId) => {
+    setOrdersByMaterial((previousOrders) => ({
+      ...previousOrders,
+      [selectedMaterial]: {
+        ...previousOrders[selectedMaterial],
+        [vehicleId]: Math.max(0, previousOrders[selectedMaterial][vehicleId] - 1),
+      },
+    }));
+  };
+
+  const getMaterialTons = (materialName) => {
+    const materialQty = ordersByMaterial[materialName];
+
+    return vehicles.reduce(
+      (sum, vehicle) => sum + materialQty[vehicle.id] * vehicle.capacity,
+      0
+    );
+  };
+
+  const materialSummary = useMemo(() => {
+    return materials
+      .map((materialName) => ({
+        materialName,
+        tons: getMaterialTons(materialName),
+        vehicles: vehicles.reduce(
+          (sum, vehicle) =>
+            sum + ordersByMaterial[materialName][vehicle.id],
+          0
+        ),
+      }))
+      .filter((item) => item.tons > 0);
+  }, [ordersByMaterial]);
+
+  const totalTons = useMemo(() => {
+    return materialSummary.reduce((sum, item) => sum + item.tons, 0);
+  }, [materialSummary]);
+
+  const totalVehicles = useMemo(() => {
+    return materialSummary.reduce((sum, item) => sum + item.vehicles, 0);
+  }, [materialSummary]);
+
+  return (
+    <div style={styles.page}>
+      <div style={styles.phone}>
+        <div style={styles.header}>
+          <p style={styles.eyebrow}>BEST RATE ORDER</p>
+
+          <div style={styles.headerRow}>
+            <div style={{ minWidth: 0 }}>
+              <h1 style={styles.title}>
+                Crushed Stone
+                <br />
+                Booking
+              </h1>
+            </div>
+            <button
+            
+            pe="button"
+            style={styles.backBtn}
+            onClick={goToPage4}
+            aria-label="Back to Home"
+            >
+              Back
+              
+  </button>
+ 
+
+
+            
+          </div>
+
+          <div style={styles.trustGrid}>
+            <div style={styles.trustBox}>
+              <b style={styles.trustValue}>24h</b>
+              <span style={styles.trustText}>Rate check</span>
+            </div>
+
+            <div style={styles.trustBox}>
+              <b style={styles.trustValue}>Verified</b>
+              <span style={styles.trustText}>Sellers</span>
+            </div>
+
+            <div style={styles.trustBox}>
+              <b style={styles.trustValue}>Fast</b>
+              <span style={styles.trustText}>Dispatch</span>
+            </div>
+          </div>
+        </div>
+
+        <div style={styles.content}>
+          <div style={styles.card}>
+            <div style={styles.labelRow}>
+              <label style={styles.label}>📦 Material</label>
+              <span style={styles.badge}>Saved separately</span>
+            </div>
+
+            <select
+              style={styles.input}
+              value={selectedMaterial}
+              onChange={(event) => setSelectedMaterial(event.target.value)}
+            >
+              {materials.map((materialName) => (
+                <option key={materialName}>{materialName}</option>
+              ))}
+            </select>
+
+            <p style={styles.helperText}>
+              Select one material, add vehicles, then switch material. Previous
+              material quantity will stay saved.
+            </p>
+          </div>
+
+          <div style={styles.sectionHeader}>
+            <h2 style={styles.sectionTitle}>🚚 Select Vehicle</h2>
+            <span style={styles.smallText}>For {selectedMaterial}</span>
+          </div>
+
+          <div style={styles.vehicleGrid}>
+            {vehicles.map((vehicle) => {
+              const qty = currentMaterialQty[vehicle.id];
+              const active = qty > 0;
+
+              return (
+                <div
+                  key={vehicle.id}
+                  style={{
+                    ...styles.vehicleCard,
+                    ...(active ? styles.vehicleCardActive : {}),
+                  }}
+                >
+                  {active && <div style={styles.check}>✓</div>}
+
+                  <div
+                    onClick={() => addVehicle(vehicle.id)}
+                    style={styles.vehicleInfo}
+                  >
+                    <b style={styles.vehicleName}>{vehicle.name}</b>
+                    <span style={styles.vehicleCapacity}>
+                      {vehicle.capacity} ton / vehicle
+                    </span>
+                    <span style={styles.tag}>{vehicle.tag}</span>
+                  </div>
+
+                  {active ? (
+                    <div style={styles.qtyBox}>
+                      <button
+                        style={styles.qtyBtn}
+                        onClick={() => removeVehicle(vehicle.id)}
+                      >
+                        −
+                      </button>
+
+                      <div style={styles.qtyCenter}>
+                        <b style={styles.qtyNumber}>{qty}</b>
+                        <span style={styles.qtyText}>vehicles</span>
+                      </div>
+
+                      <button
+                        style={{ ...styles.qtyBtn, ...styles.plusBtn }}
+                        onClick={() => addVehicle(vehicle.id)}
+                      >
+                        +
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      style={styles.addBtn}
+                      onClick={() => addVehicle(vehicle.id)}
+                    >
+                      + Add Vehicle
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={styles.quantityCard}>
+            <div>
+              <p style={styles.quantityLabel}>Total Estimated Quantity</p>
+
+              <div style={styles.tonsRow}>
+                <b style={styles.tons}>{totalTons}</b>
+                <span style={styles.tonsText}>tons</span>
+              </div>
+            </div>
+
+            <div style={styles.rupee}>₹</div>
+
+            <div style={styles.totalVehicleText}>
+              {totalVehicles > 0
+                ? `${totalVehicles} total vehicle${
+                    totalVehicles === 1 ? "" : "s"
+                  } selected`
+                : "Select material and vehicles to calculate total tons"}
+            </div>
+
+            {materialSummary.length > 0 && (
+              <div style={styles.materialSummaryBox}>
+                {materialSummary.map((item) => (
+                  <div
+                    key={item.materialName}
+                    style={styles.materialSummaryRow}
+                  >
+                    <span style={styles.summaryMaterialName}>
+                      {item.materialName.replace(" Crushed Stone", "")}
+                    </span>
+                    <b>{item.tons} ton</b>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div style={styles.card}>
+            <div style={styles.field}>
+              <label style={styles.label}>📅 Date of Arrival</label>
+              <input
+                type="date"
+                style={styles.input}
+                value={arrivalDate}
+                onChange={(event) => setArrivalDate(event.target.value)}
+              />
+            </div>
+
+            <div style={styles.field}>
+              <label style={styles.label}>Buyer Contact Number</label>
+              <input
+                style={styles.input}
+                value={contact}
+                onChange={(event) => setContact(event.target.value)}
+                placeholder="Enter mobile number"
+              />
+            </div>
+
+            <div style={styles.field}>
+              <label style={styles.label}>Order Notes</label>
+              <textarea
+                style={styles.textarea}
+                value={notes}
+                onChange={(event) => setNotes(event.target.value)}
+              />
+            </div>
+          </div>
+
+          <div style={styles.infoBox}>
+            <div style={styles.infoIcon}>✓</div>
+
+            <div style={{ minWidth: 0 }}>
+              <b style={styles.infoTitle}>How this works</b>
+              <p style={styles.infoText}>
+                Buyer can add different vehicles for each material. Full vehicle
+                breakdown will appear on the confirmation page.
+              </p>
+            </div>
+          </div>
+
+          <button
+  type="button"
+  onClick={goToPage6}
+  style={{
+    ...styles.continueBtn,
+    opacity: totalVehicles === 0 ? 0.5 : 1,
+  }}
+  disabled={totalVehicles === 0}
+>
+  Continue to Confirmation →
+</button>
+
+          <p style={styles.footer}>
+            Final order request is submitted after confirmation.
+          </p>
+        </div>
+
+        <nav style={styles.bottomTabs}>
+          <button style={{ ...styles.tabBtn, ...styles.tabBtnActive }}>
+            <span style={styles.tabIcon}>🏠</span>
+            <b style={styles.tabText}>Home</b>
+          </button>
+
+          <button style={styles.tabBtn}>
+            <span style={styles.tabIcon}>📦</span>
+            <b style={styles.tabText}>My Orders</b>
+          </button>
+
+          <button style={styles.tabBtn}>
+            <span style={styles.tabIcon}>👤</span>
+            <b style={styles.tabText}>Profile</b>
+          </button>
+        </nav>
+      </div>
+    </div>
+  );
+}
+
+function useViewport() {
+  const [viewport, setViewport] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 390,
+    height: typeof window !== "undefined" ? window.innerHeight : 844,
+  });
+
+  useEffect(() => {
+    const update = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    update();
+    window.addEventListener("resize", update);
+
+    return () => {
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  return viewport;
+}
+
+function createStyles(viewport) {
+  const vw = viewport.width || 390;
+  const vh = viewport.height || 844;
+
+  const isDesktop = vw >= 700;
+  const phoneW = isDesktop ? 390 : vw;
+  const phoneH = isDesktop ? 844 : vh;
+
+  const scale = Math.max(
+    0.72,
+    Math.min(1, Math.min(phoneW / 390, phoneH / 844))
+  );
+
+  const narrow = phoneW < 360;
+  const veryNarrow = phoneW < 220;
+  const short = phoneH < 700;
+
+  const px = (value) => Math.round(value * scale);
+
+  return {
+    page: {
+      width: "100vw",
+      height: "100dvh",
+      minHeight: "100dvh",
+      background: isDesktop ? "#f4f1ea" : "#ffffff",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: isDesktop ? "center" : "stretch",
+      padding: isDesktop ? 16 : 0,
+      fontFamily: "Arial, sans-serif",
+      overflow: "hidden",
+      boxSizing: "border-box",
+    },
+
+    phone: {
+      width: isDesktop ? 390 : "100vw",
+      height: isDesktop ? 844 : "100dvh",
+      maxWidth: isDesktop ? 430 : "none",
+      background: "#ffffff",
+      borderRadius: isDesktop ? 32 : 0,
+      overflow: "hidden",
+      boxShadow: isDesktop ? "0 25px 60px rgba(0,0,0,0.18)" : "none",
+      boxSizing: "border-box",
+      display: "flex",
+      flexDirection: "column",
+    },
+
+    header: {
+      position: "relative",
+      color: "white",
+    
+      padding:
+        "clamp(13px, 3.8vw, 22px) clamp(12px, 4vw, 20px) clamp(13px, 4.2vw, 24px)",
+        
+    
+        backgroundImage: HEADER_BG_IMAGE
+        ? `linear-gradient(
+            135deg,
+            rgba(8, 7, 6, 0.38),
+            rgba(28, 25, 23, 0.30) 52%,
+            rgba(120, 53, 15, 0.22)
+          ),
+          url("${HEADER_BG_IMAGE}")`
+        : `radial-gradient(
+            circle at 88% 8%,
+            rgba(245, 158, 11, 0.38),
+            transparent 32%
+          ),
+          linear-gradient(
+            135deg,
+            #080706,
+            #1c1917 52%,
+            #78350f
+          )`,
+    
+      backgroundSize: "cover",
+      backgroundPosition: "center 45%",
+      backgroundRepeat: "no-repeat",
+    
+      overflow: "hidden",
+      boxSizing: "border-box",
+    },
+    
+    backBtn: {
+      alignSelf: "flex-start",
+      flexShrink: 0,
+      minWidth: px(48),
+      height: px(27),
+      marginTop: px(-14),
+      padding: `0 ${px(9)}px`,
+      border: "1px solid rgba(253, 230, 138, 0.65)",
+      borderRadius: px(9),
+      background:
+        "linear-gradient(135deg, rgba(245,158,11,0.95), rgba(180,83,9,0.95))",
+      color: "#ffffff",
+      fontSize: px(10),
+      lineHeight: 1,
+      fontWeight: 900,
+      cursor: "pointer",
+      boxShadow:
+        "0 5px 12px rgba(120,53,15,0.32), inset 0 1px 0 rgba(255,255,255,0.25)",
+    },
+
+
+    eyebrow: {
+      fontSize: px(11),
+      letterSpacing: narrow ? 2 : 3,
+      color: "#fde68a",
+      fontWeight: 700,
+      margin: 0,
+    },
+
+    headerRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: px(10),
+    },
+
+    title: {
+      fontSize: px(short ? 30 : 34),
+      lineHeight: 1.1,
+      margin: `${px(10)}px 0 0`,
+      fontWeight: 900,
+      letterSpacing: -0.6,
+    },
+
+    truckIcon: {
+      fontSize: px(32),
+      background: "rgba(255,255,255,0.15)",
+      padding: px(14),
+      borderRadius: px(24),
+      flexShrink: 0,
+    },
+
+    trustGrid: {
+      display: "grid",
+      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+      gap: px(8),
+      marginTop: px(20),
+    },
+
+    trustBox: {
+      background: "rgba(255,255,255,0.13)",
+      borderRadius: px(18),
+      padding: px(10),
+      fontSize: px(12),
+      display: "flex",
+      flexDirection: "column",
+      gap: px(4),
+      minWidth: 0,
+      overflow: "hidden",
+    },
+
+    trustValue: {
+      fontSize: px(narrow ? 10 : 12),
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    trustText: {
+      fontSize: px(narrow ? 9 : 11),
+      color: "#e7e5e4",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    content: {
+      flex: 1,
+      overflowY: "auto",
+      overflowX: "hidden",
+      WebkitOverflowScrolling: "touch",
+      padding: px(narrow ? 14 : 20),
+      paddingBottom: px(18),
+      borderRadius: `${px(28)}px ${px(28)}px 0 0`,
+      marginTop: px(-10),
+      background: "white",
+      boxSizing: "border-box",
+    },
+
+    card: {
+      background: "#fafaf9",
+      borderRadius: px(24),
+      padding: px(narrow ? 13 : 16),
+      marginBottom: px(18),
+      boxSizing: "border-box",
+    },
+
+    labelRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: px(8),
+      marginBottom: px(10),
+    },
+
+    label: {
+      fontSize: px(14),
+      fontWeight: 800,
+      display: "block",
+      marginBottom: px(8),
+    },
+
+    badge: {
+      background: "#fef3c7",
+      color: "#92400e",
+      padding: `${px(5)}px ${px(10)}px`,
+      borderRadius: 999,
+      fontSize: px(10),
+      fontWeight: 800,
+      whiteSpace: "nowrap",
+      flexShrink: 0,
+    },
+
+    helperText: {
+      margin: `${px(10)}px 0 0`,
+      color: "#78716c",
+      fontSize: px(12),
+      lineHeight: 1.4,
+    },
+
+    input: {
+      width: "100%",
+      height: px(46),
+      padding: `0 ${px(13)}px`,
+      borderRadius: px(16),
+      border: "1px solid #e7e5e4",
+      fontSize: px(14),
+      boxSizing: "border-box",
+      background: "white",
+      color: "#111827",
+      outline: "none",
+    },
+
+    sectionHeader: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      gap: px(8),
+      marginBottom: px(12),
+    },
+
+    sectionTitle: {
+      fontSize: px(16),
+      fontWeight: 900,
+      margin: 0,
+      whiteSpace: "nowrap",
+    },
+
+    smallText: {
+      fontSize: px(11),
+      color: "#64748b",
+      textAlign: "right",
+      lineHeight: 1.25,
+      maxWidth: "50%",
+    },
+
+    vehicleGrid: {
+      display: "grid",
+      gridTemplateColumns: veryNarrow
+        ? "1fr"
+        : "repeat(2, minmax(0, 1fr))",
+      gap: px(narrow ? 6 : 8),
+      marginBottom: px(16),
+    },
+
+    vehicleCard: {
+      position: "relative",
+      background: "white",
+      border: "1px solid #e7e5e4",
+      borderRadius: px(18),
+      padding: px(narrow ? 8 : 10),
+      boxShadow: "0 8px 20px rgba(0,0,0,0.04)",
+      minWidth: 0,
+      overflow: "hidden",
+      boxSizing: "border-box",
+    },
+
+    vehicleCardActive: {
+      borderColor: "#b45309",
+      background: "linear-gradient(135deg, #fffbeb, #f5f5f4)",
+    },
+
+    check: {
+      position: "absolute",
+      right: px(10),
+      top: px(10),
+      background: "#b45309",
+      color: "white",
+      width: px(22),
+      height: px(22),
+      borderRadius: "50%",
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(13),
+      fontWeight: 900,
+      zIndex: 2,
+    },
+
+    vehicleInfo: {
+      cursor: "pointer",
+      minWidth: 0,
+    },
+
+    vehicleName: {
+      display: "block",
+      fontSize: px(narrow ? 10 : 12),
+      paddingRight: px(22),
+      lineHeight: 1.15,
+      minHeight: px(narrow ? 24 : 28),
+    },
+
+    vehicleCapacity: {
+      display: "block",
+      marginTop: px(3),
+      color: "#64748b",
+      fontSize: px(narrow ? 9 : 10),
+      lineHeight: 1.2,
+    },
+
+    tag: {
+      display: "inline-block",
+      marginTop: px(narrow ? 8 : 10),
+      background: "#fef3c7",
+      color: "#92400e",
+      padding: `${px(4)}px ${px(7)}px`,
+      borderRadius: 999,
+      fontSize: px(narrow ? 8 : 9),
+      fontWeight: 800,
+      maxWidth: "100%",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    addBtn: {
+      width: "100%",
+      marginTop: px(10),
+      minHeight: px(narrow ? 28 : 30),
+      border: 0,
+      borderRadius: px(12),
+      background: "#f59e0b",
+      color: "white",
+      fontSize: px(narrow ? 10 : 11),
+      fontWeight: 800,
+      cursor: "pointer",
+      padding: `0 ${px(4)}px`,
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    qtyBox: {
+      marginTop: px(12),
+      padding: px(7),
+      borderRadius: px(16),
+      background: "white",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: px(5),
+    },
+
+    qtyBtn: {
+      width: px(30),
+      height: px(30),
+      border: 0,
+      borderRadius: px(12),
+      background: "#f5f5f4",
+      fontWeight: 900,
+      fontSize: px(18),
+      cursor: "pointer",
+      flexShrink: 0,
+    },
+
+    plusBtn: {
+      background: "#d97706",
+      color: "white",
+    },
+
+    qtyCenter: {
+      textAlign: "center",
+      minWidth: 0,
+    },
+
+    qtyNumber: {
+      display: "block",
+      fontSize: px(18),
+      lineHeight: 1,
+    },
+
+    qtyText: {
+      fontSize: px(9),
+      color: "#64748b",
+    },
+
+    quantityCard: {
+      position: "relative",
+      background: "linear-gradient(135deg, #020617, #292524)",
+      color: "white",
+      borderRadius: px(26),
+      padding: px(narrow ? 16 : 20),
+      marginBottom: px(18),
+      boxShadow: "0 16px 35px rgba(0,0,0,0.18)",
+      overflow: "hidden",
+    },
+
+    quantityLabel: {
+      color: "#d6d3d1",
+      fontSize: px(13),
+      margin: 0,
+      paddingRight: px(58),
+    },
+
+    tonsRow: {
+      display: "flex",
+      alignItems: "flex-end",
+      gap: px(8),
+      marginTop: px(4),
+    },
+
+    tons: {
+      fontSize: px(narrow ? 44 : 52),
+      lineHeight: 1,
+    },
+
+    tonsText: {
+      marginBottom: px(6),
+      color: "#d6d3d1",
+      fontWeight: 700,
+      fontSize: px(13),
+    },
+
+    rupee: {
+      position: "absolute",
+      right: px(18),
+      top: px(18),
+      width: px(44),
+      height: px(44),
+      borderRadius: px(16),
+      background: "rgba(255,255,255,0.12)",
+      color: "#fbbf24",
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(24),
+      fontWeight: 900,
+    },
+
+    totalVehicleText: {
+      marginTop: px(14),
+      background: "rgba(255,255,255,0.1)",
+      padding: px(12),
+      borderRadius: px(16),
+      fontSize: px(12),
+      color: "#e7e5e4",
+      lineHeight: 1.35,
+    },
+
+    materialSummaryBox: {
+      marginTop: px(12),
+      padding: px(12),
+      borderRadius: px(16),
+      background: "rgba(255,255,255,0.08)",
+    },
+
+    materialSummaryRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      gap: px(10),
+      fontSize: px(13),
+      padding: `${px(6)}px 0`,
+      borderBottom: "1px solid rgba(255,255,255,0.08)",
+    },
+
+    summaryMaterialName: {
+      minWidth: 0,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+    },
+
+    field: {
+      marginBottom: px(16),
+    },
+
+    textarea: {
+      width: "100%",
+      minHeight: px(90),
+      padding: px(13),
+      borderRadius: px(16),
+      border: "1px solid #e7e5e4",
+      fontSize: px(14),
+      boxSizing: "border-box",
+      resize: "vertical",
+      outline: "none",
+      fontFamily: "Arial, sans-serif",
+    },
+
+    infoBox: {
+      display: "flex",
+      gap: px(12),
+      background: "#fffbeb",
+      borderRadius: px(24),
+      padding: px(16),
+      marginBottom: px(18),
+      boxSizing: "border-box",
+    },
+
+    infoIcon: {
+      width: px(36),
+      height: px(36),
+      borderRadius: px(14),
+      background: "#d97706",
+      color: "white",
+      display: "grid",
+      placeItems: "center",
+      fontWeight: 900,
+      flexShrink: 0,
+    },
+
+    infoTitle: {
+      fontSize: px(14),
+    },
+
+    infoText: {
+      fontSize: px(12),
+      color: "#57534e",
+      lineHeight: 1.5,
+      margin: `${px(5)}px 0 0`,
+    },
+
+    continueBtn: {
+      width: "100%",
+      minHeight: px(56),
+      border: 0,
+      borderRadius: px(24),
+      background: "linear-gradient(135deg, #020617, #92400e)",
+      color: "white",
+      fontSize: px(16),
+      fontWeight: 900,
+      cursor: "pointer",
+      padding: `0 ${px(12)}px`,
+    },
+
+    footer: {
+      textAlign: "center",
+      color: "#64748b",
+      fontSize: px(12),
+      marginTop: px(14),
+      marginBottom: px(8),
+    },
+
+    bottomTabs: {
+      flexShrink: 0,
+      height: px(72),
+      margin: `0 ${px(14)}px ${px(10)}px`,
+      padding: `${px(8)}px ${px(10)}px`,
+      borderRadius: px(24),
+      background: "rgba(16,16,16,0.96)",
+      border: "1px solid rgba(255,255,255,0.08)",
+      display: "grid",
+      gridTemplateColumns: "repeat(3, 1fr)",
+      gap: px(6),
+      boxShadow: "0 -10px 28px rgba(0,0,0,0.18)",
+    },
+
+    tabBtn: {
+      border: 0,
+      borderRadius: px(18),
+      background: "transparent",
+      color: "#a8a29e",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: px(3),
+      fontWeight: 900,
+      cursor: "pointer",
+      minWidth: 0,
+    },
+
+    tabBtnActive: {
+      color: "#f59e0b",
+    },
+
+    tabIcon: {
+      fontSize: px(18),
+      lineHeight: 1,
+    },
+
+    tabText: {
+      fontSize: px(10),
+      lineHeight: 1,
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+  };
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+orderconfirmation
+import React, { useEffect, useMemo, useState } from "react";
+
+const BASE_W = 206;
+const BASE_H = 445;
+const HEADER_BG_IMAGE = ""; // Add your quarry/mining image URL here.
+
+function useViewport() {
+  const [viewport, setViewport] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 390,
+    height: typeof window !== "undefined" ? window.innerHeight : 844,
+  });
+
+  useEffect(() => {
+    const update = () =>
+      setViewport({ width: window.innerWidth, height: window.innerHeight });
+
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("orientationchange", update);
+
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("orientationchange", update);
+    };
+  }, []);
+
+  return viewport;
+}
+
+export default function OrderConfirmationPage({
+  goToPage5,
+  goToPage7,
+}) {
+  const viewport = useViewport();
+  const styles = useMemo(
+    () => createStyles(viewport),
+    [viewport.width, viewport.height]
+  );
+
+  const [confirmed, setConfirmed] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const orderItems = [
+    { product: "20mm Crushed Stone", vehicles: 2, quantity: 20 },
+    { product: "40mm Crushed Stone", vehicles: 1, quantity: 10 },
+  ];
+
+  const totalVehicles = orderItems.reduce(
+    (sum, item) => sum + item.vehicles,
+    0
+  );
+  const totalTons = orderItems.reduce(
+    (sum, item) => sum + item.quantity,
+    0
+  );
+
+  const handleSubmit = () => {
+    if (!confirmed) return;
+    setSubmitted(true);
+  };
+  const handleDone = () => {
+    setSubmitted(false);
+    goToPage7();
+  };
+
+  return (
+    <div style={styles.page}>
+      <style>{globalCss}</style>
+
+      <main style={styles.phone}>
+        <div style={styles.scrollArea}>
+          <section style={styles.header}>
+            <div style={styles.headerShade} />
+            <div style={styles.headerGrid} />
+
+            <div style={styles.topBar}>
+            <button
+  type="button"
+  style={styles.backButton}
+  onClick={goToPage5}
+  aria-label="Go back to order details"
+>
+  ‹
+</button>
+              <div style={styles.stepBadge}>FINAL REVIEW</div>
+              <button type="button" style={styles.editHeaderButton}>
+                Edit
+              </button>
+            </div>
+
+            <div style={styles.heroRow}>
+              <div style={{ minWidth: 0 }}>
+                <p style={styles.eyebrow}>ORDER CONFIRMATION</p>
+                <h1 style={styles.title}>Review Your<br />Stone Request</h1>
+                <p style={styles.heroSubtext}>
+                  Check the product, vehicle quantity and delivery date before
+                  raising the rate enquiry.
+                </p>
+              </div>
+              <div style={styles.heroIcon}>✓</div>
+            </div>
+
+            <div style={styles.summaryStrip}>
+              <div style={styles.summaryItem}><b>2</b><span>Products</span></div>
+              <div style={styles.summaryDivider} />
+              <div style={styles.summaryItem}><b>{totalVehicles}</b><span>Vehicles</span></div>
+              <div style={styles.summaryDivider} />
+              <div style={styles.summaryItem}><b>{totalTons}t</b><span>Total qty.</span></div>
+            </div>
+          </section>
+
+          <section style={styles.content}>
+            <div style={styles.noticeCard}>
+              <div style={styles.noticeIcon}>₹</div>
+              <div style={{ minWidth: 0 }}>
+                <b style={styles.noticeTitle}>Rate enquiry only</b>
+                <p style={styles.noticeText}>
+                  No payment is required now. StoneRate will check the best
+                  available rate and contact you for approval.
+                </p>
+              </div>
+            </div>
+
+            <div style={styles.sectionTitleRow}>
+              <div>
+                <p style={styles.sectionEyebrow}>ORDER INFORMATION</p>
+                <h2 style={styles.sectionTitle}>Order summary</h2>
+              </div>
+              <button type="button" style={styles.editOrderButton}>Edit order</button>
+            </div>
+
+            <article style={styles.tableCard}>
+              <div style={styles.tableHeader}>
+                <span>Product</span>
+                <span>Vehicle</span>
+                <span>Qty.</span>
+              </div>
+
+              {orderItems.map((item, index) => (
+                <div key={item.product}>
+                  {index > 0 && <div style={styles.tableDivider} />}
+                  <div style={styles.tableRow}>
+                    <div style={styles.productCell}>
+                      <span style={styles.productIcon}>🪨</span>
+                      <b>{item.product}</b>
+                    </div>
+                    <div style={styles.vehicleCell}>
+                      <span style={styles.smallTruck}>🚚</span>
+                      <b>{item.vehicles}</b>
+                      <span>{item.vehicles === 1 ? "vehicle" : "vehicles"}</span>
+                    </div>
+                    <div style={styles.qtyCell}>
+                      <b>{item.quantity}</b>
+                      <span>tons</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              <div style={styles.tableTotalRow}>
+                <b>Total</b>
+                <span>{totalVehicles} vehicles</span>
+                <strong>{totalTons} tons</strong>
+              </div>
+            </article>
+
+            <article style={styles.deliveryCard}>
+              <div style={styles.calendarIcon}>📅</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={styles.detailLabel}>Expected delivery date</p>
+                <h3 style={styles.deliveryDate}>05 July 2026</h3>
+                <span style={styles.deliveryCaption}>
+                  Delivery timing will be reconfirmed after rate approval.
+                </span>
+              </div>
+              <button type="button" style={styles.changeButton}>Change</button>
+            </article>
+
+            <article style={styles.processCard}>
+              <p style={styles.processTitle}>What happens next?</p>
+              <div style={styles.processSteps}>
+                <div style={styles.processStep}>
+                  <div style={styles.processNumber}>1</div>
+                  <div><b>Enquiry submitted</b><span>Your requirement reaches StoneRate.</span></div>
+                </div>
+                <div style={styles.processLine} />
+                <div style={styles.processStep}>
+                  <div style={styles.processNumber}>2</div>
+                  <div><b>Best rate checked</b><span>Nearby verified sellers are contacted.</span></div>
+                </div>
+                <div style={styles.processLine} />
+                <div style={styles.processStep}>
+                  <div style={styles.processNumber}>3</div>
+                  <div><b>You confirm the rate</b><span>The request becomes an active order afterward.</span></div>
+                </div>
+              </div>
+            </article>
+
+            <button
+              type="button"
+              style={styles.agreementCard}
+              onClick={() => setConfirmed((value) => !value)}
+            >
+              <span style={{ ...styles.checkbox, ...(confirmed ? styles.checkboxActive : {}) }}>
+                {confirmed ? "✓" : ""}
+              </span>
+              <span style={styles.agreementText}>
+                I confirm that the product, vehicle quantity and expected
+                delivery date shown above are correct.
+              </span>
+            </button>
+
+            {submitted && (
+              <div style={styles.successCard}>
+                <div style={styles.successIcon}>✓</div>
+                <div>
+                  <b>Rate enquiry raised successfully</b>
+                  <p>The request is waiting for rate confirmation. You will be notified when the best rate is ready.</p>
+                </div>
+              </div>
+            )}
+
+            <div style={styles.bottomSpacer} />
+          </section>
+        </div>
+
+        <footer style={styles.fixedFooter}>
+          <div style={styles.footerHint}>
+            <span>🛡️</span>
+            <span>No payment is collected at this stage</span>
+          </div>
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={!confirmed || submitted}
+            style={{
+              ...styles.primaryButton,
+              opacity: confirmed && !submitted ? 1 : 0.52,
+            }}
+          >
+            <span style={styles.primaryIcon}>✦</span>
+            <span>{submitted ? "Enquiry Submitted" : "Place Order & Raise Enquiry"}</span>
+            <b style={styles.primaryArrow}>›</b>
+          </button>
+        </footer>
+        {submitted && (
+  <div style={styles.popupOverlay}>
+    <div style={styles.popupCard}>
+      <div style={styles.popupGlow} />
+
+      <div style={styles.greenTick}>✓</div>
+
+      <h2 style={styles.popupTitle}>
+        Order Raised for
+        <br />
+        Rate Enquiry
+      </h2>
+
+      <p style={styles.popupText}>
+        Your order request has been submitted successfully. StoneRate will
+        check the best available rate and notify you once the rate is ready.
+      </p>
+
+      <div style={styles.popupStatus}>
+        <span style={styles.popupStatusDot} />
+        Waiting for rate confirmation
+      </div>
+
+      <button
+  type="button"
+  style={styles.popupButton}
+  onClick={handleDone}
+>
+  Done
+</button>
+    </div>
+  </div>
+)}
+      </main>
+    </div>
+  );
+}
+
+function createStyles(viewport) {
+  const vw = viewport.width || 390;
+  const vh = viewport.height || 844;
+  const isDesktop = vw >= 700;
+  const appW = isDesktop ? 390 : vw;
+  const appH = isDesktop ? 844 : vh;
+  const rawScale = Math.min(appW / BASE_W, appH / BASE_H);
+  const scale = Math.max(0.86, Math.min(2.05, rawScale));
+  const ms = (value, factor = 0.55) => Math.round(value + (value * scale - value) * factor);
+  const tiny = appW <= 230;
+  const short = appH <= 620;
+
+  return {
+    page: {
+      width: "100vw", height: "100dvh", minHeight: "100dvh",
+      display: "flex", justifyContent: "center", alignItems: isDesktop ? "center" : "stretch",
+      margin: 0, padding: isDesktop ? 10 : 0, overflow: "hidden",
+      background: isDesktop ? "#f4f1ea" : "#0b0907", fontFamily: "Arial, sans-serif",
+      boxSizing: "border-box",
+    },
+    phone: {
+      position: "relative", width: isDesktop ? 390 : "100vw", height: isDesktop ? 844 : "100dvh",
+      overflow: "hidden", background: "#f6f4ef", borderRadius: isDesktop ? 30 : 0,
+      boxShadow: isDesktop ? "0 25px 70px rgba(0,0,0,.25)" : "none", boxSizing: "border-box",
+    },
+    scrollArea: {
+      width: "100%", height: "100%", overflowY: "auto", overflowX: "hidden",
+      WebkitOverflowScrolling: "touch", boxSizing: "border-box",
+    },
+    header: {
+      position: "relative", padding: `${ms(short ? 12 : 16)}px ${ms(tiny ? 11 : 15)}px ${ms(19)}px`,
+      overflow: "hidden", color: "white", boxSizing: "border-box",
+      backgroundImage: HEADER_BG_IMAGE
+        ? `linear-gradient(135deg, rgba(5,4,3,.55), rgba(28,25,23,.46) 55%, rgba(120,53,15,.35)), url("${HEADER_BG_IMAGE}")`
+        : "radial-gradient(circle at 84% 10%, rgba(245,158,11,.45), transparent 30%), linear-gradient(135deg, #080706, #1c1917 54%, #78350f)",
+      backgroundSize: "cover", backgroundPosition: "center 42%", backgroundRepeat: "no-repeat",
+    },
+    headerShade: { position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,.02), rgba(0,0,0,.3))", pointerEvents: "none" },
+    headerGrid: { position: "absolute", inset: 0, opacity: 0.24, pointerEvents: "none", backgroundImage: "linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px)", backgroundSize: `${ms(30)}px ${ms(30)}px` },
+    topBar: { position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "space-between", gap: ms(8) },
+    backButton: { width: ms(32), height: ms(32), display: "grid", placeItems: "center", border: "1px solid rgba(255,255,255,.18)", borderRadius: ms(12), background: "rgba(255,255,255,.11)", color: "white", fontSize: ms(23), lineHeight: 1, cursor: "pointer" },
+    stepBadge: { padding: `${ms(5)}px ${ms(10)}px`, borderRadius: 999, border: "1px solid rgba(245,158,11,.45)", background: "rgba(245,158,11,.17)", color: "#fde68a", fontSize: ms(7.7), letterSpacing: ms(1.2), fontWeight: 950 },
+    editHeaderButton: { minWidth: ms(43), height: ms(30), padding: `0 ${ms(9)}px`, border: "1px solid rgba(255,255,255,.18)", borderRadius: 999, background: "rgba(255,255,255,.11)", color: "white", fontSize: ms(9), fontWeight: 900, cursor: "pointer" },
+    heroRow: { position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "space-between", gap: ms(12), marginTop: ms(14) },
+    eyebrow: { margin: 0, color: "#fde68a", fontSize: ms(7.2), letterSpacing: ms(1.7), fontWeight: 950 },
+    title: { margin: `${ms(6)}px 0 0`, fontSize: ms(short ? 23 : 28), lineHeight: 1.02, letterSpacing: -0.7, fontWeight: 950 },
+    heroSubtext: { maxWidth: ms(220), margin: `${ms(8)}px 0 0`, color: "#e7e5e4", fontSize: ms(8.7), lineHeight: 1.35, fontWeight: 650 },
+    heroIcon: { width: ms(51), height: ms(51), display: "grid", placeItems: "center", borderRadius: ms(20), background: "linear-gradient(135deg, #f59e0b, #ea580c)", boxShadow: "0 15px 30px rgba(234,88,12,.32)", fontSize: ms(25), fontWeight: 950, flexShrink: 0 },
+    summaryStrip: { position: "relative", zIndex: 2, display: "grid", gridTemplateColumns: "1fr auto 1fr auto 1fr", alignItems: "center", marginTop: ms(15), padding: ms(8), border: "1px solid rgba(255,255,255,.13)", borderRadius: ms(16), background: "rgba(255,255,255,.12)", backdropFilter: "blur(10px)" },
+    summaryItem: { display: "flex", flexDirection: "column", alignItems: "center", gap: ms(2), minWidth: 0, fontSize: ms(7.7), textAlign: "center" },
+    summaryDivider: { width: 1, height: ms(27), background: "rgba(255,255,255,.17)" },
+    content: { padding: `${ms(13)}px ${ms(tiny ? 9 : 13)}px 0`, color: "#111827", background: "linear-gradient(180deg, #fff, #f6f4ef 58%, #efede8)", boxSizing: "border-box" },
+    noticeCard: { display: "flex", gap: ms(10), padding: ms(12), border: "1px solid #fde68a", borderRadius: ms(19), background: "linear-gradient(135deg, #fffbeb, #fef3c7)", boxShadow: "0 10px 22px rgba(146,64,14,.08)" },
+    noticeIcon: { width: ms(36), height: ms(36), display: "grid", placeItems: "center", borderRadius: ms(14), background: "#f59e0b", color: "white", fontSize: ms(18), fontWeight: 950, flexShrink: 0 },
+    noticeTitle: { color: "#78350f", fontSize: ms(10.5) },
+    noticeText: { margin: `${ms(4)}px 0 0`, color: "#92400e", fontSize: ms(8.2), lineHeight: 1.35, fontWeight: 650 },
+    sectionTitleRow: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: ms(9), marginTop: ms(16), marginBottom: ms(9) },
+    sectionEyebrow: { margin: 0, color: "#b45309", fontSize: ms(7.3), letterSpacing: ms(1.15), fontWeight: 950 },
+    sectionTitle: { margin: `${ms(3)}px 0 0`, fontSize: ms(15), fontWeight: 950 },
+    editOrderButton: { padding: 0, border: 0, background: "transparent", color: "#b45309", fontSize: ms(8.7), fontWeight: 900, cursor: "pointer", whiteSpace: "nowrap" },
+    tableCard: { overflow: "hidden", border: "1px solid #e7e5e4", borderRadius: ms(20), background: "rgba(255,255,255,.96)", boxShadow: "0 10px 24px rgba(0,0,0,.055)" },
+    tableHeader: { display: "grid", gridTemplateColumns: "1.55fr .85fr .65fr", gap: ms(6), padding: `${ms(9)}px ${ms(11)}px`, background: "#1c1917", color: "#fde68a", fontSize: ms(7.5), letterSpacing: ms(.6), fontWeight: 950 },
+    tableRow: { display: "grid", gridTemplateColumns: "1.55fr .85fr .65fr", alignItems: "center", gap: ms(6), padding: `${ms(11)}px`, fontSize: ms(8.6) },
+    productCell: { display: "flex", alignItems: "center", gap: ms(7), minWidth: 0, lineHeight: 1.15 },
+    productIcon: { width: ms(27), height: ms(27), display: "grid", placeItems: "center", borderRadius: ms(10), background: "#fef3c7", flexShrink: 0 },
+    vehicleCell: { display: "grid", gridTemplateColumns: "auto auto", justifyContent: "start", alignItems: "center", columnGap: ms(3), minWidth: 0 },
+    smallTruck: { gridRow: "1 / span 2", marginRight: ms(2), fontSize: ms(13) },
+    qtyCell: { display: "flex", flexDirection: "column", alignItems: "flex-end", gap: ms(1), color: "#92400e" },
+    tableDivider: { height: 1, margin: `0 ${ms(11)}px`, background: "#eeeae6" },
+    tableTotalRow: { display: "grid", gridTemplateColumns: "1.55fr .85fr .65fr", gap: ms(6), padding: `${ms(9)}px ${ms(11)}px`, background: "#fffbeb", color: "#78350f", fontSize: ms(8.2), alignItems: "center" },
+    deliveryCard: { display: "flex", alignItems: "center", gap: ms(9), marginTop: ms(12), padding: ms(12), border: "1px solid #e7e5e4", borderRadius: ms(20), background: "white", boxShadow: "0 10px 24px rgba(0,0,0,.05)" },
+    calendarIcon: { width: ms(38), height: ms(38), display: "grid", placeItems: "center", borderRadius: ms(14), background: "#fffbeb", fontSize: ms(19), flexShrink: 0 },
+    detailLabel: { margin: 0, color: "#78716c", fontSize: ms(7.8) },
+    deliveryDate: { margin: `${ms(3)}px 0 0`, fontSize: ms(11.3), fontWeight: 950 },
+    deliveryCaption: { display: "block", marginTop: ms(3), color: "#78716c", fontSize: ms(7.2), lineHeight: 1.25 },
+    changeButton: { padding: `${ms(5)}px ${ms(8)}px`, border: "1px solid #fde68a", borderRadius: 999, background: "#fffbeb", color: "#b45309", fontSize: ms(7.8), fontWeight: 900, cursor: "pointer" },
+    processCard: { marginTop: ms(12), padding: ms(13), border: "1px solid #e7e5e4", borderRadius: ms(20), background: "rgba(255,255,255,.88)" },
+    processTitle: { margin: 0, fontSize: ms(11), fontWeight: 950 },
+    processSteps: { marginTop: ms(10) },
+    processStep: { display: "flex", alignItems: "flex-start", gap: ms(9), fontSize: ms(8.3) },
+    processNumber: { width: ms(22), height: ms(22), display: "grid", placeItems: "center", borderRadius: ms(8), background: "#f59e0b", color: "white", fontSize: ms(9), fontWeight: 950, flexShrink: 0 },
+    processLine: { width: 2, height: ms(10), marginLeft: ms(10), background: "#fde68a" },
+    agreementCard: { width: "100%", display: "flex", alignItems: "flex-start", gap: ms(9), marginTop: ms(12), padding: ms(11), border: "1px solid #fde68a", borderRadius: ms(17), background: "#fffbeb", textAlign: "left", cursor: "pointer" },
+    checkbox: { width: ms(21), height: ms(21), display: "grid", placeItems: "center", border: "2px solid #d97706", borderRadius: ms(7), background: "white", color: "white", fontSize: ms(11), fontWeight: 950, flexShrink: 0 },
+    checkboxActive: { background: "#d97706" },
+    agreementText: { color: "#78350f", fontSize: ms(8.4), lineHeight: 1.35, fontWeight: 750 },
+    successCard: { display: "flex", gap: ms(9), marginTop: ms(12), padding: ms(12), border: "1px solid #bbf7d0", borderRadius: ms(18), background: "#f0fdf4", color: "#166534", fontSize: ms(8.5), lineHeight: 1.35 },
+    successIcon: { width: ms(30), height: ms(30), display: "grid", placeItems: "center", borderRadius: ms(11), background: "#22c55e", color: "white", fontWeight: 950, flexShrink: 0 },
+    bottomSpacer: { height: ms(116) },
+    fixedFooter: { position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 30, padding: `${ms(8)}px ${ms(13)}px calc(env(safe-area-inset-bottom, 0px) + ${ms(10)}px)`, background: "linear-gradient(to top, #f6f4ef 76%, rgba(246,244,239,.98) 90%, rgba(246,244,239,.82))", borderTop: "1px solid rgba(120,113,108,.12)", boxShadow: "0 -12px 30px rgba(0,0,0,.10)" },
+    footerHint: { display: "flex", alignItems: "center", justifyContent: "center", gap: ms(5), marginBottom: ms(7), color: "#78716c", fontSize: ms(7.8), fontWeight: 700 },
+    primaryButton: { position: "relative", width: "100%", minHeight: ms(52), display: "flex", alignItems: "center", justifyContent: "center", gap: ms(8), border: 0, borderRadius: ms(21), background: "linear-gradient(135deg, #f59e0b, #ea580c)", color: "white", fontSize: ms(11.7), fontWeight: 950, boxShadow: "0 15px 30px rgba(234,88,12,.3)", cursor: "pointer" },
+    primaryIcon: { width: ms(26), height: ms(26), display: "grid", placeItems: "center", borderRadius: ms(9), background: "rgba(255,255,255,.18)" },
+    popupOverlay: {
+      position: "absolute",
+      inset: 0,
+      zIndex: 100,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: ms(18),
+      background: "rgba(2, 6, 23, 0.72)",
+      backdropFilter: "blur(8px)",
+    },
+    
+    popupCard: {
+      position: "relative",
+      width: "100%",
+      maxWidth: ms(280),
+      overflow: "hidden",
+      padding: `${ms(25)}px ${ms(18)}px ${ms(18)}px`,
+      border: "1px solid rgba(255,255,255,0.18)",
+      borderRadius: ms(26),
+      background:
+        "linear-gradient(145deg, rgba(255,255,255,0.98), rgba(240,253,244,0.97))",
+      boxShadow:
+        "0 30px 80px rgba(0,0,0,0.38), 0 0 45px rgba(34,197,94,0.16)",
+      textAlign: "center",
+    },
+    
+    popupGlow: {
+      position: "absolute",
+      left: "50%",
+      top: ms(-65),
+      width: ms(170),
+      height: ms(130),
+      borderRadius: "50%",
+      background: "rgba(34,197,94,0.20)",
+      filter: `blur(${ms(28)}px)`,
+      transform: "translateX(-50%)",
+      pointerEvents: "none",
+    },
+    
+    greenTick: {
+      position: "relative",
+      zIndex: 2,
+      width: ms(62),
+      height: ms(62),
+      margin: "0 auto",
+      display: "grid",
+      placeItems: "center",
+      border: `${ms(5)}px solid #dcfce7`,
+      borderRadius: "50%",
+      background: "linear-gradient(135deg, #22c55e, #15803d)",
+      color: "white",
+      fontSize: ms(30),
+      fontWeight: 950,
+      boxShadow:
+        "0 14px 30px rgba(34,197,94,0.30), 0 0 0 7px rgba(34,197,94,0.08)",
+    },
+    
+    popupTitle: {
+      position: "relative",
+      zIndex: 2,
+      margin: `${ms(18)}px 0 0`,
+      color: "#111827",
+      fontSize: ms(20),
+      lineHeight: 1.06,
+      fontWeight: 950,
+      letterSpacing: -0.5,
+    },
+    
+    popupText: {
+      position: "relative",
+      zIndex: 2,
+      margin: `${ms(11)}px auto 0`,
+      maxWidth: ms(235),
+      color: "#57534e",
+      fontSize: ms(9.2),
+      lineHeight: 1.45,
+      fontWeight: 650,
+    },
+    
+    popupStatus: {
+      position: "relative",
+      zIndex: 2,
+      width: "fit-content",
+      margin: `${ms(14)}px auto 0`,
+      padding: `${ms(7)}px ${ms(11)}px`,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(6),
+      border: "1px solid #bbf7d0",
+      borderRadius: 999,
+      background: "#f0fdf4",
+      color: "#166534",
+      fontSize: ms(8.5),
+      fontWeight: 900,
+    },
+    
+    popupStatusDot: {
+      width: ms(7),
+      height: ms(7),
+      borderRadius: "50%",
+      background: "#22c55e",
+      boxShadow: "0 0 0 4px rgba(34,197,94,0.12)",
+    },
+    
+    popupButton: {
+      position: "relative",
+      zIndex: 2,
+      width: "100%",
+      minHeight: ms(44),
+      marginTop: ms(17),
+      border: 0,
+      borderRadius: ms(17),
+      background: "linear-gradient(135deg, #22c55e, #15803d)",
+      color: "white",
+      fontSize: ms(11),
+      fontWeight: 950,
+      cursor: "pointer",
+      boxShadow: "0 12px 24px rgba(34,197,94,0.24)",
+    },
+    primaryArrow: { position: "absolute", right: ms(17), fontSize: ms(24), fontWeight: 400 },
+  };
+}
+
+const globalCss = `
+* { box-sizing: border-box; }
+html, body, #root { margin: 0; width: 100%; height: 100%; min-height: 100%; background: #0b0907; overflow: hidden; }
+button, input, select, textarea { font: inherit; }
+body { -webkit-text-size-adjust: 100%; }
+`;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ratedetails
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+
+const BASE_W = 206;
+const BASE_H = 445;
+const HEADER_BG_IMAGE = "";
+
+// Frontend testing settings.
+// Later, these values should come from the backend.
+const INITIAL_REQUEST_STATUS = "checking";
+const INITIAL_CONTACTED_SELLERS = 8;
+const TOTAL_MATCHED_SELLERS = 12;
+const INITIAL_SELLER_RESPONSES = 3;
+const SIX_HOURS_IN_SECONDS = 6 * 60 * 60;
+const FOUR_HOURS_IN_SECONDS = 20;
+
+function useViewport() {
+  const [viewport, setViewport] = useState({
+    width:
+      typeof window !== "undefined"
+        ? window.innerWidth
+        : 390,
+    height:
+      typeof window !== "undefined"
+        ? window.innerHeight
+        : 844,
+  });
+
+  useEffect(() => {
+    const update = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    update();
+
+    window.addEventListener("resize", update);
+    window.addEventListener("orientationchange", update);
+
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener(
+        "orientationchange",
+        update
+      );
+    };
+  }, []);
+
+  return viewport;
+}
+
+export default function RateDetailsPage({
+  goToPage4,
+  goToPage8,
+}) {
+  const viewport = useViewport();
+
+  const styles = useMemo(
+    () => createStyles(viewport),
+    [viewport.width, viewport.height]
+  );
+
+  /*
+    requestStatus values:
+    checking
+    rateReady
+  */
+  /*
+  requestStatus values:
+  checking
+  rateReady
+*/
+const [requestStatus, setRequestStatus] = useState(
+  INITIAL_REQUEST_STATUS
+);
+
+/*
+  decision values:
+  pending
+  accepted
+  rejected
+*/
+const [decision, setDecision] = useState("pending");
+
+const [showRejectPopup, setShowRejectPopup] =
+  useState(false);
+
+const [showAcceptPopup, setShowAcceptPopup] =
+  useState(false);
+
+const [contactedSellers] = useState(
+  INITIAL_CONTACTED_SELLERS
+);
+
+const [sellerResponses] = useState(
+  INITIAL_SELLER_RESPONSES
+);
+
+// Six-hour timer for finding the best rate
+const [remainingSeconds, setRemainingSeconds] =
+  useState(SIX_HOURS_IN_SECONDS);
+
+// Four-hour timer for buyer acceptance
+const [
+  acceptanceRemainingSeconds,
+  setAcceptanceRemainingSeconds,
+] = useState(FOUR_HOURS_IN_SECONDS);
+
+const trackerRef = useRef(null);
+
+const isChecking =
+  requestStatus === "checking";
+
+const isRateReady =
+  requestStatus === "rateReady";
+
+const isAcceptanceExpired =
+  isRateReady &&
+  acceptanceRemainingSeconds <= 0 &&
+  decision === "pending";
+
+const orderItems = [
+  {
+    product: "20mm Crushed Stone",
+    vehicles: 2,
+    quantity: 20,
+  },
+  {
+    product: "40mm Crushed Stone",
+    vehicles: 1,
+    quantity: 10,
+  },
+];
+
+const totalVehicles = orderItems.reduce(
+  (sum, item) => sum + item.vehicles,
+  0
+);
+
+const totalTons = orderItems.reduce(
+  (sum, item) => sum + item.quantity,
+  0
+);
+
+const sellerProgress = Math.min(
+  100,
+  Math.round(
+    (contactedSellers / TOTAL_MATCHED_SELLERS) * 100
+  )
+);
+
+// Six-hour checking countdown
+const countdownHours = String(
+  Math.floor(remainingSeconds / 3600)
+).padStart(2, "0");
+
+const countdownMinutes = String(
+  Math.floor((remainingSeconds % 3600) / 60)
+).padStart(2, "0");
+
+const countdownSeconds = String(
+  remainingSeconds % 60
+).padStart(2, "0");
+
+const countdownText =
+  `${countdownHours}:${countdownMinutes}:${countdownSeconds}`;
+
+// Four-hour rate acceptance countdown
+const acceptanceHours = String(
+  Math.floor(acceptanceRemainingSeconds / 3600)
+).padStart(2, "0");
+
+const acceptanceMinutes = String(
+  Math.floor(
+    (acceptanceRemainingSeconds % 3600) / 60
+  )
+).padStart(2, "0");
+
+const acceptanceSeconds = String(
+  acceptanceRemainingSeconds % 60
+).padStart(2, "0");
+
+const acceptanceCountdownText =
+  `${acceptanceHours}:${acceptanceMinutes}:${acceptanceSeconds}`;
+  const finalStatus =
+  decision === "accepted"
+    ? {
+        label: "Accepted",
+        color: "green",
+        symbol: "✓",
+      }
+    : decision === "rejected"
+    ? {
+        label: "Rejected",
+        color: "red",
+        symbol: "×",
+      }
+    : {
+        label: "Waiting for your confirmation",
+        color: "orange",
+        symbol: "",
+      };  
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const trackerElement = trackerRef.current;
+
+      if (!trackerElement) return;
+
+      if (isChecking) {
+        trackerElement.scrollTo({
+          left: 70,
+          behavior: "smooth",
+        });
+      } else {
+        trackerElement.scrollTo({
+          left:
+            trackerElement.scrollWidth -
+            trackerElement.clientWidth,
+          behavior: "smooth",
+        });
+      }
+    }, 350);
+
+    return () => window.clearTimeout(timer);
+  }, [isChecking]);
+
+  useEffect(() => {
+    if (
+      !isRateReady ||
+      decision !== "pending" ||
+      acceptanceRemainingSeconds <= 0
+    ) {
+      return;
+    }
+  
+    const acceptanceTimer = window.setInterval(() => {
+      setAcceptanceRemainingSeconds((current) => {
+        if (current <= 1) {
+          window.clearInterval(acceptanceTimer);
+          return 0;
+        }
+  
+        return current - 1;
+      });
+    }, 1000);
+  
+    return () => {
+      window.clearInterval(acceptanceTimer);
+    };
+  }, [
+    isRateReady,
+    decision,
+    acceptanceRemainingSeconds,
+  ]);
+
+  useEffect(() => {
+    if (!isChecking) return;
+
+    const countdownTimer = window.setInterval(() => {
+      setRemainingSeconds((current) => {
+        if (current <= 1) {
+          window.clearInterval(countdownTimer);
+          return 0;
+        }
+
+        return current - 1;
+      });
+    }, 1000);
+
+    return () => {
+      window.clearInterval(countdownTimer);
+    };
+  }, [isChecking]);
+
+  const acceptRate = () => {
+    if (isAcceptanceExpired) return;
+  
+    setDecision("accepted");
+    setShowAcceptPopup(true);
+  };
+
+  const rejectRate = () => {
+    if (isAcceptanceExpired) return;
+  
+    setDecision("rejected");
+    setShowRejectPopup(false);
+  };
+  ``
+
+  const showReadyStateForTesting = () => {
+    setRequestStatus("rateReady");
+    setDecision("pending");
+    setAcceptanceRemainingSeconds(
+      FOUR_HOURS_IN_SECONDS
+    );
+  };
+
+  const showCheckingStateForTesting = () => {
+    setRequestStatus("checking");
+    setDecision("pending");
+    setAcceptanceRemainingSeconds(
+      FOUR_HOURS_IN_SECONDS
+    );
+    setShowAcceptPopup(false);
+    setShowRejectPopup(false);
+  };
+
+  return (
+    <div style={styles.page}>
+      <style>{globalCss}</style>
+
+      <main style={styles.phone}>
+        <div
+          className="rate-page-scroll"
+          style={styles.scrollArea}
+        >
+          <header style={styles.header}>
+            <div style={styles.headerShade} />
+            <div style={styles.headerGrid} />
+
+            <div style={styles.topBar}>
+              <button
+                type="button"
+                style={styles.backButton}
+                onClick={goToPage4}
+                aria-label="Back to Home"
+              >
+                ‹
+              </button>
+
+              <div style={styles.requestBadge}>
+                RATE REQUEST
+              </div>
+
+              <button
+                type="button"
+                style={styles.helpButton}
+              >
+                Help
+              </button>
+            </div>
+
+            <div style={styles.heroRow}>
+              <div style={{ minWidth: 0 }}>
+                <p style={styles.eyebrow}>
+                  REQUEST ID: SR-260705-01
+                </p>
+
+                <h1 style={styles.title}>
+                  {isChecking ? (
+                    <>
+                      Finding Your
+                      <br />
+                      Best Rate
+                    </>
+                  ) : (
+                    <>
+                      Your Best Rate
+                      <br />
+                      Is Ready
+                    </>
+                  )}
+                </h1>
+
+                <p style={styles.heroText}>
+                  {isChecking
+                    ? "We’re comparing rates and transport availability with verified sellers near your delivery location."
+                    : "Review the quote and accept or reject the seller rate."}
+                </p>
+              </div>
+
+              <div
+                style={{
+                  ...styles.rateIcon,
+                  ...(isChecking
+                    ? styles.rateIconScanning
+                    : {}),
+                }}
+              >
+                {isChecking ? "⌕" : "₹"}
+              </div>
+            </div>
+          </header>
+
+          <section style={styles.content}>
+            <article style={styles.trackerCard}>
+              <p style={styles.trackerHeading}>
+                Rate request status
+              </p>
+
+              <div
+                ref={trackerRef}
+                className="tracker-scroll"
+                style={styles.trackerViewport}
+              >
+                <div style={styles.tracker}>
+                  <StatusStep
+                    styles={styles}
+                    label="Request submitted"
+                    state="done"
+                  />
+
+                  <StatusConnector
+                    styles={styles}
+                    state="done"
+                  />
+
+                  <StatusStep
+                    styles={styles}
+                    label="Checking with sellers"
+                    state={
+                      isChecking ? "active" : "done"
+                    }
+                    symbol={
+                      isChecking ? "⌕" : "✓"
+                    }
+                  />
+
+                  <StatusConnector
+                    styles={styles}
+                    state={
+                      isRateReady
+                        ? "done"
+                        : "waiting"
+                    }
+                  />
+
+                  <StatusStep
+                    styles={styles}
+                    label="Best rate provided"
+                    state={
+                      isRateReady
+                        ? "done"
+                        : "waiting"
+                    }
+                  />
+
+                  <StatusConnector
+                    styles={styles}
+                    state={
+                      isRateReady
+                        ? finalStatus.color
+                        : "waiting"
+                    }
+                  />
+
+                  <StatusStep
+                    styles={styles}
+                    label={
+                      isRateReady
+                        ? finalStatus.label
+                        : "Your confirmation"
+                    }
+                    state={
+                      isRateReady
+                        ? finalStatus.color
+                        : "waiting"
+                    }
+                    symbol={
+                      isRateReady
+                        ? finalStatus.symbol
+                        : ""
+                    }
+                    wide
+                  />
+                </div>
+              </div>
+            </article>
+
+            <div style={styles.rateNotice}>
+              <div
+                style={{
+                  ...styles.noticeIcon,
+                  ...(isChecking
+                    ? styles.noticeIconChecking
+                    : {}),
+                }}
+              >
+                {isChecking ? "⌕" : "✓"}
+              </div>
+
+              <div style={{ minWidth: 0 }}>
+                <b style={styles.noticeTitle}>
+                  {isChecking
+                    ? "Checking with verified sellers"
+                    : "Best rate provided"}
+                </b>
+
+                <p style={styles.noticeText}>
+                  {isChecking
+                    ? "StoneRate is comparing material rates, transport availability and delivery timing."
+                    : "The quote is waiting for your confirmation."}
+                </p>
+              </div>
+            </div>
+
+            {isChecking && (
+              <>
+                <article style={styles.scanningCard}>
+                  <div style={styles.scannerArea}>
+                    <div style={styles.scannerRingOuter}>
+                      <div
+                        style={styles.scannerGridLineOne}
+                      />
+
+                      <div
+                        style={styles.scannerGridLineTwo}
+                      />
+
+                      <div
+                        style={styles.scannerRingMiddle}
+                      >
+                        <div
+                          style={styles.scannerRingInner}
+                        >
+                          <span
+                            style={styles.scannerCentre}
+                          >
+                            ₹
+                          </span>
+                        </div>
+                      </div>
+
+                      <div
+                        style={styles.scannerBeam}
+                      />
+
+                      <span
+                        style={{
+                          ...styles.sellerDot,
+                          ...styles.sellerDotOne,
+                        }}
+                      />
+
+                      <span
+                        style={{
+                          ...styles.sellerDot,
+                          ...styles.sellerDotTwo,
+                        }}
+                      />
+
+                      <span
+                        style={{
+                          ...styles.sellerDot,
+                          ...styles.sellerDotThree,
+                        }}
+                      />
+
+                      <span
+                        style={{
+                          ...styles.sellerDot,
+                          ...styles.sellerDotFour,
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={styles.scanningText}>
+                    <span
+                      style={styles.scanningEyebrow}
+                    >
+                      LIVE SELLER SEARCH
+                    </span>
+
+                    <h2 style={styles.scanningTitle}>
+                      Scanning nearby sellers
+                    </h2>
+
+                    <p
+                      style={
+                        styles.scanningDescription
+                      }
+                    >
+                      Comparing material price,
+                      transport cost and vehicle
+                      availability.
+                    </p>
+                  </div>
+                </article>
+
+                <article
+                  style={styles.sellerProgressCard}
+                >
+                  <div
+                    style={styles.sellerProgressHeader}
+                  >
+                    <div>
+                      <span
+                        style={styles.progressEyebrow}
+                      >
+                        SELLER OUTREACH
+                      </span>
+
+                      <h3
+                        style={styles.progressTitle}
+                      >
+                        {contactedSellers} of{" "}
+                        {TOTAL_MATCHED_SELLERS} sellers
+                        contacted
+                      </h3>
+                    </div>
+
+                    <div
+                      style={
+                        styles.progressPercentage
+                      }
+                    >
+                      {sellerProgress}%
+                    </div>
+                  </div>
+
+                  <div
+                    style={
+                      styles.sellerProgressTrack
+                    }
+                  >
+                    <div
+                      style={{
+                        ...styles.sellerProgressFill,
+                        width: `${sellerProgress}%`,
+                      }}
+                    />
+                  </div>
+
+                  <div
+                    style={styles.sellerMetricGrid}
+                  >
+                    <div
+                      style={styles.sellerMetric}
+                    >
+                      <span>Matched</span>
+                      <b>
+                        {TOTAL_MATCHED_SELLERS}
+                      </b>
+                    </div>
+
+                    <div
+                      style={styles.sellerMetric}
+                    >
+                      <span>Contacted</span>
+                      <b>{contactedSellers}</b>
+                    </div>
+
+                    <div
+                      style={styles.sellerMetric}
+                    >
+                      <span>Responses</span>
+                      <b>{sellerResponses}</b>
+                    </div>
+                  </div>
+                </article>
+
+                <article style={styles.countdownCard}>
+                  <div style={styles.countdownIcon}>
+                    ◷
+                  </div>
+
+                  <div
+                    style={styles.countdownContent}
+                  >
+                    <span
+                      style={styles.countdownLabel}
+                    >
+                      ESTIMATED UPDATE WITHIN
+                    </span>
+
+                    {remainingSeconds > 0 ? (
+                      <strong
+                        style={
+                          styles.countdownValue
+                        }
+                      >
+                        {countdownText}
+                      </strong>
+                    ) : (
+                      <strong
+                        style={
+                          styles.countdownExpired
+                        }
+                      >
+                        Follow-up in progress
+                      </strong>
+                    )}
+
+                    <p
+                      style={
+                        styles.countdownDescription
+                      }
+                    >
+                      {remainingSeconds > 0
+                        ? "We aim to provide the best available rate before this timer ends."
+                        : "The rate check is taking longer than expected. We’re following up with sellers and will notify you as soon as possible."}
+                    </p>
+                  </div>
+                </article>
+
+                <article
+                  style={styles.comparisonCard}
+                >
+                  <div
+                    style={styles.comparisonHeader}
+                  >
+                    <div>
+                      <span
+                        style={styles.progressEyebrow}
+                      >
+                        RATE COMPARISON
+                      </span>
+
+                      <h3
+                        style={styles.comparisonTitle}
+                      >
+                        What StoneRate is checking
+                      </h3>
+                    </div>
+
+                    <span style={styles.liveBadge}>
+                      <span
+                        style={styles.liveBadgeDot}
+                      />
+                      Live
+                    </span>
+                  </div>
+
+                  <ComparisonRow
+                    styles={styles}
+                    label="Material availability"
+                    status="Checked"
+                    state="done"
+                  />
+
+                  <ComparisonRow
+                    styles={styles}
+                    label="Seller price per ton"
+                    status="Checking"
+                    state="active"
+                  />
+
+                  <ComparisonRow
+                    styles={styles}
+                    label="Vehicle availability"
+                    status="Checking"
+                    state="active"
+                  />
+
+                  <ComparisonRow
+                    styles={styles}
+                    label="Transport cost"
+                    status="Waiting"
+                    state="waiting"
+                  />
+
+                  <ComparisonRow
+                    styles={styles}
+                    label="Delivery timing"
+                    status="Waiting"
+                    state="waiting"
+                    last
+                  />
+                </article>
+
+                <div
+                  style={styles.notificationCard}
+                >
+                  <div
+                    style={styles.notificationIcon}
+                  >
+                    🔔
+                  </div>
+
+                  <div style={{ minWidth: 0 }}>
+                    <b
+                      style={
+                        styles.notificationTitle
+                      }
+                    >
+                      We’ll notify you when the rate
+                      is ready
+                    </b>
+
+                    <p
+                      style={
+                        styles.notificationText
+                      }
+                    >
+                      You can leave this page. Seller
+                      outreach will continue in the
+                      background.
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
+
+{isRateReady && (
+  <>
+    {decision === "pending" && (
+      <article
+        style={{
+          ...styles.acceptanceTimerCard,
+          ...(isAcceptanceExpired
+            ? styles.acceptanceTimerCardExpired
+            : {}),
+        }}
+      >
+        <div
+          style={{
+            ...styles.acceptanceTimerIcon,
+            ...(isAcceptanceExpired
+              ? styles.acceptanceTimerIconExpired
+              : {}),
+          }}
+        >
+          {isAcceptanceExpired ? "!" : "◷"}
+        </div>
+
+        <div style={styles.acceptanceTimerContent}>
+          <span
+            style={{
+              ...styles.acceptanceTimerLabel,
+              ...(isAcceptanceExpired
+                ? styles.acceptanceTimerLabelExpired
+                : {}),
+            }}
+          >
+            {isAcceptanceExpired
+              ? "RESPONSE WINDOW CLOSED"
+              : "RATE RESERVED FOR"}
+          </span>
+
+          {isAcceptanceExpired ? (
+            <strong
+              style={styles.acceptanceExpiredTitle}
+            >
+              Response time expired
+            </strong>
+          ) : (
+            <strong
+              style={styles.acceptanceTimerValue}
+            >
+              {acceptanceCountdownText}
+            </strong>
+          )}
+
+          <p
+            style={{
+              ...styles.acceptanceTimerDescription,
+              ...(isAcceptanceExpired
+                ? styles.acceptanceTimerDescriptionExpired
+                : {}),
+            }}
+          >
+            {isAcceptanceExpired
+              ? "No response was received before the four-hour deadline. This quote is no longer available for acceptance."
+              : "Please accept or reject this rate before the timer ends. Seller rates and availability may change afterward."}
+          </p>
+        </div>
+      </article>
+    )}
+
+    <div style={styles.sectionHeading}>
+      <div>
+        <p style={styles.sectionEyebrow}>
+          QUOTE DETAILS
+        </p>
+
+        <h2 style={styles.sectionTitle}>
+          Rate summary
+        </h2>
+      </div>
+
+      <div
+        style={{
+          ...styles.validPill,
+          ...(isAcceptanceExpired
+            ? styles.expiredPill
+            : {}),
+        }}
+      >
+        {isAcceptanceExpired
+          ? "Expired"
+          : "Valid for 4 hours"}
+      </div>
+    </div>
+
+    <article
+      style={{
+        ...styles.quoteCard,
+        ...(isAcceptanceExpired
+          ? styles.quoteCardExpired
+          : {}),
+      }}
+    >
+      <div style={styles.quoteGlow} />
+
+      <div style={styles.quoteTopRow}>
+        <div>
+          <p style={styles.quoteLabel}>
+            Best available rate
+          </p>
+
+          <div style={styles.quoteValueRow}>
+            <span style={styles.rupeeSymbol}>
+              ₹
+            </span>
+
+            <b style={styles.quoteValue}>
+              1,280
+            </b>
+
+            <span style={styles.perTon}>
+              / ton
+            </span>
+          </div>
+        </div>
+
+        <div
+          style={{
+            ...styles.bestRateBadge,
+            ...(isAcceptanceExpired
+              ? styles.bestRateBadgeExpired
+              : {}),
+          }}
+        >
+          {isAcceptanceExpired
+            ? "QUOTE EXPIRED"
+            : "BEST RATE"}
+        </div>
+      </div>
+
+      <div style={styles.quoteMetaGrid}>
+        <div style={styles.quoteMetaItem}>
+          <span>Total quantity</span>
+          <b>{totalTons} tons</b>
+        </div>
+
+        <div style={styles.quoteMetaItem}>
+          <span>Vehicles</span>
+          <b>{totalVehicles} vehicles</b>
+        </div>
+
+        <div style={styles.quoteMetaItem}>
+          <span>Transport</span>
+          <b>Included</b>
+        </div>
+      </div>
+
+      <div style={styles.estimatedRow}>
+        <span>Estimated material value</span>
+        <b>₹38,400</b>
+      </div>
+    </article>
+  </>
+)}
+
+            <div style={styles.sectionHeading}>
+              <div>
+                <p style={styles.sectionEyebrow}>
+                  REQUEST DETAILS
+                </p>
+
+                <h2 style={styles.sectionTitle}>
+                  Order summary
+                </h2>
+              </div>
+
+              <div style={styles.requestPill}>
+                {totalTons} tons
+              </div>
+            </div>
+
+            <article style={styles.tableCard}>
+              <div style={styles.tableHeader}>
+                <span>Product</span>
+                <span>Vehicle</span>
+                <span>Qty.</span>
+              </div>
+
+              {orderItems.map((item, index) => (
+                <React.Fragment
+                  key={item.product}
+                >
+                  {index > 0 && (
+                    <div
+                      style={styles.tableDivider}
+                    />
+                  )}
+
+                  <div style={styles.tableRow}>
+                    <div
+                      style={styles.productCell}
+                    >
+                      <span
+                        style={styles.productIcon}
+                      >
+                        🪨
+                      </span>
+
+                      <b>{item.product}</b>
+                    </div>
+
+                    <div
+                      style={styles.vehicleCell}
+                    >
+                      <span>🚚</span>
+                      <b>{item.vehicles}</b>
+
+                      <small>
+                        {item.vehicles === 1
+                          ? "vehicle"
+                          : "vehicles"}
+                      </small>
+                    </div>
+
+                    <div style={styles.qtyCell}>
+                      <b>{item.quantity}</b>
+                      <span>tons</span>
+                    </div>
+                  </div>
+                </React.Fragment>
+              ))}
+            </article>
+
+            <article style={styles.deliveryCard}>
+              <div style={styles.deliveryIcon}>
+                📅
+              </div>
+
+              <div
+                style={{
+                  minWidth: 0,
+                  flex: 1,
+                }}
+              >
+                <span style={styles.detailLabel}>
+                  Expected delivery
+                </span>
+
+                <b style={styles.deliveryDate}>
+                  05 July 2026
+                </b>
+              </div>
+
+              <div style={styles.deliveryStatus}>
+                Scheduled
+              </div>
+            </article>
+
+            {isRateReady &&
+              decision === "accepted" && (
+                <div style={styles.acceptedCard}>
+                  <div
+                    style={styles.acceptedIcon}
+                  >
+                    ✓
+                  </div>
+
+                  <div>
+                    <b>Rate accepted</b>
+
+                    <p>
+                      Continue to the
+                      supplier-details page to review
+                      and confirm the seller.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+            {isRateReady &&
+              decision === "rejected" && (
+                <div style={styles.rejectedCard}>
+                  <div
+                    style={styles.rejectedIcon}
+                  >
+                    ×
+                  </div>
+
+                  <div>
+                    <b>Rate rejected</b>
+
+                    <p>
+                      This quote will not be used to
+                      place the order.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+            {isChecking && (
+              <button
+                type="button"
+                style={styles.testReadyButton}
+                onClick={showReadyStateForTesting}
+              >
+                Test: Mark Best Rate as Ready
+              </button>
+            )}
+
+            {isRateReady && (
+              <button
+                type="button"
+                style={styles.testCheckingButton}
+                onClick={showCheckingStateForTesting}
+              >
+                Test: Return to Checking State
+              </button>
+            )}
+
+            <div style={styles.bottomSpacer} />
+          </section>
+        </div>
+
+        <footer style={styles.fixedFooter}>
+          {isChecking && (
+            <>
+              <div
+                style={styles.checkingFooterHint}
+              >
+                <span
+                  style={styles.checkingFooterDot}
+                />
+
+                <span>
+                  Seller outreach is currently in
+                  progress
+                </span>
+              </div>
+
+              <button
+                type="button"
+                style={styles.checkingButton}
+                disabled
+              >
+                <span
+                  style={styles.footerSpinner}
+                >
+                  ⌕
+                </span>
+
+                Checking Best Rates...
+              </button>
+            </>
+          )}
+
+{isRateReady &&
+  decision === "pending" &&
+  !isAcceptanceExpired && (
+              <>
+                <div style={styles.footerHint}>
+                  <span>🛡️</span>
+
+                  <span>
+                    Choose whether to accept or reject
+                    this rate
+                  </span>
+                </div>
+
+                <div
+                  style={styles.footerButtons}
+                >
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowRejectPopup(true)
+                    }
+                    style={styles.rejectButton}
+                  >
+                    <span>×</span>
+                    Reject Rate
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={acceptRate}
+                    style={styles.acceptButton}
+                  >
+                    <span>✓</span>
+                    Accept Rate
+                  </button>
+                </div>
+              </>
+            )}
+
+{isRateReady &&
+  decision === "pending" &&
+  isAcceptanceExpired && (
+    <>
+      <div style={styles.expiredFooterHint}>
+        <span>!</span>
+
+        <span>
+          No response was received within four hours
+        </span>
+      </div>
+
+      <button
+        type="button"
+        style={styles.expiredFooterButton}
+        disabled
+      >
+        Response Time Expired
+      </button>
+    </>
+  )}  
+
+          {isRateReady &&
+            decision === "accepted" && (
+              <>
+                <div
+                  style={styles.footerHintGreen}
+                >
+                  <span>✓</span>
+                  <span>
+                    Rate accepted successfully
+                  </span>
+                </div>
+
+                <button
+  type="button"
+  style={styles.nextPageButton}
+  onClick={goToPage8}
+>
+  View Active Order
+  <b>›</b>
+</button>
+              </>
+            )}
+
+          {isRateReady &&
+            decision === "rejected" && (
+              <>
+                <div
+                  style={styles.footerHintRed}
+                >
+                  <span>×</span>
+
+                  <span>
+                    This rate has been rejected
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  style={
+                    styles.rejectedOnlyButton
+                  }
+                  disabled
+                >
+                  Rate Rejected
+                </button>
+              </>
+            )}
+        </footer>
+
+        {showRejectPopup && (
+          <div style={styles.popupOverlay}>
+            <div style={styles.rejectPopup}>
+              <div style={styles.warningIcon}>
+                !
+              </div>
+
+              <h2 style={styles.popupTitle}>
+                Reject this rate?
+              </h2>
+
+              <p style={styles.popupText}>
+                The quote will be marked as rejected
+                and will not be used to place this
+                order.
+              </p>
+
+              <div style={styles.popupButtons}>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowRejectPopup(false)
+                  }
+                  style={styles.cancelButton}
+                >
+                  Keep Rate
+                </button>
+
+                <button
+                  type="button"
+                  onClick={rejectRate}
+                  style={
+                    styles.confirmRejectButton
+                  }
+                >
+                  Yes, Reject
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showAcceptPopup && (
+          <div style={styles.popupOverlay}>
+            <div style={styles.acceptPopup}>
+              <div style={styles.popupGlow} />
+
+              <div style={styles.greenTick}>
+                ✓
+              </div>
+
+              <h2 style={styles.popupTitle}>
+                Rate Accepted
+              </h2>
+
+              <p style={styles.popupText}>
+                The best rate has been accepted.
+                Supplier details can now be reviewed
+                on the next page.
+              </p>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowAcceptPopup(false)
+                }
+                style={styles.doneButton}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
+
+function StatusStep({
+  styles,
+  label,
+  state,
+  symbol,
+  wide,
+}) {
+  const circleStyle =
+    state === "done" || state === "green"
+      ? styles.statusCircleGreen
+      : state === "red"
+      ? styles.statusCircleRed
+      : state === "waiting"
+      ? styles.statusCircleWaiting
+      : styles.statusCircleOrange;
+
+  const labelStyle =
+    state === "done" || state === "green"
+      ? styles.statusLabelGreen
+      : state === "red"
+      ? styles.statusLabelRed
+      : state === "waiting"
+      ? styles.statusLabelWaiting
+      : styles.statusLabelOrange;
+
+  return (
+    <div
+      style={{
+        ...styles.statusStep,
+        ...(wide ? styles.statusStepWide : {}),
+      }}
+    >
+      <div
+        style={{
+          ...styles.statusCircle,
+          ...circleStyle,
+        }}
+      >
+        {state === "done" ? "✓" : symbol}
+      </div>
+
+      <span
+        style={{
+          ...styles.statusLabel,
+          ...labelStyle,
+        }}
+      >
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function StatusConnector({ styles, state }) {
+  const background =
+    state === "done" || state === "green"
+      ? "#22c55e"
+      : state === "red"
+      ? "linear-gradient(to right, #22c55e, #ef4444)"
+      : state === "waiting"
+      ? "#e7e5e4"
+      : "linear-gradient(to right, #22c55e, #f59e0b)";
+
+  return (
+    <div
+      style={{
+        ...styles.statusConnector,
+        background,
+      }}
+    />
+  );
+}
+
+function ComparisonRow({
+  styles,
+  label,
+  status,
+  state,
+  last,
+}) {
+  const icon =
+    state === "done"
+      ? "✓"
+      : state === "active"
+      ? "⌕"
+      : "•";
+
+  return (
+    <div
+      style={{
+        ...styles.comparisonRow,
+        ...(last
+          ? styles.comparisonRowLast
+          : {}),
+      }}
+    >
+      <span
+        style={{
+          ...styles.comparisonIcon,
+          ...(state === "done"
+            ? styles.comparisonIconDone
+            : {}),
+          ...(state === "active"
+            ? styles.comparisonIconActive
+            : {}),
+          ...(state === "waiting"
+            ? styles.comparisonIconWaiting
+            : {}),
+        }}
+      >
+        {icon}
+      </span>
+
+      <span style={styles.comparisonLabel}>
+        {label}
+      </span>
+
+      <span
+        style={{
+          ...styles.comparisonStatus,
+          ...(state === "done"
+            ? styles.comparisonStatusDone
+            : {}),
+          ...(state === "active"
+            ? styles.comparisonStatusActive
+            : {}),
+          ...(state === "waiting"
+            ? styles.comparisonStatusWaiting
+            : {}),
+        }}
+      >
+        {status}
+      </span>
+    </div>
+  );
+}
+
+function createStyles(viewport) {
+  const vw = viewport.width || 390;
+  const vh = viewport.height || 844;
+
+  const isDesktop = vw >= 700;
+  const appW = isDesktop ? 390 : vw;
+  const appH = isDesktop ? 844 : vh;
+
+  const rawScale = Math.min(
+    appW / BASE_W,
+    appH / BASE_H
+  );
+
+  const scale = Math.max(
+    0.86,
+    Math.min(2.05, rawScale)
+  );
+
+  const ms = (value, factor = 0.55) =>
+    Math.round(
+      value +
+        (value * scale - value) * factor
+    );
+
+  const tiny = appW <= 230;
+  const short = appH <= 620;
+
+  return {
+    page: {
+      width: "100vw",
+      height: "100dvh",
+      minHeight: "100dvh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: isDesktop
+        ? "center"
+        : "stretch",
+      margin: 0,
+      padding: isDesktop ? 10 : 0,
+      overflow: "hidden",
+      background: isDesktop
+        ? "#f4f1ea"
+        : "#0b0907",
+      fontFamily: "Arial, sans-serif",
+    },
+
+    phone: {
+      position: "relative",
+      width: isDesktop ? 390 : "100vw",
+      height: isDesktop ? 844 : "100dvh",
+      overflow: "hidden",
+      background: "#f6f4ef",
+      borderRadius: isDesktop ? 30 : 0,
+      boxShadow: isDesktop
+        ? "0 25px 70px rgba(0,0,0,.25)"
+        : "none",
+    },
+    acceptanceTimerCard: {
+      display: "flex",
+      alignItems: "center",
+      gap: ms(12),
+      marginTop: ms(12),
+      padding: ms(13),
+      border: "1px solid #fcd34d",
+      borderRadius: ms(21),
+      background:
+        "linear-gradient(135deg, #fffbeb, #fef3c7)",
+      boxShadow:
+        "0 12px 26px rgba(146,64,14,.12)",
+    },
+    
+    acceptanceTimerCardExpired: {
+      borderColor: "#fecaca",
+      background:
+        "linear-gradient(135deg, #fff7f7, #fee2e2)",
+      boxShadow:
+        "0 12px 26px rgba(185,28,28,.08)",
+    },
+    
+    acceptanceTimerIcon: {
+      width: ms(46),
+      height: ms(46),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: ms(16),
+      background:
+        "linear-gradient(135deg, #f59e0b, #ea580c)",
+      color: "white",
+      fontSize: ms(24),
+      fontWeight: 950,
+      boxShadow:
+        "0 10px 22px rgba(234,88,12,.24)",
+    },
+    
+    acceptanceTimerIconExpired: {
+      background:
+        "linear-gradient(135deg, #ef4444, #b91c1c)",
+      boxShadow:
+        "0 10px 22px rgba(239,68,68,.20)",
+    },
+    
+    acceptanceTimerContent: {
+      minWidth: 0,
+      flex: 1,
+    },
+    
+    acceptanceTimerLabel: {
+      display: "block",
+      color: "#92400e",
+      fontSize: ms(6.8),
+      letterSpacing: ms(.9),
+      fontWeight: 950,
+    },
+    
+    acceptanceTimerLabelExpired: {
+      color: "#b91c1c",
+    },
+    
+    acceptanceTimerValue: {
+      display: "block",
+      marginTop: ms(3),
+      color: "#78350f",
+      fontSize: ms(21),
+      lineHeight: 1,
+      letterSpacing: ms(1),
+      fontWeight: 950,
+    },
+    
+    acceptanceExpiredTitle: {
+      display: "block",
+      marginTop: ms(4),
+      color: "#991b1b",
+      fontSize: ms(12),
+      lineHeight: 1.1,
+      fontWeight: 950,
+    },
+    
+    acceptanceTimerDescription: {
+      margin: `${ms(6)}px 0 0`,
+      color: "#92400e",
+      fontSize: ms(7.5),
+      lineHeight: 1.35,
+      fontWeight: 650,
+    },
+    
+    acceptanceTimerDescriptionExpired: {
+      color: "#991b1b",
+    },
+    
+    expiredPill: {
+      background: "#fee2e2",
+      color: "#b91c1c",
+    },
+    
+    quoteCardExpired: {
+      filter: "saturate(.72)",
+      opacity: 0.84,
+    },
+    
+    bestRateBadgeExpired: {
+      borderColor: "rgba(239,68,68,.35)",
+      background: "rgba(239,68,68,.16)",
+      color: "#fecaca",
+    },
+    
+    expiredFooterHint: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(6),
+      marginBottom: ms(7),
+      color: "#b91c1c",
+      fontSize: ms(7.8),
+      fontWeight: 900,
+    },
+    
+    expiredFooterButton: {
+      width: "100%",
+      minHeight: ms(48),
+      border: "1px solid #fecaca",
+      borderRadius: ms(18),
+      background:
+        "linear-gradient(135deg, #ef4444, #b91c1c)",
+      color: "white",
+      fontSize: ms(10),
+      fontWeight: 950,
+      opacity: 0.82,
+    },
+
+    scrollArea: {
+      width: "100%",
+      height: "100%",
+      overflowY: "auto",
+      overflowX: "hidden",
+      scrollBehavior: "smooth",
+      WebkitOverflowScrolling: "touch",
+    },
+
+    header: {
+      position: "sticky",
+      top: 0,
+      zIndex: 40,
+      padding: `${ms(short ? 8 : 11)}px ${ms(
+        tiny ? 10 : 13
+      )}px ${ms(12)}px`,
+      overflow: "hidden",
+      color: "white",
+      backgroundImage: HEADER_BG_IMAGE
+        ? `linear-gradient(
+            135deg,
+            rgba(5,4,3,.58),
+            rgba(28,25,23,.46) 55%,
+            rgba(120,53,15,.34)
+          ),
+          url("${HEADER_BG_IMAGE}")`
+        : "radial-gradient(circle at 84% 10%, rgba(245,158,11,.45), transparent 30%), linear-gradient(135deg, #080706, #1c1917 54%, #78350f)",
+      backgroundSize: "cover",
+      backgroundPosition: "center 42%",
+      backgroundRepeat: "no-repeat",
+    },
+
+    headerShade: {
+      position: "absolute",
+      inset: 0,
+      background:
+        "linear-gradient(to bottom, rgba(0,0,0,.02), rgba(0,0,0,.32))",
+      pointerEvents: "none",
+    },
+
+    headerGrid: {
+      position: "absolute",
+      inset: 0,
+      opacity: 0.24,
+      pointerEvents: "none",
+      backgroundImage:
+        "linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px)",
+      backgroundSize: `${ms(30)}px ${ms(
+        30
+      )}px`,
+    },
+
+    topBar: {
+      position: "relative",
+      zIndex: 2,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: ms(8),
+    },
+
+    backButton: {
+      width: ms(32),
+      height: ms(32),
+      display: "grid",
+      placeItems: "center",
+      padding: 0,
+      border:
+        "1px solid rgba(255,255,255,.18)",
+      borderRadius: ms(12),
+      background: "rgba(255,255,255,.11)",
+      color: "white",
+      fontSize: ms(23),
+      lineHeight: 1,
+      cursor: "pointer",
+    },
+
+    requestBadge: {
+      padding: `${ms(5)}px ${ms(10)}px`,
+      borderRadius: 999,
+      border:
+        "1px solid rgba(245,158,11,.45)",
+      background: "rgba(245,158,11,.17)",
+      color: "#fde68a",
+      fontSize: ms(7.7),
+      letterSpacing: ms(1.2),
+      fontWeight: 950,
+    },
+
+    helpButton: {
+      minWidth: ms(43),
+      height: ms(30),
+      padding: `0 ${ms(9)}px`,
+      border:
+        "1px solid rgba(255,255,255,.18)",
+      borderRadius: 999,
+      background: "rgba(255,255,255,.11)",
+      color: "white",
+      fontSize: ms(9),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+
+    heroRow: {
+      position: "relative",
+      zIndex: 2,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: ms(12),
+      marginTop: ms(14),
+    },
+
+    eyebrow: {
+      margin: 0,
+      color: "#fde68a",
+      fontSize: ms(7.1),
+      letterSpacing: ms(1.25),
+      fontWeight: 950,
+    },
+
+    title: {
+      margin: `${ms(6)}px 0 0`,
+      fontSize: ms(short ? 23 : 28),
+      lineHeight: 1.02,
+      letterSpacing: -0.7,
+      fontWeight: 950,
+    },
+
+    heroText: {
+      maxWidth: ms(220),
+      margin: `${ms(8)}px 0 0`,
+      color: "#e7e5e4",
+      fontSize: ms(8.7),
+      lineHeight: 1.35,
+      fontWeight: 650,
+    },
+
+    rateIcon: {
+      width: ms(51),
+      height: ms(51),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: ms(20),
+      background:
+        "linear-gradient(135deg, #f59e0b, #ea580c)",
+      color: "white",
+      fontSize: ms(27),
+      fontWeight: 950,
+      boxShadow:
+        "0 15px 30px rgba(234,88,12,.32)",
+      flexShrink: 0,
+    },
+
+    rateIconScanning: {
+      animation:
+        "scannerIconPulse 1.8s ease-in-out infinite",
+    },
+
+    content: {
+      padding: `${ms(13)}px ${ms(
+        tiny ? 9 : 13
+      )}px 0`,
+      color: "#111827",
+      background:
+        "linear-gradient(180deg, #fff, #f6f4ef 58%, #efede8)",
+    },
+
+    trackerCard: {
+      padding: `${ms(12)}px ${ms(
+        8
+      )}px ${ms(10)}px`,
+      border: "1px solid #e7e5e4",
+      borderRadius: ms(20),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    trackerHeading: {
+      margin: `0 0 ${ms(11)}px`,
+      textAlign: "center",
+      fontSize: ms(11),
+      fontWeight: 950,
+    },
+
+    trackerViewport: {
+      width: "100%",
+      overflowX: "auto",
+      overflowY: "hidden",
+      scrollbarWidth: "none",
+      paddingBottom: ms(3),
+    },
+
+    tracker: {
+      minWidth: ms(455),
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "center",
+    },
+
+    statusStep: {
+      width: ms(86),
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      flexShrink: 0,
+      textAlign: "center",
+    },
+
+    statusStepWide: {
+      width: ms(112),
+    },
+
+    statusCircle: {
+      width: ms(25),
+      height: ms(25),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: "50%",
+      fontSize: ms(10),
+      fontWeight: 950,
+    },
+
+    statusCircleGreen: {
+      background: "#22c55e",
+      color: "white",
+      boxShadow:
+        "0 6px 14px rgba(34,197,94,.22)",
+    },
+
+    statusCircleOrange: {
+      background: "#f59e0b",
+      color: "white",
+      boxShadow:
+        "0 6px 14px rgba(245,158,11,.24)",
+      animation:
+        "scannerIconPulse 1.8s ease-in-out infinite",
+    },
+
+    statusCircleRed: {
+      background: "#ef4444",
+      color: "white",
+      boxShadow:
+        "0 6px 14px rgba(239,68,68,.22)",
+    },
+
+    statusCircleWaiting: {
+      border: "2px solid #d6d3d1",
+      background: "#f5f5f4",
+      color: "#a8a29e",
+      boxShadow: "none",
+    },
+
+    statusLabel: {
+      marginTop: ms(6),
+      fontSize: ms(7),
+      lineHeight: 1.16,
+      fontWeight: 850,
+    },
+
+    statusLabelGreen: {
+      color: "#166534",
+    },
+
+    statusLabelOrange: {
+      color: "#92400e",
+    },
+
+    statusLabelRed: {
+      color: "#b91c1c",
+    },
+
+    statusLabelWaiting: {
+      color: "#a8a29e",
+    },
+
+    statusConnector: {
+      width: ms(22),
+      height: ms(4),
+      marginTop: ms(10.5),
+      borderRadius: 999,
+      flexShrink: 0,
+    },
+
+    rateNotice: {
+      display: "flex",
+      gap: ms(10),
+      marginTop: ms(11),
+      padding: ms(12),
+      border: "1px solid #fde68a",
+      borderRadius: ms(19),
+      background:
+        "linear-gradient(135deg, #fffbeb, #fef3c7)",
+      boxShadow:
+        "0 10px 22px rgba(146,64,14,.08)",
+    },
+
+    noticeIcon: {
+      width: ms(36),
+      height: ms(36),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: ms(14),
+      background: "#22c55e",
+      color: "white",
+      fontSize: ms(18),
+      fontWeight: 950,
+      flexShrink: 0,
+    },
+
+    noticeIconChecking: {
+      background:
+        "linear-gradient(135deg, #f59e0b, #ea580c)",
+      animation:
+        "scannerIconPulse 1.8s ease-in-out infinite",
+    },
+
+    noticeTitle: {
+      color: "#78350f",
+      fontSize: ms(10.1),
+    },
+
+    noticeText: {
+      margin: `${ms(4)}px 0 0`,
+      color: "#92400e",
+      fontSize: ms(8.1),
+      lineHeight: 1.35,
+      fontWeight: 650,
+    },
+
+    scanningCard: {
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr)",
+      alignItems: "center",
+      gap: ms(14),
+      marginTop: ms(12),
+      padding: ms(14),
+      overflow: "hidden",
+      border:
+        "1px solid rgba(245,158,11,.24)",
+      borderRadius: ms(22),
+      background:
+        "linear-gradient(135deg, #17100b, #3f2414 58%, #78350f)",
+      color: "white",
+      boxShadow:
+        "0 16px 34px rgba(120,53,15,.18)",
+    },
+
+    scannerArea: {
+      width: ms(92),
+      height: ms(92),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+    },
+
+    scannerRingOuter: {
+      position: "relative",
+      width: ms(82),
+      height: ms(82),
+      display: "grid",
+      placeItems: "center",
+      overflow: "hidden",
+      border:
+        "1px solid rgba(251,191,36,.36)",
+      borderRadius: "50%",
+      background:
+        "radial-gradient(circle, rgba(245,158,11,.18), rgba(245,158,11,.04) 54%, transparent 55%)",
+      boxShadow:
+        "0 0 30px rgba(245,158,11,.18), inset 0 0 25px rgba(245,158,11,.10)",
+    },
+
+    scannerGridLineOne: {
+      position: "absolute",
+      left: "50%",
+      top: 0,
+      bottom: 0,
+      width: 1,
+      background:
+        "rgba(251,191,36,.16)",
+    },
+
+    scannerGridLineTwo: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: "50%",
+      height: 1,
+      background:
+        "rgba(251,191,36,.16)",
+    },
+
+    scannerRingMiddle: {
+      width: "66%",
+      height: "66%",
+      display: "grid",
+      placeItems: "center",
+      border:
+        "1px solid rgba(251,191,36,.30)",
+      borderRadius: "50%",
+    },
+
+    scannerRingInner: {
+      width: "52%",
+      height: "52%",
+      display: "grid",
+      placeItems: "center",
+      border:
+        "1px solid rgba(251,191,36,.28)",
+      borderRadius: "50%",
+      background: "rgba(245,158,11,.12)",
+    },
+
+    scannerCentre: {
+      width: ms(25),
+      height: ms(25),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: "50%",
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: ms(13),
+      fontWeight: 950,
+      boxShadow:
+        "0 8px 18px rgba(234,88,12,.32)",
+    },
+
+    scannerBeam: {
+      position: "absolute",
+      left: "50%",
+      top: "50%",
+      width: "48%",
+      height: "48%",
+      borderRadius: "100% 0 0 0",
+      background:
+        "linear-gradient(45deg, rgba(245,158,11,.40), transparent 72%)",
+      transformOrigin: "0 0",
+      animation:
+        "radarSweep 2.4s linear infinite",
+    },
+
+    sellerDot: {
+      position: "absolute",
+      width: ms(6),
+      height: ms(6),
+      borderRadius: "50%",
+      background: "#22c55e",
+      boxShadow:
+        "0 0 9px rgba(34,197,94,.95)",
+      animation:
+        "sellerDotPulse 1.5s ease-in-out infinite",
+    },
+
+    sellerDotOne: {
+      left: "21%",
+      top: "28%",
+    },
+
+    sellerDotTwo: {
+      right: "18%",
+      top: "32%",
+      animationDelay: ".35s",
+    },
+
+    sellerDotThree: {
+      left: "34%",
+      bottom: "17%",
+      animationDelay: ".7s",
+    },
+
+    sellerDotFour: {
+      right: "26%",
+      bottom: "25%",
+      animationDelay: "1s",
+    },
+
+    scanningText: {
+      minWidth: 0,
+    },
+
+    scanningEyebrow: {
+      color: "#fbbf24",
+      fontSize: ms(6.8),
+      letterSpacing: ms(1.05),
+      fontWeight: 950,
+    },
+
+    scanningTitle: {
+      margin: `${ms(5)}px 0 0`,
+      color: "white",
+      fontSize: ms(14),
+      lineHeight: 1.08,
+      fontWeight: 950,
+    },
+
+    scanningDescription: {
+      margin: `${ms(6)}px 0 0`,
+      color: "#d6d3d1",
+      fontSize: ms(8),
+      lineHeight: 1.4,
+      fontWeight: 650,
+    },
+
+    sellerProgressCard: {
+      marginTop: ms(12),
+      padding: ms(13),
+      border: "1px solid #e7e5e4",
+      borderRadius: ms(21),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    sellerProgressHeader: {
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: ms(10),
+    },
+
+    progressEyebrow: {
+      color: "#b45309",
+      fontSize: ms(6.8),
+      letterSpacing: ms(1),
+      fontWeight: 950,
+    },
+
+    progressTitle: {
+      margin: `${ms(4)}px 0 0`,
+      color: "#111827",
+      fontSize: ms(11),
+      fontWeight: 950,
+    },
+
+    progressPercentage: {
+      minWidth: ms(38),
+      height: ms(29),
+      display: "grid",
+      placeItems: "center",
+      padding: `0 ${ms(7)}px`,
+      borderRadius: 999,
+      background: "#fffbeb",
+      color: "#b45309",
+      fontSize: ms(8),
+      fontWeight: 950,
+    },
+
+    sellerProgressTrack: {
+      height: ms(7),
+      marginTop: ms(11),
+      overflow: "hidden",
+      borderRadius: 999,
+      background: "#f1f0ee",
+    },
+
+    sellerProgressFill: {
+      height: "100%",
+      borderRadius: 999,
+      background:
+        "linear-gradient(90deg,#f59e0b,#ea580c)",
+      boxShadow:
+        "0 0 12px rgba(245,158,11,.28)",
+      transition: "width 500ms ease",
+    },
+
+    sellerMetricGrid: {
+      display: "grid",
+      gridTemplateColumns: "repeat(3,1fr)",
+      gap: ms(7),
+      marginTop: ms(11),
+    },
+
+    sellerMetric: {
+      display: "flex",
+      flexDirection: "column",
+      gap: ms(3),
+      minWidth: 0,
+      padding: ms(8),
+      border: "1px solid #eeeae6",
+      borderRadius: ms(13),
+      background: "#fafaf9",
+      color: "#78716c",
+      fontSize: ms(7),
+    },
+
+    countdownCard: {
+      display: "flex",
+      alignItems: "center",
+      gap: ms(12),
+      marginTop: ms(12),
+      padding: ms(13),
+      border: "1px solid #fde68a",
+      borderRadius: ms(21),
+      background:
+        "linear-gradient(135deg,#fffbeb,#fef3c7)",
+      boxShadow:
+        "0 10px 22px rgba(146,64,14,.08)",
+    },
+
+    countdownIcon: {
+      width: ms(43),
+      height: ms(43),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: ms(15),
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: ms(23),
+      fontWeight: 950,
+    },
+
+    countdownContent: {
+      minWidth: 0,
+    },
+
+    countdownLabel: {
+      display: "block",
+      color: "#92400e",
+      fontSize: ms(6.8),
+      letterSpacing: ms(0.85),
+      fontWeight: 950,
+    },
+
+    countdownValue: {
+      display: "block",
+      marginTop: ms(3),
+      color: "#78350f",
+      fontSize: ms(20),
+      lineHeight: 1,
+      letterSpacing: ms(1),
+      fontWeight: 950,
+    },
+
+    countdownExpired: {
+      display: "block",
+      marginTop: ms(4),
+      color: "#b45309",
+      fontSize: ms(11),
+      fontWeight: 950,
+    },
+
+    countdownDescription: {
+      margin: `${ms(6)}px 0 0`,
+      color: "#92400e",
+      fontSize: ms(7.5),
+      lineHeight: 1.35,
+      fontWeight: 650,
+    },
+
+    comparisonCard: {
+      marginTop: ms(12),
+      padding: ms(13),
+      border: "1px solid #e7e5e4",
+      borderRadius: ms(21),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    comparisonHeader: {
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: ms(8),
+      marginBottom: ms(8),
+    },
+
+    comparisonTitle: {
+      margin: `${ms(4)}px 0 0`,
+      fontSize: ms(11),
+      fontWeight: 950,
+    },
+
+    liveBadge: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: ms(4),
+      padding: `${ms(5)}px ${ms(8)}px`,
+      borderRadius: 999,
+      background: "#ecfdf5",
+      color: "#15803d",
+      fontSize: ms(7),
+      fontWeight: 950,
+    },
+
+    liveBadgeDot: {
+      width: ms(6),
+      height: ms(6),
+      borderRadius: "50%",
+      background: "#22c55e",
+      boxShadow:
+        "0 0 7px rgba(34,197,94,.75)",
+      animation:
+        "sellerDotPulse 1.5s ease-in-out infinite",
+    },
+
+    comparisonRow: {
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr) auto",
+      alignItems: "center",
+      gap: ms(8),
+      padding: `${ms(8)}px 0`,
+      borderBottom:
+        "1px solid #eeeae6",
+    },
+
+    comparisonRowLast: {
+      borderBottom: 0,
+    },
+
+    comparisonIcon: {
+      width: ms(25),
+      height: ms(25),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: ms(9),
+      fontSize: ms(10),
+      fontWeight: 950,
+    },
+
+    comparisonIconDone: {
+      background: "#dcfce7",
+      color: "#15803d",
+    },
+
+    comparisonIconActive: {
+      background: "#fef3c7",
+      color: "#b45309",
+      animation:
+        "scannerIconPulse 1.8s ease-in-out infinite",
+    },
+
+    comparisonIconWaiting: {
+      background: "#f5f5f4",
+      color: "#a8a29e",
+    },
+
+    comparisonLabel: {
+      minWidth: 0,
+      color: "#292524",
+      fontSize: ms(8.4),
+      fontWeight: 800,
+    },
+
+    comparisonStatus: {
+      padding: `${ms(4)}px ${ms(7)}px`,
+      borderRadius: 999,
+      fontSize: ms(6.9),
+      fontWeight: 950,
+    },
+
+    comparisonStatusDone: {
+      background: "#ecfdf5",
+      color: "#15803d",
+    },
+
+    comparisonStatusActive: {
+      background: "#fffbeb",
+      color: "#b45309",
+    },
+
+    comparisonStatusWaiting: {
+      background: "#f5f5f4",
+      color: "#78716c",
+    },
+
+    notificationCard: {
+      display: "flex",
+      alignItems: "center",
+      gap: ms(10),
+      marginTop: ms(12),
+      padding: ms(12),
+      border: "1px solid #dbeafe",
+      borderRadius: ms(19),
+      background: "#eff6ff",
+    },
+
+    notificationIcon: {
+      width: ms(36),
+      height: ms(36),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: ms(13),
+      background: "#dbeafe",
+      fontSize: ms(17),
+    },
+
+    notificationTitle: {
+      color: "#1e3a8a",
+      fontSize: ms(9),
+    },
+
+    notificationText: {
+      margin: `${ms(4)}px 0 0`,
+      color: "#1d4ed8",
+      fontSize: ms(7.5),
+      lineHeight: 1.35,
+    },
+
+    sectionHeading: {
+      display: "flex",
+      alignItems: "flex-end",
+      justifyContent: "space-between",
+      gap: ms(9),
+      marginTop: ms(16),
+      marginBottom: ms(9),
+    },
+
+    sectionEyebrow: {
+      margin: 0,
+      color: "#b45309",
+      fontSize: ms(7.3),
+      letterSpacing: ms(1.15),
+      fontWeight: 950,
+    },
+
+    sectionTitle: {
+      margin: `${ms(3)}px 0 0`,
+      fontSize: ms(15),
+      fontWeight: 950,
+    },
+
+    validPill: {
+      padding: `${ms(5)}px ${ms(8)}px`,
+      borderRadius: 999,
+      background: "#ecfdf5",
+      color: "#15803d",
+      fontSize: ms(7.7),
+      fontWeight: 950,
+    },
+
+    requestPill: {
+      padding: `${ms(5)}px ${ms(8)}px`,
+      borderRadius: 999,
+      background: "#fffbeb",
+      color: "#b45309",
+      fontSize: ms(7.7),
+      fontWeight: 950,
+    },
+
+    quoteCard: {
+      position: "relative",
+      overflow: "hidden",
+      padding: ms(15),
+      borderRadius: ms(22),
+      background:
+        "linear-gradient(135deg, #020617, #292524)",
+      color: "white",
+      boxShadow:
+        "0 17px 36px rgba(0,0,0,.18)",
+    },
+
+    quoteGlow: {
+      position: "absolute",
+      right: ms(-30),
+      top: ms(-35),
+      width: ms(105),
+      height: ms(105),
+      borderRadius: "50%",
+      background:
+        "rgba(245,158,11,.25)",
+      filter: `blur(${ms(20)}px)`,
+    },
+
+    quoteTopRow: {
+      position: "relative",
+      zIndex: 2,
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: ms(10),
+    },
+
+    quoteLabel: {
+      margin: 0,
+      color: "#d6d3d1",
+      fontSize: ms(9.3),
+    },
+
+    quoteValueRow: {
+      display: "flex",
+      alignItems: "flex-end",
+      gap: ms(3),
+      marginTop: ms(5),
+    },
+
+    rupeeSymbol: {
+      marginBottom: ms(4),
+      color: "#fbbf24",
+      fontSize: ms(18),
+      fontWeight: 950,
+    },
+
+    quoteValue: {
+      fontSize: ms(38),
+      lineHeight: 1,
+    },
+
+    perTon: {
+      marginBottom: ms(4),
+      color: "#d6d3d1",
+      fontSize: ms(9.5),
+      fontWeight: 800,
+    },
+
+    bestRateBadge: {
+      padding: `${ms(6)}px ${ms(9)}px`,
+      border:
+        "1px solid rgba(245,158,11,.35)",
+      borderRadius: 999,
+      background: "rgba(245,158,11,.16)",
+      color: "#fde68a",
+      fontSize: ms(7.6),
+      fontWeight: 950,
+    },
+
+    quoteMetaGrid: {
+      position: "relative",
+      zIndex: 2,
+      display: "grid",
+      gridTemplateColumns: "repeat(3, 1fr)",
+      gap: ms(7),
+      marginTop: ms(13),
+    },
+
+    quoteMetaItem: {
+      display: "flex",
+      flexDirection: "column",
+      gap: ms(3),
+      minWidth: 0,
+      padding: ms(8),
+      borderRadius: ms(13),
+      background:
+        "rgba(255,255,255,.08)",
+      color: "#d6d3d1",
+      fontSize: ms(7.2),
+    },
+
+    estimatedRow: {
+      position: "relative",
+      zIndex: 2,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: ms(8),
+      marginTop: ms(10),
+      padding: ms(9),
+      borderRadius: ms(12),
+      background:
+        "rgba(255,255,255,.1)",
+      color: "#e7e5e4",
+      fontSize: ms(8.4),
+    },
+
+    tableCard: {
+      overflow: "hidden",
+      border: "1px solid #e7e5e4",
+      borderRadius: ms(20),
+      background:
+        "rgba(255,255,255,.96)",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.055)",
+    },
+
+    tableHeader: {
+      display: "grid",
+      gridTemplateColumns:
+        "1.55fr .85fr .65fr",
+      gap: ms(6),
+      padding: `${ms(9)}px ${ms(11)}px`,
+      background: "#1c1917",
+      color: "#fde68a",
+      fontSize: ms(7.5),
+      fontWeight: 950,
+    },
+
+    tableRow: {
+      display: "grid",
+      gridTemplateColumns:
+        "1.55fr .85fr .65fr",
+      alignItems: "center",
+      gap: ms(6),
+      padding: `${ms(11)}px`,
+      fontSize: ms(8.5),
+    },
+
+    productCell: {
+      display: "flex",
+      alignItems: "center",
+      gap: ms(7),
+      minWidth: 0,
+      lineHeight: 1.15,
+    },
+
+    productIcon: {
+      width: ms(27),
+      height: ms(27),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: ms(10),
+      background: "#fef3c7",
+      flexShrink: 0,
+    },
+
+    vehicleCell: {
+      display: "grid",
+      gridTemplateColumns: "auto auto",
+      justifyContent: "start",
+      columnGap: ms(3),
+      minWidth: 0,
+    },
+
+    qtyCell: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "flex-end",
+      gap: ms(1),
+      color: "#92400e",
+    },
+
+    tableDivider: {
+      height: 1,
+      margin: `0 ${ms(11)}px`,
+      background: "#eeeae6",
+    },
+
+    deliveryCard: {
+      display: "flex",
+      alignItems: "center",
+      gap: ms(9),
+      marginTop: ms(12),
+      padding: ms(12),
+      border: "1px solid #e7e5e4",
+      borderRadius: ms(20),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    deliveryIcon: {
+      width: ms(38),
+      height: ms(38),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: ms(14),
+      background: "#fffbeb",
+      fontSize: ms(19),
+      flexShrink: 0,
+    },
+
+    detailLabel: {
+      display: "block",
+      color: "#78716c",
+      fontSize: ms(7.8),
+    },
+
+    deliveryDate: {
+      display: "block",
+      marginTop: ms(3),
+      fontSize: ms(11.2),
+    },
+
+    deliveryStatus: {
+      padding: `${ms(5)}px ${ms(8)}px`,
+      borderRadius: 999,
+      background: "#ecfdf5",
+      color: "#15803d",
+      fontSize: ms(7.6),
+      fontWeight: 950,
+    },
+
+    acceptedCard: {
+      display: "flex",
+      gap: ms(9),
+      marginTop: ms(12),
+      padding: ms(12),
+      border: "1px solid #bbf7d0",
+      borderRadius: ms(18),
+      background: "#f0fdf4",
+      color: "#166534",
+      fontSize: ms(8.4),
+      lineHeight: 1.35,
+    },
+
+    acceptedIcon: {
+      width: ms(30),
+      height: ms(30),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: ms(11),
+      background: "#22c55e",
+      color: "white",
+      fontWeight: 950,
+      flexShrink: 0,
+    },
+
+    rejectedCard: {
+      display: "flex",
+      gap: ms(9),
+      marginTop: ms(12),
+      padding: ms(12),
+      border: "1px solid #fecaca",
+      borderRadius: ms(18),
+      background: "#fff7f7",
+      color: "#991b1b",
+      fontSize: ms(8.4),
+      lineHeight: 1.35,
+    },
+
+    rejectedIcon: {
+      width: ms(30),
+      height: ms(30),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: ms(11),
+      background: "#ef4444",
+      color: "white",
+      fontWeight: 950,
+      flexShrink: 0,
+    },
+
+    testReadyButton: {
+      width: "100%",
+      minHeight: ms(40),
+      marginTop: ms(14),
+      border: "1px dashed #d97706",
+      borderRadius: ms(15),
+      background: "#fffbeb",
+      color: "#92400e",
+      fontSize: ms(8),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+
+    testCheckingButton: {
+      width: "100%",
+      minHeight: ms(40),
+      marginTop: ms(14),
+      border: "1px dashed #a8a29e",
+      borderRadius: ms(15),
+      background: "#fafaf9",
+      color: "#57534e",
+      fontSize: ms(8),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+
+    bottomSpacer: {
+      height: ms(128),
+    },
+
+    fixedFooter: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 30,
+      padding: `${ms(8)}px ${ms(
+        13
+      )}px calc(env(safe-area-inset-bottom, 0px) + ${ms(
+        10
+      )}px)`,
+      background:
+        "linear-gradient(to top, #f6f4ef 76%, rgba(246,244,239,.98) 90%, rgba(246,244,239,.82))",
+      borderTop:
+        "1px solid rgba(120,113,108,.12)",
+      boxShadow:
+        "0 -12px 30px rgba(0,0,0,.10)",
+    },
+
+    checkingFooterHint: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(6),
+      marginBottom: ms(7),
+      color: "#92400e",
+      fontSize: ms(7.8),
+      fontWeight: 800,
+    },
+
+    checkingFooterDot: {
+      width: ms(7),
+      height: ms(7),
+      borderRadius: "50%",
+      background: "#f59e0b",
+      boxShadow:
+        "0 0 8px rgba(245,158,11,.65)",
+      animation:
+        "sellerDotPulse 1.5s ease-in-out infinite",
+    },
+
+    checkingButton: {
+      width: "100%",
+      minHeight: ms(48),
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(8),
+      border: 0,
+      borderRadius: ms(18),
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: ms(10),
+      fontWeight: 950,
+      opacity: 1,
+    },
+
+    footerSpinner: {
+      display: "grid",
+      placeItems: "center",
+      width: ms(24),
+      height: ms(24),
+      borderRadius: "50%",
+      background:
+        "rgba(255,255,255,.16)",
+      animation:
+        "scannerIconPulse 1.8s ease-in-out infinite",
+    },
+
+    footerHint: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(5),
+      marginBottom: ms(7),
+      color: "#78716c",
+      fontSize: ms(7.8),
+      fontWeight: 700,
+    },
+
+    footerHintGreen: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(5),
+      marginBottom: ms(7),
+      color: "#15803d",
+      fontSize: ms(8),
+      fontWeight: 900,
+    },
+
+    footerHintRed: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(5),
+      marginBottom: ms(7),
+      color: "#b91c1c",
+      fontSize: ms(8),
+      fontWeight: 900,
+    },
+
+    footerButtons: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1.18fr",
+      gap: ms(8),
+    },
+
+    rejectButton: {
+      minHeight: ms(48),
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(6),
+      border: "1px solid #fecaca",
+      borderRadius: ms(18),
+      background: "#fff7f7",
+      color: "#b91c1c",
+      fontSize: ms(9.3),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    acceptButton: {
+      minHeight: ms(48),
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(6),
+      border: 0,
+      borderRadius: ms(18),
+      background:
+        "linear-gradient(135deg, #22c55e, #15803d)",
+      color: "white",
+      fontSize: ms(9.3),
+      fontWeight: 950,
+      boxShadow:
+        "0 12px 24px rgba(34,197,94,.22)",
+      cursor: "pointer",
+    },
+
+    nextPageButton: {
+      position: "relative",
+      width: "100%",
+      minHeight: ms(48),
+      border: 0,
+      borderRadius: ms(18),
+      background:
+        "linear-gradient(135deg, #22c55e, #15803d)",
+      color: "white",
+      fontSize: ms(10),
+      fontWeight: 950,
+      boxShadow:
+        "0 12px 24px rgba(34,197,94,.22)",
+      cursor: "pointer",
+    },
+
+    rejectedOnlyButton: {
+      width: "100%",
+      minHeight: ms(48),
+      border: 0,
+      borderRadius: ms(18),
+      background: "#ef4444",
+      color: "white",
+      fontSize: ms(10),
+      fontWeight: 950,
+      boxShadow:
+        "0 12px 24px rgba(239,68,68,.20)",
+    },
+
+    popupOverlay: {
+      position: "absolute",
+      inset: 0,
+      zIndex: 100,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: ms(18),
+      background: "rgba(2,6,23,.72)",
+      backdropFilter: "blur(8px)",
+    },
+
+    rejectPopup: {
+      width: "100%",
+      maxWidth: ms(280),
+      padding: `${ms(23)}px ${ms(
+        18
+      )}px ${ms(18)}px`,
+      borderRadius: ms(25),
+      border: "1px solid #fecaca",
+      background: "white",
+      textAlign: "center",
+      boxShadow:
+        "0 30px 80px rgba(0,0,0,.38)",
+    },
+
+    acceptPopup: {
+      position: "relative",
+      width: "100%",
+      maxWidth: ms(280),
+      overflow: "hidden",
+      padding: `${ms(25)}px ${ms(
+        18
+      )}px ${ms(18)}px`,
+      borderRadius: ms(25),
+      border: "1px solid #bbf7d0",
+      background:
+        "linear-gradient(145deg, white, #f0fdf4)",
+      textAlign: "center",
+      boxShadow:
+        "0 30px 80px rgba(0,0,0,.38)",
+    },
+
+    warningIcon: {
+      width: ms(58),
+      height: ms(58),
+      margin: "0 auto",
+      display: "grid",
+      placeItems: "center",
+      borderRadius: "50%",
+      background: "#fee2e2",
+      color: "#dc2626",
+      fontSize: ms(29),
+      fontWeight: 950,
+      boxShadow:
+        "0 0 0 7px rgba(239,68,68,.08)",
+    },
+
+    popupGlow: {
+      position: "absolute",
+      left: "50%",
+      top: ms(-65),
+      width: ms(170),
+      height: ms(130),
+      borderRadius: "50%",
+      background:
+        "rgba(34,197,94,.20)",
+      filter: `blur(${ms(28)}px)`,
+      transform: "translateX(-50%)",
+    },
+
+    greenTick: {
+      position: "relative",
+      zIndex: 2,
+      width: ms(62),
+      height: ms(62),
+      margin: "0 auto",
+      display: "grid",
+      placeItems: "center",
+      border: `${ms(5)}px solid #dcfce7`,
+      borderRadius: "50%",
+      background:
+        "linear-gradient(135deg, #22c55e, #15803d)",
+      color: "white",
+      fontSize: ms(30),
+      fontWeight: 950,
+    },
+
+    popupTitle: {
+      margin: `${ms(17)}px 0 0`,
+      color: "#111827",
+      fontSize: ms(19),
+      lineHeight: 1.06,
+      fontWeight: 950,
+    },
+
+    popupText: {
+      margin: `${ms(10)}px auto 0`,
+      maxWidth: ms(235),
+      color: "#57534e",
+      fontSize: ms(9),
+      lineHeight: 1.45,
+      fontWeight: 650,
+    },
+
+    popupButtons: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: ms(8),
+      marginTop: ms(17),
+    },
+
+    cancelButton: {
+      minHeight: ms(42),
+      border: "1px solid #e7e5e4",
+      borderRadius: ms(16),
+      background: "#fafaf9",
+      color: "#44403c",
+      fontSize: ms(9),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+
+    confirmRejectButton: {
+      minHeight: ms(42),
+      border: 0,
+      borderRadius: ms(16),
+      background: "#ef4444",
+      color: "white",
+      fontSize: ms(9),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    doneButton: {
+      position: "relative",
+      zIndex: 2,
+      width: "100%",
+      minHeight: ms(44),
+      marginTop: ms(17),
+      border: 0,
+      borderRadius: ms(17),
+      background:
+        "linear-gradient(135deg, #22c55e, #15803d)",
+      color: "white",
+      fontSize: ms(10.5),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+  };
+}
+
+const globalCss = `
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  background: #0b0907;
+  overflow: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.rate-page-scroll,
+.tracker-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.rate-page-scroll::-webkit-scrollbar,
+.tracker-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+body {
+  -webkit-text-size-adjust: 100%;
+}
+
+@keyframes radarSweep {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sellerDotPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.82);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+}
+
+@keyframes scannerIconPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.07);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+`;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+activeorder
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
+const BASE_W = 390;
+const BASE_H = 844;
+
+const ORDER_STAGES = [
+  {
+    id: "confirmed",
+    label: "Order confirmed",
+  },
+  {
+    id: "sellerAssigned",
+    label: "Seller assigned",
+  },
+  {
+    id: "vehicleAssigned",
+    label: "Vehicle assigned",
+  },
+  {
+    id: "loading",
+    label: "Material loading",
+  },
+  {
+    id: "inTransit",
+    label: "In transit",
+  },
+  {
+    id: "delivered",
+    label: "Delivered",
+  },
+];
+
+const VEHICLES = [
+  {
+    id: "vehicle-1",
+    number: "KA 01 AB 1234",
+    driver: "Ramesh Kumar",
+    contact: "+91 98765 43210",
+    capacity: "10 tons",
+    material: "20mm Crushed Stone",
+    status: "In transit",
+    loadingStatus: "Loaded",
+    progress: 100,
+  },
+  {
+    id: "vehicle-2",
+    number: "KA 02 CD 5678",
+    driver: "Suresh Patil",
+    contact: "+91 98765 43211",
+    capacity: "10 tons",
+    material: "20mm Crushed Stone",
+    status: "In transit",
+    loadingStatus: "Loading",
+    progress: 68,
+  },
+  {
+    id: "vehicle-3",
+    number: "KA 03 EF 9012",
+    driver: "Mahesh Rao",
+    contact: "+91 98765 43212",
+    capacity: "10 tons",
+    material: "40mm Crushed Stone",
+    status: "Dispatched",
+    loadingStatus: "Waiting",
+    progress: 20,
+  },
+];
+
+function useViewport() {
+  const [viewport, setViewport] = useState({
+    width:
+      typeof window !== "undefined"
+        ? window.innerWidth
+        : BASE_W,
+    height:
+      typeof window !== "undefined"
+        ? window.innerHeight
+        : BASE_H,
+  });
+
+  useEffect(() => {
+    const updateViewport = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    updateViewport();
+
+    window.addEventListener(
+      "resize",
+      updateViewport
+    );
+
+    window.addEventListener(
+      "orientationchange",
+      updateViewport
+    );
+
+    return () => {
+      window.removeEventListener(
+        "resize",
+        updateViewport
+      );
+
+      window.removeEventListener(
+        "orientationchange",
+        updateViewport
+      );
+    };
+  }, []);
+
+  return viewport;
+}
+
+export default function ActiveOrderPage({
+  goToPage4,
+  goToPage7,
+}) {
+  const viewport = useViewport();
+
+  const styles = useMemo(
+    () => createStyles(viewport),
+    [viewport.width, viewport.height]
+  );
+
+  /*
+    Frontend testing statuses:
+
+    confirmed
+    loading
+    inTransit
+    delivered
+
+    Later, the backend will provide this value.
+  */
+  const [orderStatus, setOrderStatus] =
+    useState("confirmed");
+
+  const [showStatusMenu, setShowStatusMenu] =
+    useState(false);
+
+  const [showIssuePanel, setShowIssuePanel] =
+    useState(false);
+  const [feedbackSubmitted, setFeedbackSubmitted] =
+    useState(false);
+
+    const [feedback, setFeedback] = useState({
+      overall: 0,
+      materialQuality: 0,
+      rateValue: 0,
+      transportation: 0,
+      bookingExperience: 0,
+      comments: "",
+    });
+    
+    const currentStageIndex = useMemo(() => {
+      if (orderStatus === "confirmed") {
+        return 2;
+      }
+    
+      if (orderStatus === "loading") {
+        return 3;
+      }
+    
+      if (orderStatus === "inTransit") {
+        return 4;
+      }
+    
+      if (orderStatus === "delivered") {
+        return 5;
+      }
+    
+      return 0;
+    }, [orderStatus]);
+    
+    const pageContent = useMemo(() => {
+      if (orderStatus === "loading") {
+        return {
+          eyebrow: "MATERIAL PREPARATION",
+          title: "Material Loading",
+          titleSecondLine: "in Progress",
+          description:
+            "Your stone material is being loaded into the assigned vehicles.",
+          icon: "⬆",
+          statusLabel: "Loading",
+          statusTone: "amber",
+        };
+      }
+    
+      if (orderStatus === "inTransit") {
+        return {
+          eyebrow: "DELIVERY IN PROGRESS",
+          title: "Your Order Is",
+          titleSecondLine: "on the Way",
+          description:
+            "The assigned vehicles have left the seller location and are travelling to your delivery site.",
+          icon: "🚚",
+          statusLabel: "In transit",
+          statusTone: "blue",
+        };
+      }
+    
+      if (orderStatus === "delivered") {
+        return {
+          eyebrow: "DELIVERY COMPLETED",
+          title: "Order Delivered",
+          titleSecondLine: "Successfully",
+          description:
+            "All assigned vehicles have completed delivery. Please review your experience.",
+          icon: "✓",
+          statusLabel: "Delivered",
+          statusTone: "green",
+        };
+      }
+    
+      return {
+        eyebrow: "ACTIVE ORDER",
+        title: "Your Order Is",
+        titleSecondLine: "Confirmed",
+        description:
+          "The seller and transport vehicles have been assigned. Material preparation will begin shortly.",
+        icon: "✓",
+        statusLabel: "Confirmed",
+        statusTone: "green",
+      };
+    }, [orderStatus]);
+
+  const updateRating = (name, value) => {
+    if (feedbackSubmitted) return;
+
+    setFeedback((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
+  };
+
+  const updateComments = (event) => {
+    if (feedbackSubmitted) return;
+
+    const value = event.target.value.slice(0, 500);
+
+    setFeedback((previous) => ({
+      ...previous,
+      comments: value,
+    }));
+  };
+
+  const submitFeedback = () => {
+    if (feedback.overall === 0) return;
+
+    setFeedbackSubmitted(true);
+  };
+
+  const callNumber = (number) => {
+    window.location.href = `tel:${number.replace(
+      /\s/g,
+      ""
+    )}`;
+  };
+
+  const getStageState = (index) => {
+    if (index < currentStageIndex) {
+      return "completed";
+    }
+
+    if (index === currentStageIndex) {
+      if (orderStatus === "delivered") {
+        return "completed";
+      }
+
+      return "active";
+    }
+
+    return "waiting";
+  };
+
+  return (
+    <div style={styles.page}>
+      <style>{globalCss}</style>
+
+      <main style={styles.phone}>
+        <header style={styles.header}>
+          <div style={styles.headerGrid} />
+          <div style={styles.headerShade} />
+
+          <div style={styles.topBar}>
+            <button
+              type="button"
+              style={styles.backButton}
+              onClick={goToPage4}
+              aria-label="Back to Home"
+            >
+              ‹
+            </button>
+
+            <div style={styles.orderBadge}>
+              ACTIVE ORDER
+            </div>
+
+            <button
+              type="button"
+              style={styles.helpButton}
+              onClick={() =>
+                setShowIssuePanel(true)
+              }
+            >
+              Help
+            </button>
+          </div>
+
+          <div style={styles.heroRow}>
+            <div style={styles.heroTextArea}>
+              <p style={styles.eyebrow}>
+                {pageContent.eyebrow}
+              </p>
+
+              <h1 style={styles.title}>
+                {pageContent.title}
+                <br />
+                {pageContent.titleSecondLine}
+              </h1>
+
+              <p style={styles.heroDescription}>
+                {pageContent.description}
+              </p>
+            </div>
+
+            <div
+              style={{
+                ...styles.heroIcon,
+                ...(pageContent.statusTone ===
+                "blue"
+                  ? styles.heroIconBlue
+                  : {}),
+                ...(pageContent.statusTone ===
+                "green"
+                  ? styles.heroIconGreen
+                  : {}),
+              }}
+            >
+              {pageContent.icon}
+            </div>
+          </div>
+
+          <div style={styles.headerSummary}>
+            <div style={styles.headerSummaryItem}>
+              <span>Order ID</span>
+              <b>SO-260705-01</b>
+            </div>
+
+            <div
+              style={styles.headerSummaryDivider}
+            />
+
+            <div style={styles.headerSummaryItem}>
+              <span>Quantity</span>
+              <b>30 tons</b>
+            </div>
+
+            <div
+              style={styles.headerSummaryDivider}
+            />
+
+            <div style={styles.headerSummaryItem}>
+              <span>Status</span>
+              <b>{pageContent.statusLabel}</b>
+            </div>
+          </div>
+        </header>
+
+        <section
+          className="active-order-scroll"
+          style={styles.scrollArea}
+        >
+          <section style={styles.content}>
+            <article style={styles.trackerCard}>
+              <div style={styles.trackerHeader}>
+                <div>
+                  <span
+                    style={styles.sectionEyebrow}
+                  >
+                    ORDER JOURNEY
+                  </span>
+
+                  <h2 style={styles.trackerTitle}>
+                    Delivery status
+                  </h2>
+                </div>
+
+                <span
+                  style={{
+                    ...styles.currentStatusPill,
+                    ...(orderStatus === "inTransit"
+                      ? styles.currentStatusPillBlue
+                      : {}),
+                    ...(orderStatus === "delivered"
+                      ? styles.currentStatusPillGreen
+                      : {}),
+                  }}
+                >
+                  {pageContent.statusLabel}
+                </span>
+              </div>
+
+              <div
+                className="tracker-horizontal-scroll"
+                style={styles.trackerScroller}
+              >
+                <div style={styles.tracker}>
+                  {ORDER_STAGES.map(
+                    (stage, index) => {
+                      const state =
+                        getStageState(index);
+
+                      return (
+                        <React.Fragment
+                          key={stage.id}
+                        >
+                          <OrderStatusStep
+                            styles={styles}
+                            label={stage.label}
+                            state={state}
+                          />
+
+                          {index <
+                            ORDER_STAGES.length -
+                              1 && (
+                            <div
+                              style={{
+                                ...styles.trackerConnector,
+                                ...(state ===
+                                "completed"
+                                  ? styles.trackerConnectorCompleted
+                                  : {}),
+                              }}
+                            />
+                          )}
+                        </React.Fragment>
+                      );
+                    }
+                  )}
+                </div>
+              </div>
+            </article>
+
+            <section style={styles.testingSection}>
+              <button
+                type="button"
+                style={styles.testingToggle}
+                onClick={() =>
+                  setShowStatusMenu(
+                    (previous) => !previous
+                  )
+                }
+              >
+                Test order statuses
+                <span>
+                  {showStatusMenu ? "▲" : "▼"}
+                </span>
+              </button>
+
+              {showStatusMenu && (
+                <div style={styles.testingButtons}>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOrderStatus("confirmed")
+                    }
+                    style={{
+                      ...styles.testingButton,
+                      ...(orderStatus ===
+                      "confirmed"
+                        ? styles.testingButtonActive
+                        : {}),
+                    }}
+                  >
+                    Confirmed
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOrderStatus("loading")
+                    }
+                    style={{
+                      ...styles.testingButton,
+                      ...(orderStatus === "loading"
+                        ? styles.testingButtonActive
+                        : {}),
+                    }}
+                  >
+                    Loading
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOrderStatus("inTransit")
+                    }
+                    style={{
+                      ...styles.testingButton,
+                      ...(orderStatus ===
+                      "inTransit"
+                        ? styles.testingButtonActive
+                        : {}),
+                    }}
+                  >
+                    In transit
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOrderStatus("delivered")
+                    }
+                    style={{
+                      ...styles.testingButton,
+                      ...(orderStatus ===
+                      "delivered"
+                        ? styles.testingButtonActive
+                        : {}),
+                    }}
+                  >
+                    Delivered
+                  </button>
+                </div>
+              )}
+            </section>
+
+            {orderStatus === "confirmed" && (
+              <ConfirmedContent
+                styles={styles}
+              />
+            )}
+
+            {orderStatus === "loading" && (
+              <LoadingContent
+                styles={styles}
+                vehicles={VEHICLES}
+              />
+            )}
+
+            {orderStatus === "inTransit" && (
+              <InTransitContent
+                styles={styles}
+                vehicles={VEHICLES}
+                callNumber={callNumber}
+                setShowIssuePanel={
+                  setShowIssuePanel
+                }
+              />
+            )}
+
+            {orderStatus === "delivered" && (
+              <DeliveredContent
+                styles={styles}
+                feedback={feedback}
+                updateRating={updateRating}
+                updateComments={updateComments}
+                submitFeedback={submitFeedback}
+                feedbackSubmitted={
+                  feedbackSubmitted
+                }
+              />
+            )}
+
+            <OrderSummary styles={styles} />
+
+            <div style={styles.bottomSpacer} />
+          </section>
+        </section>
+
+        <footer style={styles.fixedFooter}>
+          {orderStatus === "confirmed" && (
+            <>
+              <div style={styles.footerHint}>
+                <span
+                  style={styles.footerStatusDot}
+                />
+
+                <span>
+                  Waiting for material loading to
+                  begin
+                </span>
+              </div>
+
+              <button
+                type="button"
+                style={styles.footerMainButton}
+                onClick={() =>
+                  setShowIssuePanel(true)
+                }
+              >
+                Contact Support
+              </button>
+            </>
+          )}
+
+          {orderStatus === "loading" && (
+            <>
+              <div style={styles.footerHint}>
+                <span
+                  style={styles.footerStatusDot}
+                />
+
+                <span>
+                  Loading and quality checks are in
+                  progress
+                </span>
+              </div>
+
+              <button
+                type="button"
+                style={styles.footerMainButton}
+                onClick={() =>
+                  setShowIssuePanel(true)
+                }
+              >
+                Contact Support
+              </button>
+            </>
+          )}
+
+          {orderStatus === "inTransit" && (
+            <>
+              <div style={styles.footerHintBlue}>
+                <span
+                  style={styles.footerStatusDotBlue}
+                />
+
+                <span>
+                  Three assigned vehicles are on the
+                  way
+                </span>
+              </div>
+
+              <div style={styles.transitFooterButtons}>
+                <button
+                  type="button"
+                  style={styles.supportButton}
+                  onClick={() =>
+                    setShowIssuePanel(true)
+                  }
+                >
+                  Support
+                </button>
+
+                <button
+                  type="button"
+                  style={styles.trackButton}
+                >
+                  Track Delivery
+                </button>
+              </div>
+            </>
+          )}
+
+          {orderStatus === "delivered" &&
+            !feedbackSubmitted && (
+              <>
+                <div
+                  style={styles.footerHintGreen}
+                >
+                  <span>✓</span>
+
+                  <span>
+                    Delivery completed successfully
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  style={{
+                    ...styles.submitFeedbackButton,
+                    opacity:
+                      feedback.overall > 0
+                        ? 1
+                        : 0.5,
+                  }}
+                  disabled={feedback.overall === 0}
+                  onClick={submitFeedback}
+                >
+                  Submit Feedback
+                </button>
+              </>
+            )}
+
+          {orderStatus === "delivered" &&
+            feedbackSubmitted && (
+              <>
+                <div
+                  style={styles.footerHintGreen}
+                >
+                  <span>✓</span>
+
+                  <span>
+                    Feedback submitted successfully
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  style={styles.footerMainButton}
+                  onClick={goToPage4}
+                >
+                  Return to Home
+                </button>
+              </>
+            )}
+        </footer>
+
+        {showIssuePanel && (
+          <div style={styles.popupOverlay}>
+            <div style={styles.supportPopup}>
+              <div style={styles.supportPopupIcon}>
+                ?
+              </div>
+
+              <h2 style={styles.popupTitle}>
+                Need help with this order?
+              </h2>
+
+              <p style={styles.popupText}>
+                Contact StoneRate support for
+                delivery, material, seller or
+                transporter assistance.
+              </p>
+
+              <div style={styles.popupButtons}>
+                <button
+                  type="button"
+                  style={styles.popupCancelButton}
+                  onClick={() =>
+                    setShowIssuePanel(false)
+                  }
+                >
+                  Close
+                </button>
+
+                <button
+                  type="button"
+                  style={styles.popupCallButton}
+                  onClick={() =>
+                    callNumber("+91 98765 00000")
+                  }
+                >
+                  Call Support
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
+
+function OrderStatusStep({
+  styles,
+  label,
+  state,
+}) {
+  return (
+    <div style={styles.trackerStep}>
+      <div
+        style={{
+          ...styles.trackerCircle,
+          ...(state === "completed"
+            ? styles.trackerCircleCompleted
+            : {}),
+          ...(state === "active"
+            ? styles.trackerCircleActive
+            : {}),
+          ...(state === "waiting"
+            ? styles.trackerCircleWaiting
+            : {}),
+        }}
+      >
+        {state === "completed"
+          ? "✓"
+          : state === "active"
+          ? "•"
+          : ""}
+      </div>
+
+      <span
+        style={{
+          ...styles.trackerLabel,
+          ...(state === "completed"
+            ? styles.trackerLabelCompleted
+            : {}),
+          ...(state === "active"
+            ? styles.trackerLabelActive
+            : {}),
+        }}
+      >
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function ConfirmedContent({ styles }) {
+  return (
+    <>
+      <article style={styles.primaryStatusCard}>
+        <div style={styles.primaryStatusIcon}>
+          ✓
+        </div>
+
+        <div style={{ minWidth: 0 }}>
+          <span style={styles.cardEyebrow}>
+            ORDER CONFIRMED
+          </span>
+
+          <h2 style={styles.primaryStatusTitle}>
+            Preparing your order
+          </h2>
+
+          <p style={styles.primaryStatusText}>
+            The seller and transporter are
+            coordinating material preparation.
+            You’ll receive an update when loading
+            begins.
+          </p>
+        </div>
+      </article>
+
+      <div style={styles.sectionHeading}>
+        <div>
+          <span style={styles.sectionEyebrow}>
+            ASSIGNMENT DETAILS
+          </span>
+
+          <h2 style={styles.sectionTitle}>
+            Seller and transporter
+          </h2>
+        </div>
+
+        <span style={styles.verifiedPill}>
+          Verified
+        </span>
+      </div>
+
+      <article style={styles.assignmentCard}>
+        <div style={styles.assignmentHeader}>
+          <div style={styles.sellerIcon}>
+            S
+          </div>
+
+          <div style={styles.assignmentTitleArea}>
+            <span style={styles.assignmentLabel}>
+              ASSIGNED SELLER
+            </span>
+
+            <h3 style={styles.assignmentTitle}>
+              Verified Stone Supplier
+            </h3>
+
+            <p style={styles.assignmentSubtitle}>
+              Bengaluru Rural, Karnataka
+            </p>
+          </div>
+
+          <span style={styles.verifiedIcon}>
+            ✓
+          </span>
+        </div>
+
+        <div style={styles.assignmentInfoGrid}>
+          <InfoBox
+            styles={styles}
+            label="Material"
+            value="20mm and 40mm Stone"
+          />
+
+          <InfoBox
+            styles={styles}
+            label="Seller status"
+            value="Confirmed"
+          />
+        </div>
+      </article>
+
+      <article style={styles.assignmentCard}>
+        <div style={styles.assignmentHeader}>
+          <div style={styles.transporterIcon}>
+            🚚
+          </div>
+
+          <div style={styles.assignmentTitleArea}>
+            <span style={styles.assignmentLabel}>
+              ASSIGNED TRANSPORTER
+            </span>
+
+            <h3 style={styles.assignmentTitle}>
+              StoneRate Transport Partner
+            </h3>
+
+            <p style={styles.assignmentSubtitle}>
+              Three vehicles reserved
+            </p>
+          </div>
+
+          <span style={styles.verifiedIcon}>
+            ✓
+          </span>
+        </div>
+
+        <div style={styles.assignmentInfoGrid}>
+          <InfoBox
+            styles={styles}
+            label="Vehicles"
+            value="3 assigned"
+          />
+
+          <InfoBox
+            styles={styles}
+            label="Capacity"
+            value="30 tons"
+          />
+        </div>
+
+        <div style={styles.assignmentNotice}>
+          Driver and vehicle registration details
+          will appear before dispatch.
+        </div>
+      </article>
+    </>
+  );
+}
+
+function LoadingContent({
+  styles,
+  vehicles,
+}) {
+  const loadedVehicles = vehicles.filter(
+    (vehicle) =>
+      vehicle.loadingStatus === "Loaded"
+  ).length;
+
+  return (
+    <>
+      <article style={styles.loadingShowcase}>
+        <div style={styles.loadingScene}>
+          <div style={styles.loadingMaterialOne}>
+            ◆
+          </div>
+
+          <div style={styles.loadingMaterialTwo}>
+            ◆
+          </div>
+
+          <div style={styles.loadingMaterialThree}>
+            ◆
+          </div>
+
+          <div style={styles.loadingTruck}>
+            🚚
+          </div>
+
+          <div style={styles.loadingGround} />
+        </div>
+
+        <div style={styles.loadingShowcaseText}>
+          <span style={styles.cardEyebrow}>
+            LIVE LOADING UPDATE
+          </span>
+
+          <h2 style={styles.loadingTitle}>
+            Loading is underway
+          </h2>
+
+          <p style={styles.loadingText}>
+            The material is being loaded and checked
+            before dispatch.
+          </p>
+        </div>
+      </article>
+
+      <article style={styles.loadingProgressCard}>
+        <div style={styles.progressHeader}>
+          <div>
+            <span style={styles.sectionEyebrow}>
+              LOADING PROGRESS
+            </span>
+
+            <h3 style={styles.progressTitle}>
+              {loadedVehicles} of {vehicles.length}{" "}
+              vehicles ready
+            </h3>
+          </div>
+
+          <span style={styles.loadingLivePill}>
+            <span
+              style={styles.loadingLiveDot}
+            />
+            Live
+          </span>
+        </div>
+
+        <div style={styles.overallProgressTrack}>
+          <div
+            style={{
+              ...styles.overallProgressFill,
+              width: "63%",
+            }}
+          />
+        </div>
+
+        <div style={styles.loadingMeta}>
+          <span>Loading started at 10:20 AM</span>
+          <b>Estimated dispatch: 12:30 PM</b>
+        </div>
+      </article>
+
+      <div style={styles.sectionHeading}>
+        <div>
+          <span style={styles.sectionEyebrow}>
+            VEHICLE PREPARATION
+          </span>
+
+          <h2 style={styles.sectionTitle}>
+            Loading status
+          </h2>
+        </div>
+      </div>
+
+      <div style={styles.vehicleStack}>
+        {vehicles.map((vehicle, index) => (
+          <article
+            key={vehicle.id}
+            style={styles.loadingVehicleCard}
+          >
+            <div
+              style={styles.loadingVehicleHeader}
+            >
+              <div
+                style={styles.loadingVehicleNumber}
+              >
+                {index + 1}
+              </div>
+
+              <div
+                style={styles.loadingVehicleText}
+              >
+                <h3
+                  style={
+                    styles.loadingVehicleTitle
+                  }
+                >
+                  Vehicle {index + 1}
+                </h3>
+
+                <p
+                  style={
+                    styles.loadingVehicleSubtitle
+                  }
+                >
+                  {vehicle.material} •{" "}
+                  {vehicle.capacity}
+                </p>
+              </div>
+
+              <span
+                style={{
+                  ...styles.loadingStatusPill,
+                  ...(vehicle.loadingStatus ===
+                  "Loaded"
+                    ? styles.loadingStatusComplete
+                    : {}),
+                  ...(vehicle.loadingStatus ===
+                  "Waiting"
+                    ? styles.loadingStatusWaiting
+                    : {}),
+                }}
+              >
+                {vehicle.loadingStatus}
+              </span>
+            </div>
+
+            <div
+              style={
+                styles.vehicleProgressTrack
+              }
+            >
+              <div
+                style={{
+                  ...styles.vehicleProgressFill,
+                  width: `${vehicle.progress}%`,
+                  ...(vehicle.loadingStatus ===
+                  "Loaded"
+                    ? styles.vehicleProgressComplete
+                    : {}),
+                }}
+              />
+            </div>
+
+            <div style={styles.vehicleProgressText}>
+              <span>Preparation progress</span>
+              <b>{vehicle.progress}%</b>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div style={styles.qualityNotice}>
+        <div style={styles.qualityIcon}>
+          ✓
+        </div>
+
+        <div>
+          <b>Material quality check included</b>
+
+          <p>
+            Material type and vehicle quantity are
+            being checked before dispatch.
+          </p>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function InTransitContent({
+  styles,
+  vehicles,
+  callNumber,
+  setShowIssuePanel,
+}) {
+  return (
+    <>
+      <article style={styles.transitStatusCard}>
+        <div style={styles.transitAnimation}>
+          <div style={styles.roadLine} />
+          <div style={styles.movingTruck}>
+            🚚
+          </div>
+        </div>
+
+        <div style={styles.transitStatusText}>
+          <span style={styles.transitEyebrow}>
+            LIVE DELIVERY UPDATE
+          </span>
+
+          <h2 style={styles.transitTitle}>
+            Three vehicles in transit
+          </h2>
+
+          <p style={styles.transitText}>
+            Dispatched at 10:30 AM • Expected arrival
+            at 2:15 PM
+          </p>
+        </div>
+      </article>
+
+      <article style={styles.routeCard}>
+        <div style={styles.routeHeader}>
+          <div style={styles.routeIcon}>
+            ◎
+          </div>
+
+          <div style={styles.routeTitleArea}>
+            <span style={styles.routeLabel}>
+              DELIVERY ROUTE
+            </span>
+
+            <h3 style={styles.routeTitle}>
+              Seller location to your site
+            </h3>
+          </div>
+
+          <span style={styles.distancePill}>
+            42 km
+          </span>
+        </div>
+
+        <div style={styles.routeTrack}>
+          <span style={styles.routeStartDot} />
+
+          <div style={styles.routeProgressLine}>
+            <div
+              style={styles.routeProgressFill}
+            />
+          </div>
+
+          <span style={styles.routeEndDot} />
+        </div>
+
+        <div style={styles.routeLabels}>
+          <span>Dispatched</span>
+          <span>Delivery site</span>
+        </div>
+
+        <div style={styles.lastUpdated}>
+          Last updated 2 minutes ago
+        </div>
+      </article>
+
+      <div style={styles.sectionHeading}>
+        <div>
+          <span style={styles.sectionEyebrow}>
+            TRANSPORT DETAILS
+          </span>
+
+          <h2 style={styles.sectionTitle}>
+            Assigned vehicles
+          </h2>
+        </div>
+
+        <span style={styles.transitCountPill}>
+          3 vehicles
+        </span>
+      </div>
+
+      <div style={styles.vehicleStack}>
+        {vehicles.map((vehicle, index) => (
+          <article
+            key={vehicle.id}
+            style={styles.transitVehicleCard}
+          >
+            <div style={styles.vehicleCardHeader}>
+              <div style={styles.vehicleMainIcon}>
+                🚚
+              </div>
+
+              <div
+                style={styles.vehicleMainText}
+              >
+                <span
+                  style={styles.vehicleNumberLabel}
+                >
+                  VEHICLE {index + 1}
+                </span>
+
+                <h3
+                  style={styles.vehicleNumber}
+                >
+                  {vehicle.number}
+                </h3>
+              </div>
+
+              <span style={styles.inTransitPill}>
+                <span
+                  style={styles.inTransitDot}
+                />
+                {vehicle.status}
+              </span>
+            </div>
+
+            <div
+              style={styles.vehicleDetailsGrid}
+            >
+              <InfoBox
+                styles={styles}
+                label="Driver"
+                value={vehicle.driver}
+              />
+
+              <InfoBox
+                styles={styles}
+                label="Capacity"
+                value={vehicle.capacity}
+              />
+
+              <InfoBox
+                styles={styles}
+                label="Material"
+                value={vehicle.material}
+                wide
+              />
+            </div>
+
+            <div style={styles.vehicleActions}>
+              <button
+                type="button"
+                style={styles.callDriverButton}
+                onClick={() =>
+                  callNumber(vehicle.contact)
+                }
+              >
+                ☎ Call Driver
+              </button>
+
+              <button
+                type="button"
+                style={styles.reportIssueButton}
+                onClick={() =>
+                  setShowIssuePanel(true)
+                }
+              >
+                Report Issue
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function DeliveredContent({
+  styles,
+  feedback,
+  updateRating,
+  updateComments,
+  submitFeedback,
+  feedbackSubmitted,
+}) {
+  return (
+    <>
+      <article style={styles.deliveredShowcase}>
+        <div style={styles.deliverySuccessIcon}>
+          ✓
+        </div>
+
+        <div style={styles.deliveredText}>
+          <span style={styles.deliveredEyebrow}>
+            DELIVERY COMPLETED
+          </span>
+
+          <h2 style={styles.deliveredTitle}>
+            All vehicles delivered
+          </h2>
+
+          <p style={styles.deliveredDescription}>
+            Delivery was completed on 05 July 2026 at
+            3:45 PM.
+          </p>
+        </div>
+      </article>
+
+      <article style={styles.deliverySummaryCard}>
+        <div style={styles.deliverySummaryGrid}>
+          <SummaryMetric
+            styles={styles}
+            label="Delivered"
+            value="30 tons"
+          />
+
+          <SummaryMetric
+            styles={styles}
+            label="Vehicles"
+            value="3 of 3"
+          />
+
+          <SummaryMetric
+            styles={styles}
+            label="Final rate"
+            value="₹1,280/t"
+          />
+        </div>
+
+        <div style={styles.deliveryLocation}>
+          <div
+            style={
+              styles.deliveryLocationIcon
+            }
+          >
+            ◎
+          </div>
+
+          <div>
+            <span>Delivery location</span>
+            <b>
+              Buyer’s construction site,
+              Bengaluru
+            </b>
+          </div>
+        </div>
+      </article>
+
+      <div style={styles.sectionHeading}>
+        <div>
+          <span style={styles.sectionEyebrow}>
+            YOUR FEEDBACK
+          </span>
+
+          <h2 style={styles.sectionTitle}>
+            Rate your experience
+          </h2>
+        </div>
+
+        {!feedbackSubmitted && (
+          <span style={styles.optionalPill}>
+            1 minute
+          </span>
+        )}
+      </div>
+
+      {feedbackSubmitted ? (
+        <article
+          style={styles.feedbackSuccessCard}
+        >
+          <div
+            style={styles.feedbackSuccessIcon}
+          >
+            ✓
+          </div>
+
+          <h2
+            style={styles.feedbackSuccessTitle}
+          >
+            Thank you for your feedback
+          </h2>
+
+          <p
+            style={styles.feedbackSuccessText}
+          >
+            Your review helps StoneRate improve
+            seller quality, transportation and the
+            booking experience.
+          </p>
+        </article>
+      ) : (
+        <article style={styles.feedbackCard}>
+          <RatingField
+            styles={styles}
+            label="Overall Experience"
+            description="Your complete StoneRate experience"
+            value={feedback.overall}
+            onChange={(value) =>
+              updateRating("overall", value)
+            }
+            featured
+          />
+
+          <div style={styles.ratingDivider} />
+
+          <RatingField
+            styles={styles}
+            label="Material Quality"
+            description="Quality and condition of delivered stone"
+            value={feedback.materialQuality}
+            onChange={(value) =>
+              updateRating(
+                "materialQuality",
+                value
+              )
+            }
+          />
+
+          <div style={styles.ratingDivider} />
+
+          <RatingField
+            styles={styles}
+            label="Rate and Value"
+            description="Price competitiveness and transparency"
+            value={feedback.rateValue}
+            onChange={(value) =>
+              updateRating("rateValue", value)
+            }
+          />
+
+          <div style={styles.ratingDivider} />
+
+          <RatingField
+            styles={styles}
+            label="Transportation"
+            description="Delivery timing and driver coordination"
+            value={feedback.transportation}
+            onChange={(value) =>
+              updateRating(
+                "transportation",
+                value
+              )
+            }
+          />
+
+          <div style={styles.ratingDivider} />
+
+          <RatingField
+            styles={styles}
+            label="Booking Experience"
+            description="Ease of booking and status updates"
+            value={feedback.bookingExperience}
+            onChange={(value) =>
+              updateRating(
+                "bookingExperience",
+                value
+              )
+            }
+          />
+
+          <div style={styles.commentsSection}>
+            <div style={styles.commentsHeader}>
+              <label style={styles.commentsLabel}>
+                Additional Comments
+              </label>
+
+              <span
+                style={styles.characterCount}
+              >
+                {feedback.comments.length} / 500
+              </span>
+            </div>
+
+            <textarea
+              value={feedback.comments}
+              onChange={updateComments}
+              placeholder="Tell us what went well or what we can improve..."
+              style={styles.commentsTextarea}
+            />
+          </div>
+
+          <button
+            type="button"
+            style={{
+              ...styles.inlineSubmitButton,
+              opacity:
+                feedback.overall > 0
+                  ? 1
+                  : 0.5,
+            }}
+            disabled={feedback.overall === 0}
+            onClick={submitFeedback}
+          >
+            Submit Feedback
+          </button>
+        </article>
+      )}
+    </>
+  );
+}
+
+function RatingField({
+  styles,
+  label,
+  description,
+  value,
+  onChange,
+  featured,
+}) {
+  const ratingLabels = [
+    "",
+    "Poor",
+    "Fair",
+    "Good",
+    "Very Good",
+    "Excellent",
+  ];
+
+  return (
+    <div
+      style={{
+        ...styles.ratingField,
+        ...(featured
+          ? styles.ratingFieldFeatured
+          : {}),
+      }}
+    >
+      <div style={styles.ratingHeader}>
+        <div>
+          <h3 style={styles.ratingLabel}>
+            {label}
+          </h3>
+
+          <p style={styles.ratingDescription}>
+            {description}
+          </p>
+        </div>
+
+        {value > 0 && (
+          <span style={styles.ratingValuePill}>
+            {ratingLabels[value]}
+          </span>
+        )}
+      </div>
+
+      <div
+        style={styles.starRow}
+        role="radiogroup"
+        aria-label={label}
+      >
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            type="button"
+            style={{
+              ...styles.starButton,
+              ...(star <= value
+                ? styles.starButtonActive
+                : {}),
+            }}
+            onClick={() => onChange(star)}
+            aria-label={`${star} star rating`}
+          >
+            ★
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function InfoBox({
+  styles,
+  label,
+  value,
+  wide,
+}) {
+  return (
+    <div
+      style={{
+        ...styles.infoBox,
+        ...(wide ? styles.infoBoxWide : {}),
+      }}
+    >
+      <span>{label}</span>
+      <b>{value}</b>
+    </div>
+  );
+}
+
+function SummaryMetric({
+  styles,
+  label,
+  value,
+}) {
+  return (
+    <div style={styles.summaryMetric}>
+      <span>{label}</span>
+      <b>{value}</b>
+    </div>
+  );
+}
+
+function OrderSummary({ styles }) {
+  return (
+    <>
+      <div style={styles.sectionHeading}>
+        <div>
+          <span style={styles.sectionEyebrow}>
+            ORDER INFORMATION
+          </span>
+
+          <h2 style={styles.sectionTitle}>
+            Confirmed details
+          </h2>
+        </div>
+
+        <span style={styles.orderIdPill}>
+          SO-260705-01
+        </span>
+      </div>
+
+      <article style={styles.orderSummaryCard}>
+        <div style={styles.summaryRow}>
+          <span>Source rate request</span>
+          <b>SR-260705-01</b>
+        </div>
+
+        <div style={styles.summaryDivider} />
+
+        <div style={styles.summaryRow}>
+          <span>Material</span>
+          <b>20mm and 40mm Stone</b>
+        </div>
+
+        <div style={styles.summaryDivider} />
+
+        <div style={styles.summaryRow}>
+          <span>Total quantity</span>
+          <b>30 tons</b>
+        </div>
+
+        <div style={styles.summaryDivider} />
+
+        <div style={styles.summaryRow}>
+          <span>Confirmed rate</span>
+          <b>₹1,280 per ton</b>
+        </div>
+
+        <div style={styles.summaryDivider} />
+
+        <div style={styles.summaryRow}>
+          <span>Transport</span>
+          <b>Included</b>
+        </div>
+
+        <div style={styles.summaryDivider} />
+
+        <div style={styles.summaryRow}>
+          <span>Expected delivery</span>
+          <b>05 July 2026</b>
+        </div>
+      </article>
+    </>
+  );
+}
+
+function createStyles(viewport) {
+  const viewportWidth =
+    viewport.width || BASE_W;
+
+  const viewportHeight =
+    viewport.height || BASE_H;
+
+  const isDesktop = viewportWidth >= 700;
+
+  const appWidth = isDesktop
+    ? 390
+    : viewportWidth;
+
+  const appHeight = isDesktop
+    ? 844
+    : viewportHeight;
+
+  const scale = Math.max(
+    0.72,
+    Math.min(
+      1,
+      Math.min(
+        appWidth / BASE_W,
+        appHeight / BASE_H
+      )
+    )
+  );
+
+  const px = (value) =>
+    Math.max(1, Math.round(value * scale));
+  const FONT_SCALE = 1.4;
+
+    const font = (value) =>
+      Math.max(
+        1,
+        Math.round(value * scale * FONT_SCALE)
+      );
+    
+
+
+
+  const narrow = appWidth < 360;
+  const navFooterHeight = px(92);
+  const headerHeight = px(narrow ? 272 : 280);
+  const contentGap = px(0);
+
+  return {
+    page: {
+      width: "100vw",
+      height: "100dvh",
+      minHeight: "100dvh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: isDesktop
+        ? "center"
+        : "stretch",
+      margin: 0,
+      padding: isDesktop ? 10 : 0,
+      overflow: "hidden",
+      background: isDesktop
+        ? "#f4f1ea"
+        : "#0b0907",
+      fontFamily: "Arial, sans-serif",
+    },
+
+    phone: {
+      position: "relative",
+      width: isDesktop ? 390 : "100vw",
+      height: isDesktop ? 844 : "100dvh",
+      overflow: "hidden",
+      background: "#f6f4ef",
+      borderRadius: isDesktop ? 30 : 0,
+      boxShadow: isDesktop
+        ? "0 25px 70px rgba(0,0,0,.25)"
+        : "none",
+    },
+
+    header: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: 0,
+      zIndex: 30,
+      height: headerHeight,
+      padding: `${px(12)}px ${px(
+        narrow ? 12 : 15
+      )}px ${px(15)}px`,
+      overflow: "hidden",
+      color: "white",
+      background:
+        "radial-gradient(circle at 85% 8%, rgba(245,158,11,.42), transparent 31%), linear-gradient(135deg,#080706,#1c1917 54%,#78350f)",
+      boxShadow:
+        "0 16px 34px rgba(28,15,7,.20)",
+    },
+
+    headerGrid: {
+      position: "absolute",
+      inset: 0,
+      opacity: 0.22,
+      pointerEvents: "none",
+      backgroundImage:
+        "linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px)",
+      backgroundSize: `${px(30)}px ${px(
+        30
+      )}px`,
+    },
+
+    headerShade: {
+      position: "absolute",
+      inset: 0,
+      pointerEvents: "none",
+      background:
+        "linear-gradient(to bottom,rgba(0,0,0,.02),rgba(0,0,0,.28))",
+    },
+
+    topBar: {
+      position: "relative",
+      zIndex: 2,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: px(8),
+    },
+
+    backButton: {
+      width: px(34),
+      height: px(34),
+      display: "grid",
+      placeItems: "center",
+      padding: 0,
+      border:
+        "1px solid rgba(255,255,255,.18)",
+      borderRadius: px(12),
+      background: "rgba(255,255,255,.11)",
+      color: "white",
+      fontSize: font(24),
+      lineHeight: 1,
+      cursor: "pointer",
+    },
+
+    orderBadge: {
+      padding: `${px(6)}px ${px(11)}px`,
+      border:
+        "1px solid rgba(245,158,11,.45)",
+      borderRadius: 999,
+      background: "rgba(245,158,11,.17)",
+      color: "#fde68a",
+      fontSize: font(8),
+      letterSpacing: px(1),
+      fontWeight: 950,
+    },
+
+    helpButton: {
+      minWidth: px(45),
+      height: px(32),
+      padding: `0 ${px(10)}px`,
+      border:
+        "1px solid rgba(255,255,255,.18)",
+      borderRadius: 999,
+      background: "rgba(255,255,255,.11)",
+      color: "white",
+      fontSize: font(9),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+
+    heroRow: {
+      position: "relative",
+      zIndex: 2,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: px(12),
+      marginTop: px(16),
+    },
+
+    heroTextArea: {
+      minWidth: 0,
+    },
+
+    eyebrow: {
+      margin: 0,
+      color: "#fde68a",
+      fontSize: font(7),
+      letterSpacing: px(1.2),
+      fontWeight: 950,
+    },
+
+    title: {
+      margin: `${px(6)}px 0 0`,
+      color: "white",
+      fontSize: px(narrow ? 25 : 29),
+      lineHeight: 1.02,
+      letterSpacing: -0.7,
+      fontWeight: 950,
+    },
+
+    heroDescription: {
+      maxWidth: px(245),
+      margin: `${px(8)}px 0 0`,
+      color: "#e7e5e4",
+      fontSize: font(9),
+      lineHeight: 1.35,
+      fontWeight: 650,
+    },
+
+    heroIcon: {
+      width: px(54),
+      height: px(54),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: px(20),
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: font(25),
+      fontWeight: 950,
+      boxShadow:
+        "0 15px 30px rgba(234,88,12,.32)",
+      animation:
+        "statusIconPulse 2.2s ease-in-out infinite",
+    },
+
+    heroIconBlue: {
+      background:
+        "linear-gradient(135deg,#38bdf8,#1d4ed8)",
+      boxShadow:
+        "0 15px 30px rgba(29,78,216,.28)",
+    },
+
+    heroIconGreen: {
+      background:
+        "linear-gradient(135deg,#22c55e,#15803d)",
+      boxShadow:
+        "0 15px 30px rgba(34,197,94,.28)",
+    },
+
+    headerSummary: {
+      position: "relative",
+      zIndex: 2,
+      display: "grid",
+      gridTemplateColumns:
+        "1fr auto 1fr auto 1fr",
+      alignItems: "center",
+      marginTop: px(15),
+      padding: px(9),
+      border:
+        "1px solid rgba(255,255,255,.14)",
+      borderRadius: px(16),
+      background: "rgba(255,255,255,.11)",
+      backdropFilter: "blur(10px)",
+    },
+
+    headerSummaryItem: {
+      minWidth: 0,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: px(3),
+      color: "#e7e5e4",
+      textAlign: "center",
+      fontSize: font(7),
+    },
+
+    headerSummaryDivider: {
+      width: 1,
+      height: px(28),
+      background:
+        "rgba(255,255,255,.18)",
+    },
+
+    scrollArea: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: headerHeight + contentGap,
+      bottom: navFooterHeight,
+      overflowY: "auto",
+      overflowX: "hidden",
+      WebkitOverflowScrolling: "touch",
+      scrollbarWidth: "none",
+      background:
+        "linear-gradient(180deg,#fff,#f6f4ef 58%,#efede8)",
+    },
+
+    content: {
+      padding: `${px(13)}px ${px(
+        narrow ? 10 : 13
+      )}px 0`,
+      color: "#111827",
+    },
+
+    trackerCard: {
+      padding: px(12),
+      overflow: "hidden",
+      border: "1px solid #e7e5e4",
+      borderRadius: px(21),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    trackerHeader: {
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: px(8),
+      marginBottom: px(10),
+    },
+
+    sectionEyebrow: {
+      color: "#b45309",
+      fontSize: font(7),
+      letterSpacing: px(1),
+      fontWeight: 950,
+    },
+
+    trackerTitle: {
+      margin: `${px(4)}px 0 0`,
+      fontSize: font(13),
+      fontWeight: 950,
+    },
+
+    currentStatusPill: {
+      padding: `${px(5)}px ${px(8)}px`,
+      borderRadius: 999,
+      background: "#fffbeb",
+      color: "#b45309",
+      fontSize: font(7),
+      fontWeight: 950,
+      whiteSpace: "nowrap",
+    },
+
+    currentStatusPillBlue: {
+      background: "#eff6ff",
+      color: "#1d4ed8",
+    },
+
+    currentStatusPillGreen: {
+      background: "#ecfdf5",
+      color: "#15803d",
+    },
+
+    trackerScroller: {
+      width: "100%",
+      overflowX: "auto",
+      overflowY: "hidden",
+      paddingBottom: px(3),
+      scrollbarWidth: "none",
+    },
+
+    tracker: {
+      minWidth: px(610),
+      display: "flex",
+      alignItems: "flex-start",
+    },
+
+    trackerStep: {
+      width: px(78),
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      flexShrink: 0,
+      textAlign: "center",
+    },
+
+    trackerCircle: {
+      width: px(25),
+      height: px(25),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: "50%",
+      fontSize: font(10),
+      fontWeight: 950,
+    },
+
+    trackerCircleCompleted: {
+      background: "#22c55e",
+      color: "white",
+      boxShadow:
+        "0 6px 14px rgba(34,197,94,.22)",
+    },
+
+    trackerCircleActive: {
+      background: "#f59e0b",
+      color: "white",
+      boxShadow:
+        "0 0 0 5px rgba(245,158,11,.13)",
+      animation:
+        "activeStagePulse 1.7s ease-in-out infinite",
+    },
+
+    trackerCircleWaiting: {
+      border: "2px solid #d6d3d1",
+      background: "#f5f5f4",
+      color: "#a8a29e",
+    },
+
+    trackerLabel: {
+      marginTop: px(6),
+      color: "#a8a29e",
+      fontSize: font(6.5),
+      lineHeight: 1.15,
+      fontWeight: 750,
+    },
+
+    trackerLabelCompleted: {
+      color: "#166534",
+    },
+
+    trackerLabelActive: {
+      color: "#92400e",
+      fontWeight: 950,
+    },
+
+    trackerConnector: {
+      width: px(26),
+      height: px(4),
+      marginTop: px(10.5),
+      flexShrink: 0,
+      borderRadius: 999,
+      background: "#e7e5e4",
+    },
+
+    trackerConnectorCompleted: {
+      background: "#22c55e",
+    },
+
+    testingSection: {
+      marginTop: px(10),
+    },
+
+    testingToggle: {
+      width: "100%",
+      minHeight: px(34),
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: `0 ${px(11)}px`,
+      border: "1px dashed #d97706",
+      borderRadius: px(13),
+      background: "#fffbeb",
+      color: "#92400e",
+      fontSize: font(8),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+
+    testingButtons: {
+      display: "grid",
+      gridTemplateColumns: "repeat(4,1fr)",
+      gap: px(5),
+      marginTop: px(7),
+    },
+
+    testingButton: {
+      minWidth: 0,
+      minHeight: px(31),
+      padding: `0 ${px(4)}px`,
+      border: "1px solid #e7e5e4",
+      borderRadius: px(10),
+      background: "white",
+      color: "#57534e",
+      fontSize: font(6.5),
+      fontWeight: 850,
+      cursor: "pointer",
+    },
+
+    testingButtonActive: {
+      borderColor: "#f59e0b",
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+    },
+
+    primaryStatusCard: {
+      display: "flex",
+      alignItems: "center",
+      gap: px(12),
+      marginTop: px(12),
+      padding: px(14),
+      border: "1px solid #fde68a",
+      borderRadius: px(21),
+      background:
+        "linear-gradient(135deg,#fffbeb,#fef3c7)",
+      boxShadow:
+        "0 11px 25px rgba(146,64,14,.09)",
+    },
+
+    primaryStatusIcon: {
+      width: px(44),
+      height: px(44),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: px(16),
+      background:
+        "linear-gradient(135deg,#22c55e,#15803d)",
+      color: "white",
+      fontSize: font(21),
+      fontWeight: 950,
+    },
+
+    cardEyebrow: {
+      color: "#b45309",
+      fontSize: font(6.8),
+      letterSpacing: px(0.9),
+      fontWeight: 950,
+    },
+
+    primaryStatusTitle: {
+      margin: `${px(4)}px 0 0`,
+      color: "#78350f",
+      fontSize: font(12),
+      fontWeight: 950,
+    },
+
+    primaryStatusText: {
+      margin: `${px(5)}px 0 0`,
+      color: "#92400e",
+      fontSize: font(7.8),
+      lineHeight: 1.4,
+      fontWeight: 650,
+    },
+
+    sectionHeading: {
+      display: "flex",
+      alignItems: "flex-end",
+      justifyContent: "space-between",
+      gap: px(8),
+      marginTop: px(16),
+      marginBottom: px(9),
+    },
+
+    sectionTitle: {
+      margin: `${px(4)}px 0 0`,
+      fontSize: font(14),
+      fontWeight: 950,
+    },
+
+    verifiedPill: {
+      padding: `${px(5)}px ${px(8)}px`,
+      borderRadius: 999,
+      background: "#ecfdf5",
+      color: "#15803d",
+      fontSize: font(7),
+      fontWeight: 950,
+    },
+
+    assignmentCard: {
+      marginBottom: px(10),
+      padding: px(13),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(20),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    assignmentHeader: {
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr) auto",
+      alignItems: "center",
+      gap: px(9),
+    },
+
+    sellerIcon: {
+      width: px(39),
+      height: px(39),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: px(14),
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: font(16),
+      fontWeight: 950,
+    },
+
+    transporterIcon: {
+      width: px(39),
+      height: px(39),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: px(14),
+      background:
+        "linear-gradient(135deg,#38bdf8,#1d4ed8)",
+      color: "white",
+      fontSize: font(17),
+    },
+
+    assignmentTitleArea: {
+      minWidth: 0,
+    },
+
+    assignmentLabel: {
+      color: "#a8a29e",
+      fontSize: font(6.5),
+      letterSpacing: px(0.7),
+      fontWeight: 950,
+    },
+
+    assignmentTitle: {
+      margin: `${px(3)}px 0 0`,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      color: "#111827",
+      fontSize: font(10.5),
+      fontWeight: 950,
+    },
+
+    assignmentSubtitle: {
+      margin: `${px(3)}px 0 0`,
+      color: "#78716c",
+      fontSize: font(7.5),
+    },
+
+    verifiedIcon: {
+      width: px(25),
+      height: px(25),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: "50%",
+      background: "#dcfce7",
+      color: "#15803d",
+      fontSize: font(10),
+      fontWeight: 950,
+    },
+
+    assignmentInfoGrid: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: px(7),
+      marginTop: px(11),
+    },
+
+    infoBox: {
+      minWidth: 0,
+      display: "flex",
+      flexDirection: "column",
+      gap: px(3),
+      padding: px(8),
+      border: "1px solid #eeeae6",
+      borderRadius: px(13),
+      background: "#fafaf9",
+      color: "#78716c",
+      fontSize: font(7),
+    },
+
+    infoBoxWide: {
+      gridColumn: "1 / -1",
+    },
+
+    assignmentNotice: {
+      marginTop: px(9),
+      padding: px(9),
+      borderRadius: px(12),
+      background: "#eff6ff",
+      color: "#1d4ed8",
+      fontSize: font(7.3),
+      lineHeight: 1.35,
+      fontWeight: 700,
+    },
+
+    loadingShowcase: {
+      position: "relative",
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr)",
+      alignItems: "center",
+      gap: px(13),
+      marginTop: px(12),
+      padding: px(14),
+      overflow: "hidden",
+      border:
+        "1px solid rgba(245,158,11,.28)",
+      borderRadius: px(22),
+      background:
+        "linear-gradient(135deg,#17100b,#3f2414 58%,#78350f)",
+      color: "white",
+      boxShadow:
+        "0 16px 34px rgba(120,53,15,.18)",
+    },
+
+    loadingScene: {
+      position: "relative",
+      width: px(96),
+      height: px(78),
+      flexShrink: 0,
+      overflow: "hidden",
+    },
+
+    loadingTruck: {
+      position: "absolute",
+      right: px(4),
+      bottom: px(10),
+      zIndex: 3,
+      fontSize: font(38),
+      animation:
+        "truckBounce 1.8s ease-in-out infinite",
+    },
+
+    loadingMaterialOne: {
+      position: "absolute",
+      left: px(12),
+      top: px(8),
+      color: "#f59e0b",
+      fontSize: font(15),
+      animation:
+        "materialDrop 1.6s ease-in-out infinite",
+    },
+
+    loadingMaterialTwo: {
+      position: "absolute",
+      left: px(32),
+      top: px(4),
+      color: "#d97706",
+      fontSize: font(12),
+      animation:
+        "materialDrop 1.6s .35s ease-in-out infinite",
+    },
+
+    loadingMaterialThree: {
+      position: "absolute",
+      left: px(49),
+      top: px(12),
+      color: "#92400e",
+      fontSize: font(13),
+      animation:
+        "materialDrop 1.6s .7s ease-in-out infinite",
+    },
+
+    loadingGround: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom: px(8),
+      height: px(3),
+      borderRadius: 999,
+      background:
+        "rgba(251,191,36,.35)",
+    },
+
+    loadingShowcaseText: {
+      minWidth: 0,
+    },
+
+    loadingTitle: {
+      margin: `${px(5)}px 0 0`,
+      fontSize: font(14),
+      fontWeight: 950,
+    },
+
+    loadingText: {
+      margin: `${px(6)}px 0 0`,
+      color: "#d6d3d1",
+      fontSize: font(8),
+      lineHeight: 1.4,
+    },
+
+    loadingProgressCard: {
+      marginTop: px(12),
+      padding: px(13),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(21),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    progressHeader: {
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: px(8),
+    },
+
+    progressTitle: {
+      margin: `${px(4)}px 0 0`,
+      fontSize: font(11),
+      fontWeight: 950,
+    },
+
+    loadingLivePill: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: px(4),
+      padding: `${px(5)}px ${px(8)}px`,
+      borderRadius: 999,
+      background: "#fffbeb",
+      color: "#b45309",
+      fontSize: font(7),
+      fontWeight: 950,
+    },
+
+    loadingLiveDot: {
+      width: px(6),
+      height: px(6),
+      borderRadius: "50%",
+      background: "#f59e0b",
+      animation:
+        "activeStagePulse 1.7s ease-in-out infinite",
+    },
+
+    overallProgressTrack: {
+      height: px(7),
+      marginTop: px(11),
+      overflow: "hidden",
+      borderRadius: 999,
+      background: "#f1f0ee",
+    },
+
+    overallProgressFill: {
+      height: "100%",
+      borderRadius: 999,
+      background:
+        "linear-gradient(90deg,#f59e0b,#ea580c)",
+      transition: "width 500ms ease",
+    },
+
+    loadingMeta: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: px(8),
+      marginTop: px(9),
+      color: "#78716c",
+      fontSize: font(7),
+    },
+
+    vehicleStack: {
+      display: "grid",
+      gap: px(9),
+    },
+
+    loadingVehicleCard: {
+      padding: px(12),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(19),
+      background: "white",
+      boxShadow:
+        "0 9px 22px rgba(0,0,0,.045)",
+    },
+
+    loadingVehicleHeader: {
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr) auto",
+      alignItems: "center",
+      gap: px(8),
+    },
+
+    loadingVehicleNumber: {
+      width: px(32),
+      height: px(32),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: px(11),
+      background: "#fffbeb",
+      color: "#b45309",
+      fontSize: font(11),
+      fontWeight: 950,
+    },
+
+    loadingVehicleText: {
+      minWidth: 0,
+    },
+
+    loadingVehicleTitle: {
+      margin: 0,
+      fontSize: font(10),
+      fontWeight: 950,
+    },
+
+    loadingVehicleSubtitle: {
+      margin: `${px(3)}px 0 0`,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      color: "#78716c",
+      fontSize: font(7),
+    },
+
+    loadingStatusPill: {
+      padding: `${px(5)}px ${px(7)}px`,
+      borderRadius: 999,
+      background: "#fffbeb",
+      color: "#b45309",
+      fontSize: font(6.5),
+      fontWeight: 950,
+    },
+
+    loadingStatusComplete: {
+      background: "#ecfdf5",
+      color: "#15803d",
+    },
+
+    loadingStatusWaiting: {
+      background: "#f5f5f4",
+      color: "#78716c",
+    },
+
+    vehicleProgressTrack: {
+      height: px(5),
+      marginTop: px(10),
+      overflow: "hidden",
+      borderRadius: 999,
+      background: "#f1f0ee",
+    },
+
+    vehicleProgressFill: {
+      height: "100%",
+      borderRadius: 999,
+      background:
+        "linear-gradient(90deg,#f59e0b,#ea580c)",
+    },
+
+    vehicleProgressComplete: {
+      background:
+        "linear-gradient(90deg,#22c55e,#15803d)",
+    },
+
+    vehicleProgressText: {
+      display: "flex",
+      justifyContent: "space-between",
+      marginTop: px(6),
+      color: "#78716c",
+      fontSize: font(6.7),
+    },
+
+    qualityNotice: {
+      display: "flex",
+      gap: px(9),
+      marginTop: px(11),
+      padding: px(11),
+      border: "1px solid #bbf7d0",
+      borderRadius: px(17),
+      background: "#f0fdf4",
+      color: "#166534",
+      fontSize: font(7.5),
+      lineHeight: 1.35,
+    },
+
+    qualityIcon: {
+      width: px(29),
+      height: px(29),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: px(10),
+      background: "#22c55e",
+      color: "white",
+      fontWeight: 950,
+    },
+
+    transitStatusCard: {
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr)",
+      alignItems: "center",
+      gap: px(13),
+      marginTop: px(12),
+      padding: px(14),
+      overflow: "hidden",
+      border:
+        "1px solid rgba(56,189,248,.28)",
+      borderRadius: px(22),
+      background:
+        "linear-gradient(135deg,#071426,#0c4a6e 56%,#1d4ed8)",
+      color: "white",
+      boxShadow:
+        "0 16px 34px rgba(29,78,216,.18)",
+    },
+
+    transitAnimation: {
+      position: "relative",
+      width: px(92),
+      height: px(66),
+      overflow: "hidden",
+      borderRadius: px(16),
+      background:
+        "rgba(255,255,255,.07)",
+    },
+
+    roadLine: {
+      position: "absolute",
+      left: px(7),
+      right: px(7),
+      bottom: px(14),
+      height: px(3),
+      borderRadius: 999,
+      background:
+        "repeating-linear-gradient(90deg,#fde68a 0 12px,transparent 12px 22px)",
+    },
+
+    movingTruck: {
+      position: "absolute",
+      left: px(5),
+      bottom: px(17),
+      fontSize: font(34),
+      animation:
+      "driveTruck 3s ease-in-out infinite",
+    },
+
+    transitStatusText: {
+      minWidth: 0,
+    },
+
+    transitEyebrow: {
+      color: "#bae6fd",
+      fontSize: font(6.8),
+      letterSpacing: px(1),
+      fontWeight: 950,
+    },
+
+    transitTitle: {
+      margin: `${px(5)}px 0 0`,
+      fontSize: font(13),
+      fontWeight: 950,
+    },
+
+    transitText: {
+      margin: `${px(6)}px 0 0`,
+      color: "#dbeafe",
+      fontSize: font(7.5),
+      lineHeight: 1.35,
+    },
+
+    routeCard: {
+      marginTop: px(12),
+      padding: px(13),
+      border: "1px solid #dbeafe",
+      borderRadius: px(21),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    routeHeader: {
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr) auto",
+      alignItems: "center",
+      gap: px(9),
+    },
+
+    routeIcon: {
+      width: px(37),
+      height: px(37),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: px(13),
+      background: "#eff6ff",
+      color: "#1d4ed8",
+      fontSize: font(18),
+      fontWeight: 950,
+    },
+
+    routeTitleArea: {
+      minWidth: 0,
+    },
+
+    routeLabel: {
+      color: "#1d4ed8",
+      fontSize: font(6.5),
+      letterSpacing: px(0.8),
+      fontWeight: 950,
+    },
+
+    routeTitle: {
+      margin: `${px(4)}px 0 0`,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      fontSize: font(10),
+      fontWeight: 950,
+    },
+
+    distancePill: {
+      padding: `${px(5)}px ${px(8)}px`,
+      borderRadius: 999,
+      background: "#eff6ff",
+      color: "#1d4ed8",
+      fontSize: font(7),
+      fontWeight: 950,
+    },
+
+    routeTrack: {
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr) auto",
+      alignItems: "center",
+      marginTop: px(15),
+    },
+
+    routeStartDot: {
+      width: px(12),
+      height: px(12),
+      borderRadius: "50%",
+      background: "#22c55e",
+      boxShadow:
+        "0 0 0 4px rgba(34,197,94,.12)",
+    },
+
+    routeEndDot: {
+      width: px(12),
+      height: px(12),
+      border: "3px solid #1d4ed8",
+      borderRadius: "50%",
+      background: "white",
+    },
+
+    routeProgressLine: {
+      height: px(5),
+      overflow: "hidden",
+      background: "#dbeafe",
+    },
+
+    routeProgressFill: {
+      width: "68%",
+      height: "100%",
+      background:
+        "linear-gradient(90deg,#22c55e,#38bdf8,#1d4ed8)",
+    },
+
+    routeLabels: {
+      display: "flex",
+      justifyContent: "space-between",
+      marginTop: px(7),
+      color: "#64748b",
+      fontSize: font(6.7),
+      fontWeight: 750,
+    },
+
+    lastUpdated: {
+      marginTop: px(9),
+      padding: px(8),
+      borderRadius: px(11),
+      background: "#eff6ff",
+      color: "#1d4ed8",
+      textAlign: "center",
+      fontSize: font(7),
+      fontWeight: 800,
+    },
+
+    transitCountPill: {
+      padding: `${px(5)}px ${px(8)}px`,
+      borderRadius: 999,
+      background: "#eff6ff",
+      color: "#1d4ed8",
+      fontSize: font(7),
+      fontWeight: 950,
+    },
+
+    transitVehicleCard: {
+      padding: px(12),
+      border: "1px solid #dbeafe",
+      borderRadius: px(20),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    vehicleCardHeader: {
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr) auto",
+      alignItems: "center",
+      gap: px(8),
+    },
+
+    vehicleMainIcon: {
+      width: px(38),
+      height: px(38),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: px(13),
+      background:
+        "linear-gradient(135deg,#38bdf8,#1d4ed8)",
+      fontSize: font(18),
+    },
+
+    vehicleMainText: {
+      minWidth: 0,
+    },
+
+    vehicleNumberLabel: {
+      color: "#64748b",
+      fontSize: font(6.3),
+      letterSpacing: px(0.7),
+      fontWeight: 950,
+    },
+
+    vehicleNumber: {
+      margin: `${px(3)}px 0 0`,
+      fontSize: font(10.5),
+      fontWeight: 950,
+    },
+
+    inTransitPill: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: px(4),
+      padding: `${px(5)}px ${px(7)}px`,
+      borderRadius: 999,
+      background: "#eff6ff",
+      color: "#1d4ed8",
+      fontSize: font(6.5),
+      fontWeight: 950,
+    },
+
+    inTransitDot: {
+      width: px(5),
+      height: px(5),
+      borderRadius: "50%",
+      background: "#38bdf8",
+      animation:
+        "activeStagePulse 1.7s ease-in-out infinite",
+    },
+
+    vehicleDetailsGrid: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: px(7),
+      marginTop: px(10),
+    },
+
+    vehicleActions: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: px(7),
+      marginTop: px(10),
+    },
+
+    callDriverButton: {
+      minHeight: px(35),
+      border: 0,
+      borderRadius: px(12),
+      background:
+        "linear-gradient(135deg,#22c55e,#15803d)",
+      color: "white",
+      fontSize: font(7.5),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    reportIssueButton: {
+      minHeight: px(35),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(12),
+      background: "#fafaf9",
+      color: "#57534e",
+      fontSize: font(7.5),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+
+    deliveredShowcase: {
+      display: "flex",
+      alignItems: "center",
+      gap: px(13),
+      marginTop: px(12),
+      padding: px(15),
+      border: "1px solid #bbf7d0",
+      borderRadius: px(22),
+      background:
+        "linear-gradient(135deg,#f0fdf4,#dcfce7)",
+      boxShadow:
+        "0 13px 28px rgba(34,197,94,.10)",
+    },
+
+    deliverySuccessIcon: {
+      width: px(52),
+      height: px(52),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      border: `${px(4)}px solid #dcfce7`,
+      borderRadius: "50%",
+      background:
+        "linear-gradient(135deg,#22c55e,#15803d)",
+      color: "white",
+      fontSize: font(24),
+      fontWeight: 950,
+      boxShadow:
+        "0 12px 25px rgba(34,197,94,.22)",
+    },
+
+    deliveredText: {
+      minWidth: 0,
+    },
+
+    deliveredEyebrow: {
+      color: "#15803d",
+      fontSize: font(6.8),
+      letterSpacing: px(0.9),
+      fontWeight: 950,
+    },
+
+    deliveredTitle: {
+      margin: `${px(5)}px 0 0`,
+      color: "#166534",
+      fontSize: font(13),
+      fontWeight: 950,
+    },
+
+    deliveredDescription: {
+      margin: `${px(5)}px 0 0`,
+      color: "#166534",
+      fontSize: font(7.5),
+      lineHeight: 1.35,
+    },
+
+    deliverySummaryCard: {
+      marginTop: px(12),
+      padding: px(13),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(21),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    deliverySummaryGrid: {
+      display: "grid",
+      gridTemplateColumns: "repeat(3,1fr)",
+      gap: px(7),
+    },
+
+    summaryMetric: {
+      minWidth: 0,
+      display: "flex",
+      flexDirection: "column",
+      gap: px(3),
+      padding: px(9),
+      borderRadius: px(13),
+      background: "#f0fdf4",
+      color: "#166534",
+      fontSize: font(7),
+    },
+
+    deliveryLocation: {
+      display: "flex",
+      alignItems: "center",
+      gap: px(9),
+      marginTop: px(10),
+      padding: px(10),
+      border: "1px solid #eeeae6",
+      borderRadius: px(14),
+      color: "#78716c",
+      fontSize: font(7),
+    },
+
+    deliveryLocationIcon: {
+      width: px(32),
+      height: px(32),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: px(11),
+      background: "#fffbeb",
+      color: "#b45309",
+      fontSize: font(15),
+      fontWeight: 950,
+    },
+
+    optionalPill: {
+      padding: `${px(5)}px ${px(8)}px`,
+      borderRadius: 999,
+      background: "#f5f5f4",
+      color: "#78716c",
+      fontSize: font(7),
+      fontWeight: 900,
+    },
+
+    feedbackCard: {
+      padding: px(13),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(22),
+      background: "white",
+      boxShadow:
+        "0 12px 27px rgba(0,0,0,.06)",
+    },
+
+    ratingField: {
+      padding: `${px(4)}px 0`,
+    },
+
+    ratingFieldFeatured: {
+      padding: px(10),
+      borderRadius: px(15),
+      background: "#fffbeb",
+    },
+
+    ratingHeader: {
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: px(8),
+    },
+
+    ratingLabel: {
+      margin: 0,
+      fontSize: font(10),
+      fontWeight: 950,
+    },
+
+    ratingDescription: {
+      margin: `${px(3)}px 0 0`,
+      color: "#78716c",
+      fontSize: font(7),
+      lineHeight: 1.3,
+    },
+
+    ratingValuePill: {
+      flexShrink: 0,
+      padding: `${px(4)}px ${px(7)}px`,
+      borderRadius: 999,
+      background: "#fef3c7",
+      color: "#92400e",
+      fontSize: font(6.5),
+      fontWeight: 950,
+    },
+
+    starRow: {
+      display: "flex",
+      alignItems: "center",
+      gap: px(5),
+      marginTop: px(8),
+    },
+
+    starButton: {
+      width: px(35),
+      height: px(35),
+      display: "grid",
+      placeItems: "center",
+      padding: 0,
+      border: "1px solid #e7e5e4",
+      borderRadius: px(11),
+      background: "#fafaf9",
+      color: "#d6d3d1",
+      fontSize: font(18),
+      cursor: "pointer",
+      transition:
+        "transform 160ms ease,color 160ms ease,background 160ms ease",
+    },
+
+    starButtonActive: {
+      borderColor: "#f59e0b",
+      background: "#fffbeb",
+      color: "#f59e0b",
+      transform: "translateY(-2px)",
+      boxShadow:
+        "0 7px 14px rgba(245,158,11,.14)",
+    },
+
+    ratingDivider: {
+      height: 1,
+      margin: `${px(10)}px 0`,
+      background: "#eeeae6",
+    },
+
+    commentsSection: {
+      marginTop: px(13),
+      paddingTop: px(12),
+      borderTop: "1px solid #eeeae6",
+    },
+
+    commentsHeader: {
+      display: "flex",
+      justifyContent: "space-between",
+      gap: px(8),
+    },
+
+    commentsLabel: {
+      fontSize: font(9),
+      fontWeight: 950,
+    },
+
+    characterCount: {
+      color: "#a8a29e",
+      fontSize: font(6.5),
+    },
+
+    commentsTextarea: {
+      width: "100%",
+      minHeight: px(95),
+      marginTop: px(8),
+      padding: px(11),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(15),
+      outline: 0,
+      resize: "vertical",
+      background: "#fafaf9",
+      color: "#111827",
+      fontFamily: "Arial, sans-serif",
+      fontSize: font(8),
+      lineHeight: 1.45,
+    },
+
+    inlineSubmitButton: {
+      width: "100%",
+      minHeight: px(45),
+      marginTop: px(12),
+      border: 0,
+      borderRadius: px(16),
+      background:
+        "linear-gradient(135deg,#22c55e,#15803d)",
+      color: "white",
+      fontSize: font(9),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    feedbackSuccessCard: {
+      padding: px(20),
+      border: "1px solid #bbf7d0",
+      borderRadius: px(22),
+      background:
+        "linear-gradient(135deg,#f0fdf4,#dcfce7)",
+      textAlign: "center",
+    },
+
+    feedbackSuccessIcon: {
+      width: px(52),
+      height: px(52),
+      margin: "0 auto",
+      display: "grid",
+      placeItems: "center",
+      borderRadius: "50%",
+      background:
+        "linear-gradient(135deg,#22c55e,#15803d)",
+      color: "white",
+      fontSize: font(24),
+      fontWeight: 950,
+    },
+
+    feedbackSuccessTitle: {
+      margin: `${px(13)}px 0 0`,
+      color: "#166534",
+      fontSize: font(13),
+      fontWeight: 950,
+    },
+
+    feedbackSuccessText: {
+      maxWidth: px(280),
+      margin: `${px(7)}px auto 0`,
+      color: "#166534",
+      fontSize: font(7.8),
+      lineHeight: 1.45,
+    },
+
+    orderIdPill: {
+      padding: `${px(5)}px ${px(8)}px`,
+      borderRadius: 999,
+      background: "#fffbeb",
+      color: "#b45309",
+      fontSize: font(7),
+      fontWeight: 950,
+    },
+
+    orderSummaryCard: {
+      overflow: "hidden",
+      padding: px(12),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(20),
+      background: "white",
+      boxShadow:
+        "0 10px 24px rgba(0,0,0,.05)",
+    },
+
+    summaryRow: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: px(12),
+      padding: `${px(8)}px 0`,
+      color: "#78716c",
+      fontSize: font(7.5),
+    },
+
+    summaryDivider: {
+      height: 1,
+      background: "#eeeae6",
+    },
+
+    bottomSpacer: {
+      height: px(24),
+    },
+
+    fixedFooter: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 40,
+      minHeight: navFooterHeight,
+      padding: `${px(8)}px ${px(
+        13
+      )}px calc(env(safe-area-inset-bottom,0px) + ${px(
+        10
+      )}px)`,
+      background:
+        "linear-gradient(to top,#f6f4ef 78%,rgba(246,244,239,.98))",
+      borderTop:
+        "1px solid rgba(120,113,108,.13)",
+      boxShadow:
+        "0 -12px 30px rgba(0,0,0,.10)",
+    },
+
+    footerHint: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: px(6),
+      marginBottom: px(7),
+      color: "#92400e",
+      fontSize: font(7),
+      fontWeight: 800,
+    },
+
+    footerStatusDot: {
+      width: px(7),
+      height: px(7),
+      borderRadius: "50%",
+      background: "#f59e0b",
+      animation:
+        "activeStagePulse 1.7s ease-in-out infinite",
+    },
+
+    footerHintBlue: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: px(6),
+      marginBottom: px(7),
+      color: "#1d4ed8",
+      fontSize: font(7),
+      fontWeight: 850,
+    },
+
+    footerStatusDotBlue: {
+      width: px(7),
+      height: px(7),
+      borderRadius: "50%",
+      background: "#38bdf8",
+      animation:
+        "activeStagePulse 1.7s ease-in-out infinite",
+    },
+
+    footerHintGreen: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: px(6),
+      marginBottom: px(7),
+      color: "#15803d",
+      fontSize: font(7),
+      fontWeight: 850,
+    },
+
+    footerMainButton: {
+      width: "100%",
+      minHeight: px(47),
+      border: 0,
+      borderRadius: px(17),
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: font(9),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    transitFooterButtons: {
+      display: "grid",
+      gridTemplateColumns: ".8fr 1.2fr",
+      gap: px(8),
+    },
+
+    supportButton: {
+      minHeight: px(47),
+      border: "1px solid #dbeafe",
+      borderRadius: px(17),
+      background: "white",
+      color: "#1d4ed8",
+      fontSize: font(9),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    trackButton: {
+      minHeight: px(47),
+      border: 0,
+      borderRadius: px(17),
+      background:
+        "linear-gradient(135deg,#38bdf8,#1d4ed8)",
+      color: "white",
+      fontSize: font(9),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    submitFeedbackButton: {
+      width: "100%",
+      minHeight: px(47),
+      border: 0,
+      borderRadius: px(17),
+      background:
+        "linear-gradient(135deg,#22c55e,#15803d)",
+      color: "white",
+      fontSize: font(9),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    popupOverlay: {
+      position: "absolute",
+      inset: 0,
+      zIndex: 100,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: px(18),
+      background: "rgba(2,6,23,.72)",
+      backdropFilter: "blur(8px)",
+    },
+
+    supportPopup: {
+      width: "100%",
+      maxWidth: px(310),
+      padding: px(20),
+      border: "1px solid #fde68a",
+      borderRadius: px(24),
+      background: "white",
+      textAlign: "center",
+      boxShadow:
+        "0 30px 80px rgba(0,0,0,.38)",
+    },
+
+    supportPopupIcon: {
+      width: px(56),
+      height: px(56),
+      margin: "0 auto",
+      display: "grid",
+      placeItems: "center",
+      borderRadius: "50%",
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: font(25),
+      fontWeight: 950,
+    },
+
+    popupTitle: {
+      margin: `${px(15)}px 0 0`,
+      color: "#111827",
+      fontSize: font(15),
+      fontWeight: 950,
+    },
+
+    popupText: {
+      margin: `${px(8)}px auto 0`,
+      color: "#57534e",
+      fontSize: font(8),
+      lineHeight: 1.45,
+    },
+
+    popupButtons: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: px(8),
+      marginTop: px(17),
+    },
+
+    popupCancelButton: {
+      minHeight: px(42),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(15),
+      background: "#fafaf9",
+      color: "#57534e",
+      fontSize: font(8),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+
+    popupCallButton: {
+      minHeight: px(42),
+      border: 0,
+      borderRadius: px(15),
+      background:
+        "linear-gradient(135deg,#22c55e,#15803d)",
+      color: "white",
+      fontSize: font(8),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+  };
+}
+
+const globalCss = `
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  background: #0b0907;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.active-order-scroll,
+.tracker-horizontal-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.active-order-scroll::-webkit-scrollbar,
+.tracker-horizontal-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+textarea::placeholder {
+  color: #a8a29e;
+}
+
+body {
+  -webkit-text-size-adjust: 100%;
+}
+
+@keyframes statusIconPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.07);
+  }
+}
+
+@keyframes activeStagePulse {
+  0%,
+  100% {
+    opacity: .65;
+    transform: scale(.9);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes truckBounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes materialDrop {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  35% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(35px, 42px) rotate(160deg);
+  }
+}
+
+@keyframes driveTruck {
+  0% {
+    transform: translateX(105px);
+  }
+
+  45%,
+  60% {
+    transform: translateX(30px);
+  }
+
+  100% {
+    transform: translateX(-44px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+`;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+orderpgae
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
+const BASE_W = 390;
+const BASE_H = 844;
+const RECENT_ORDERS_BG = "https://cdn.jsdelivr.net/gh/Shyam7291/company-document-monitor@main/just give me the bg image of this not with the fon.png";
+
+const ORDERS = [
+  {
+    id: "SR-260711-04",
+    type: "rate",
+    title: "20mm + 40mm Crushed Stone",
+    subtitle: "30 tons • 3 vehicles",
+    date: "11 Jul 2026",
+    orderDate: "2026-07-11",
+    timestamp: 1783708200000,
+    value: "₹1,280 / ton",
+    status: "Best rate ready",
+    statusKey: "rateReady",
+    tone: "success",
+    progress: 3,
+    stages: [
+      "Submitted",
+      "Checking",
+      "Rate ready",
+      "Confirm",
+    ],
+  },
+  {
+    id: "SO-260709-02",
+    type: "delivery",
+    title: "40mm Crushed Stone",
+    subtitle: "22 tons • 1 vehicle",
+    date: "09 Jul 2026",
+    orderDate: "2026-07-09",
+    timestamp: 1783535400000,
+    value: "In transit",
+    status: "In transit",
+    statusKey: "inTransit",
+    tone: "delivery",
+    progress: 3,
+    stages: [
+      "Confirmed",
+      "Loading",
+      "In transit",
+      "Delivered",
+    ],
+  },
+  {
+    id: "SR-260707-01",
+    type: "rate",
+    title: "M-Sand",
+    subtitle: "18 tons • 1 vehicle",
+    date: "07 Jul 2026",
+    orderDate: "2026-07-07",
+    timestamp: 1783362600000,
+    value: "₹1,050 / ton",
+    status: "Rejected",
+    statusKey: "rejected",
+    tone: "rejected",
+    progress: 4,
+    stages: [
+      "Submitted",
+      "Checking",
+      "Rate ready",
+      "Rejected",
+    ],
+  },
+  {
+    id: "SR-260705-08",
+    type: "rate",
+    title: "Stone Dust",
+    subtitle: "15 tons • 1 vehicle",
+    date: "05 Jul 2026",
+    orderDate: "2026-07-05",
+    timestamp: 1783189800000,
+    value: "Checking sellers",
+    status: "Checking sellers",
+    statusKey: "checking",
+    tone: "pending",
+    progress: 2,
+    stages: [
+      "Submitted",
+      "Checking",
+      "Rate ready",
+      "Confirm",
+    ],
+  },
+  {
+    id: "SO-260702-03",
+    type: "delivery",
+    title: "20mm Crushed Stone",
+    subtitle: "30 tons • 3 vehicles",
+    date: "02 Jul 2026",
+    orderDate: "2026-07-02",
+    timestamp: 1782930600000,
+    value: "Delivered",
+    status: "Delivered",
+    statusKey: "delivered",
+    tone: "delivered",
+    progress: 4,
+    stages: [
+      "Confirmed",
+      "Loading",
+      "In transit",
+      "Delivered",
+    ],
+  },
+];
+
+const QUICK_FILTERS = [
+  {
+    id: "all",
+    label: "All",
+  },
+  {
+    id: "rate",
+    label: "Rate requests",
+  },
+  {
+    id: "delivery",
+    label: "Delivery orders",
+  },
+  {
+    id: "active",
+    label: "Active",
+  },
+];
+const ORDER_TYPE_OPTIONS = [
+  {
+    id: "all",
+    label: "All orders",
+    icon: "▣",
+  },
+  {
+    id: "rate",
+    label: "Rate requests",
+    icon: "₹",
+  },
+  {
+    id: "delivery",
+    label: "Delivery orders",
+    icon: "🚚",
+  },
+  {
+    id: "active",
+    label: "Active orders",
+    icon: "●",
+  },
+];
+
+const SORT_OPTIONS = [
+  "Newest first",
+  "Oldest first",
+  "Rate requests first",
+  "Delivery orders first",
+];
+
+const STATUS_OPTIONS = [
+  {
+    id: "all",
+    label: "All statuses",
+  },
+  {
+    id: "checking",
+    label: "Checking sellers",
+  },
+  {
+    id: "rateReady",
+    label: "Best rate ready",
+  },
+  {
+    id: "inTransit",
+    label: "In transit",
+  },
+  {
+    id: "delivered",
+    label: "Delivered",
+  },
+  {
+    id: "rejected",
+    label: "Rejected",
+  },
+];
+
+function useViewport() {
+  const [viewport, setViewport] = useState({
+    width:
+      typeof window !== "undefined"
+        ? window.innerWidth
+        : BASE_W,
+    height:
+      typeof window !== "undefined"
+        ? window.innerHeight
+        : BASE_H,
+  });
+
+  useEffect(() => {
+    const update = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    update();
+
+    window.addEventListener("resize", update);
+    window.addEventListener(
+      "orientationchange",
+      update
+    );
+
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener(
+        "orientationchange",
+        update
+      );
+    };
+  }, []);
+
+  return viewport;
+}
+
+export default function OrdersPage({
+  goToPage4,
+  goToPage7,
+  goToPage8,
+  goToProfile,
+  initialOrderType = "all",
+  initialOrderStatus = "all",
+}) {
+  const viewport = useViewport();
+
+  const styles = useMemo(
+    () => createStyles(viewport),
+    [viewport.width, viewport.height]
+  );
+
+  const [query, setQuery] = useState("");
+  const [quickFilter, setQuickFilter] =
+  useState(initialOrderType);
+
+  
+  useEffect(() => {
+    setQuickFilter(initialOrderType);
+    setStatusFilter(initialOrderStatus);
+  }, [initialOrderType, initialOrderStatus]);
+
+
+const [statusFilter, setStatusFilter] =
+useState(initialOrderStatus);
+
+  const [sortOrder, setSortOrder] =
+    useState("Newest first");
+
+  const [showFilters, setShowFilters] =
+    useState(false);
+
+  const [activeFilterTab, setActiveFilterTab] =
+    useState("type");
+
+    const [dateMode, setDateMode] =
+    useState("single");
+  
+  const [singleDate, setSingleDate] =
+    useState("");
+  
+  const [fromDate, setFromDate] =
+    useState("");
+  
+  const [toDate, setToDate] =
+    useState("");  
+
+  const [activeNav, setActiveNav] =
+    useState("Orders");
+
+    const hasDateFilter =
+    dateMode === "single"
+      ? Boolean(singleDate)
+      : Boolean(fromDate || toDate);
+  
+  const activeFilterCount =
+    (quickFilter !== "all" ? 1 : 0) +
+    (statusFilter !== "all" ? 1 : 0) +
+    (hasDateFilter ? 1 : 0) +
+    (sortOrder !== "Newest first" ? 1 : 0);
+
+  const activeAdvancedFilterCount =
+    statusFilter === "all" ? 0 : 1;
+
+  const filteredOrders = useMemo(() => {
+    const normalizedQuery = query
+      .trim()
+      .toLowerCase();
+
+    let result = ORDERS.filter((order) => {
+      const searchMatches =
+        !normalizedQuery ||
+        order.id
+          .toLowerCase()
+          .includes(normalizedQuery) ||
+        order.title
+          .toLowerCase()
+          .includes(normalizedQuery) ||
+        order.subtitle
+          .toLowerCase()
+          .includes(normalizedQuery) ||
+        order.status
+          .toLowerCase()
+          .includes(normalizedQuery);
+
+      const quickFilterMatches =
+        quickFilter === "all" ||
+        (quickFilter === "rate" &&
+          order.type === "rate") ||
+        (quickFilter === "delivery" &&
+          order.type === "delivery") ||
+        (quickFilter === "active" &&
+          !["rejected", "delivered"].includes(
+            order.statusKey
+          ));
+
+      const statusMatches =
+        statusFilter === "all" ||
+        order.statusKey === statusFilter;
+
+        let dateMatches = true;
+
+        if (dateMode === "single" && singleDate) {
+          dateMatches =
+            order.orderDate === singleDate;
+        }
+        
+        if (dateMode === "range") {
+          const matchesFromDate =
+            !fromDate ||
+            order.orderDate >= fromDate;
+        
+          const matchesToDate =
+            !toDate ||
+            order.orderDate <= toDate;
+        
+          dateMatches =
+            matchesFromDate && matchesToDate;
+        }  
+
+        return (
+          searchMatches &&
+          quickFilterMatches &&
+          statusMatches &&
+          dateMatches
+        );
+    });
+
+    if (sortOrder === "Newest first") {
+      result = [...result].sort(
+        (first, second) =>
+          second.timestamp - first.timestamp
+      );
+    }
+
+    if (sortOrder === "Oldest first") {
+      result = [...result].sort(
+        (first, second) =>
+          first.timestamp - second.timestamp
+      );
+    }
+
+    if (
+      sortOrder === "Rate requests first"
+    ) {
+      result = [...result].sort((first, second) => {
+        if (first.type === second.type) {
+          return second.timestamp - first.timestamp;
+        }
+
+        return first.type === "rate" ? -1 : 1;
+      });
+    }
+
+    if (
+      sortOrder === "Delivery orders first"
+    ) {
+      result = [...result].sort((first, second) => {
+        if (first.type === second.type) {
+          return second.timestamp - first.timestamp;
+        }
+
+        return first.type === "delivery"
+          ? -1
+          : 1;
+      });
+    }
+
+    return result;
+  }, [
+    query,
+    quickFilter,
+    statusFilter,
+    sortOrder,
+    dateMode,
+    singleDate,
+    fromDate,
+    toDate,
+  ]);
+
+  const totalOrders = ORDERS.length;
+
+  const totalRateRequests = ORDERS.filter(
+    (order) => order.type === "rate"
+  ).length;
+
+  const totalInTransit = ORDERS.filter(
+    (order) =>
+      order.statusKey === "inTransit"
+  ).length;
+
+  const clearAllFilters = () => {
+    setQuery("");
+    setQuickFilter("all");
+    setStatusFilter("all");
+    setSortOrder("Newest first");
+  
+    setDateMode("single");
+    setSingleDate("");
+    setFromDate("");
+    setToDate("");
+  
+    setActiveFilterTab("type");
+    setShowFilters(false);
+  };
+
+  const handleViewDetails = (order) => {
+    if (
+      order.type === "delivery" &&
+      goToPage8
+    ) {
+      goToPage8();
+      return;
+    }
+
+    if (order.type === "rate" && goToPage7) {
+      goToPage7();
+    }
+  };
+
+  const handleBottomNavigation = (name) => {
+    setActiveNav(name);
+
+    if (name === "Home" && goToPage4) {
+      goToPage4();
+      return;
+    }
+
+    if (name === "Profile" && goToProfile) {
+      goToProfile();
+    }
+  };
+
+  return (
+    <div style={styles.page}>
+      <style>{globalCss}</style>
+
+      <main style={styles.phone}>
+        <header style={styles.controlHeader}>
+          <div style={styles.headerAmbientGlow} />
+
+          <div style={styles.topControlRow}>
+            <button
+              type="button"
+              style={styles.backButton}
+              aria-label="Back to Home"
+              onClick={goToPage4}
+            >
+              ‹
+            </button>
+
+            <div style={styles.searchContainer}>
+              <div style={styles.searchIconBox}>
+                ⌕
+              </div>
+
+              <div
+  style={{
+    ...styles.searchTextArea,
+    ...(query ? styles.searchTextAreaTyping : {}),
+  }}
+>
+  {!query && (
+    <span style={styles.searchLabel}>
+      SEARCH ORDERS
+    </span>
+  )}
+
+  <input
+    type="search"
+    value={query}
+    onChange={(event) =>
+      setQuery(event.target.value)
+    }
+    placeholder={
+      query ? "" : "Order ID, material or status"
+    }
+    style={{
+      ...styles.searchInput,
+      ...(query ? styles.searchInputTyping : {}),
+    }}
+  />
+</div>
+
+              {query && (
+                <button
+                  type="button"
+                  style={styles.clearSearchButton}
+                  onClick={() => setQuery("")}
+                  aria-label="Clear search"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+
+            <button
+  type="button"
+  style={{
+    ...styles.combinedFilterButton,
+    ...(showFilters || activeFilterCount > 0
+      ? styles.combinedFilterButtonActive
+      : {}),
+  }}
+  onClick={() =>
+    setShowFilters((previous) => !previous)
+  }
+  aria-label="Filter and sort orders"
+  aria-expanded={showFilters}
+>
+  <span style={styles.combinedFilterIcon}>
+    ☷
+  </span>
+
+  <span style={styles.combinedFilterText}>
+    Filter
+  </span>
+
+  {activeFilterCount > 0 && (
+    <span style={styles.filterCountBadge}>
+      {activeFilterCount}
+    </span>
+  )}
+</button>
+          </div>
+
+         
+
+          {showFilters && (
+  <>
+    <div
+      style={styles.filterOverlay}
+      onClick={() => setShowFilters(false)}
+      aria-hidden="true"
+    />
+
+    <div
+      style={styles.filterPanel}
+      onClick={(event) => event.stopPropagation()}
+    >
+      <div style={styles.panelHeader}>
+      <div>
+        <span style={styles.panelEyebrow}>
+          ORDER FILTERS
+        </span>
+
+        <h2 style={styles.panelTitle}>
+          Find the right order
+        </h2>
+      </div>
+
+      <button
+        type="button"
+        style={styles.panelCloseButton}
+        onClick={() => setShowFilters(false)}
+        aria-label="Close filters"
+      >
+        ×
+      </button>
+    </div>
+
+    <div style={styles.filterTabs}>
+      <button
+        type="button"
+        style={{
+          ...styles.filterTab,
+          ...(activeFilterTab === "type"
+            ? styles.filterTabActive
+            : {}),
+        }}
+        onClick={() =>
+          setActiveFilterTab("type")
+        }
+      >
+        <span style={styles.filterTabIcon}>
+          ▣
+        </span>
+
+        Order Type
+
+        {quickFilter !== "all" && (
+          <span style={styles.tabSelectionDot} />
+        )}
+      </button>
+
+      <button
+        type="button"
+        style={{
+          ...styles.filterTab,
+          ...(activeFilterTab === "status"
+            ? styles.filterTabActive
+            : {}),
+        }}
+        onClick={() =>
+          setActiveFilterTab("status")
+        }
+      >
+        <span style={styles.filterTabIcon}>
+          ◉
+        </span>
+
+        Status
+
+        {statusFilter !== "all" && (
+          <span style={styles.tabSelectionDot} />
+        )}
+      </button>
+
+      <button
+        type="button"
+        style={{
+          ...styles.filterTab,
+          ...(activeFilterTab === "sort"
+            ? styles.filterTabActive
+            : {}),
+        }}
+        onClick={() =>
+          setActiveFilterTab("sort")
+        }
+      >
+        <span style={styles.filterTabIcon}>
+          ⇅
+        </span>
+
+        Sort
+
+        {sortOrder !== "Newest first" && (
+          <span style={styles.tabSelectionDot} />
+        )}
+      </button>
+      <button
+  type="button"
+  style={{
+    ...styles.filterTab,
+    ...(activeFilterTab === "date"
+      ? styles.filterTabActive
+      : {}),
+  }}
+  onClick={() =>
+    setActiveFilterTab("date")
+  }
+>
+  <span style={styles.filterTabIcon}>
+    📅
+  </span>
+
+  Date
+
+  {hasDateFilter && (
+    <span style={styles.tabSelectionDot} />
+  )}
+</button>
+    </div>
+
+    <div style={styles.filterTabContent}>
+      {activeFilterTab === "type" && (
+        <>
+          <div style={styles.tabContentHeading}>
+            <span style={styles.filterSectionLabel}>
+              SELECT ORDER TYPE
+            </span>
+
+            <p style={styles.tabContentDescription}>
+              Choose which kind of orders you want
+              to see.
+            </p>
+          </div>
+
+          <div style={styles.optionCardGrid}>
+            {ORDER_TYPE_OPTIONS.map((option) => {
+              const selected =
+                quickFilter === option.id;
+
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  style={{
+                    ...styles.optionCard,
+                    ...(selected
+                      ? styles.optionCardActive
+                      : {}),
+                  }}
+                  onClick={() =>
+                    setQuickFilter(option.id)
+                  }
+                >
+                  <span
+                    style={{
+                      ...styles.optionCardIcon,
+                      ...(selected
+                        ? styles.optionCardIconActive
+                        : {}),
+                    }}
+                  >
+                    {option.icon}
+                  </span>
+
+                  <span style={styles.optionCardLabel}>
+                    {option.label}
+                  </span>
+
+                  <span
+                    style={{
+                      ...styles.optionCheck,
+                      ...(selected
+                        ? styles.optionCheckActive
+                        : {}),
+                    }}
+                  >
+                    {selected ? "✓" : ""}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {activeFilterTab === "status" && (
+        <>
+          <div style={styles.tabContentHeading}>
+            <span style={styles.filterSectionLabel}>
+              SELECT ORDER STATUS
+            </span>
+
+            <p style={styles.tabContentDescription}>
+              Filter orders by their current
+              progress.
+            </p>
+          </div>
+
+          <div style={styles.statusOptionStack}>
+            {STATUS_OPTIONS.map((option) => {
+              const selected =
+                statusFilter === option.id;
+
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  style={{
+                    ...styles.statusOption,
+                    ...(selected
+                      ? styles.statusOptionActive
+                      : {}),
+                  }}
+                  onClick={() =>
+                    setStatusFilter(option.id)
+                  }
+                >
+                  <span
+                    style={{
+                      ...styles.statusOptionDot,
+                      background:
+                        option.id === "checking"
+                          ? "#f59e0b"
+                          : option.id === "rateReady"
+                          ? "#22c55e"
+                          : option.id === "inTransit"
+                          ? "#38bdf8"
+                          : option.id === "delivered"
+                          ? "#16a34a"
+                          : option.id === "rejected"
+                          ? "#ef4444"
+                          : "#a8a29e",
+                    }}
+                  />
+
+                  <span style={styles.statusOptionLabel}>
+                    {option.label}
+                  </span>
+
+                  <span
+                    style={{
+                      ...styles.optionCheck,
+                      ...(selected
+                        ? styles.optionCheckActive
+                        : {}),
+                    }}
+                  >
+                    {selected ? "✓" : ""}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
+      {activeFilterTab === "date" && (
+  <>
+    <div style={styles.tabContentHeading}>
+      <span style={styles.filterSectionLabel}>
+        FILTER BY DATE
+      </span>
+
+      <p style={styles.tabContentDescription}>
+        Choose one specific day or select a
+        date range.
+      </p>
+    </div>
+
+    <div style={styles.dateModeTabs}>
+      <button
+        type="button"
+        style={{
+          ...styles.dateModeButton,
+          ...(dateMode === "single"
+            ? styles.dateModeButtonActive
+            : {}),
+        }}
+        onClick={() => setDateMode("single")}
+      >
+        <span>●</span>
+        Specific day
+      </button>
+
+      <button
+        type="button"
+        style={{
+          ...styles.dateModeButton,
+          ...(dateMode === "range"
+            ? styles.dateModeButtonActive
+            : {}),
+        }}
+        onClick={() => setDateMode("range")}
+      >
+        <span>↔</span>
+        Date range
+      </button>
+    </div>
+
+    {dateMode === "single" && (
+      <div style={styles.singleDateSection}>
+        <label style={styles.dateFieldLabel}>
+          Order date
+        </label>
+
+        <div style={styles.dateInputShell}>
+          <span style={styles.dateInputIcon}>
+            📅
+          </span>
+
+          <input
+            type="date"
+            value={singleDate}
+            onChange={(event) =>
+              setSingleDate(event.target.value)
+            }
+            style={styles.dateInput}
+          />
+
+          {singleDate && (
+            <button
+              type="button"
+              style={styles.clearDateButton}
+              onClick={() => setSingleDate("")}
+              aria-label="Clear selected date"
+            >
+              ×
+            </button>
+          )}
+        </div>
+
+        <p style={styles.dateHelperText}>
+          Orders created on the selected day
+          will be displayed.
+        </p>
+      </div>
+    )}
+
+    {dateMode === "range" && (
+      <div style={styles.dateRangeSection}>
+        <div style={styles.dateField}>
+          <label style={styles.dateFieldLabel}>
+            From
+          </label>
+
+          <div style={styles.dateInputShell}>
+            <span style={styles.dateInputIcon}>
+              📅
+            </span>
+
+            <input
+              type="date"
+              value={fromDate}
+              max={toDate || undefined}
+              onChange={(event) =>
+                setFromDate(event.target.value)
+              }
+              style={styles.dateInput}
+            />
+
+            {fromDate && (
+              <button
+                type="button"
+                style={styles.clearDateButton}
+                onClick={() => setFromDate("")}
+                aria-label="Clear from date"
+              >
+                ×
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div style={styles.dateRangeConnector}>
+          <span>→</span>
+        </div>
+
+        <div style={styles.dateField}>
+          <label style={styles.dateFieldLabel}>
+            To
+          </label>
+
+          <div style={styles.dateInputShell}>
+            <span style={styles.dateInputIcon}>
+              📅
+            </span>
+
+            <input
+              type="date"
+              value={toDate}
+              min={fromDate || undefined}
+              onChange={(event) =>
+                setToDate(event.target.value)
+              }
+              style={styles.dateInput}
+            />
+
+            {toDate && (
+              <button
+                type="button"
+                style={styles.clearDateButton}
+                onClick={() => setToDate("")}
+                aria-label="Clear to date"
+              >
+                ×
+              </button>
+            )}
+          </div>
+        </div>
+
+        <p style={styles.dateRangeHelper}>
+          Both start and end dates are included
+          in the results.
+        </p>
+      </div>
+    )}
+
+    {hasDateFilter && (
+      <button
+        type="button"
+        style={styles.removeDateFilterButton}
+        onClick={() => {
+          setSingleDate("");
+          setFromDate("");
+          setToDate("");
+        }}
+      >
+        Remove date filter
+      </button>
+    )}
+  </>
+)}
+      {activeFilterTab === "sort" && (
+        <>
+          <div style={styles.tabContentHeading}>
+            <span style={styles.filterSectionLabel}>
+              SORT RESULTS
+            </span>
+
+            <p style={styles.tabContentDescription}>
+              Choose how orders should be arranged.
+            </p>
+          </div>
+
+          <div style={styles.sortOptionStack}>
+            {SORT_OPTIONS.map((option) => {
+              const selected =
+                sortOrder === option;
+
+              return (
+                <button
+                  type="button"
+                  key={option}
+                  style={{
+                    ...styles.sortOption,
+                    ...(selected
+                      ? styles.sortOptionActive
+                      : {}),
+                  }}
+                  onClick={() =>
+                    setSortOrder(option)
+                  }
+                >
+                  <span>{option}</span>
+
+                  <span
+                    style={{
+                      ...styles.sortSelection,
+                      ...(selected
+                        ? styles.sortSelectionActive
+                        : {}),
+                    }}
+                  >
+                    {selected ? "✓" : ""}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
+    </div>
+
+    <div style={styles.panelFooter}>
+      <button
+        type="button"
+        style={styles.resetButton}
+        onClick={clearAllFilters}
+      >
+        Reset all
+      </button>
+
+      <button
+        type="button"
+        style={styles.applyButton}
+        onClick={() => setShowFilters(false)}
+      >
+        Show {filteredOrders.length}{" "}
+        {filteredOrders.length === 1
+          ? "order"
+          : "orders"}
+      </button>
+      </div>
+  </div>
+  </>
+)}
+
+          
+        </header>
+
+        <section
+          className="orders-scroll-area"
+          style={styles.ordersScrollArea}
+        >
+          <section style={styles.hero}>
+            <div style={styles.heroGrid} />
+            <div style={styles.heroGlow} />
+
+            <div style={styles.heroContent}>
+              <p style={styles.heroEyebrow}>
+                ORDER CENTRE
+              </p>
+
+              <h1 style={styles.heroTitle}>
+                Recent Orders
+              </h1>
+
+              <p style={styles.heroDescription}>
+                Track rate requests, active deliveries
+                and completed orders.
+              </p>
+            </div>
+
+            <div style={styles.summaryCard}>
+              <SummaryItem
+                styles={styles}
+                value={totalOrders}
+                label="Total orders"
+              />
+
+              <div style={styles.summaryDivider} />
+
+              <SummaryItem
+                styles={styles}
+                value={totalRateRequests}
+                label="Rate requests"
+              />
+
+              <div style={styles.summaryDivider} />
+
+              <SummaryItem
+                styles={styles}
+                value={totalInTransit}
+                label="In transit"
+              />
+            </div>
+          </section>
+
+          <section style={styles.activityArea}>
+            <div style={styles.resultsHeader}>
+              <div>
+                <span style={styles.resultsEyebrow}>
+                  RECENT ACTIVITY
+                </span>
+
+                <h2 style={styles.resultsTitle}>
+                  {filteredOrders.length}{" "}
+                  {filteredOrders.length === 1
+                    ? "order"
+                    : "orders"}
+                </h2>
+              </div>
+
+              <button
+  type="button"
+  style={styles.currentSortButton}
+  onClick={() => {
+    setActiveFilterTab("sort");
+    setShowFilters(true);
+  }}
+>
+  <span>{sortOrder}</span>
+  <b>⌄</b>
+</button>
+            </div>
+
+            {(query ||
+              quickFilter !== "all" ||
+              statusFilter !== "all") && (
+              <div style={styles.activeFiltersRow}>
+                <span
+                  style={styles.activeFiltersLabel}
+                >
+                  ACTIVE FILTERS
+                </span>
+
+                {query && (
+                  <ActiveFilter
+                    styles={styles}
+                    label={`Search: ${query}`}
+                    onRemove={() => setQuery("")}
+                  />
+                )}
+
+                {quickFilter !== "all" && (
+                  <ActiveFilter
+                    styles={styles}
+                    label={
+                      QUICK_FILTERS.find(
+                        (item) =>
+                          item.id === quickFilter
+                      )?.label
+                    }
+                    onRemove={() =>
+                      setQuickFilter("all")
+                    }
+                  />
+                )}
+
+                {statusFilter !== "all" && (
+                  <ActiveFilter
+                    styles={styles}
+                    label={
+                      STATUS_OPTIONS.find(
+                        (item) =>
+                          item.id === statusFilter
+                      )?.label
+                    }
+                    onRemove={() =>
+                      setStatusFilter("all")
+                    }
+                  />
+                )}
+              </div>
+            )}
+                {hasDateFilter && (
+  <ActiveFilter
+    styles={styles}
+    label={
+      dateMode === "single"
+        ? `Date: ${singleDate}`
+        : `Date: ${fromDate || "Any"} to ${
+            toDate || "Any"
+          }`
+    }
+    onRemove={() => {
+      setSingleDate("");
+      setFromDate("");
+      setToDate("");
+    }}
+  />
+)}
+
+            <div style={styles.orderStack}>
+              {filteredOrders.map((order) => (
+                <OrderCard
+                  key={order.id}
+                  order={order}
+                  styles={styles}
+                  onViewDetails={() =>
+                    handleViewDetails(order)
+                  }
+                />
+              ))}
+
+              {filteredOrders.length === 0 && (
+                <div style={styles.emptyCard}>
+                  <div style={styles.emptyIcon}>
+                    ⌕
+                  </div>
+
+                  <h3 style={styles.emptyTitle}>
+                    No matching orders
+                  </h3>
+
+                  <p style={styles.emptyText}>
+                    Try another order ID, material,
+                    type or status.
+                  </p>
+
+                  <button
+                    type="button"
+                    style={styles.emptyResetButton}
+                    onClick={clearAllFilters}
+                  >
+                    Clear all filters
+                  </button>
+                </div>
+              )}
+            </div>
+          </section>
+        </section>
+
+        <nav style={styles.bottomNav}>
+          {[
+            {
+              name: "Home",
+              icon: "⌂",
+            },
+            {
+              name: "Orders",
+              icon: "▣",
+            },
+            {
+              name: "Profile",
+              icon: "●",
+            },
+          ].map((item) => {
+            const active =
+              activeNav === item.name;
+
+            return (
+              <button
+                type="button"
+                key={item.name}
+                onClick={() =>
+                  handleBottomNavigation(
+                    item.name
+                  )
+                }
+                style={{
+                  ...styles.navButton,
+                  ...(active
+                    ? styles.navButtonActive
+                    : {}),
+                }}
+              >
+                {active && (
+                  <span
+                    style={
+                      styles.activeNavIndicator
+                    }
+                  />
+                )}
+
+                <span
+                  style={{
+                    ...styles.navIconBox,
+                    ...(active
+                      ? styles.navIconBoxActive
+                      : {}),
+                  }}
+                >
+                  {item.icon}
+                </span>
+
+                <span
+                  style={{
+                    ...styles.navLabel,
+                    ...(active
+                      ? styles.navLabelActive
+                      : {}),
+                  }}
+                >
+                  {item.name}
+                </span>
+              </button>
+            );
+          })}
+        </nav>
+      </main>
+    </div>
+  );
+}
+
+function SummaryItem({
+  styles,
+  value,
+  label,
+}) {
+  return (
+    <div style={styles.summaryItem}>
+      <b>{value}</b>
+      <span>{label}</span>
+    </div>
+  );
+}
+
+function ActiveFilter({
+  styles,
+  label,
+  onRemove,
+}) {
+  return (
+    <button
+      type="button"
+      style={styles.activeFilterChip}
+      onClick={onRemove}
+    >
+      <span>{label}</span>
+      <b>×</b>
+    </button>
+  );
+}
+
+function OrderCard({
+  order,
+  styles,
+  onViewDetails,
+}) {
+  const isDelivery =
+    order.type === "delivery";
+
+  const isRejected =
+    order.statusKey === "rejected";
+
+  const isPending =
+    order.statusKey === "checking";
+
+  const isDelivered =
+    order.statusKey === "delivered";
+
+  const tone = isRejected
+    ? "red"
+    : isDelivery
+    ? "blue"
+    : isPending
+    ? "amber"
+    : "green";
+
+  const accentStyle =
+    tone === "red"
+      ? styles.accentRed
+      : tone === "blue"
+      ? styles.accentBlue
+      : tone === "amber"
+      ? styles.accentAmber
+      : styles.accentGreen;
+
+  const statusStyle =
+    tone === "red"
+      ? styles.statusRed
+      : tone === "blue"
+      ? styles.statusBlue
+      : tone === "amber"
+      ? styles.statusAmber
+      : styles.statusGreen;
+
+  return (
+    <article style={styles.orderCard}>
+      <div
+        style={{
+          ...styles.cardAccent,
+          ...accentStyle,
+        }}
+      />
+
+      <div
+        style={{
+          ...styles.cardGlow,
+          background:
+            tone === "red"
+              ? "rgba(239,68,68,.15)"
+              : tone === "blue"
+              ? "rgba(59,130,246,.15)"
+              : tone === "amber"
+              ? "rgba(245,158,11,.16)"
+              : "rgba(34,197,94,.14)",
+        }}
+      />
+
+      <div style={styles.orderHeader}>
+        <div
+          style={{
+            ...styles.orderTypeIcon,
+            ...(isDelivery
+              ? styles.deliveryOrderIcon
+              : {}),
+            ...(isRejected
+              ? styles.rejectedOrderIcon
+              : {}),
+          }}
+        >
+          {isDelivery ? "🚚" : "₹"}
+        </div>
+
+        <div style={styles.orderHeadingArea}>
+          <div style={styles.orderMetaRow}>
+            <span style={styles.orderId}>
+              {order.id}
+            </span>
+
+            <span
+              style={{
+                ...styles.orderStatusPill,
+                ...statusStyle,
+              }}
+            >
+              <span
+                style={{
+                  ...styles.orderStatusDot,
+                  background:
+                    tone === "red"
+                      ? "#ef4444"
+                      : tone === "blue"
+                      ? "#38bdf8"
+                      : tone === "amber"
+                      ? "#f59e0b"
+                      : "#22c55e",
+                }}
+              />
+
+              {order.status}
+            </span>
+          </div>
+
+          <h3 style={styles.orderTitle}>
+            {order.title}
+          </h3>
+
+          <p style={styles.orderSubtitle}>
+            {order.subtitle}
+          </p>
+        </div>
+      </div>
+
+      <div style={styles.orderInfoGrid}>
+        <div style={styles.orderInfoCell}>
+          <span>Request date</span>
+          <b>{order.date}</b>
+        </div>
+
+        <div style={styles.orderInfoCell}>
+          <span>
+            {isDelivery
+              ? "Current state"
+              : "Quoted rate"}
+          </span>
+
+          <b>{order.value}</b>
+        </div>
+      </div>
+
+      <div style={styles.progressSection}>
+        <div style={styles.progressHeader}>
+          <span>
+            {isDelivery
+              ? "DELIVERY PROGRESS"
+              : "RATE REQUEST PROGRESS"}
+          </span>
+
+          <b>
+            {Math.round(
+              (order.progress /
+                order.stages.length) *
+                100
+            )}
+            %
+          </b>
+        </div>
+
+        <div
+          className="progress-scroll"
+          style={styles.progressScroller}
+        >
+          <div style={styles.miniTracker}>
+            {order.stages.map(
+              (stage, index) => {
+                const completed =
+                  index < order.progress;
+
+                const current =
+                  index === order.progress - 1;
+
+                return (
+                  <React.Fragment key={stage}>
+                    <div
+                      style={styles.miniStep}
+                    >
+                      <div
+                        style={{
+                          ...styles.miniCircle,
+                          ...(completed
+                            ? accentStyle
+                            : styles.miniCircleWaiting),
+                          ...(current
+                            ? styles.miniCircleCurrent
+                            : {}),
+                        }}
+                      >
+                        {completed
+                          ? isRejected &&
+                            index ===
+                              order.stages.length -
+                                1
+                            ? "×"
+                            : "✓"
+                          : ""}
+                      </div>
+
+                      <span
+                        style={{
+                          ...styles.miniLabel,
+                          color: completed
+                            ? tone === "red"
+                              ? "#b91c1c"
+                              : tone === "blue"
+                              ? "#1d4ed8"
+                              : tone === "amber"
+                              ? "#b45309"
+                              : "#15803d"
+                            : "#a8a29e",
+                          fontWeight: current
+                            ? 950
+                            : 750,
+                        }}
+                      >
+                        {stage}
+                      </span>
+                    </div>
+
+                    {index <
+                      order.stages.length - 1 && (
+                      <div
+                        style={{
+                          ...styles.miniConnector,
+                          background:
+                            index <
+                            order.progress - 1
+                              ? tone === "red"
+                                ? "#ef4444"
+                                : tone === "blue"
+                                ? "#38bdf8"
+                                : tone === "amber"
+                                ? "#f59e0b"
+                                : "#22c55e"
+                              : "#e7e5e4",
+                        }}
+                      />
+                    )}
+                  </React.Fragment>
+                );
+              }
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div style={styles.orderFooter}>
+        <span
+          style={{
+            ...styles.orderTypeLabel,
+            color:
+              tone === "red"
+                ? "#b91c1c"
+                : tone === "blue"
+                ? "#1d4ed8"
+                : tone === "amber"
+                ? "#b45309"
+                : "#15803d",
+          }}
+        >
+          {isDelivery
+            ? isDelivered
+              ? "Completed delivery"
+              : "Active delivery order"
+            : isRejected
+            ? "Rejected rate request"
+            : isPending
+            ? "Rate comparison in progress"
+            : "Active rate request"}
+        </span>
+
+        <button
+          type="button"
+          onClick={onViewDetails}
+          style={{
+            ...styles.viewDetailsButton,
+            ...(tone === "red"
+              ? styles.viewDetailsRed
+              : {}),
+            ...(tone === "blue"
+              ? styles.viewDetailsBlue
+              : {}),
+            ...(tone === "amber"
+              ? styles.viewDetailsAmber
+              : {}),
+          }}
+        >
+          View details
+          <b>›</b>
+        </button>
+      </div>
+    </article>
+  );
+}
+
+function createStyles(viewport) {
+  const viewportWidth =
+    viewport.width || BASE_W;
+
+  const viewportHeight =
+    viewport.height || BASE_H;
+
+  const isDesktop = viewportWidth >= 700;
+
+  const appWidth = isDesktop
+    ? 390
+    : viewportWidth;
+
+  const appHeight = isDesktop
+    ? 844
+    : viewportHeight;
+
+  const scale = Math.max(
+    0.72,
+    Math.min(
+      1,
+      Math.min(
+        appWidth / BASE_W,
+        appHeight / BASE_H
+      )
+    )
+  );
+
+  const px = (value) =>
+  Math.max(
+    1,
+    Math.round(value * scale)
+  );
+
+const FONT_SCALE = 1.4;
+
+const font = (value) =>
+  Math.max(
+    1,
+    Math.round(
+      value * scale * FONT_SCALE
+    )
+  );
+
+
+  const narrow = appWidth < 360;
+  const controlsHeight = px(72);
+  const navHeight = px(74);
+
+  return {
+    page: {
+      width: "100vw",
+      height: "100dvh",
+      minHeight: "100dvh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: isDesktop
+        ? "center"
+        : "stretch",
+      margin: 0,
+      padding: isDesktop ? 10 : 0,
+      overflow: "hidden",
+      background: isDesktop
+        ? "#f4f1ea"
+        : "#0b0907",
+      fontFamily: "Arial, sans-serif",
+    },
+
+    phone: {
+      position: "relative",
+      width: isDesktop ? 390 : "100vw",
+      height: isDesktop ? 844 : "100dvh",
+      overflow: "hidden",
+      background: "#0b0907",
+      borderRadius: isDesktop ? 30 : 0,
+      boxShadow: isDesktop
+        ? "0 25px 70px rgba(0,0,0,.25)"
+        : "none",
+    },
+
+    controlHeader: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: 0,
+      zIndex: 50,
+      height: controlsHeight,
+      padding: `${px(10)}px ${px(
+        narrow ? 9 : 12
+      )}px ${px(8)}px`,
+      overflow: "visible",
+      borderBottom:
+        "1px solid rgba(245,158,11,.20)",
+      background:
+        "radial-gradient(circle at 92% 0%,rgba(245,158,11,.28),transparent 35%),linear-gradient(145deg,#080706,#24140c 58%,#4b250d)",
+      boxShadow:
+        "0 14px 32px rgba(0,0,0,.28)",
+    },
+
+    headerAmbientGlow: {
+      position: "absolute",
+      right: px(-35),
+      top: px(-45),
+      width: px(150),
+      height: px(150),
+      borderRadius: "50%",
+      background: "rgba(245,158,11,.12)",
+      filter: `blur(${px(30)}px)`,
+      pointerEvents: "none",
+    },
+
+    topControlRow: {
+      position: "relative",
+      zIndex: 2,
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr) auto",
+      alignItems: "stretch",
+      gap: px(7),
+    },
+
+    backButton: {
+      width: px(42),
+      minHeight: px(48),
+      display: "grid",
+      placeItems: "center",
+      padding: 0,
+      border:
+        "1px solid rgba(255,255,255,.18)",
+      borderRadius: px(15),
+      background:
+        "linear-gradient(145deg,rgba(255,255,255,.14),rgba(255,255,255,.05))",
+      color: "white",
+      fontSize: px(25),
+      lineHeight: 1,
+      cursor: "pointer",
+      backdropFilter: "blur(12px)",
+    },
+    dateModeTabs: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: px(7),
+      padding: px(4),
+    
+      border:
+        "1px solid rgba(255,255,255,.08)",
+    
+      borderRadius: px(14),
+    
+      background: "rgba(255,255,255,.04)",
+    },
+    
+    dateModeButton: {
+      minHeight: px(39),
+    
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    
+      gap: px(6),
+      padding: `0 ${px(7)}px`,
+    
+      border: 0,
+      borderRadius: px(10),
+    
+      background: "transparent",
+      color: "#a8a29e",
+    
+      fontSize: font(6.8),
+      fontWeight: 900,
+    
+      cursor: "pointer",
+    },
+    
+    dateModeButtonActive: {
+      background:
+        "linear-gradient(135deg, rgba(245,158,11,.25), rgba(234,88,12,.14))",
+    
+      color: "#fbbf24",
+    
+      boxShadow:
+        "inset 0 0 0 1px rgba(245,158,11,.28)",
+    },
+    
+    singleDateSection: {
+      marginTop: px(12),
+    },
+    
+    dateRangeSection: {
+      display: "grid",
+      gridTemplateColumns:
+        "minmax(0,1fr) auto minmax(0,1fr)",
+    
+      alignItems: "end",
+    
+      gap: px(7),
+      marginTop: px(12),
+    },
+    
+    dateField: {
+      minWidth: 0,
+    },
+    
+    dateFieldLabel: {
+      display: "block",
+      marginBottom: px(6),
+    
+      color: "#d6d3d1",
+    
+      fontSize: font(6.5),
+      fontWeight: 900,
+    },
+    
+    dateInputShell: {
+      minWidth: 0,
+      minHeight: px(44),
+    
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr) auto",
+    
+      alignItems: "center",
+    
+      gap: px(6),
+      padding: `0 ${px(8)}px`,
+    
+      border:
+        "1px solid rgba(255,255,255,.11)",
+    
+      borderRadius: px(13),
+    
+      background: "rgba(255,255,255,.055)",
+    },
+    
+    dateInputIcon: {
+      fontSize: px(13),
+      lineHeight: 1,
+    },
+    
+    dateInput: {
+      width: "100%",
+      minWidth: 0,
+    
+      padding: 0,
+      border: 0,
+      outline: 0,
+    
+      background: "transparent",
+      color: "#ffffff",
+      colorScheme: "dark",
+    
+      fontSize: font(6.8),
+      fontWeight: 850,
+    },
+    
+    clearDateButton: {
+      width: px(22),
+      height: px(22),
+    
+      display: "grid",
+      placeItems: "center",
+    
+      flexShrink: 0,
+    
+      padding: 0,
+      border: 0,
+      borderRadius: "50%",
+    
+      background: "rgba(255,255,255,.10)",
+      color: "#fde68a",
+    
+      fontSize: px(13),
+      cursor: "pointer",
+    },
+    
+    dateRangeConnector: {
+      height: px(44),
+    
+      display: "grid",
+      placeItems: "center",
+    
+      color: "#f59e0b",
+    
+      fontSize: px(16),
+      fontWeight: 950,
+    },
+    
+    dateHelperText: {
+      margin: `${px(7)}px 0 0`,
+      color: "#a8a29e",
+    
+      fontSize: font(6.4),
+      lineHeight: 1.35,
+    },
+    
+    dateRangeHelper: {
+      gridColumn: "1 / -1",
+    
+      margin: 0,
+      color: "#a8a29e",
+    
+      fontSize: font(6.4),
+      lineHeight: 1.35,
+    },
+    
+    removeDateFilterButton: {
+      minHeight: px(33),
+      marginTop: px(11),
+      padding: `0 ${px(11)}px`,
+    
+      border:
+        "1px solid rgba(239,68,68,.25)",
+    
+      borderRadius: 999,
+    
+      background: "rgba(239,68,68,.08)",
+      color: "#fca5a5",
+    
+      fontSize: font(6.5),
+      fontWeight: 900,
+    
+      cursor: "pointer",
+    },
+
+    searchContainer: {
+      minWidth: 0,
+      minHeight: px(48),
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0,1fr) auto",
+      alignItems: "center",
+      gap: px(8),
+      padding: `0 ${px(10)}px`,
+      overflow: "hidden",
+      border:
+        "1px solid rgba(255,255,255,.17)",
+      borderRadius: px(16),
+      background:
+        "linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.05))",
+      boxShadow:
+        "inset 0 1px 0 rgba(255,255,255,.12)",
+      backdropFilter: "blur(14px)",
+    },
+
+    searchIconBox: {
+      width: px(31),
+      height: px(31),
+      display: "grid",
+      placeItems: "center",
+      border:
+        "1px solid rgba(245,158,11,.24)",
+      borderRadius: px(11),
+      background: "rgba(245,158,11,.13)",
+      color: "#fbbf24",
+      fontSize: px(18),
+      fontWeight: 950,
+    },
+
+    searchTextArea: {
+      minWidth: 0,
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      gap: px(2),
+    },
+
+    searchLabel: {
+      color: "#fde68a",
+      fontSize: font(6),
+      letterSpacing: px(0.7),
+      lineHeight: 1,
+      fontWeight: 950,
+    },
+
+    searchInput: {
+      width: "100%",
+      minWidth: 0,
+      padding: 0,
+      border: 0,
+      outline: 0,
+      background: "transparent",
+      color: "white",
+      caretColor: "#f59e0b",
+      fontSize: font(8),
+      lineHeight: 1.2,
+      fontWeight: 800,
+    },
+
+    clearSearchButton: {
+      width: px(23),
+      height: px(23),
+      display: "grid",
+      placeItems: "center",
+      padding: 0,
+      border: 0,
+      borderRadius: "50%",
+      background: "rgba(255,255,255,.14)",
+      color: "white",
+      fontSize: px(14),
+      cursor: "pointer",
+    },
+
+    filterButton: {
+      position: "relative",
+      width: px(43),
+      minHeight: px(48),
+      display: "grid",
+      placeItems: "center",
+      padding: 0,
+      border:
+        "1px solid rgba(255,255,255,.16)",
+      borderRadius: px(15),
+      background: "rgba(255,255,255,.08)",
+      color: "#fde68a",
+      cursor: "pointer",
+    },
+    combinedFilterButton: {
+      position: "relative",
+    
+      minWidth: px(76),
+      minHeight: px(48),
+    
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    
+      gap: px(6),
+      padding: `0 ${px(11)}px`,
+    
+      border:
+        "1px solid rgba(245, 158, 11, 0.42)",
+    
+      borderRadius: px(15),
+    
+      background:
+        "linear-gradient(145deg, rgba(245,158,11,.18), rgba(234,88,12,.10))",
+    
+      color: "#fde68a",
+    
+      boxShadow:
+        "inset 0 1px 0 rgba(255,255,255,.10), 0 8px 18px rgba(0,0,0,.14)",
+    
+      cursor: "pointer",
+    },
+    
+    combinedFilterButtonActive: {
+      borderColor: "#f59e0b",
+    
+      background:
+        "linear-gradient(145deg, #f59e0b, #ea580c)",
+    
+      color: "#ffffff",
+    
+      boxShadow:
+        "0 10px 22px rgba(234,88,12,.28), inset 0 1px 0 rgba(255,255,255,.22)",
+    },
+    
+    combinedFilterIcon: {
+      fontSize: px(16),
+      lineHeight: 1,
+      fontWeight: 950,
+    },
+    
+    combinedFilterText: {
+      fontSize: font(7.5),
+      lineHeight: 1,
+      fontWeight: 950,
+      whiteSpace: "nowrap",
+    },
+
+    filterButtonActive: {
+      borderColor: "rgba(245,158,11,.58)",
+      background:
+        "linear-gradient(145deg,#f59e0b,#ea580c)",
+      color: "white",
+      boxShadow:
+        "0 10px 22px rgba(234,88,12,.28)",
+    },
+
+    filterButtonIcon: {
+      fontSize: px(18),
+      fontWeight: 950,
+    },
+
+    filterCountBadge: {
+      position: "absolute",
+      right: px(-3),
+      top: px(-4),
+      minWidth: px(17),
+      height: px(17),
+      display: "grid",
+      placeItems: "center",
+      padding: `0 ${px(4)}px`,
+      border: `${px(2)}px solid #24140c`,
+      borderRadius: 999,
+      background: "#22c55e",
+      color: "white",
+      fontSize: font(6),
+      fontWeight: 950,
+    },
+
+    sortButton: {
+      width: px(43),
+      minHeight: px(48),
+      display: "grid",
+      placeItems: "center",
+      padding: 0,
+      border:
+        "1px solid rgba(245,158,11,.38)",
+      borderRadius: px(15),
+      background:
+        "linear-gradient(145deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: px(20),
+      fontWeight: 950,
+      boxShadow:
+        "0 10px 22px rgba(234,88,12,.28)",
+      cursor: "pointer",
+    },
+
+    sortButtonActive: {
+      transform: "scale(.96)",
+      boxShadow:
+        "0 6px 15px rgba(234,88,12,.22)",
+    },
+
+    quickFilterScroller: {
+      position: "relative",
+      zIndex: 2,
+      display: "flex",
+      alignItems: "center",
+      gap: px(7),
+      marginTop: px(8),
+      paddingBottom: px(2),
+      overflowX: "auto",
+      overflowY: "hidden",
+      scrollbarWidth: "none",
+      scrollSnapType: "x proximity",
+    },
+
+    quickFilterChip: {
+      minHeight: px(36),
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: px(5),
+      flexShrink: 0,
+      padding: `0 ${px(13)}px`,
+      border:
+        "1px solid rgba(255,255,255,.15)",
+      borderRadius: 999,
+      background: "rgba(255,255,255,.08)",
+      color: "#e7e5e4",
+      fontSize: font(7.2),
+      fontWeight: 900,
+      cursor: "pointer",
+      scrollSnapAlign: "start",
+      backdropFilter: "blur(10px)",
+    },
+
+    quickFilterChipActive: {
+      borderColor: "#f59e0b",
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      boxShadow:
+        "0 8px 18px rgba(245,158,11,.24)",
+    },
+
+    selectedChipDot: {
+      width: px(6),
+      height: px(6),
+      flexShrink: 0,
+      borderRadius: "50%",
+      background: "white",
+      boxShadow:
+        "0 0 8px rgba(255,255,255,.8)",
+    },
+
+    filterPanel: {
+      position: "absolute",
+      left: px(10),
+      right: px(10),
+      top: `calc(100% + ${px(7)}px)`,
+      zIndex: 100,
+      padding: px(14),
+      border:
+        "1px solid rgba(245,158,11,.22)",
+      borderRadius: px(21),
+      background:
+        "linear-gradient(155deg,rgba(28,25,23,.99),rgba(50,27,14,.99))",
+      color: "white",
+      boxShadow:
+        "0 24px 55px rgba(0,0,0,.45)",
+      backdropFilter: "blur(20px)",
+    },
+    filterOverlay: {
+      position: "fixed",
+      inset: 0,
+      zIndex: 90,
+      background: "rgba(0, 0, 0, 0.22)",
+    },
+    filterTabs: {
+      display: "grid",
+      gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+    
+      gap: px(5),
+      marginTop: px(13),
+      padding: px(4),
+    
+      border:
+        "1px solid rgba(255,255,255,.08)",
+    
+      borderRadius: px(15),
+    
+      background: "rgba(255,255,255,.045)",
+    },
+    
+    filterTab: {
+      position: "relative",
+      minWidth: 0,
+      minHeight: px(40),
+    
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    
+      gap: px(5),
+      padding: `0 ${px(5)}px`,
+    
+      border: 0,
+      borderRadius: px(11),
+    
+      background: "transparent",
+      color: "#a8a29e",
+    
+      fontSize: font(6.6),
+      lineHeight: 1,
+      fontWeight: 900,
+    
+      whiteSpace: "nowrap",
+      cursor: "pointer",
+    },
+    
+    filterTabActive: {
+      background:
+        "linear-gradient(135deg, rgba(245,158,11,.28), rgba(234,88,12,.17))",
+    
+      color: "#fbbf24",
+    
+      boxShadow:
+        "inset 0 0 0 1px rgba(245,158,11,.28)",
+    },
+    
+    filterTabIcon: {
+      fontSize: px(13),
+      lineHeight: 1,
+    },
+    
+    tabSelectionDot: {
+      position: "absolute",
+      right: px(5),
+      top: px(5),
+    
+      width: px(6),
+      height: px(6),
+    
+      borderRadius: "50%",
+    
+      background: "#22c55e",
+    
+      boxShadow:
+        "0 0 7px rgba(34,197,94,.75)",
+    },
+    
+    filterTabContent: {
+      minHeight: px(220),
+      marginTop: px(12),
+    },
+    
+    tabContentHeading: {
+      marginBottom: px(10),
+    },
+    
+    filterSectionLabel: {
+      display: "block",
+    
+      margin: 0,
+    
+      color: "#fbbf24",
+    
+      fontSize: font(6.4),
+      letterSpacing: px(0.85),
+      fontWeight: 950,
+    },
+    
+    tabContentDescription: {
+      margin: `${px(4)}px 0 0`,
+    
+      color: "#a8a29e",
+    
+      fontSize: font(6.8),
+      lineHeight: 1.4,
+      fontWeight: 700,
+    },
+    optionCardGrid: {
+      display: "grid",
+      gridTemplateColumns:
+        "repeat(2, minmax(0, 1fr))",
+    
+      gap: px(7),
+    },
+    
+    optionCard: {
+      position: "relative",
+      minWidth: 0,
+      minHeight: px(67),
+    
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0, 1fr) auto",
+    
+      alignItems: "center",
+    
+      gap: px(8),
+      padding: px(9),
+    
+      border:
+        "1px solid rgba(255,255,255,.09)",
+    
+      borderRadius: px(15),
+    
+      background: "rgba(255,255,255,.045)",
+      color: "#d6d3d1",
+    
+      textAlign: "left",
+      cursor: "pointer",
+    },
+    
+    optionCardActive: {
+      borderColor: "rgba(245,158,11,.45)",
+    
+      background:
+        "linear-gradient(145deg, rgba(245,158,11,.18), rgba(234,88,12,.10))",
+    
+      color: "#fbbf24",
+    
+      boxShadow:
+        "inset 0 1px 0 rgba(255,255,255,.05)",
+    },
+    
+    optionCardIcon: {
+      width: px(32),
+      height: px(32),
+    
+      display: "grid",
+      placeItems: "center",
+    
+      flexShrink: 0,
+    
+      borderRadius: px(11),
+    
+      background: "rgba(255,255,255,.07)",
+      color: "#d6d3d1",
+    
+      fontSize: px(14),
+      lineHeight: 1,
+      fontWeight: 950,
+    },
+    
+    optionCardIconActive: {
+      background:
+        "linear-gradient(135deg, #f59e0b, #ea580c)",
+    
+      color: "#ffffff",
+    
+      boxShadow:
+        "0 7px 15px rgba(234,88,12,.22)",
+    },
+    
+    optionCardLabel: {
+      minWidth: 0,
+    
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    
+      fontSize: font(7),
+      lineHeight: 1.2,
+      fontWeight: 900,
+    },
+    
+    optionCheck: {
+      width: px(21),
+      height: px(21),
+    
+      display: "grid",
+      placeItems: "center",
+    
+      flexShrink: 0,
+    
+      border:
+        "1px solid rgba(255,255,255,.13)",
+    
+      borderRadius: "50%",
+    
+      background: "rgba(255,255,255,.04)",
+      color: "transparent",
+    
+      fontSize: font(7),
+      fontWeight: 950,
+    },
+    
+    optionCheckActive: {
+      borderColor: "#22c55e",
+      background: "#22c55e",
+      color: "#ffffff",
+    
+      boxShadow:
+        "0 5px 12px rgba(34,197,94,.20)",
+    },
+    statusOptionStack: {
+      display: "grid",
+      gap: px(6),
+    },
+    
+    statusOption: {
+      minWidth: 0,
+      minHeight: px(38),
+    
+      display: "grid",
+      gridTemplateColumns:
+        "auto minmax(0, 1fr) auto",
+    
+      alignItems: "center",
+    
+      gap: px(8),
+      padding: `0 ${px(10)}px`,
+    
+      border:
+        "1px solid rgba(255,255,255,.08)",
+    
+      borderRadius: px(12),
+    
+      background: "rgba(255,255,255,.04)",
+      color: "#d6d3d1",
+    
+      textAlign: "left",
+      cursor: "pointer",
+    },
+    
+    statusOptionActive: {
+      borderColor: "rgba(245,158,11,.38)",
+    
+      background: "rgba(245,158,11,.12)",
+    
+      color: "#fbbf24",
+    },
+    
+    statusOptionDot: {
+      width: px(8),
+      height: px(8),
+    
+      flexShrink: 0,
+    
+      borderRadius: "50%",
+    
+      boxShadow:
+        "0 0 0 3px rgba(255,255,255,.05)",
+    },
+    
+    statusOptionLabel: {
+      minWidth: 0,
+    
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+    
+      fontSize: font(7),
+      fontWeight: 850,
+    },
+
+    sortPanel: {
+      position: "absolute",
+      left: px(10),
+      right: px(10),
+      top: `calc(100% + ${px(7)}px)`,
+      zIndex: 100,
+      padding: px(14),
+      border:
+        "1px solid rgba(245,158,11,.22)",
+      borderRadius: px(21),
+      background:
+        "linear-gradient(155deg,rgba(28,25,23,.99),rgba(50,27,14,.99))",
+      color: "white",
+      boxShadow:
+        "0 24px 55px rgba(0,0,0,.45)",
+      backdropFilter: "blur(20px)",
+    },
+
+    panelHeader: {
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: px(10),
+    },
+
+    panelEyebrow: {
+      color: "#fbbf24",
+      fontSize: font(6),
+      letterSpacing: px(1),
+      fontWeight: 950,
+    },
+
+    panelTitle: {
+      margin: `${px(4)}px 0 0`,
+      color: "white",
+      fontSize: font(12),
+      fontWeight: 950,
+    },
+
+    panelCloseButton: {
+      width: px(30),
+      height: px(30),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      padding: 0,
+      border:
+        "1px solid rgba(255,255,255,.12)",
+      borderRadius: px(10),
+      background: "rgba(255,255,255,.07)",
+      color: "#fde68a",
+      fontSize: px(19),
+      cursor: "pointer",
+    },
+
+    filterSectionLabel: {
+      margin: `${px(14)}px 0 ${px(8)}px`,
+      color: "#a8a29e",
+      fontSize: font(6.5),
+      letterSpacing: px(0.8),
+      fontWeight: 950,
+    },
+
+    statusFilterGrid: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: px(7),
+    },
+
+    statusFilterButton: {
+      minHeight: px(39),
+      display: "flex",
+      alignItems: "center",
+      gap: px(7),
+      padding: `0 ${px(9)}px`,
+      border:
+        "1px solid rgba(255,255,255,.10)",
+      borderRadius: px(13),
+      background: "rgba(255,255,255,.05)",
+      color: "#d6d3d1",
+      textAlign: "left",
+      fontSize: font(7),
+      fontWeight: 850,
+      cursor: "pointer",
+    },
+
+    statusFilterButtonActive: {
+      borderColor: "rgba(245,158,11,.45)",
+      background: "rgba(245,158,11,.15)",
+      color: "#fbbf24",
+    },
+
+    statusFilterRadio: {
+      width: px(19),
+      height: px(19),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      border:
+        "1px solid rgba(255,255,255,.16)",
+      borderRadius: px(7),
+      background: "rgba(255,255,255,.05)",
+      fontSize: font(7),
+      fontWeight: 950,
+    },
+
+    statusFilterRadioActive: {
+      borderColor: "#f59e0b",
+      background: "#f59e0b",
+      color: "white",
+    },
+
+    panelFooter: {
+      display: "grid",
+      gridTemplateColumns: ".8fr 1.2fr",
+      gap: px(8),
+      marginTop: px(14),
+      paddingTop: px(12),
+      borderTop:
+        "1px solid rgba(255,255,255,.08)",
+    },
+
+    resetButton: {
+      minHeight: px(42),
+      border:
+        "1px solid rgba(255,255,255,.13)",
+      borderRadius: px(14),
+      background: "rgba(255,255,255,.06)",
+      color: "#e7e5e4",
+      fontSize: font(7.5),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+
+    applyButton: {
+      minHeight: px(42),
+      border: 0,
+      borderRadius: px(14),
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: font(7.5),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    sortOptionStack: {
+      display: "grid",
+      gap: px(6),
+      marginTop: px(13),
+    },
+
+    sortOption: {
+      width: "100%",
+      minHeight: px(41),
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: px(8),
+      padding: `0 ${px(11)}px`,
+      border:
+        "1px solid rgba(255,255,255,.08)",
+      borderRadius: px(13),
+      background: "rgba(255,255,255,.04)",
+      color: "#d6d3d1",
+      fontSize: font(7.5),
+      fontWeight: 850,
+      cursor: "pointer",
+    },
+
+    sortOptionActive: {
+      borderColor: "rgba(245,158,11,.42)",
+      background: "rgba(245,158,11,.14)",
+      color: "#fbbf24",
+    },
+
+    sortSelection: {
+      width: px(21),
+      height: px(21),
+      display: "grid",
+      placeItems: "center",
+      border:
+        "1px solid rgba(255,255,255,.12)",
+      borderRadius: "50%",
+      color: "transparent",
+    },
+
+    sortSelectionActive: {
+      borderColor: "#f59e0b",
+      background: "#f59e0b",
+      color: "white",
+    },
+
+    ordersScrollArea: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: controlsHeight,
+      bottom: navHeight,
+      overflowY: "auto",
+      overflowX: "hidden",
+      background: "#f6f4ef",
+      scrollbarWidth: "none",
+      WebkitOverflowScrolling: "touch",
+    },
+
+    hero: {
+      position: "relative",
+      minHeight: px(245),
+    
+      padding: `${px(18)}px ${px(
+        narrow ? 15 : 20
+      )}px ${px(18)}px`,
+    
+      overflow: "hidden",
+      color: "white",
+    
+      backgroundImage: `url("${RECENT_ORDERS_BG}")`,
+    
+      backgroundSize: "cover",
+      backgroundPosition: "64% 58%",
+      backgroundRepeat: "no-repeat",
+    
+      borderBottom:
+        "1px solid rgba(245, 158, 11, 0.22)",
+    
+      boxShadow:
+        "0 14px 30px rgba(28, 25, 23, 0.20)",
+    },
+
+    heroGrid: {
+      position: "absolute",
+      inset: 0,
+      opacity: 0.2,
+      backgroundImage:
+        "linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px)",
+      backgroundSize: `${px(30)}px ${px(
+        30
+      )}px`,
+      pointerEvents: "none",
+    },
+
+    heroGlow: {
+      position: "absolute",
+      right: px(-45),
+      bottom: px(-70),
+      width: px(190),
+      height: px(190),
+      borderRadius: "50%",
+      background: "rgba(245,158,11,.15)",
+      filter: `blur(${px(38)}px)`,
+    },
+
+    heroContent: {
+      position: "relative",
+      zIndex: 2,
+    },
+
+    heroEyebrow: {
+      margin: 0,
+      color: "#fde68a",
+      fontSize: font(7),
+      letterSpacing: px(1.2),
+      fontWeight: 950,
+    },
+
+    heroTitle: {
+      margin: `${px(6)}px 0 0`,
+      color: "white",
+      fontSize: px(25),
+      lineHeight: 1,
+      letterSpacing: -0.7,
+      fontWeight: 950,
+    },
+
+    heroDescription: {
+      maxWidth: px(290),
+      margin: `${px(7)}px 0 0`,
+      color: "#e7e5e4",
+      fontSize: font(8),
+      lineHeight: 1.4,
+      fontWeight: 650,
+    },
+
+    summaryCard: {
+      position: "absolute",
+      zIndex: 3,
+    
+      left: px(narrow ? 12 : 20),
+      right: px(narrow ? 12 : 20),
+      bottom: px(14),
+    
+      display: "grid",
+      gridTemplateColumns:
+        "1fr auto 1fr auto 1fr",
+      alignItems: "center",
+    
+      margin: 0,
+      padding: `${px(11)}px ${px(8)}px`,
+    
+      border:
+        "1px solid rgba(255,255,255,.22)",
+    
+      borderRadius: px(18),
+    
+      background:
+        "linear-gradient(135deg, rgba(18,12,8,.88), rgba(76,38,17,.78))",
+    
+      backdropFilter: "blur(15px)",
+      WebkitBackdropFilter: "blur(15px)",
+    
+      boxShadow:
+        "0 13px 30px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.12)",
+    },
+
+    summaryItem: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: px(3),
+      minWidth: 0,
+      color: "white",
+      textAlign: "center",
+      fontSize: font(7),
+    },
+
+    summaryDivider: {
+      width: 1,
+      height: px(31),
+      background:
+        "rgba(255,255,255,.18)",
+    },
+
+    activityArea: {
+      minHeight: "100%",
+      padding: `${px(16)}px 0 ${px(18)}px`,
+      background:
+        "linear-gradient(180deg,#faf9f7,#f6f4ef 55%,#efede8)",
+    },
+
+    resultsHeader: {
+      display: "flex",
+      alignItems: "flex-end",
+      justifyContent: "space-between",
+      gap: px(8),
+      margin: `0 ${px(
+        narrow ? 12 : 17
+      )}px ${px(11)}px`,
+    },
+
+    resultsEyebrow: {
+      color: "#b45309",
+      fontSize: font(7),
+      letterSpacing: px(1),
+      fontWeight: 950,
+    },
+
+    resultsTitle: {
+      margin: `${px(4)}px 0 0`,
+      color: "#111827",
+      fontSize: font(15),
+      fontWeight: 950,
+    },
+
+    currentSortButton: {
+      maxWidth: "48%",
+      display: "inline-flex",
+      alignItems: "center",
+      gap: px(5),
+      padding: `${px(5)}px ${px(8)}px`,
+      overflow: "hidden",
+      border: 0,
+      borderRadius: 999,
+      background: "#eeeae6",
+      color: "#78716c",
+      fontSize: font(6.5),
+      fontWeight: 850,
+      cursor: "pointer",
+    },
+
+    activeFiltersRow: {
+      display: "flex",
+      alignItems: "center",
+      gap: px(6),
+      margin: `0 ${px(
+        narrow ? 12 : 17
+      )}px ${px(11)}px`,
+      overflowX: "auto",
+      scrollbarWidth: "none",
+    },
+
+    activeFiltersLabel: {
+      flexShrink: 0,
+      color: "#a8a29e",
+      fontSize: font(5.8),
+      letterSpacing: px(0.7),
+      fontWeight: 950,
+    },
+
+    activeFilterChip: {
+      minHeight: px(27),
+      display: "inline-flex",
+      alignItems: "center",
+      gap: px(5),
+      flexShrink: 0,
+      padding: `0 ${px(8)}px`,
+      border: "1px solid #fde68a",
+      borderRadius: 999,
+      background: "#fffbeb",
+      color: "#92400e",
+      fontSize: font(6.5),
+      fontWeight: 850,
+      cursor: "pointer",
+    },
+
+    orderStack: {
+      display: "grid",
+      gap: px(13),
+      padding: `0 ${px(
+        narrow ? 12 : 17
+      )}px`,
+    },
+
+    orderCard: {
+      position: "relative",
+      overflow: "hidden",
+      padding: px(14),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(23),
+      background:
+        "linear-gradient(145deg,#fff,#fafaf9)",
+      boxShadow:
+        "0 16px 34px rgba(28,25,23,.08),inset 0 1px 0 #fff",
+    },
+
+    cardAccent: {
+      position: "absolute",
+      left: 0,
+      top: px(16),
+      bottom: px(16),
+      width: px(5),
+      borderRadius:
+        "0 999px 999px 0",
+    },
+
+    accentGreen: {
+      background:
+        "linear-gradient(to bottom,#22c55e,#15803d)",
+    },
+
+    accentBlue: {
+      background:
+        "linear-gradient(to bottom,#38bdf8,#1d4ed8)",
+    },
+
+    accentRed: {
+      background:
+        "linear-gradient(to bottom,#ef4444,#991b1b)",
+    },
+
+    accentAmber: {
+      background:
+        "linear-gradient(to bottom,#f59e0b,#ea580c)",
+    },
+
+    cardGlow: {
+      position: "absolute",
+      right: px(-35),
+      top: px(-40),
+      width: px(125),
+      height: px(125),
+      borderRadius: "50%",
+      filter: `blur(${px(28)}px)`,
+      pointerEvents: "none",
+    },
+
+    orderHeader: {
+      position: "relative",
+      zIndex: 2,
+      display: "grid",
+      gridTemplateColumns:
+        `${px(43)}px minmax(0,1fr)`,
+      alignItems: "start",
+      gap: px(10),
+    },
+
+    orderTypeIcon: {
+      width: px(43),
+      height: px(43),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: px(15),
+      background:
+        "linear-gradient(145deg,#fffbeb,#fef3c7)",
+      color: "#b45309",
+      fontSize: px(20),
+      fontWeight: 950,
+      boxShadow:
+        "0 8px 18px rgba(180,83,9,.10)",
+    },
+
+    deliveryOrderIcon: {
+      background:
+        "linear-gradient(145deg,#eff6ff,#dbeafe)",
+    },
+
+    rejectedOrderIcon: {
+      background:
+        "linear-gradient(145deg,#fff7f7,#fee2e2)",
+    },
+
+    orderHeadingArea: {
+      minWidth: 0,
+    },
+
+    orderMetaRow: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: px(6),
+    },
+
+    orderId: {
+      minWidth: 0,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      color: "#a8a29e",
+      fontSize: font(8),
+      letterSpacing: px(0.5),
+      fontWeight: 900,
+    },
+
+    orderStatusPill: {
+      minWidth: 0,
+      maxWidth: px(130),
+      minHeight: px(25),
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: px(5),
+      padding: `0 ${px(8)}px`,
+      overflow: "hidden",
+      borderRadius: 999,
+      whiteSpace: "nowrap",
+      textOverflow: "ellipsis",
+      fontSize: font(8),
+      fontWeight: 950,
+    },
+
+    statusGreen: {
+      background: "#ecfdf5",
+      color: "#15803d",
+    },
+
+    statusBlue: {
+      background: "#eff6ff",
+      color: "#1d4ed8",
+    },
+
+    statusRed: {
+      background: "#fee2e2",
+      color: "#b91c1c",
+    },
+
+    statusAmber: {
+      background: "#fffbeb",
+      color: "#b45309",
+    },
+
+    orderStatusDot: {
+      width: px(6),
+      height: px(6),
+      flexShrink: 0,
+      borderRadius: "50%",
+    },
+
+    orderTitle: {
+      margin: `${px(6)}px 0 0`,
+      color: "#111827",
+      fontSize: font(11),
+      lineHeight: 1.15,
+      fontWeight: 950,
+    },
+
+    orderSubtitle: {
+      margin: `${px(4)}px 0 0`,
+      color: "#78716c",
+      fontSize: font(7.5),
+      fontWeight: 700,
+    },
+
+    orderInfoGrid: {
+      position: "relative",
+      zIndex: 2,
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: px(8),
+      marginTop: px(12),
+    },
+
+    orderInfoCell: {
+      display: "flex",
+      flexDirection: "column",
+      gap: px(4),
+      minWidth: 0,
+      padding: px(9),
+      border: "1px solid #eeeae6",
+      borderRadius: px(14),
+      background: "#fafaf9",
+      color: "#78716c",
+      fontSize: font(7),
+    },
+
+    progressSection: {
+      position: "relative",
+      zIndex: 2,
+      marginTop: px(12),
+      paddingTop: px(10),
+      borderTop: "1px solid #eeeae6",
+    },
+
+    progressHeader: {
+      display: "flex",
+      justifyContent: "space-between",
+      gap: px(8),
+      marginBottom: px(9),
+      color: "#a8a29e",
+      fontSize: font(6),
+      letterSpacing: px(0.7),
+      fontWeight: 950,
+    },
+
+    progressScroller: {
+      overflowX: "auto",
+      overflowY: "hidden",
+      scrollbarWidth: "none",
+    },
+
+    miniTracker: {
+      minWidth: px(340),
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "center",
+    },
+
+    miniStep: {
+      width: px(68),
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      flexShrink: 0,
+      textAlign: "center",
+    },
+
+    miniCircle: {
+      width: px(21),
+      height: px(21),
+      display: "grid",
+      placeItems: "center",
+      borderRadius: "50%",
+      color: "white",
+      fontSize: font(7),
+      fontWeight: 950,
+    },
+
+    miniCircleWaiting: {
+      background: "#e7e5e4",
+      color: "#a8a29e",
+    },
+
+    miniCircleCurrent: {
+      boxShadow:
+        "0 0 0 4px rgba(245,158,11,.10)",
+    },
+
+    miniLabel: {
+      marginTop: px(5),
+      fontSize: font(7.7),
+      lineHeight: 1.15,
+    },
+
+    miniConnector: {
+      width: px(21),
+      height: px(3),
+      marginTop: px(9),
+      flexShrink: 0,
+      borderRadius: 999,
+    },
+
+    orderFooter: {
+      position: "relative",
+      zIndex: 2,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: px(8),
+      marginTop: px(12),
+    },
+
+    orderTypeLabel: {
+      fontSize: font(7),
+      fontWeight: 900,
+    },
+
+    viewDetailsButton: {
+      minHeight: px(34),
+      display: "inline-flex",
+      alignItems: "center",
+      gap: px(6),
+      padding: `0 ${px(12)}px`,
+      border: 0,
+      borderRadius: 999,
+      background:
+        "linear-gradient(135deg,#1c1917,#44403c)",
+      color: "white",
+      fontSize: font(7),
+      fontWeight: 950,
+      boxShadow:
+        "0 8px 17px rgba(28,25,23,.15)",
+      cursor: "pointer",
+    },
+
+    viewDetailsBlue: {
+      background:
+        "linear-gradient(135deg,#38bdf8,#1d4ed8)",
+    },
+
+    viewDetailsRed: {
+      background:
+        "linear-gradient(135deg,#ef4444,#b91c1c)",
+    },
+
+    viewDetailsAmber: {
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+    },
+
+    emptyCard: {
+      padding: px(28),
+      border: "1px dashed #d6d3d1",
+      borderRadius: px(22),
+      background: "rgba(255,255,255,.74)",
+      textAlign: "center",
+    },
+
+    emptyIcon: {
+      width: px(48),
+      height: px(48),
+      margin: "0 auto",
+      display: "grid",
+      placeItems: "center",
+      borderRadius: px(16),
+      background: "#fffbeb",
+      color: "#b45309",
+      fontSize: px(23),
+    },
+
+    emptyTitle: {
+      margin: `${px(12)}px 0 0`,
+      color: "#292524",
+      fontSize: font(12),
+      fontWeight: 950,
+    },
+
+    emptyText: {
+      margin: `${px(6)}px 0 0`,
+      color: "#78716c",
+      fontSize: font(7.5),
+      lineHeight: 1.4,
+    },
+
+    emptyResetButton: {
+      minHeight: px(37),
+      marginTop: px(13),
+      padding: `0 ${px(13)}px`,
+      border: 0,
+      borderRadius: 999,
+      background:
+        "linear-gradient(135deg,#f59e0b,#ea580c)",
+      color: "white",
+      fontSize: font(7),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    bottomNav: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 50,
+      height: navHeight,
+      display: "grid",
+      gridTemplateColumns: "repeat(3,1fr)",
+      gap: px(5),
+      padding: `${px(5)}px ${px(
+        8
+      )}px calc(env(safe-area-inset-bottom,0px) + ${px(
+        5
+      )}px)`,
+      borderTop:
+        "1px solid rgba(251,191,36,.19)",
+      background:
+        "radial-gradient(circle at 50% 0%,rgba(245,158,11,.16),transparent 47%),linear-gradient(135deg,#21140d,#352013 52%,#4b250d)",
+      boxShadow:
+        "0 -14px 34px rgba(28,15,7,.30)",
+    },
+
+    navButton: {
+      position: "relative",
+      minWidth: 0,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: px(3),
+      padding: px(3),
+      border: 0,
+      borderRadius: px(15),
+      background: "transparent",
+      cursor: "pointer",
+    },
+
+    navButtonActive: {
+      background: "rgba(245,158,11,.14)",
+      boxShadow:
+        "inset 0 0 0 1px rgba(245,158,11,.18)",
+    },
+
+    activeNavIndicator: {
+      position: "absolute",
+      left: "50%",
+      top: px(-5),
+      width: px(25),
+      height: px(3),
+      borderRadius: 999,
+      background:
+        "linear-gradient(90deg,#fbbf24,#f97316)",
+      boxShadow:
+        "0 0 12px rgba(245,158,11,.70)",
+      transform: "translateX(-50%)",
+    },
+
+    navIconBox: {
+      width: px(29),
+      height: px(27),
+      display: "grid",
+      placeItems: "center",
+      border:
+        "1px solid rgba(255,255,255,.07)",
+      borderRadius: px(9),
+      background: "rgba(255,255,255,.06)",
+      color: "#d6c3b5",
+      fontSize: px(15),
+    },
+
+    navIconBoxActive: {
+      borderColor: "rgba(251,191,36,.35)",
+      background:
+        "linear-gradient(145deg,#f59e0b,#ea580c)",
+      color: "white",
+      boxShadow:
+        "0 8px 17px rgba(234,88,12,.30)",
+    },
+
+    navLabel: {
+      maxWidth: "100%",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      color: "#c4afa0",
+      fontSize: font(6.7),
+      fontWeight: 800,
+    },
+
+    navLabelActive: {
+      color: "#fbbf24",
+      fontWeight: 950,
+    },
+  };
+}
+
+const globalCss = `
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  background: #0b0907;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+  display: none;
+}
+
+input::placeholder {
+  color: rgba(255,255,255,.60);
+  opacity: 1;
+}
+
+.orders-scroll-area,
+.quick-filter-scroll,
+.progress-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.orders-scroll-area::-webkit-scrollbar,
+.quick-filter-scroll::-webkit-scrollbar,
+.progress-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+body {
+  -webkit-text-size-adjust: 100%;
+}
+`;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+profile
+import React, { useEffect, useMemo, useState } from "react";
+
+const BASE_W = 206;
+const BASE_H = 445;
+const PROFILE_BG_IMAGE ="https://cdn.jsdelivr.net/gh/Shyam7291/company-document-monitor@main/1783841473662.png";
+
+const INITIAL_PROFILE = {
+  name: "Arjun Kumar",
+  shopName: "AK Stone Building Materials",
+  email: "arjun@akstone.in",
+  phone: "9876543210",
+  alternatePhone: "9123456780",
+  address: "Plot 18, Quarry Link Road, Hoskote Industrial Area",
+  pincode: "562114",
+  city: "Bengaluru",
+  state: "Karnataka",
+};
+const requiredFields = [
+  { key: "name", label: "Full Name" },
+  { key: "shopName", label: "Shop Name" },
+  { key: "phone", label: "Phone Number" },
+  { key: "address", label: "Address" },
+  { key: "pincode", label: "Pincode" },
+  { key: "city", label: "City" },
+  { key: "state", label: "State" },
+];
+
+const allProfileFields = [
+  "name",
+  "shopName",
+  "email",
+  "phone",
+  "alternatePhone",
+  "address",
+  "pincode",
+  "city",
+  "state",
+];
+
+
+function useViewport() {
+  const [viewport, setViewport] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 390,
+    height: typeof window !== "undefined" ? window.innerHeight : 844,
+  });
+
+  useEffect(() => {
+    const update = () =>
+      setViewport({ width: window.innerWidth, height: window.innerHeight });
+
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("orientationchange", update);
+
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("orientationchange", update);
+    };
+  }, []);
+
+  return viewport;
+}
+
+
+export default function BuyerProfilePage({
+  goToPage4,
+  goToPage9,
+}) {
+
+  const viewport = useViewport();
+  const styles = useMemo(
+    () => createStyles(viewport),
+    [viewport.width, viewport.height]
+  );
+
+  const [profile, setProfile] = useState(INITIAL_PROFILE);
+  const [draft, setDraft] = useState(INITIAL_PROFILE);
+  const [editing, setEditing] = useState(false);
+  const [focused, setFocused] = useState(null);
+  const [saved, setSaved] = useState(false);
+  const [activeNav, setActiveNav] = useState("Profile");
+  const closeValidationPopup = () => {
+    const fieldToFocus = validationPopup.field;
+  
+    setValidationPopup({
+      visible: false,
+      field: "",
+      message: "",
+    });
+  
+    if (fieldToFocus) {
+      setFocused(fieldToFocus);
+  
+      window.setTimeout(() => {
+        const fieldElement = document.querySelector(
+          `[data-profile-field="${fieldToFocus}"]`
+        );
+  
+        if (fieldElement) {
+          fieldElement.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+  
+          fieldElement.focus();
+        }
+      }, 150);
+    }
+  };
+  const [validationPopup, setValidationPopup] = useState({
+    visible: false,
+    field: "",
+    message: "",
+  });
+
+  const shown = editing ? draft : profile;
+  
+
+
+
+
+
+const completedFieldCount = allProfileFields.filter((field) => {
+  const value = shown[field];
+
+  return typeof value === "string" && value.trim() !== "";
+}).length;
+
+const profileCompletion = Math.round(
+  (completedFieldCount / allProfileFields.length) * 100
+);
+  const initials = shown.name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
+
+    const changeField = (field, value) => {
+      let cleanedValue = value;
+    
+      // Phone fields: numeric only, maximum 10 digits
+      if (field === "phone" || field === "alternatePhone") {
+        cleanedValue = value.replace(/\D/g, "").slice(0, 10);
+      }
+    
+      // Pincode: numeric only, maximum 6 digits
+      if (field === "pincode") {
+        cleanedValue = value.replace(/\D/g, "").slice(0, 6);
+      }
+    
+      // Name and shop name: alphabets and spaces only
+      if (field === "name" || field === "shopName") {
+        cleanedValue = value
+          .replace(/[^a-zA-Z ]/g, "")
+          .replace(/\s{2,}/g, " ");
+      }
+    
+      // City and state: alphabets and spaces only
+      if (field === "city" || field === "state") {
+        cleanedValue = value
+          .replace(/[^a-zA-Z ]/g, "")
+          .replace(/\s{2,}/g, " ");
+      }
+    
+      setDraft((current) => ({
+        ...current,
+        [field]: cleanedValue,
+      }));
+    };
+
+  const beginEdit = () => {
+    setDraft(profile);
+    setEditing(true);
+  };
+
+  const cancelEdit = () => {
+    setDraft(profile);
+    setEditing(false);
+    setFocused(null);
+  };
+
+  
+const saveChanges = () => {
+  const firstEmptyRequiredField =
+    requiredFields.find(({ key }) => {
+      const value = draft[key];
+
+      return (
+        typeof value !== "string" ||
+        value.trim() === ""
+      );
+    });
+
+
+    if (firstEmptyRequiredField) {
+      setValidationPopup({
+        visible: true,
+        field: firstEmptyRequiredField.key,
+        message: `${firstEmptyRequiredField.label} cannot be blank.`,
+      });
+  
+      return;
+    }
+  
+    if (!/^[A-Za-z ]+$/.test(draft.name.trim())) {
+      setValidationPopup({
+        visible: true,
+        field: "name",
+        message: "Full Name can contain alphabets only.",
+      });
+  
+      return;
+    }
+  
+    if (!/^[A-Za-z ]+$/.test(draft.shopName.trim())) {
+      setValidationPopup({
+        visible: true,
+        field: "shopName",
+        message: "Shop Name can contain alphabets only.",
+      });
+  
+      return;
+    }
+  
+    if (!/^\d{10}$/.test(draft.phone)) {
+      setValidationPopup({
+        visible: true,
+        field: "phone",
+        message: "Phone Number must contain exactly 10 digits.",
+      });
+  
+      return;
+    }
+  
+    if (
+      draft.alternatePhone.trim() !== "" &&
+      !/^\d{10}$/.test(draft.alternatePhone)
+    ) {
+      setValidationPopup({
+        visible: true,
+        field: "alternatePhone",
+        message: "Alternate Phone must contain exactly 10 digits.",
+      });
+  
+      return;
+    }
+  
+    if (!/^\d{6}$/.test(draft.pincode)) {
+      setValidationPopup({
+        visible: true,
+        field: "pincode",
+        message: "Pincode must contain exactly 6 digits.",
+      });
+  
+      return;
+    }
+  
+    const cleanedProfile = {
+      name: draft.name.trim(),
+      shopName: draft.shopName.trim(),
+      email: draft.email.trim(),
+      phone: draft.phone.trim(),
+      alternatePhone: draft.alternatePhone.trim(),
+      address: draft.address.trim(),
+      pincode: draft.pincode.trim(),
+      city: draft.city.trim(),
+      state: draft.state.trim(),
+    };
+  
+    setProfile(cleanedProfile);
+    setDraft(cleanedProfile);
+    setEditing(false);
+    setFocused(null);
+    setSaved(true);
+  
+    window.setTimeout(() => {
+      setSaved(false);
+    }, 2200);
+  };
+  const handleBottomNavigation = (name) => {
+    setActiveNav(name);
+  
+    if (name === "Home") {
+      if (goToPage4) {
+        goToPage4();
+      }
+  
+      return;
+    }
+  
+    if (name === "Orders") {
+      if (goToPage9) {
+        goToPage9();
+      }
+  
+      return;
+    }
+  
+    // Profile is already the current page.
+  };
+  return (
+    <div style={styles.page}>
+      <style>{globalCss}</style>
+
+      <main style={styles.phone}>
+        <header style={styles.hero}>
+          <div style={styles.heroGlow} />
+          <div style={styles.heroGrid} />
+
+          
+           <div style={styles.topRow}>
+          <button
+  type="button"
+  style={{
+    ...styles.circleButton,
+    ...styles.backCircleButton,
+  }}
+  onClick={goToPage4}
+  aria-label="Back to Home"
+>
+  <span style={styles.backArrow}>‹</span>
+</button>
+
+  <div style={styles.brandPill}>
+    <span>🪨</span>
+    <b>StoneRate</b>
+  </div>
+
+  <button
+    type="button"
+    style={{
+      ...styles.circleButton,
+      ...styles.notificationButton,
+    }}
+    aria-label="Notifications"
+  >
+    <span style={styles.bellIcon}>🔔</span>
+    <span style={styles.notificationDot} />
+  </button>
+</div>
+
+        </header>
+
+        <section style={styles.profileSurface}>
+          <div style={styles.avatarWrap}>
+            <div style={styles.avatarRing}>
+              <div style={styles.avatar}>{initials || "BP"}</div>
+            </div>
+
+            <button type="button" style={styles.cameraButton} aria-label="Change profile picture">
+              ◉
+            </button>
+          </div>
+
+          <div style={styles.identityBlock}>
+            <div style={styles.nameLine}>
+              <h1 style={styles.name}>{shown.name}</h1>
+              <span style={styles.verifiedIcon}>✓</span>
+            </div>
+            <p style={styles.email}>{shown.email}</p>
+            <p style={styles.shop}>{shown.shopName}</p>
+          </div>
+
+          <div style={styles.profileCompletion}>
+          <div style={styles.completionTop}>
+  <span>PROFILE COMPLETION</span>
+  <b>{profileCompletion}%</b>
+</div>
+
+<div style={styles.progressTrack}>
+  <div
+    style={{
+      ...styles.progressFill,
+      width: `${profileCompletion}%`,
+    }}
+  />
+</div>
+          </div>
+
+          <div className="profile-content-scroll" style={styles.contentScroll}>
+            <section style={styles.detailCard}>
+              <ProfileRow
+                styles={styles}
+                icon="👤"
+                label="Full Name"
+                field="name"
+                value={shown.name}
+                editing={editing}
+                focused={focused}
+                setFocused={setFocused}
+                onChange={changeField}
+              />
+
+              <ProfileRow
+                styles={styles}
+                icon="◆"
+                label="Shop Name"
+                field="shopName"
+                value={shown.shopName}
+                editing={editing}
+                focused={focused}
+                setFocused={setFocused}
+                onChange={changeField}
+              />
+
+              <ProfileRow
+                styles={styles}
+                icon="✉"
+                label="Mail ID"
+                field="email"
+                type="email"
+                value={shown.email}
+                editing={editing}
+                focused={focused}
+                setFocused={setFocused}
+                onChange={changeField}
+              />
+            </section>
+
+            <section style={styles.detailCard}>
+            <ProfileRow
+  styles={styles}
+  icon="☎"
+  label="Phone Number"
+  field="phone"
+  value={shown.phone}
+  editing={editing}
+  focused={focused}
+  setFocused={setFocused}
+  onChange={changeField}
+  verified
+  prefix="+91"
+  inputMode="numeric"
+  maxLength={10}
+/>
+
+<ProfileRow
+  styles={styles}
+  icon="☏"
+  label="Alternate Phone (Optional)"
+  field="alternatePhone"
+  value={shown.alternatePhone}
+  editing={editing}
+  focused={focused}
+  setFocused={setFocused}
+  onChange={changeField}
+  prefix="+91"
+  inputMode="numeric"
+  maxLength={10}
+/>
+            </section>
+
+            <section style={styles.addressCard}>
+              <div style={styles.addressHeading}>
+                <div style={styles.addressHeadingIcon}>⌖</div>
+                <div>
+                  <p style={styles.addressKicker}>DELIVERY LOCATION</p>
+                  <h2 style={styles.addressTitle}>Business Address</h2>
+                </div>
+                <span style={styles.defaultPill}>Default</span>
+              </div>
+
+              <ProfileRow
+                styles={styles}
+                icon="⌂"
+                label="Address"
+                field="address"
+                value={shown.address}
+                editing={editing}
+                focused={focused}
+                setFocused={setFocused}
+                onChange={changeField}
+                multiline
+              />
+
+              <div style={styles.twoColumns}>
+              <ProfileRow
+  styles={styles}
+  icon="#"
+  label="Pincode"
+  field="pincode"
+  value={shown.pincode}
+  editing={editing}
+  focused={focused}
+  setFocused={setFocused}
+  onChange={changeField}
+  compact
+  inputMode="numeric"
+  maxLength={6}
+/>
+                <ProfileRow
+                  styles={styles}
+                  icon="⌾"
+                  label="City"
+                  field="city"
+                  value={shown.city}
+                  editing={editing}
+                  focused={focused}
+                  setFocused={setFocused}
+                  onChange={changeField}
+                  compact
+                />
+              </div>
+
+              <ProfileRow
+                styles={styles}
+                icon="◇"
+                label="State"
+                field="state"
+                value={shown.state}
+                editing={editing}
+                focused={focused}
+                setFocused={setFocused}
+                onChange={changeField}
+              />
+            </section>
+
+            <div style={styles.securityNote}>
+              <div style={styles.securityIcon}>🛡</div>
+              <div>
+                <b>Your information is protected</b>
+                <p>Details are used only for rate enquiries and order delivery.</p>
+              </div>
+            </div>
+
+            {!editing ? (
+              <button type="button" style={styles.primaryButton} onClick={beginEdit}>
+                <span>✎</span>
+                Edit Profile
+              </button>
+            ) : (
+              <div style={styles.editButtons}>
+                <button type="button" style={styles.cancelButton} onClick={cancelEdit}>
+                  Cancel
+                </button>
+                <button type="button" style={styles.primaryButton} onClick={saveChanges}>
+                  <span>✓</span>
+                  Save Profile
+                </button>
+              </div>
+            )}
+
+            <div style={styles.bottomSpace} />
+          </div>
+        </section>
+
+        <nav style={styles.bottomNav}>
+          {[
+            { name: "Home", icon: "⌂" },
+            { name: "Orders", icon: "▣" },
+            { name: "Profile", icon: "●" },
+          ].map((item) => {
+            const active = activeNav === item.name;
+
+            return (
+              <button
+                type="button"
+                key={item.name}
+                onClick={() =>
+                  handleBottomNavigation(item.name)
+                }
+                style={{
+                  ...styles.navButton,
+                  ...(active ? styles.navButtonActive : {}),
+                }}
+              >
+                {active && <span style={styles.activeMarker} />}
+                <span
+                  style={{
+                    ...styles.navIcon,
+                    ...(active ? styles.navIconActive : {}),
+                  }}
+                >
+                  {item.icon}
+                </span>
+                <span
+                  style={{
+                    ...styles.navText,
+                    ...(active ? styles.navTextActive : {}),
+                  }}
+                >
+                  {item.name}
+                </span>
+              </button>
+            );
+          })}
+        </nav>
+
+        {saved && (
+          <div style={styles.toast}>
+            <span>✓</span>
+            Profile updated successfully
+          </div>
+        )}
+        {validationPopup.visible && (
+  <div style={styles.validationOverlay}>
+    <div style={styles.validationPopup}>
+      <div style={styles.validationGlow} />
+
+      <div style={styles.warningCircle}>!</div>
+
+      <p style={styles.validationKicker}>REQUIRED INFORMATION</p>
+
+      <h2 style={styles.validationTitle}>
+        Complete Your Profile
+      </h2>
+
+      <p style={styles.validationMessage}>
+        {validationPopup.message}
+      </p>
+
+      <div style={styles.validationHint}>
+        <span style={styles.validationHintIcon}>✎</span>
+
+        <span>
+          Please enter this information before saving your profile.
+        </span>
+      </div>
+
+      <button
+        type="button"
+        style={styles.validationButton}
+        onClick={closeValidationPopup}
+      >
+        Fill Required Field
+      </button>
+    </div>
+  </div>
+)}
+      </main>
+    </div>
+  );
+}
+
+function ProfileRow({
+  styles,
+  icon,
+  label,
+  field,
+  value,
+  editing,
+  focused,
+  setFocused,
+  onChange,
+  type = "text",
+  multiline = false,
+  compact = false,
+  verified = false,
+  prefix = "",
+  inputMode,
+  maxLength,
+}) {
+  const isFocused = focused === field;
+
+  return (
+    <div
+      style={{
+        ...styles.profileRow,
+        ...(compact ? styles.profileRowCompact : {}),
+        ...(isFocused ? styles.profileRowFocused : {}),
+      }}
+    >
+      <div style={styles.rowIcon}>{icon}</div>
+
+      <div style={styles.rowContent}>
+        <span style={styles.rowLabel}>{label}</span>
+
+        {editing ? (
+          multiline ? (
+            
+<textarea
+  data-profile-field={field}
+  rows={2}
+  value={value}
+  onChange={(event) => onChange(field, event.target.value)}
+  onFocus={() => setFocused(field)}
+  onBlur={() => setFocused(null)}
+  style={styles.rowTextarea}
+/>
+
+          ) : (
+            
+<div style={styles.inputValueWrap}>
+  {prefix && <span style={styles.fixedPrefix}>{prefix}</span>}
+
+  <input
+    data-profile-field={field}
+    type={type}
+    value={value}
+    inputMode={inputMode}
+    maxLength={maxLength}
+    onChange={(event) => onChange(field, event.target.value)}
+    onFocus={() => setFocused(field)}
+    onBlur={() => setFocused(null)}
+    style={styles.rowInput}
+  />
+</div>
+
+          )
+        ) : (
+          <b
+  style={{
+    ...styles.rowValue,
+    ...(compact ? styles.rowValueCompact : {}),
+  }}
+>
+  {prefix ? `${prefix} ${value}` : value}
+</b>
+        )}
+      </div>
+
+      {verified ? (
+        <span style={styles.rowVerified}>✓</span>
+      ) : !editing ? (
+        <span style={styles.rowArrow}>›</span>
+      ) : (
+        <span style={styles.editMark}>✎</span>
+      )}
+    </div>
+  );
+}
+
+function createStyles(viewport) {
+  const vw = viewport.width || 390;
+  const vh = viewport.height || 844;
+  const isDesktop = vw >= 700;
+  const appW = isDesktop ? 390 : vw;
+  const appH = isDesktop ? 844 : vh;
+  const rawScale = Math.min(appW / BASE_W, appH / BASE_H);
+  const scale = Math.max(0.86, Math.min(2.05, rawScale));
+  const ms = (value, factor = 0.55) =>
+    Math.round(value + (value * scale - value) * factor);
+  const tiny = appW <= 230;
+  const navHeight = ms(63);
+  const heroHeight = ms(127);
+
+
+  return {
+    page: {
+      width: "100vw",
+      height: "100dvh",
+      minHeight: "100dvh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: isDesktop ? "center" : "stretch",
+      padding: isDesktop ? 10 : 0,
+      margin: 0,
+      overflow: "hidden",
+      background:
+        "radial-gradient(circle at 50% 0%, rgba(245,158,11,.18), transparent 35%), #17110d",
+      fontFamily: "Arial, sans-serif",
+    },
+    phone: {
+      position: "relative",
+      width: isDesktop ? 390 : "100vw",
+      height: isDesktop ? 844 : "100dvh",
+      overflow: "hidden",
+      background: "#f7f4ef",
+      borderRadius: isDesktop ? 30 : 0,
+      boxShadow: isDesktop ? "0 28px 80px rgba(0,0,0,.34)" : "none",
+    },
+    hero: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: 0,
+      zIndex: 2,
+      height: heroHeight,
+      padding: `${ms(3)}px ${ms(tiny ? 10 : 14)}px`,
+      overflow: "hidden",
+      color: "white",
+    
+      backgroundImage: PROFILE_BG_IMAGE
+        ? `linear-gradient(
+            135deg,
+            rgba(2, 6, 23, 0.25),
+            rgba(28, 25, 23, 0.18) 55%,
+            rgba(146, 64, 14, 0.10)
+          ),
+          url("${PROFILE_BG_IMAGE}")`
+        : `radial-gradient(
+            circle at 86% 8%,
+            rgba(251, 191, 36, 0.34),
+            transparent 30%
+          ),
+          radial-gradient(
+            circle at 8% 95%,
+            rgba(249, 115, 22, 0.18),
+            transparent 34%
+          ),
+          linear-gradient(
+            145deg,
+            #020617 0%,
+            #1c1917 54%,
+            #92400e 100%
+          )`,
+    
+      backgroundSize: "cover",
+      backgroundPosition: "center top",
+      backgroundRepeat: "no-repeat",
+    },
+    validationOverlay: {
+      position: "absolute",
+      inset: 0,
+      zIndex: 200,
+    
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    
+      padding: ms(18),
+    
+      background: "rgba(2, 6, 23, 0.72)",
+      backdropFilter: "blur(9px)",
+    },
+    
+    validationPopup: {
+      position: "relative",
+    
+      width: "100%",
+      maxWidth: ms(280),
+    
+      overflow: "hidden",
+    
+      padding: `${ms(24)}px ${ms(17)}px ${ms(17)}px`,
+    
+      border: "1px solid rgba(245,158,11,.28)",
+      borderRadius: ms(25),
+    
+      background:
+        "linear-gradient(145deg, rgba(255,255,255,.99), rgba(255,251,235,.98))",
+    
+      textAlign: "center",
+    
+      boxShadow:
+        "0 30px 80px rgba(0,0,0,.38), 0 0 45px rgba(245,158,11,.14)",
+    },
+    
+    validationGlow: {
+      position: "absolute",
+    
+      left: "50%",
+      top: ms(-60),
+    
+      width: ms(170),
+      height: ms(125),
+    
+      borderRadius: "50%",
+    
+      background: "rgba(245,158,11,.22)",
+      filter: `blur(${ms(28)}px)`,
+    
+      transform: "translateX(-50%)",
+      pointerEvents: "none",
+    },
+    
+    warningCircle: {
+      position: "relative",
+      zIndex: 2,
+    
+      width: ms(59),
+      height: ms(59),
+    
+      margin: "0 auto",
+    
+      display: "grid",
+      placeItems: "center",
+    
+      border: `${ms(5)}px solid #fef3c7`,
+      borderRadius: "50%",
+    
+      background:
+        "linear-gradient(145deg, #f59e0b, #ea580c)",
+    
+      color: "white",
+    
+      fontSize: ms(27),
+      fontWeight: 950,
+    
+      boxShadow:
+        "0 14px 28px rgba(234,88,12,.27), 0 0 0 7px rgba(245,158,11,.08)",
+    },
+    
+    validationKicker: {
+      position: "relative",
+      zIndex: 2,
+    
+      margin: `${ms(15)}px 0 0`,
+    
+      color: "#b45309",
+    
+      fontSize: ms(6.8),
+      letterSpacing: ms(1.1),
+      fontWeight: 950,
+    },
+    
+    validationTitle: {
+      position: "relative",
+      zIndex: 2,
+    
+      margin: `${ms(5)}px 0 0`,
+    
+      color: "#1c1917",
+    
+      fontSize: ms(18),
+      lineHeight: 1.08,
+      fontWeight: 950,
+      letterSpacing: -0.35,
+    },
+    
+    validationMessage: {
+      position: "relative",
+      zIndex: 2,
+    
+      margin: `${ms(9)}px auto 0`,
+    
+      color: "#92400e",
+    
+      fontSize: ms(9.2),
+      lineHeight: 1.4,
+      fontWeight: 900,
+    },
+    
+    validationHint: {
+      position: "relative",
+      zIndex: 2,
+    
+      display: "flex",
+      alignItems: "center",
+    
+      gap: ms(7),
+    
+      marginTop: ms(13),
+      padding: ms(9),
+    
+      border: "1px solid #fde68a",
+      borderRadius: ms(14),
+    
+      background: "#fffbeb",
+    
+      color: "#78716c",
+    
+      textAlign: "left",
+    
+      fontSize: ms(7.6),
+      lineHeight: 1.35,
+      fontWeight: 750,
+    },
+    
+    validationHintIcon: {
+      width: ms(27),
+      height: ms(27),
+    
+      display: "grid",
+      placeItems: "center",
+    
+      flexShrink: 0,
+    
+      borderRadius: ms(10),
+    
+      background: "#1c1917",
+      color: "#fbbf24",
+    
+      fontSize: ms(12),
+      fontWeight: 950,
+    },
+    
+    validationButton: {
+      position: "relative",
+      zIndex: 2,
+    
+      width: "100%",
+      minHeight: ms(45),
+    
+      marginTop: ms(15),
+    
+      border: 0,
+      borderRadius: ms(17),
+    
+      background:
+        "linear-gradient(135deg, #020617, #92400e)",
+    
+      color: "white",
+    
+      fontSize: ms(9.7),
+      fontWeight: 950,
+    
+      boxShadow:
+        "0 13px 27px rgba(146,64,14,.25)",
+    
+      cursor: "pointer",
+    },
+
+    heroGlow: {
+      position: "absolute",
+      right: ms(-45),
+      top: ms(-65),
+      width: ms(170),
+      height: ms(170),
+      borderRadius: "50%",
+      background: "rgba(245,158,11,.20)",
+      filter: `blur(${ms(30)}px)`,
+    },
+    heroGrid: {
+      position: "absolute",
+      inset: 0,
+      opacity: .25,
+      backgroundImage:
+        "linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px)",
+      backgroundSize: `${ms(30)}px ${ms(30)}px`,
+      pointerEvents: "none",
+    },
+    topRow: {
+      position: "relative",
+      zIndex: 5,
+    
+      display: "grid",
+      gridTemplateColumns: "1fr auto 1fr",
+      alignItems: "center",
+    
+      width: `calc(100% + ${ms(10)}px)`,
+      marginLeft: ms(-5),
+    
+      transform: `translateY(${ms(-3)}px)`,
+    },
+    circleButton: {
+      position: "relative",
+    
+      width: ms(34),
+      height: ms(34),
+    
+      display: "grid",
+      placeItems: "center",
+    
+      padding: 0,
+    
+      border: "1px solid rgba(255,255,255,.22)",
+      borderRadius: ms(12),
+    
+      background: "rgba(28,25,23,.52)",
+      color: "white",
+      
+      boxShadow:
+        "0 8px 18px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.15)",
+    
+      backdropFilter: "blur(12px)",
+      cursor: "pointer",
+    },
+    backCircleButton: {
+      justifySelf: "start",
+      transform: `translateX(${ms(-6)}px)`,
+    },
+    
+    notificationButton: {
+      justifySelf: "end",
+      transform: `translateX(${ms(5)}px)`,
+    },
+    notificationDot: {
+      position: "absolute",
+      right: ms(7),
+      top: ms(7),
+      width: ms(6),
+      height: ms(6),
+      border: "1px solid #1c1917",
+      borderRadius: "50%",
+      background: "#f59e0b",
+    },
+    brandPill: {
+      position: "relative",
+      zIndex: 5,
+    
+      display: "flex",
+      alignItems: "center",
+      gap: ms(5),
+    
+      padding: `${ms(6)}px ${ms(11)}px`,
+    
+      border: "1px solid rgba(251,191,36,.55)",
+      borderRadius: 999,
+    
+      background:
+        "linear-gradient(145deg, rgba(2,6,23,.92), rgba(28,25,23,.88))",
+    
+      color: "#fde68a",
+    
+      fontSize: ms(7.8),
+      fontWeight: 950,
+    
+      boxShadow:
+        "0 8px 20px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.12)",
+    
+      backdropFilter: "blur(12px)",
+    
+      transform: `translateY(${ms(-4)}px)`,
+    },
+    profileSurface: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: ms(70),
+      bottom: navHeight,
+      zIndex: 5,
+      borderRadius: `${ms(34)}px ${ms(34)}px 0 0`,
+      background:
+        "radial-gradient(circle at 90% 2%, rgba(245,158,11,.08), transparent 24%), linear-gradient(180deg, #fff 0%, #f8f5f0 55%, #efeae3 100%)",
+      boxShadow: "0 -12px 35px rgba(0,0,0,.18)",
+    },
+    avatarWrap: {
+      position: "absolute",
+      left: "50%",
+      top: ms(-42),
+      width: ms(88),
+      height: ms(88),
+      transform: "translateX(-50%)",
+    },
+    avatarRing: {
+      width: "100%",
+      height: "100%",
+      padding: ms(4),
+      borderRadius: "50%",
+    
+      background:
+        "linear-gradient(145deg, #fde68a, #f59e0b 45%, #ea580c 75%, #92400e)",
+    
+      boxShadow:
+        "0 14px 30px rgba(28,25,23,.24), " +
+        "0 0 0 3px rgba(255,255,255,.85), " +
+        "0 0 14px rgba(245,158,11,.80), " +
+        "0 0 28px rgba(234,88,12,.52), " +
+        "0 0 48px rgba(146,64,14,.28)",
+    
+      animation: "profileGlow 2.4s ease-in-out infinite",
+    },
+    avatar: {
+      width: "100%",
+      height: "100%",
+      display: "grid",
+      placeItems: "center",
+      borderRadius: "50%",
+      background:
+        "radial-gradient(circle at 35% 25%, rgba(255,255,255,.27), transparent 25%), linear-gradient(145deg, #f59e0b, #92400e)",
+      color: "white",
+      fontSize: ms(24),
+      fontWeight: 950,
+      letterSpacing: ms(1),
+    },
+    cameraButton: {
+      position: "absolute",
+      right: ms(-2),
+      bottom: ms(4),
+      width: ms(29),
+      height: ms(29),
+      display: "grid",
+      placeItems: "center",
+      padding: 0,
+      border: `${ms(3)}px solid white`,
+      borderRadius: "50%",
+      background: "linear-gradient(145deg, #1c1917, #44403c)",
+      color: "#fbbf24",
+      fontSize: ms(13),
+      boxShadow: "0 7px 15px rgba(0,0,0,.20)",
+      cursor: "pointer",
+    },
+    identityBlock: {
+      padding: `${ms(52)}px ${ms(14)}px 0`,
+      textAlign: "center",
+    },
+    nameLine: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(5),
+    },
+    name: {
+      maxWidth: "78%",
+      margin: 0,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      color: "#1c1917",
+      fontSize: ms(tiny ? 17 : 20),
+      fontWeight: 950,
+      letterSpacing: -.35,
+    },
+    verifiedIcon: {
+      width: ms(18),
+      height: ms(18),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: "50%",
+      background: "#f59e0b",
+      color: "white",
+      fontSize: ms(8),
+      fontWeight: 950,
+      boxShadow: "0 5px 12px rgba(245,158,11,.25)",
+    },
+    email: {
+      margin: `${ms(4)}px 0 0`,
+      color: "#8a817b",
+      fontSize: ms(7.7),
+      fontWeight: 750,
+    },
+    shop: {
+      maxWidth: "85%",
+      margin: `${ms(4)}px auto 0`,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      color: "#92400e",
+      fontSize: ms(7.4),
+      fontWeight: 900,
+    },
+    profileCompletion: {
+      width: `calc(100% - ${ms(26)}px)`,
+      margin: `${ms(10)}px auto 0`,
+      padding: ms(9),
+      border: "1px solid rgba(245,158,11,.16)",
+      borderRadius: ms(15),
+      background: "linear-gradient(145deg, #fffdf8, #fff7e7)",
+      boxShadow: "0 8px 20px rgba(146,64,14,.06)",
+    },
+    completionTop: {
+      display: "flex",
+      justifyContent: "space-between",
+      color: "#92400e",
+      fontSize: ms(6.3),
+      letterSpacing: ms(.7),
+      fontWeight: 950,
+    },
+    progressTrack: {
+      height: ms(5),
+      marginTop: ms(6),
+      overflow: "hidden",
+      borderRadius: 999,
+      background: "#fde7bd",
+    },
+    progressFill: {
+      height: "100%",
+      minWidth: 0,
+      borderRadius: 999,
+      background: "linear-gradient(90deg, #f59e0b, #ea580c)",
+      boxShadow: "0 0 12px rgba(245,158,11,.32)",
+      transition: "width 320ms ease",
+    },
+    contentScroll: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: ms(142),
+      bottom: 0,
+      overflowY: "auto",
+      overflowX: "hidden",
+      padding: `${ms(9)}px ${ms(tiny ? 9 : 13)}px ${ms(16)}px`,
+      scrollbarWidth: "none",
+      WebkitOverflowScrolling: "touch",
+    },
+    detailCard: {
+      overflow: "hidden",
+      marginTop: ms(10),
+      border: "1px solid #eeeae4",
+      borderRadius: ms(20),
+      background: "rgba(255,255,255,.96)",
+      boxShadow: "0 13px 28px rgba(28,25,23,.07)",
+    },
+    addressCard: {
+      marginTop: ms(10),
+      padding: ms(10),
+      border: "1px solid rgba(245,158,11,.16)",
+      borderRadius: ms(20),
+      background:
+        "radial-gradient(circle at 100% 0%, rgba(245,158,11,.08), transparent 30%), rgba(255,255,255,.97)",
+      boxShadow: "0 13px 28px rgba(28,25,23,.07)",
+    },
+    addressHeading: {
+      display: "flex",
+      alignItems: "center",
+      gap: ms(8),
+      marginBottom: ms(7),
+    },
+    addressHeadingIcon: {
+      width: ms(33),
+      height: ms(33),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: ms(12),
+      background: "linear-gradient(145deg, #fef3c7, #fde68a)",
+      color: "#92400e",
+      fontSize: ms(16),
+      fontWeight: 950,
+    },
+    addressKicker: {
+      margin: 0,
+      color: "#b45309",
+      fontSize: ms(5.8),
+      letterSpacing: ms(.8),
+      fontWeight: 950,
+    },
+    addressTitle: {
+      margin: `${ms(2)}px 0 0`,
+      color: "#1c1917",
+      fontSize: ms(10),
+      fontWeight: 950,
+    },
+    defaultPill: {
+      marginLeft: "auto",
+      padding: `${ms(4)}px ${ms(7)}px`,
+      borderRadius: 999,
+      background: "#fffbeb",
+      color: "#92400e",
+      fontSize: ms(6.4),
+      fontWeight: 950,
+    },
+    profileRow: {
+      minWidth: 0,
+      minHeight: ms(50),
+      display: "flex",
+      alignItems: "center",
+      gap: ms(8),
+      padding: `${ms(8)}px ${ms(9)}px`,
+      borderBottom: "1px solid #eeeae4",
+      background: "transparent",
+      transition: "all 180ms ease",
+    },
+    profileRowCompact: {
+      minWidth: 0,
+      minHeight: ms(55),
+      padding: `${ms(7)}px ${ms(6)}px`,
+      gap: ms(5),
+      border: "1px solid #eeeae4",
+      borderRadius: ms(14),
+      background: "#fffdf9",
+    },
+    
+    profileRowFocused: {
+      borderColor: "rgba(245,158,11,.55)",
+      background: "#fffbeb",
+      boxShadow: "inset 0 0 0 2px rgba(245,158,11,.08)",
+    },
+    rowIcon: {
+      width: ms(32),
+      height: ms(32),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: ms(11),
+      background: "linear-gradient(145deg, #fff7df, #fef3c7)",
+      color: "#b45309",
+      fontSize: ms(14),
+      fontWeight: 950,
+    },
+    rowContent: {
+      minWidth: 0,
+      flex: 1,
+    },
+    rowLabel: {
+      display: "block",
+      color: "#8a817b",
+      fontSize: ms(6.6),
+      fontWeight: 800,
+    },
+    rowValue: {
+      display: "block",
+      marginTop: ms(3),
+      overflowWrap: "anywhere",
+      color: "#292524",
+      fontSize: ms(8.4),
+      lineHeight: 1.22,
+      fontWeight: 900,
+    },
+    rowInput: {
+      width: "100%",
+      minWidth: 0,
+      marginTop: ms(3),
+      padding: 0,
+      border: 0,
+      outline: 0,
+      background: "transparent",
+      color: "#292524",
+      fontSize: ms(8.4),
+      fontWeight: 900,
+    },
+    rowTextarea: {
+      width: "100%",
+      minWidth: 0,
+      marginTop: ms(3),
+      padding: 0,
+      resize: "none",
+      border: 0,
+      outline: 0,
+      background: "transparent",
+      color: "#292524",
+      fontSize: ms(8.2),
+      lineHeight: 1.3,
+      fontWeight: 850,
+    },
+    rowArrow: {
+      color: "#b8afa7",
+      fontSize: ms(20),
+      lineHeight: 1,
+    },
+    rowVerified: {
+      width: ms(22),
+      height: ms(22),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: "50%",
+      background: "#22c55e",
+      color: "white",
+      fontSize: ms(9),
+      fontWeight: 950,
+    },
+    editMark: {
+      color: "#f59e0b",
+      fontSize: ms(12),
+      fontWeight: 950,
+    },
+    twoColumns: {
+      display: "grid",
+      gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)",
+      alignItems: "stretch",
+      gap: ms(7),
+      margin: `${ms(6)}px 0`,
+    },
+    
+    securityNote: {
+      display: "flex",
+      alignItems: "center",
+      gap: ms(9),
+      marginTop: ms(10),
+      padding: ms(10),
+      border: "1px solid #fde68a",
+      borderRadius: ms(18),
+      background: "#fffbeb",
+      color: "#78350f",
+      fontSize: ms(7.2),
+    },
+    securityIcon: {
+      width: ms(34),
+      height: ms(34),
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: ms(13),
+      background: "linear-gradient(145deg, #1c1917, #44403c)",
+      color: "#fbbf24",
+      fontSize: ms(16),
+    },
+    primaryButton: {
+      width: "100%",
+      minHeight: ms(49),
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(6),
+      marginTop: ms(12),
+      border: 0,
+      borderRadius: ms(22),
+      background: "linear-gradient(135deg, #020617, #92400e)",
+      color: "white",
+      fontSize: ms(10),
+      fontWeight: 950,
+      boxShadow: "0 15px 31px rgba(146,64,14,.25)",
+      cursor: "pointer",
+    },
+    editButtons: {
+      display: "grid",
+      gridTemplateColumns: ".8fr 1.45fr",
+      gap: ms(8),
+    },
+    cancelButton: {
+      minHeight: ms(49),
+      marginTop: ms(12),
+      border: "1px solid #e7e5e4",
+      borderRadius: ms(22),
+      background: "white",
+      color: "#57534e",
+      fontSize: ms(9),
+      fontWeight: 900,
+      cursor: "pointer",
+    },
+    bottomSpace: {
+      height: ms(10),
+    },
+    bottomNav: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 30,
+      height: navHeight,
+      display: "grid",
+      gridTemplateColumns: "repeat(3,1fr)",
+      padding: `${ms(5)}px ${ms(8)}px calc(env(safe-area-inset-bottom, 0px) + ${ms(5)}px)`,
+      borderTop: "1px solid rgba(251,191,36,.20)",
+      background:
+        "radial-gradient(circle at 50% 0%, rgba(245,158,11,.16), transparent 46%), linear-gradient(135deg, #21140d 0%, #352013 52%, #4b250d 100%)",
+      boxShadow: "0 -14px 34px rgba(28,15,7,.30)",
+    },
+    navButton: {
+      position: "relative",
+      minWidth: 0,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: ms(3),
+      padding: ms(3),
+      border: 0,
+      borderRadius: ms(15),
+      background: "transparent",
+      cursor: "pointer",
+    },
+    navButtonActive: {
+      background:
+        "linear-gradient(145deg, rgba(245,158,11,.22), rgba(234,88,12,.10))",
+      boxShadow: "inset 0 0 0 1px rgba(251,191,36,.24)",
+    },
+    activeMarker: {
+      position: "absolute",
+      top: ms(-5),
+      left: "50%",
+      width: ms(25),
+      height: ms(3),
+      borderRadius: 999,
+      background: "linear-gradient(90deg,#fbbf24,#f97316)",
+      boxShadow: "0 0 12px rgba(245,158,11,.70)",
+      transform: "translateX(-50%)",
+    },
+    navIcon: {
+      width: ms(28),
+      height: ms(26),
+      display: "grid",
+      placeItems: "center",
+      border: "1px solid rgba(255,255,255,.07)",
+      borderRadius: ms(9),
+      background: "rgba(255,255,255,.06)",
+      color: "#d6c3b5",
+      fontSize: ms(15),
+      fontWeight: 900,
+    },
+    navIconActive: {
+      borderColor: "rgba(251,191,36,.35)",
+      background: "linear-gradient(145deg,#f59e0b,#ea580c)",
+      color: "white",
+      boxShadow: "0 8px 17px rgba(234,88,12,.30)",
+    },
+    navText: {
+      color: "#c4afa0",
+      fontSize: ms(7.1),
+      fontWeight: 800,
+    },
+    navTextActive: {
+      color: "#fbbf24",
+      fontWeight: 950,
+    },
+    toast: {
+      position: "absolute",
+      left: "50%",
+      bottom: navHeight + ms(12),
+      zIndex: 80,
+      display: "flex",
+      alignItems: "center",
+      gap: ms(7),
+      padding: `${ms(9)}px ${ms(13)}px`,
+      border: "1px solid #bbf7d0",
+      borderRadius: 999,
+      background: "rgba(240,253,244,.98)",
+      color: "#166534",
+      fontSize: ms(8),
+      fontWeight: 950,
+      boxShadow: "0 14px 30px rgba(0,0,0,.18)",
+      transform: "translateX(-50%)",
+      whiteSpace: "nowrap",
+    },
+  };
+}
+
+const globalCss = `
+* { box-sizing: border-box; }
+html, body, #root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  background: #17110d;
+}
+@keyframes profileGlow {
+  0%,
+  100% {
+    box-shadow:
+      0 14px 30px rgba(28,25,23,.24),
+      0 0 0 3px rgba(255,255,255,.85),
+      0 0 14px rgba(245,158,11,.65),
+      0 0 27px rgba(234,88,12,.42),
+      0 0 42px rgba(146,64,14,.22);
+  }
+
+  50% {
+    box-shadow:
+      0 17px 34px rgba(28,25,23,.28),
+      0 0 0 3px rgba(255,255,255,.95),
+      0 0 19px rgba(251,191,36,.92),
+      0 0 36px rgba(234,88,12,.64),
+      0 0 57px rgba(146,64,14,.34);
+  }
+}
+button, input, textarea { font: inherit; }
+.profile-content-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.profile-content-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+body { -webkit-text-size-adjust: 100%; }
+`;
+
+
+
+
+
