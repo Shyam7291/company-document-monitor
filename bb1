@@ -1,1 +1,1865 @@
+signin
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  requestBuyerOtp,
+  verifyBuyerOtp,
+} from "../api/authApi";
 
+export default function FinalSignInOTPPageWithChangeMobileNumber
+({
+  goToPage1,
+  goToPage2,
+  goToPage4,
+}) {
+
+  const viewport = useViewport();
+
+  const styles = useMemo(
+    () => createStyles(viewport),
+    [viewport.width, viewport.height]
+  );
+
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpVisible, setOtpVisible] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
+  const [hoveredButton, setHoveredButton] = useState(null);
+
+  const isMobileValid = mobileNumber.length === 10;
+  const isOtpValid = otp.length === 6;
+  const isNumberLocked = otpVisible;
+  const [loginError, setLoginError] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [showErrorPopup, setShowErrorPopup] =
+  useState(false);
+
+const [popupMessage, setPopupMessage] =
+  useState("");
+
+const [popupTitle, setPopupTitle] =
+  useState("");
+
+const [popupType, setPopupType] =
+  useState("mobile");
+
+const [isCheckingNumber, setIsCheckingNumber] =
+  useState(false);
+
+
+  const formattedNumber = useMemo(() => {
+    if (!mobileNumber) {
+      return "+91 XXXXX XXXXX";
+    }
+
+    return `+91 ${mobileNumber.slice(0, 5)} ${mobileNumber.slice(5, 10)}`;
+  }, [mobileNumber]);
+
+  const handleMobileChange = (value) => {
+    if (isNumberLocked) {
+      return;
+    }
+  
+    const digitsOnly = value
+      .replace(/\D/g, "")
+      .slice(0, 10);
+  
+    setMobileNumber(digitsOnly);
+    setOtp("");
+    setOtpVisible(false);
+    setLoginError("");
+    setPopupMessage("");
+    setShowErrorPopup(false);
+  };
+  const handleOtpChange = (value) => {
+    const digitsOnly = value.replace(/\D/g, "").slice(0, 6);
+    setOtp(digitsOnly);
+  };
+
+  const handleNext = async () => {
+    if (!isMobileValid || isCheckingNumber) {
+      return;
+    }
+  
+    setLoginError("");
+    setPopupMessage("");
+    setPopupTitle("");
+    setShowErrorPopup(false);
+    setIsCheckingNumber(true);
+  
+    try {
+      const result = await requestBuyerOtp({
+        phone: mobileNumber,
+      });
+  
+      if (!result.success) {
+        setPopupType("mobile");
+        setPopupTitle("Number not recognized");
+  
+        setPopupMessage(
+          result.message ||
+            "This mobile number is not registered."
+        );
+  
+        setShowErrorPopup(true);
+        return;
+      }
+  
+      setOtp("");
+      setOtpVisible(true);
+      setFocusedField("otp");
+    } catch (error) {
+      console.error(
+        "Mobile number check failed:",
+        error
+      );
+  
+      setPopupType("mobile");
+      setPopupTitle("Unable to check number");
+  
+      setPopupMessage(
+        "Unable to check this mobile number. Please try again."
+      );
+  
+      setShowErrorPopup(true);
+    } finally {
+      setIsCheckingNumber(false);
+    }
+  };
+
+  const handleChangeNumber = () => {
+    setOtpVisible(false);
+    setOtp("");
+    setLoginError("");
+    setPopupMessage("");
+    setShowErrorPopup(false);
+    setFocusedField("mobile");
+  };
+  const handleVerifyAndSignIn = async () => {
+    if (
+      !isMobileValid ||
+      !isOtpValid ||
+      isVerifying
+    ) {
+      return;
+    }
+  
+    setLoginError("");
+    setPopupMessage("");
+    setPopupTitle("");
+    setShowErrorPopup(false);
+    setIsVerifying(true);
+  
+    try {
+      const result = await verifyBuyerOtp({
+        phone: mobileNumber,
+        otp: otp,
+      });
+  
+      if (!result.success) {
+        setPopupType("otp");
+  
+        setPopupTitle(
+          result.code === "OTP_MISMATCH"
+            ? "Incorrect OTP"
+            : "Verification failed"
+        );
+  
+        setPopupMessage(
+          result.message ||
+            "The OTP entered is incorrect. Please try again."
+        );
+  
+        setShowErrorPopup(true);
+        return;
+      }
+  
+      goToPage4?.();
+    } catch (error) {
+      console.error(
+        "OTP verification failed:",
+        error
+      );
+  
+      setPopupType("otp");
+      setPopupTitle("Verification unavailable");
+  
+      setPopupMessage(
+        "Unable to verify the OTP. Please try again."
+      );
+  
+      setShowErrorPopup(true);
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+  
+  
+  return (
+    <div style={styles.page}>
+      <div style={styles.phone}>
+        <section style={styles.hero}>
+          <div style={styles.glowOne} />
+          <div style={styles.glowTwo} />
+          <div style={styles.gridOverlay} />
+
+          <nav style={styles.nav}>
+            <div style={styles.brandWrap}>
+              <div style={styles.logo}>🪨</div>
+
+              <div style={styles.brandText}>
+                <p style={styles.brandName}>StoneRate</p>
+                <p style={styles.brandSub}>Secure OTP Login</p>
+              </div>
+            </div>
+
+            <button
+  type="button"
+  style={styles.backBtn}
+  onClick={goToPage1}
+>
+  Back
+</button>
+          </nav>
+
+          <div style={styles.heroText}>
+            <p style={styles.kicker}>SIGN IN</p>
+
+            <h1 style={styles.title}>Verify your mobile number</h1>
+
+            <p style={styles.subtitle}>
+              Enter your number to receive OTP and continue to your account.
+            </p>
+          </div>
+
+          <div style={styles.visualStage}>
+            <div style={styles.orbitOne} />
+            <div style={styles.orbitTwo} />
+
+            <div
+              style={{
+                ...styles.loginCard3d,
+                ...(isMobileValid ? styles.loginCardReady : {}),
+              }}
+            >
+              <div style={styles.topHandle} />
+
+              <div style={styles.cardHeaderRow}>
+                <div
+                  style={{
+                    ...styles.lockBox,
+                    background: isMobileValid ? "#22c55e" : "#f59e0b",
+                  }}
+                >
+                  {isNumberLocked ? "🔒" : isMobileValid ? "✅" : "🔐"}
+                </div>
+
+                <div style={styles.statusPill}>
+                  {isNumberLocked
+                    ? "Locked"
+                    : isMobileValid
+                    ? "Ready"
+                    : "Waiting"}
+                </div>
+              </div>
+
+              <div style={styles.numberPanel}>
+                <p style={styles.panelLabel}>Mobile Number</p>
+                <p style={styles.panelNumber}>{formattedNumber}</p>
+              </div>
+
+              <div style={styles.readyPanel}>
+                <span
+                  style={{
+                    ...styles.statusDot,
+                    background: isMobileValid ? "#22c55e" : "#f59e0b",
+                  }}
+                />
+
+                <div style={styles.readyText}>
+                  <p style={styles.readyTitle}>
+                    {isMobileValid ? "Ready for OTP" : "Enter 10 digits"}
+                  </p>
+
+                  <p style={styles.readySub}>
+                    {otpVisible
+                      ? "Mobile number locked"
+                      : "OTP appears after Next"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{
+                ...styles.floatBadgeTop,
+                color: isMobileValid ? "#15803d" : "#92400e",
+              }}
+            >
+              +91 India
+            </div>
+
+            <div
+              style={{
+                ...styles.floatBadgeLeft,
+                borderColor: isMobileValid ? "#22c55e" : "#f59e0b",
+              }}
+            >
+              OTP Login
+            </div>
+
+            <div
+              style={{
+                ...styles.floatIcon,
+                background: isMobileValid ? "#22c55e" : "#f59e0b",
+              }}
+            >
+              📲
+            </div>
+          </div>
+        </section>
+
+        <section style={styles.formSection}>
+          <div style={styles.formCard}>
+            <div style={styles.formTitleRow}>
+              <div style={styles.formHeadingText}>
+                <p style={styles.formKicker}>MOBILE VERIFICATION</p>
+                <h2 style={styles.formTitle}>Sign In</h2>
+              </div>
+
+              <div
+                style={{
+                  ...styles.formIcon,
+                  background: isMobileValid ? "#22c55e" : "#1c1917",
+                }}
+              >
+                {isNumberLocked ? "🔒" : isMobileValid ? "✓" : "🔐"}
+              </div>
+            </div>
+
+            <div style={styles.fieldBlock}>
+              <label style={styles.label}>Mobile Number</label>
+
+              <div
+                style={{
+                  ...styles.mobileWrap,
+                  ...(focusedField === "mobile"
+                    ? styles.fieldFocused
+                    : {}),
+                  ...(isNumberLocked
+                    ? styles.mobileWrapLocked
+                    : {}),
+                }}
+              >
+                <div
+                  style={{
+                    ...styles.prefix,
+                    ...(isNumberLocked ? styles.prefixLocked : {}),
+                  }}
+                >
+                  +91
+                </div>
+
+                <input
+                  value={mobileNumber}
+                  onChange={(event) =>
+                    handleMobileChange(event.target.value)
+                  }
+                  onFocus={() => setFocusedField("mobile")}
+                  onBlur={() => setFocusedField(null)}
+                  placeholder="10 digit number"
+                  inputMode="numeric"
+                  maxLength={10}
+                  disabled={isNumberLocked}
+                  aria-label="Mobile number"
+                  style={{
+                    ...styles.mobileInput,
+                    ...(isNumberLocked
+                      ? styles.mobileInputLocked
+                      : {}),
+                  }}
+                />
+
+                <div
+                  style={{
+                    ...styles.inputStatus,
+                    background: isMobileValid
+                      ? "#22c55e"
+                      : "#e7e5e4",
+                    color: isMobileValid ? "#ffffff" : "#57534e",
+                  }}
+                >
+                  {isNumberLocked
+                    ? "🔒"
+                    : isMobileValid
+                    ? "✓"
+                    : mobileNumber.length}
+                </div>
+              </div>
+
+              <div style={styles.mobileHelperRow}>
+                <p style={styles.helper}>
+                  {isNumberLocked
+                    ? "Mobile number is locked for OTP verification."
+                    : "Required format: +91 followed by exactly 10 numeric digits."}
+                </p>
+
+                {isNumberLocked && (
+                  <button
+                    type="button"
+                    onClick={handleChangeNumber}
+                    style={styles.changeNumberBtn}
+                  >
+                    Change mobile number
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {otpVisible && (
+              <div style={styles.otpSection}>
+                <div style={styles.otpTopRow}>
+                  <div style={styles.otpHeading}>
+                    <label style={styles.label}>OTP Verification</label>
+                    <p style={styles.otpHint}>
+                      OTP sent to {formattedNumber}
+                    </p>
+                  </div>
+
+                  <button type="button" style={styles.resendBtn}>
+                    Resend
+                  </button>
+                </div>
+
+                <input
+                  value={otp}
+                  onChange={(event) =>
+                    handleOtpChange(event.target.value)
+                  }
+                  onFocus={() => setFocusedField("otp")}
+                  onBlur={() => setFocusedField(null)}
+                  placeholder="••••••"
+                  inputMode="numeric"
+                  maxLength={6}
+                  autoFocus
+                  aria-label="Six digit OTP"
+                  style={{
+                    ...styles.otpInput,
+                    ...(focusedField === "otp"
+                      ? styles.otpFocused
+                      : {}),
+                  }}
+                />
+
+                <div style={styles.otpDotRow}>
+                  {[0, 1, 2, 3, 4, 5].map((index) => (
+                    <span
+                      key={index}
+                      style={{
+                        ...styles.otpDot,
+                        background:
+                          otp.length > index
+                            ? "#22c55e"
+                            : "#e7e5e4",
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div style={styles.securityNote}>
+              <div style={styles.noteIcon}>🔒</div>
+
+              <p style={styles.noteText}>
+                Your account is protected with secure one-time password
+                verification.
+              </p>
+            </div>
+
+            {!otpVisible ? (
+  <button
+  type="button"
+  disabled={
+    !isMobileValid || isCheckingNumber
+  }
+  onClick={handleNext}
+  onMouseEnter={() =>
+    setHoveredButton("next")
+  }
+  onMouseLeave={() =>
+    setHoveredButton(null)
+  }
+  style={{
+    ...styles.primaryBtn,
+
+    ...(isMobileValid && !isCheckingNumber
+      ? styles.primaryActive
+      : styles.primaryDisabled),
+
+    transform:
+      hoveredButton === "next" &&
+      isMobileValid &&
+      !isCheckingNumber
+        ? "translateY(-3px) scale(1.015)"
+        : "none",
+  }}
+>
+  {isCheckingNumber
+    ? "Scanning Number..."
+    : "Next"}
+</button>
+) : (
+  <>
+    
+  <button
+  type="button"
+  disabled={!isOtpValid || isVerifying}
+  onClick={handleVerifyAndSignIn}
+  onMouseEnter={() =>
+    setHoveredButton("verify")
+  }
+  onMouseLeave={() =>
+    setHoveredButton(null)
+  }
+  style={{
+    ...styles.primaryBtn,
+    ...(isOtpValid && !isVerifying
+      ? styles.primaryActive
+      : styles.primaryDisabled),
+
+    transform:
+      hoveredButton === "verify" &&
+      isOtpValid &&
+      !isVerifying
+        ? "translateY(-3px) scale(1.015)"
+        : "none",
+  }}
+>
+  {isVerifying
+    ? "Verifying..."
+    : "Verify & Sign In"}
+
+</button>
+  </>
+)}
+
+            <div style={styles.createAccountRow}>
+  <span style={styles.newAccountText}>
+    New to StoneRate?
+  </span>
+
+  <button
+    type="button"
+    style={styles.createAccountLink}
+    onClick={goToPage2}
+  >
+    Create Account
+  </button>
+</div>
+          </div>
+          </section>
+      </div>
+
+      {showErrorPopup && (
+  <div
+    style={styles.popupOverlay}
+    role="presentation"
+    onMouseDown={(event) => {
+      if (event.target === event.currentTarget) {
+        setShowErrorPopup(false);
+      }
+    }}
+  >
+    <div
+      style={styles.popupCard}
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="error-popup-title"
+      aria-describedby="error-popup-message"
+    >
+      <div style={styles.popupGrid} />
+      <div style={styles.popupGlowOne} />
+      <div style={styles.popupGlowTwo} />
+      <div style={styles.popupScannerLine} />
+
+      <button
+        type="button"
+        aria-label="Close error popup"
+        style={styles.popupCloseButton}
+        onClick={() => {
+          setShowErrorPopup(false);
+
+          setFocusedField(
+            popupType === "otp"
+              ? "otp"
+              : "mobile"
+          );
+        }}
+      >
+        ×
+      </button>
+
+      <div style={styles.popupIconOuter}>
+        <div style={styles.popupIconInner}>
+          !
+        </div>
+      </div>
+
+      <p style={styles.popupKicker}>
+        {popupType === "otp"
+          ? "OTP SCAN FAILED"
+          : "IDENTITY SCAN FAILED"}
+      </p>
+
+      <h3
+        id="error-popup-title"
+        style={styles.popupTitle}
+      >
+        {popupTitle}
+      </h3>
+
+      <p
+        id="error-popup-message"
+        style={styles.popupMessage}
+      >
+        {popupMessage}
+      </p>
+
+      <div style={styles.popupNumberPanel}>
+        <span style={styles.popupNumberLabel}>
+          {popupType === "otp"
+            ? "VERIFICATION STATUS"
+            : "SCANNED MOBILE NUMBER"}
+        </span>
+
+        {popupType === "otp" ? (
+          <>
+            <div style={styles.popupOtpDots}>
+              {[0, 1, 2, 3, 4, 5].map(
+                (index) => (
+                  <span
+                    key={index}
+                    style={styles.popupOtpDot}
+                  />
+                )
+              )}
+            </div>
+
+            <span style={styles.popupStatus}>
+              OTP DOES NOT MATCH
+            </span>
+          </>
+        ) : (
+          <>
+            <strong style={styles.popupNumber}>
+              {formattedNumber}
+            </strong>
+
+            <span style={styles.popupStatus}>
+              ACCOUNT NOT LOCATED
+            </span>
+          </>
+        )}
+      </div>
+
+      <button
+        type="button"
+        style={styles.popupActionButton}
+        onClick={() => {
+          setShowErrorPopup(false);
+          setPopupMessage("");
+          setPopupTitle("");
+
+          if (popupType === "otp") {
+            setOtp("");
+            setFocusedField("otp");
+          } else {
+            setFocusedField("mobile");
+          }
+        }}
+      >
+        {popupType === "otp"
+          ? "ENTER OTP AGAIN"
+          : "EDIT MOBILE NUMBER"}
+      </button>
+
+      {popupType === "mobile" && (
+        <button
+          type="button"
+          style={styles.popupCreateButton}
+          onClick={() => {
+            setShowErrorPopup(false);
+            goToPage2?.();
+          }}
+        >
+          Create a new buyer account
+        </button>
+      )}
+    </div>
+  </div>
+)}
+    </div>
+  );
+}
+
+function useViewport() {
+  const [viewport, setViewport] = useState({
+    width:
+      typeof window !== "undefined"
+        ? window.innerWidth
+        : 390,
+    height:
+      typeof window !== "undefined"
+        ? window.innerHeight
+        : 844,
+  });
+
+  useEffect(() => {
+    const updateViewport = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    updateViewport();
+
+    window.addEventListener("resize", updateViewport);
+
+    return () => {
+      window.removeEventListener("resize", updateViewport);
+    };
+  }, []);
+
+  return viewport;
+}
+
+function createStyles(viewport) {
+  const viewportWidth = viewport.width || 390;
+  const viewportHeight = viewport.height || 844;
+
+  const isDesktop = viewportWidth >= 700;
+
+  const phoneWidth = isDesktop ? 390 : viewportWidth;
+  const phoneHeight = isDesktop ? 844 : viewportHeight;
+
+  const scale = Math.max(
+    0.68,
+    Math.min(
+      1,
+      Math.min(phoneWidth / 390, phoneHeight / 844)
+    )
+  );
+
+  const narrow = phoneWidth < 360;
+  const veryNarrow = phoneWidth < 300;
+  const short = phoneHeight < 700;
+  const veryShort = phoneHeight < 560;
+
+  const px = (value) => Math.round(value * scale);
+
+  return {
+    page: {
+      width: "100vw",
+      height: "100dvh",
+      minHeight: "100dvh",
+      background: isDesktop ? "#f4f1ea" : "#ffffff",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: isDesktop ? "center" : "stretch",
+      padding: isDesktop ? 16 : 0,
+      fontFamily: "Arial, sans-serif",
+      overflow: "hidden",
+      boxSizing: "border-box",
+    },
+    
+    
+    loginError: {
+      display: "flex",
+      alignItems: "center",
+      gap: 7,
+      marginBottom: 9,
+      padding: 9,
+      border: "1px solid #fecaca",
+      borderRadius: 14,
+      background: "#fff7f7",
+      color: "#b91c1c",
+      fontSize: 12,
+      lineHeight: 1.35,
+      fontWeight: 850,
+    },
+    
+    loginErrorIcon: {
+      width: 24,
+      height: 24,
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      borderRadius: "50%",
+      background: "#ef4444",
+      color: "white",
+      fontSize: 12,
+      fontWeight: 950,
+    }, 
+    popupOverlay: {
+      position: "fixed",
+      inset: 0,
+      zIndex: 99999,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: px(18),
+      background:
+        "radial-gradient(circle at center, rgba(127,29,29,0.24), rgba(2,6,23,0.9))",
+      backdropFilter: "blur(14px)",
+      WebkitBackdropFilter: "blur(14px)",
+      boxSizing: "border-box",
+    },
+    
+    popupCard: {
+      position: "relative",
+      width: "100%",
+      maxWidth: px(338),
+      padding: `${px(30)}px ${px(22)}px ${px(
+        22
+      )}px`,
+      overflow: "hidden",
+      borderRadius: px(30),
+      border:
+        "1px solid rgba(248,113,113,0.45)",
+      background:
+        "linear-gradient(145deg, rgba(2,6,23,0.99), rgba(28,25,23,0.99) 58%, rgba(69,10,10,0.99))",
+      boxShadow:
+        "0 30px 90px rgba(0,0,0,0.62), 0 0 50px rgba(239,68,68,0.25), inset 0 1px 0 rgba(255,255,255,0.12)",
+      textAlign: "center",
+      boxSizing: "border-box",
+    },
+   
+    
+    popupGrid: {
+      position: "absolute",
+      inset: 0,
+      pointerEvents: "none",
+      opacity: 0.4,
+      backgroundImage:
+        "linear-gradient(rgba(248,113,113,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(248,113,113,0.08) 1px, transparent 1px)",
+      backgroundSize: `${px(25)}px ${px(25)}px`,
+      maskImage:
+        "linear-gradient(to bottom, black, transparent 88%)",
+      WebkitMaskImage:
+        "linear-gradient(to bottom, black, transparent 88%)",
+    },
+    
+    popupGlowOne: {
+      position: "absolute",
+      top: px(-80),
+      right: px(-65),
+      width: px(190),
+      height: px(190),
+      borderRadius: "50%",
+      background: "rgba(239,68,68,0.25)",
+      filter: `blur(${px(45)}px)`,
+      pointerEvents: "none",
+    },
+    
+    popupGlowTwo: {
+      position: "absolute",
+      bottom: px(-90),
+      left: px(-65),
+      width: px(170),
+      height: px(170),
+      borderRadius: "50%",
+      background: "rgba(245,158,11,0.17)",
+      filter: `blur(${px(45)}px)`,
+      pointerEvents: "none",
+    },
+    
+    popupScannerLine: {
+      position: "absolute",
+      top: px(112),
+      left: "8%",
+      right: "8%",
+      height: 1,
+      background:
+        "linear-gradient(90deg, transparent, #f87171, transparent)",
+      boxShadow: "0 0 14px #ef4444",
+      opacity: 0.8,
+      pointerEvents: "none",
+    },
+    
+    popupCloseButton: {
+      position: "absolute",
+      top: px(14),
+      right: px(14),
+      zIndex: 3,
+      width: px(34),
+      height: px(34),
+      padding: 0,
+      border:
+        "1px solid rgba(255,255,255,0.12)",
+      borderRadius: "50%",
+      background: "rgba(255,255,255,0.07)",
+      color: "#ffffff",
+      fontSize: px(22),
+      lineHeight: 1,
+      cursor: "pointer",
+    },
+    
+    popupIconOuter: {
+      position: "relative",
+      zIndex: 2,
+      width: px(88),
+      height: px(88),
+      margin: `0 auto ${px(18)}px`,
+      padding: px(7),
+      borderRadius: "50%",
+      background:
+        "linear-gradient(145deg, rgba(248,113,113,0.58), rgba(127,29,29,0.12))",
+      boxShadow:
+        "0 0 0 8px rgba(239,68,68,0.08), 0 0 38px rgba(239,68,68,0.5)",
+      boxSizing: "border-box",
+    },
+    
+    popupIconInner: {
+      width: "100%",
+      height: "100%",
+      display: "grid",
+      placeItems: "center",
+      borderRadius: "50%",
+      background:
+        "linear-gradient(145deg, #f87171, #dc2626 58%, #7f1d1d)",
+      color: "#ffffff",
+      fontSize: px(42),
+      fontWeight: 950,
+      boxShadow:
+        "inset 0 1px 0 rgba(255,255,255,0.5)",
+    },
+    
+    popupKicker: {
+      position: "relative",
+      zIndex: 2,
+      display: "inline-block",
+      margin: 0,
+      padding: `${px(6)}px ${px(11)}px`,
+      border:
+        "1px solid rgba(248,113,113,0.35)",
+      borderRadius: 999,
+      background: "rgba(239,68,68,0.1)",
+      color: "#fca5a5",
+      fontSize: px(9),
+      fontWeight: 950,
+      letterSpacing: 1.6,
+    },
+    
+    popupTitle: {
+      position: "relative",
+      zIndex: 2,
+      margin: `${px(14)}px 0 0`,
+      color: "#ffffff",
+      fontSize: px(25),
+      lineHeight: 1.15,
+      fontWeight: 950,
+    },
+    
+    popupMessage: {
+      position: "relative",
+      zIndex: 2,
+      margin: `${px(10)}px auto 0`,
+      maxWidth: px(275),
+      color: "#cbd5e1",
+      fontSize: px(13),
+      lineHeight: 1.55,
+      fontWeight: 700,
+    },
+    
+    popupNumberPanel: {
+      position: "relative",
+      zIndex: 2,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: px(5),
+      marginTop: px(18),
+      padding: px(13),
+      border:
+        "1px solid rgba(248,113,113,0.23)",
+      borderRadius: px(18),
+      background: "rgba(0,0,0,0.28)",
+    },
+    
+    popupNumberLabel: {
+      color: "#fca5a5",
+      fontSize: px(8),
+      fontWeight: 950,
+      letterSpacing: 1.4,
+    },
+    
+    popupNumber: {
+      color: "#ffffff",
+      fontSize: px(17),
+      fontWeight: 950,
+      letterSpacing: 0.5,
+    },
+    popupOtpDots: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: px(8),
+      margin: `${px(9)}px 0 ${px(5)}px`,
+    },
+    
+    popupOtpDot: {
+      width: px(10),
+      height: px(10),
+      borderRadius: "50%",
+      background:
+        "linear-gradient(145deg, #f87171, #dc2626)",
+      boxShadow:
+        "0 0 10px rgba(239,68,68,0.7)",
+    },
+    popupStatus: {
+      marginTop: px(3),
+      padding: `${px(4)}px ${px(8)}px`,
+      borderRadius: 999,
+      background: "rgba(239,68,68,0.13)",
+      color: "#f87171",
+      fontSize: px(8),
+      fontWeight: 950,
+      letterSpacing: 1,
+    },
+    
+    popupActionButton: {
+      position: "relative",
+      zIndex: 2,
+      width: "100%",
+      height: px(52),
+      marginTop: px(20),
+      border: 0,
+      borderRadius: px(18),
+      background:
+        "linear-gradient(135deg, #f87171, #dc2626 55%, #991b1b)",
+      color: "#ffffff",
+      fontSize: px(13),
+      fontWeight: 950,
+      letterSpacing: 0.8,
+      cursor: "pointer",
+      boxShadow:
+        "0 16px 32px rgba(220,38,38,0.34), inset 0 1px 0 rgba(255,255,255,0.28)",
+    },
+    
+    popupCreateButton: {
+      position: "relative",
+      zIndex: 2,
+      marginTop: px(14),
+      padding: px(5),
+      border: 0,
+      background: "transparent",
+      color: "#fbbf24",
+      fontSize: px(12),
+      fontWeight: 900,
+      textDecoration: "underline",
+      textUnderlineOffset: px(4),
+      cursor: "pointer",
+    },
+
+
+    phone: {
+      width: isDesktop ? 390 : "100vw",
+      height: isDesktop ? 844 : "100dvh",
+      maxWidth: isDesktop ? 430 : "none",
+      background: "#ffffff",
+      borderRadius: isDesktop ? 36 : 0,
+      overflowY: "auto",
+      overflowX: "hidden",
+      WebkitOverflowScrolling: "touch",
+      boxShadow: isDesktop
+        ? "0 30px 80px rgba(0,0,0,0.25)"
+        : "none",
+      boxSizing: "border-box",
+    },
+
+    hero: {
+      position: "relative",
+      minHeight: px(
+        veryShort ? 430 : short ? 495 : 565
+      ),
+      padding: `${px(short ? 18 : 22)}px ${px(
+        narrow ? 15 : 20
+      )}px ${px(short ? 22 : 28)}px`,
+      color: "white",
+      background:
+        "radial-gradient(circle at 20% 8%, rgba(245,158,11,0.38), transparent 28%), linear-gradient(145deg, #020617 0%, #1c1917 52%, #92400e 100%)",
+      overflow: "hidden",
+      boxSizing: "border-box",
+    },
+
+    glowOne: {
+      position: "absolute",
+      top: px(-80),
+      right: px(-80),
+      width: px(230),
+      height: px(230),
+      borderRadius: "50%",
+      background: "rgba(251,191,36,0.25)",
+      filter: `blur(${px(38)}px)`,
+    },
+
+    glowTwo: {
+      position: "absolute",
+      bottom: px(70),
+      left: px(-95),
+      width: px(225),
+      height: px(225),
+      borderRadius: "50%",
+      background: "rgba(34,197,94,0.14)",
+      filter: `blur(${px(44)}px)`,
+    },
+
+    gridOverlay: {
+      position: "absolute",
+      inset: 0,
+      backgroundImage:
+        "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
+      backgroundSize: `${px(34)}px ${px(34)}px`,
+      maskImage:
+        "linear-gradient(to bottom, black, transparent 82%)",
+      pointerEvents: "none",
+    },
+
+    nav: {
+      position: "relative",
+      zIndex: 3,
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: px(10),
+    },
+
+    brandWrap: {
+      display: "flex",
+      alignItems: "center",
+      gap: px(12),
+      minWidth: 0,
+    },
+
+    brandText: {
+      minWidth: 0,
+    },
+
+    logo: {
+      width: px(short ? 42 : 50),
+      height: px(short ? 42 : 50),
+      borderRadius: px(19),
+      background:
+        "linear-gradient(145deg, rgba(255,255,255,0.24), rgba(255,255,255,0.08))",
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(short ? 20 : 24),
+      boxShadow:
+        "inset 0 1px 0 rgba(255,255,255,0.3), 0 14px 26px rgba(0,0,0,0.25)",
+      flexShrink: 0,
+    },
+
+    brandName: {
+      margin: 0,
+      fontSize: px(short ? 16 : 18),
+      fontWeight: 950,
+      lineHeight: 1,
+    },
+
+    brandSub: {
+      margin: `${px(3)}px 0 0`,
+      color: "#d6d3d1",
+      fontSize: px(10),
+      fontWeight: 700,
+      whiteSpace: "nowrap",
+    },
+
+    backBtn: {
+      border: "1px solid rgba(255,255,255,0.2)",
+      borderRadius: 999,
+      background: "rgba(255,255,255,0.1)",
+      color: "white",
+      padding: `${px(8)}px ${px(13)}px`,
+      fontSize: px(12),
+      fontWeight: 900,
+      cursor: "pointer",
+      flexShrink: 0,
+    },
+
+    heroText: {
+      position: "relative",
+      zIndex: 3,
+      marginTop: px(
+        veryShort ? 16 : short ? 22 : 30
+      ),
+      textAlign: "center",
+    },
+
+    kicker: {
+      display: "inline-block",
+      margin: 0,
+      padding: `${px(6)}px ${px(11)}px`,
+      borderRadius: 999,
+      background: "rgba(245,158,11,0.16)",
+      border: "1px solid rgba(245,158,11,0.35)",
+      color: "#fde68a",
+      fontSize: px(10),
+      letterSpacing: narrow ? 1.3 : 1.8,
+      fontWeight: 950,
+    },
+
+    title: {
+      margin: `${px(12)}px 0 0`,
+      fontSize: px(
+        veryShort ? 27 : short ? 32 : 37
+      ),
+      lineHeight: 1.05,
+      fontWeight: 950,
+      letterSpacing: -1,
+      overflowWrap: "break-word",
+    },
+
+    subtitle: {
+      margin: `${px(
+        veryShort ? 8 : 12
+      )}px auto 0`,
+      maxWidth: px(330),
+      color: "#e7e5e4",
+      fontSize: px(
+        veryShort ? 10 : short ? 12 : 13
+      ),
+      lineHeight: veryShort ? 1.35 : 1.5,
+      fontWeight: 600,
+    },
+
+    visualStage: {
+      position: "relative",
+      zIndex: 3,
+      height: px(
+        veryShort ? 220 : short ? 250 : 290
+      ),
+      marginTop: px(
+        veryShort ? 8 : short ? 12 : 18
+      ),
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      perspective: 1100,
+    },
+
+    orbitOne: {
+      position: "absolute",
+      width: Math.min(
+        px(350),
+        Math.max(0, phoneWidth - px(20))
+      ),
+      height: px(190),
+      borderRadius: "50%",
+      border: "1px solid rgba(255,255,255,0.16)",
+      transform: "rotateX(66deg) rotateZ(-12deg)",
+    },
+
+    orbitTwo: {
+      position: "absolute",
+      width: px(250),
+      height: px(235),
+      borderRadius: "50%",
+      border: "1px solid rgba(245,158,11,0.33)",
+      transform: "rotateX(64deg) rotateZ(12deg)",
+    },
+
+    loginCard3d: {
+      position: "relative",
+      width: px(
+        veryNarrow ? 210 : veryShort ? 220 : 258
+      ),
+      minHeight: px(
+        veryShort ? 205 : short ? 225 : 255
+      ),
+      borderRadius: px(36),
+      background:
+        "linear-gradient(145deg, rgba(255,255,255,0.30), rgba(255,255,255,0.08))",
+      border: "2px solid rgba(255,255,255,0.25)",
+      backdropFilter: "blur(14px)",
+      transform:
+        "rotateX(8deg) rotateY(-9deg) rotateZ(1deg)",
+      boxShadow:
+        "0 30px 60px rgba(245,158,11,0.22)",
+      padding: px(veryShort ? 13 : 18),
+      transition: "all 320ms ease",
+      boxSizing: "border-box",
+      overflow: "hidden",
+    },
+
+    loginCardReady: {
+      border: "2px solid #22c55e",
+      boxShadow:
+        "0 34px 72px rgba(34,197,94,0.38)",
+      background:
+        "linear-gradient(145deg, rgba(34,197,94,0.22), rgba(255,255,255,0.09))",
+    },
+
+    topHandle: {
+      width: px(75),
+      height: px(8),
+      borderRadius: 999,
+      background: "rgba(255,255,255,0.62)",
+      marginBottom: px(
+        veryShort ? 10 : 17
+      ),
+    },
+
+    cardHeaderRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: px(8),
+    },
+
+    lockBox: {
+      width: px(
+        veryShort ? 48 : 62
+      ),
+      height: px(
+        veryShort ? 48 : 62
+      ),
+      borderRadius: px(23),
+      color: "#111827",
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(
+        veryShort ? 23 : 29
+      ),
+      boxShadow:
+        "0 16px 28px rgba(0,0,0,0.25)",
+      transition: "all 280ms ease",
+      flexShrink: 0,
+    },
+
+    statusPill: {
+      padding: `${px(7)}px ${px(10)}px`,
+      borderRadius: 999,
+      background: "rgba(255,255,255,0.16)",
+      color: "white",
+      fontSize: px(11),
+      fontWeight: 900,
+      whiteSpace: "nowrap",
+    },
+
+    numberPanel: {
+      marginTop: px(
+        veryShort ? 10 : 16
+      ),
+      padding: px(
+        veryShort ? 10 : 14
+      ),
+      borderRadius: px(21),
+      background: "rgba(0,0,0,0.24)",
+      minWidth: 0,
+      overflow: "hidden",
+    },
+
+    panelLabel: {
+      margin: 0,
+      color: "#d6d3d1",
+      fontSize: px(10),
+      fontWeight: 850,
+    },
+
+    panelNumber: {
+      margin: `${px(7)}px 0 0`,
+      color: "white",
+      fontSize: px(
+        veryNarrow ? 13 : veryShort ? 15 : 17
+      ),
+      fontWeight: 950,
+      whiteSpace: "nowrap",
+      letterSpacing: -0.2,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    readyPanel: {
+      marginTop: px(
+        veryShort ? 8 : 12
+      ),
+      display: "flex",
+      gap: px(10),
+      alignItems: "center",
+      padding: px(
+        veryShort ? 9 : 12
+      ),
+      borderRadius: px(20),
+      background: "rgba(255,255,255,0.18)",
+      minWidth: 0,
+    },
+
+    readyText: {
+      minWidth: 0,
+    },
+
+    statusDot: {
+      width: px(13),
+      height: px(13),
+      borderRadius: "50%",
+      flexShrink: 0,
+    },
+
+    readyTitle: {
+      margin: 0,
+      color: "white",
+      fontSize: px(13),
+      fontWeight: 950,
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    readySub: {
+      margin: `${px(4)}px 0 0`,
+      color: "#e7e5e4",
+      fontSize: px(10),
+      fontWeight: 700,
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+
+    floatBadgeTop: {
+      position: "absolute",
+      top: px(
+        veryShort ? 12 : 25
+      ),
+      right: narrow ? px(2) : px(10),
+      zIndex: 5,
+      padding: `${px(8)}px ${px(11)}px`,
+      borderRadius: px(19),
+      background: "rgba(255,255,255,0.94)",
+      fontSize: px(
+        veryShort ? 9 : 12
+      ),
+      fontWeight: 950,
+      boxShadow:
+        "0 16px 30px rgba(0,0,0,0.25)",
+      whiteSpace: "nowrap",
+    },
+
+    floatBadgeLeft: {
+      position: "absolute",
+      bottom: px(
+        veryShort ? 18 : 32
+      ),
+      left: narrow ? px(2) : px(10),
+      zIndex: 5,
+      padding: `${px(8)}px ${px(11)}px`,
+      borderRadius: px(19),
+      background: "rgba(255,255,255,0.92)",
+      border: "2px solid #f59e0b",
+      color: "#1c1917",
+      fontSize: px(
+        veryShort ? 9 : 12
+      ),
+      fontWeight: 950,
+      boxShadow:
+        "0 16px 30px rgba(0,0,0,0.24)",
+      whiteSpace: "nowrap",
+    },
+
+    floatIcon: {
+      position: "absolute",
+      bottom: px(
+        veryShort ? 48 : 73
+      ),
+      right: narrow ? px(5) : px(16),
+      zIndex: 5,
+      width: px(
+        veryShort ? 44 : 58
+      ),
+      height: px(
+        veryShort ? 44 : 58
+      ),
+      borderRadius: px(22),
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(
+        veryShort ? 22 : 29
+      ),
+      boxShadow:
+        "0 18px 32px rgba(0,0,0,0.28)",
+      transition: "all 280ms ease",
+    },
+
+    formSection: {
+      marginTop: px(-28),
+      position: "relative",
+      zIndex: 5,
+      padding: `0 ${px(
+        narrow ? 13 : 18
+      )}px ${px(24)}px`,
+      background: "white",
+      borderRadius: `${px(32)}px ${px(32)}px 0 0`,
+      boxSizing: "border-box",
+    },
+
+    formCard: {
+      padding: px(
+        narrow ? 13 : 16
+      ),
+      borderRadius: px(30),
+      background: "#fafaf9",
+      border: "1px solid #eee7df",
+      boxShadow:
+        "0 16px 34px rgba(0,0,0,0.08)",
+      boxSizing: "border-box",
+    },
+
+    formTitleRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: px(10),
+      marginBottom: px(16),
+    },
+
+    formHeadingText: {
+      minWidth: 0,
+    },
+
+    formKicker: {
+      margin: 0,
+      color: "#b45309",
+      fontSize: px(10),
+      letterSpacing: narrow ? 1.2 : 1.7,
+      fontWeight: 950,
+    },
+
+    formTitle: {
+      margin: `${px(5)}px 0 0`,
+      color: "#1c1917",
+      fontSize: px(
+        narrow ? 20 : 23
+      ),
+      fontWeight: 950,
+    },
+
+    formIcon: {
+      width: px(48),
+      height: px(48),
+      borderRadius: px(18),
+      color: "white",
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(23),
+      boxShadow:
+        "0 14px 24px rgba(0,0,0,0.18)",
+      flexShrink: 0,
+    },
+
+    fieldBlock: {
+      marginTop: px(4),
+    },
+
+    label: {
+      display: "block",
+      marginBottom: px(8),
+      color: "#1c1917",
+      fontSize: px(13),
+      fontWeight: 900,
+    },
+
+    mobileWrap: {
+      display: "flex",
+      alignItems: "center",
+      gap: px(
+        narrow ? 6 : 9
+      ),
+      height: px(54),
+      border: "1px solid #e7e5e4",
+      borderRadius: px(20),
+      padding: `0 ${px(
+        narrow ? 7 : 10
+      )}px`,
+      background: "white",
+      boxSizing: "border-box",
+      transition: "all 220ms ease",
+      minWidth: 0,
+    },
+
+    mobileWrapLocked: {
+      borderColor: "#bbf7d0",
+      background: "#f0fdf4",
+    },
+
+    fieldFocused: {
+      borderColor: "#f59e0b",
+      boxShadow:
+        "0 0 0 4px rgba(245,158,11,0.15)",
+      transform: "translateY(-1px)",
+    },
+
+    prefix: {
+      height: px(36),
+      minWidth: px(
+        narrow ? 44 : 52
+      ),
+      borderRadius: px(14),
+      background: "#1c1917",
+      color: "white",
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(13),
+      fontWeight: 950,
+      flexShrink: 0,
+    },
+
+    prefixLocked: {
+      background: "#166534",
+    },
+
+    mobileInput: {
+      flex: 1,
+      width: 0,
+      height: "100%",
+      border: 0,
+      outline: "none",
+      background: "transparent",
+      fontSize: px(
+        narrow ? 12 : 14
+      ),
+      fontWeight: 800,
+      color: "#1c1917",
+      minWidth: 0,
+    },
+
+    mobileInputLocked: {
+      color: "#166534",
+    },
+
+    inputStatus: {
+      width: px(34),
+      height: px(34),
+      borderRadius: px(13),
+      display: "grid",
+      placeItems: "center",
+      fontSize: px(12),
+      fontWeight: 950,
+      flexShrink: 0,
+    },
+
+    mobileHelperRow: {
+      marginTop: px(8),
+      display: "flex",
+      flexDirection: "column",
+      gap: px(8),
+    },
+
+    helper: {
+      margin: 0,
+      color: "#78716c",
+      fontSize: px(11),
+      lineHeight: 1.35,
+      fontWeight: 700,
+    },
+
+    changeNumberBtn: {
+      alignSelf: "flex-start",
+      border: 0,
+      borderRadius: 999,
+      background: "#dcfce7",
+      color: "#166534",
+      padding: `${px(8)}px ${px(11)}px`,
+      fontSize: px(11),
+      fontWeight: 950,
+      cursor: "pointer",
+    },
+
+    otpSection: {
+      marginTop: px(17),
+      padding: px(
+        narrow ? 11 : 14
+      ),
+      borderRadius: px(24),
+      background: "#f0fdf4",
+      border: "1px solid #bbf7d0",
+      boxSizing: "border-box",
+    },
+
+    otpTopRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      gap: px(10),
+    },
+
+    otpHeading: {
+      minWidth: 0,
+    },
+
+    otpHint: {
+      margin: `${px(-3)}px 0 0`,
+      color: "#15803d",
+      fontSize: px(
+        narrow ? 9 : 11
+      ),
+      fontWeight: 750,
+      overflowWrap: "anywhere",
+    },
+
+    resendBtn: {
+      border: 0,
+      borderRadius: 999,
+      background: "#166534",
+      color: "white",
+      padding: `${px(8)}px ${px(11)}px`,
+      fontSize: px(11),
+      fontWeight: 900,
+      cursor: "pointer",
+      flexShrink: 0,
+    },
+
+    otpInput: {
+      width: "100%",
+      height: px(52),
+      marginTop: px(12),
+      border: "1px solid #bbf7d0",
+      borderRadius: px(18),
+      padding: `0 ${px(14)}px`,
+      fontSize: px(18),
+      fontWeight: 950,
+      letterSpacing: narrow ? 4 : 7,
+      textAlign: "center",
+      outline: "none",
+      background: "white",
+      color: "#1c1917",
+      boxSizing: "border-box",
+      transition: "all 220ms ease",
+    },
+
+    otpFocused: {
+      borderColor: "#22c55e",
+      boxShadow:
+        "0 0 0 4px rgba(34,197,94,0.14)",
+    },
+
+    otpDotRow: {
+      display: "flex",
+      justifyContent: "center",
+      gap: px(8),
+      marginTop: px(12),
+    },
+
+    otpDot: {
+      width: px(8),
+      height: px(8),
+      borderRadius: "50%",
+    },
+
+    securityNote: {
+      marginTop: px(17),
+      padding: px(12),
+      borderRadius: px(22),
+      background: "#fffbeb",
+      border: "1px solid #fde68a",
+      display: "flex",
+      alignItems: "center",
+      gap: px(10),
+    },
+
+    noteIcon: {
+      width: px(40),
+      height: px(40),
+      borderRadius: px(16),
+      background: "#1c1917",
+      color: "white",
+      display: "grid",
+      placeItems: "center",
+      flexShrink: 0,
+      fontSize: px(20),
+    },
+
+    noteText: {
+      margin: 0,
+      color: "#78716c",
+      fontSize: px(
+        narrow ? 10 : 12
+      ),
+      lineHeight: 1.35,
+      fontWeight: 800,
+    },
+
+    primaryBtn: {
+      width: "100%",
+      height: px(58),
+      marginTop: px(22),
+      border: 0,
+      borderRadius: px(28),
+      color: "white",
+      fontSize: px(18),
+      fontWeight: 950,
+      transition: "all 260ms ease",
+    },
+
+    primaryDisabled: {
+      background:
+        "linear-gradient(135deg, rgba(2,6,23,0.38), rgba(146,64,14,0.38))",
+      opacity: 0.55,
+      boxShadow: "none",
+      cursor: "not-allowed",
+    },
+
+    primaryActive: {
+      background:
+        "linear-gradient(135deg, #020617, #92400e)",
+      opacity: 1,
+      boxShadow:
+        "0 18px 38px rgba(146,64,14,0.28)",
+      cursor: "pointer",
+    },
+
+    createAccountRow: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      flexWrap: "wrap",
+    
+      gap: px(5),
+      marginTop: px(20),
+    },
+    
+    newAccountText: {
+      color: "#78716c",
+    
+      fontSize: px(13),
+      lineHeight: 1.2,
+      fontWeight: 850,
+    },
+    
+    createAccountLink: {
+      padding: `${px(5)}px ${px(8)}px`,
+    
+      border: "1px solid rgba(245,158,11,0.28)",
+      borderRadius: px(9),
+    
+      background:
+        "linear-gradient(145deg, rgba(245,158,11,0.16), rgba(234,88,12,0.08))",
+    
+      color: "#b45309",
+    
+      fontSize: px(13),
+      lineHeight: 1.2,
+      fontWeight: 950,
+    
+      textDecoration: "underline",
+      textUnderlineOffset: px(3),
+    
+      boxShadow:
+        "0 5px 12px rgba(146,64,14,0.08)",
+    
+      cursor: "pointer",
+    
+      transition:
+        "background 180ms ease, color 180ms ease, transform 180ms ease",
+    },
+  };
+}
