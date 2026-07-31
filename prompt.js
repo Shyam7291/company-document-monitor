@@ -2,28 +2,19 @@ Create a complete, production-quality React component for:
 
 src/pages/Page6.js
 
-This page is the final confirmation and delivery-details step for a construction-material rate-request application called StoneRate.
+StoneRate Page 6 is the final review, delivery-details, and submission step for a construction-material rate request.
 
-IMPORTANT REQUIREMENTS
+CORE REQUIREMENTS
 
-Return the complete Page6.js source code in one response.
-
-Do not return partial snippets.
-Do not omit styles.
-Do not use TypeScript.
-Do not use Tailwind, Bootstrap, Material UI or external UI libraries.
-Do not require package installation.
-Use standard React JavaScript, React hooks and JSX.
-Use inline JavaScript style objects and an internal globalCss string.
-The code must compile in StackBlitz React.
-Use normal JSX characters, not HTML entities such as &lt; or =&gt;.
-Do not insert placeholder comments in place of working functionality.
-
-PRESERVE THIS IMPORT
+- Return the complete Page6.js source in one response.
+- No partial snippets, omitted styles, placeholders, or additional files.
+- Use JavaScript, React hooks, JSX, inline style objects, and an internal globalCss string.
+- No TypeScript, Tailwind, Bootstrap, Material UI, external UI libraries, or package installation.
+- Must compile in StackBlitz React.
+- Use normal JSX characters, not HTML entities.
+- Preserve this import:
 
 import { createRateRequest } from "../api/orderApi";
-
-COMPONENT SIGNATURE
 
 Use this exact component signature:
 
@@ -34,35 +25,24 @@ export default function OrderConfirmationPage({
 }) {
 }
 
-PURPOSE
+PAGE PURPOSE
 
-Page 5 is now a visual material marketplace.
-
-On Page 5, the buyer:
-
-1. Browses daily material sample images.
-2. Selects one preferred image per material category.
-3. Selects vehicle quantities.
-4. Adds multiple materials to a request cart.
-5. Continues to Page 6.
+Page 5 lets buyers select one daily sample per material category, vehicle quantities, and multiple cart materials.
 
 Page 6 must:
 
-1. Display the selected material-image references.
-2. Display the selected vehicle quantities and tonnage.
-3. Allow the buyer to preview each selected image.
-4. Collect common delivery and contact information.
-5. Validate all required information.
-6. Let the buyer confirm the request.
-7. Submit the request using createRateRequest.
-8. Display a success popup containing the generated SR request ID.
-9. Call goToPage7 when the buyer closes the success popup.
+1. Show selected material images and details.
+2. Show vehicle quantities and tonnage.
+3. Preview each selected image.
+4. Collect delivery and contact details.
+5. Validate required fields.
+6. Confirm and submit through createRateRequest.
+7. Show a success popup with the generated SR request ID.
+8. Call goToPage7() only when Done is tapped.
 
-Do not remove working backend submission behavior.
+Do not remove existing backend submission behavior.
 
-ORDER DRAFT RECEIVED FROM PAGE 5
-
-The incoming orderDraft follows this structure:
+INCOMING DRAFT
 
 {
   materials: [
@@ -94,7 +74,7 @@ The incoming orderDraft follows this structure:
   createdAt
 }
 
-Page 6 must safely handle missing or malformed fields.
+Handle missing or malformed fields safely.
 
 Use:
 
@@ -102,22 +82,11 @@ const orderItems = Array.isArray(orderDraft?.materials)
   ? orderDraft.materials
   : [];
 
-Calculate totals safely from the material items rather than blindly trusting frontend-provided totals.
+Do not mutate orderDraft. Recalculate all totals from normalized materials.
 
-Do not mutate orderDraft directly.
+REQUIRED STATE
 
-NEW PAGE 6 RESPONSIBILITY
-
-The redesigned Page 5 no longer collects:
-
-- Requested delivery date
-- Contact number
-- Delivery address
-- Buyer notes
-
-Page 6 must collect these fields.
-
-Create React states for:
+Create states for:
 
 - requestedArrivalDate
 - contactNumber
@@ -131,272 +100,195 @@ Create React states for:
 - previewItem
 - validationErrors
 
-If the incoming orderDraft already contains any of these delivery fields, restore them as the initial values.
+Restore delivery values from orderDraft when available.
 
-DELIVERY DATE
+DELIVERY FIELDS
 
-Add a date input for the requested delivery date.
+Requested Date:
+- Required.
+- Cannot be in the past.
+- Use the current India date as min.
+- Show a readable selected date.
+- Avoid timezone errors.
+- Parse YYYY-MM-DD by splitting year, month, and day.
+- Do not append T00:00:00 to an ISO timestamp.
 
-Requirements:
+Contact Number:
+- Required and exactly 10 digits.
+- Remove non-numeric input while typing.
+- Maximum length 10.
+- Show fixed +91 prefix.
+- Show a clear inline error.
 
-- Required
-- Must not allow a past date
-- Use the current India date as the minimum
-- Display a readable formatted date after selection
-- Avoid timezone errors
-- Parse YYYY-MM-DD by splitting year, month and day
-- Do not create invalid values by appending T00:00:00 to a full ISO timestamp
+Delivery Address:
+- Required.
+- Minimum 10 characters.
+- Maximum 1,000 characters.
+- Multiline input with location icon.
+- Helper text: “Use the exact location where the vehicles should deliver the material.”
 
-CONTACT NUMBER
+Buyer Notes:
+- Optional.
+- Maximum 2,000 characters.
+- Show live character count.
+- Placeholder: “Add access instructions, preferred calling time or site directions.”
 
-Add a contact-number input.
+DESIGN
 
-Requirements:
+Create a premium, high-tech mobile-commerce checkout experience:
 
-- Required
-- Exactly 10 digits
-- Remove non-numeric characters as the buyer types
-- Maximum length 10
-- Display +91 as a fixed prefix
-- Show a clear validation message when invalid
+- Dark graphite and charcoal base.
+- Warm amber and gold accents.
+- Metallic borders, subtle grids, glows, and glass panels.
+- Compact typography and strong hierarchy.
+- High contrast and touch-friendly controls.
+- Restrained animations.
+- No plain table or generic white form.
 
-DELIVERY ADDRESS
+For widths of 700px or more, center the app in a 390 × 844 phone frame.
 
-Add a multiline delivery-address field.
-
-Requirements:
-
-- Required
-- Minimum practical length, such as 10 characters
-- Maximum 1,000 characters
-- Display a location icon
-- Add helper text:
-  “Use the exact location where the vehicles should deliver the material.”
-
-BUYER NOTES
-
-Add an optional buyer-notes textarea.
-
-Requirements:
-
-- Maximum 2,000 characters
-- Show a live character counter
-- Example placeholder:
-  “Add access instructions, preferred calling time or site directions.”
-
-PAGE DESIGN
-
-Create a genuinely new, premium, high-tech confirmation experience.
-
-The visual design should match a high-end material marketplace:
-
-- Dark graphite and charcoal background
-- Warm amber and gold accents
-- Metallic borders
-- Subtle grid patterns and glows
-- Glassmorphism panels
-- Clean, compact typography
-- Strong visual hierarchy
-- High contrast
-- Touch-friendly controls
-- Smooth but restrained animations
-- Premium mobile-commerce checkout feeling
-- No oversized headings
-- No plain HTML table
-- No generic white form layout
-
-For widths of 700px and above:
-
-- Display the application inside a centered 390 × 844 phone frame.
-
-For mobile:
-
-- Use the full viewport.
+On mobile:
+- Use full viewport.
 - Respect safe-area insets.
-- Keep the main content vertically scrollable.
-- Keep the final submission area accessible.
 - Prevent horizontal overflow.
+- Keep content vertically scrollable.
+- Keep submission controls accessible.
 
-Use a useViewport hook and createStyles(viewport).
+Use useViewport() and createStyles(viewport).
 
 HEADER
 
-Create a compact sticky or fixed high-tech header containing:
+Create a compact sticky header containing:
 
-- Back button calling goToPage5
-- Badge: “FINAL REVIEW”
-- Page title: “Confirm Your Request”
-- Subtitle:
-  “Review selected quality references and add delivery details.”
-- Compact Edit button calling goToPage5
+- Back button calling goToPage5.
+- “FINAL REVIEW” badge.
+- Title: “Confirm Your Request”
+- Subtitle: “Review selected quality references and add delivery details.”
+- Edit button calling goToPage5.
 
-Below the title, display a premium summary strip:
+Add a summary strip showing recalculated total materials, vehicles, and tons.
 
-- Total materials
-- Total vehicles
-- Total tons
+MATERIAL CARDS
 
-Use the actual recalculated totals.
+Render one premium card per selected material, showing:
 
-SELECTED MATERIAL REFERENCE SECTION
-
-Replace the old table with one premium card per selected material.
-
-Each material card must clearly display:
-
-- Large selected reference-image thumbnail
+- Large reference thumbnail
 - Material name
 - Sample code
-- Sample source area
-- Sample upload time
+- Source area
+- Upload time
 - Freshness or expiry status
 - Total vehicles
 - Total tons
 - Vehicle breakdown
-- Material-specific admin note, if available
-- “Edit selection” button calling goToPage5
-- Image-preview button
+- Admin note when available
+- View image button
+- Edit selection button calling goToPage5
 
-Example card structure:
-
-[Selected image]
-
-M-Sand
-Sample SRMS-401
-Sarjapur Plant
-Uploaded today
-
-18 tons
-1 vehicle
-Transport quotation pending
-
-Vehicle breakdown:
-Hyva
-1 vehicle × 18 tons
-
-Selected reference note:
-Fine manufactured sand with a consistent warm-grey appearance.
-
-[View image] [Edit selection]
-
-Do not display seller identity.
+Do not display seller identity. Use loading="lazy" for thumbnails.
 
 IMAGE PREVIEW
 
-When the buyer taps a selected material image or “View image”, open a full-screen preview.
+Clicking the image or View image opens a full-screen dark preview containing:
 
-The preview must include:
-
-- Large selected image
+- Full image
 - Close button
 - Material name
 - Sample code
 - Source area
 - Upload time
 - Admin note
-- Visual-reference disclaimer
-
-Use this disclaimer:
+- Disclaimer:
 
 “This image is a visual material reference. Natural variation, lighting, moisture and dust may affect final appearance.”
 
-The preview must use a dark, high-contrast backdrop.
+Load the full image only when preview opens.
 
-SELECTED IMAGE EXPIRY BEHAVIOR
+EXPIRED SAMPLES
 
-The daily marketplace sample may expire after selection.
+If sampleExpiresAt is absent, do not crash.
 
-Page 6 must distinguish between:
+If a sample expired before submission:
 
-1. A sample that expired before the request was submitted.
-2. A permanent request snapshot that will be created after submission.
+- Show a red warning.
+- Disable submission.
+- Show: “This daily sample has expired. Return to the material gallery and select a fresh reference.”
+- Add a button calling goToPage5.
+- Never silently submit an expired sample.
 
-For the frontend confirmation step:
+After successful submission, the backend creates the permanent request snapshot.
 
-- If sampleExpiresAt is missing, do not crash.
-- If a selected sample is already expired, show a red warning.
-- Disable submission while any selected sample is expired.
-- Tell the buyer:
-  “This daily sample has expired. Return to the material gallery and select a fresh reference.”
-- Provide a button calling goToPage5.
+ADDITIONAL SECTIONS
 
-Do not silently submit an expired reference.
-
-DELIVERY DETAILS SECTION
-
-Create a section titled:
-
-“Delivery details”
-
-Add attractive form cards for:
-
-1. Requested delivery date
-2. Contact number
-3. Delivery address
-4. Optional buyer notes
-
-Use icons, labels, helper text and inline validation.
-
-Do not place all fields in one plain rectangular form.
-
-Each field should have a clear focused state.
-
-ORDER TOTALS SECTION
-
-Add a compact confirmation summary near the bottom showing:
-
-- Number of selected materials
+Request Totals:
+- Selected materials
 - Total vehicles
 - Total tons
-- Number of selected visual references
+- Selected visual references
+- Do not show quoted rates.
 
-This section should not display quoted rates because the request is still waiting for rate checking.
+Rate Enquiry Notice:
+- Heading: “Rate enquiry only”
+- Text: “No payment is required now. StoneRate will check material-wise rates, transport availability and delivery timing before asking for approval.”
+- Also show: “Submitting this request does not create a confirmed delivery order.”
 
-RATE-ENQUIRY NOTICE
-
-Display a concise notice:
-
-“Rate enquiry only”
-
-Text:
-
-“No payment is required now. StoneRate will check material-wise rates, transport availability and delivery timing before asking for approval.”
-
-Also state:
-
-“Submitting this request does not create a confirmed delivery order.”
-
-WHAT HAPPENS NEXT
-
-Show a compact three-step process:
-
+What Happens Next:
 1. Request submitted
 2. StoneRate checks material-wise rates
 3. Buyer reviews and confirms the rates
 
-The request will automatically enter the checking stage after submission.
+State that submission automatically enters the checking stage.
 
 CONFIRMATION CONSENT
 
-Add a premium checkable confirmation card.
-
-Use this exact meaning:
+Add a premium checkbox card with this meaning:
 
 “I confirm that the selected material references, vehicle quantities, requested delivery date, contact number and delivery address are correct.”
 
-The submit button must remain disabled until:
+Disable submission until:
 
-- At least one material exists
-- No selected sample is expired
-- Requested delivery date is valid
-- Contact number is exactly 10 digits
-- Delivery address is valid
-- Buyer confirmation is checked
-- Submission is not already in progress
+- At least one valid material exists.
+- No sample is expired.
+- Delivery date is valid.
+- Contact number has exactly 10 digits.
+- Delivery address is valid.
+- Confirmation is checked.
+- Submission is not in progress.
 
-SUBMISSION PAYLOAD
+NORMALIZATION
 
-Before calling createRateRequest, create a new complete request object:
+For every material:
+
+- Ensure vehicles is an array.
+- Convert numeric values with Number.
+- Ignore zero-quantity vehicles.
+- Recalculate each vehicle’s totalTons.
+- Recalculate material totalVehicles and totalTons.
+- Recalculate request totals.
+
+Preserve these sample fields:
+
+- sampleId
+- sampleCode
+- sampleImageUrl
+- sampleSourceArea
+- sampleUploadedAt
+- sampleExpiresAt
+- sampleAdminNote
+
+Preserve each vehicle as:
+
+{
+  vehicleId,
+  vehicleName,
+  capacityTons,
+  quantity,
+  totalTons
+}
+
+SUBMISSION
+
+Before submission, create:
 
 const completeOrderDraft = {
   ...orderDraft,
@@ -416,148 +308,75 @@ const result = await createRateRequest(
   completeOrderDraft
 );
 
-Preserve the sample fields inside each material object.
-
-Do not remove:
-
-- sampleId
-- sampleCode
-- sampleImageUrl
-- sampleSourceArea
-- sampleUploadedAt
-- sampleExpiresAt
-- sampleAdminNote
-
-Preserve the vehicle structure expected by the current backend:
-
-{
-  vehicleId,
-  vehicleName,
-  capacityTons,
-  quantity,
-  totalTons
-}
-
-NORMALIZE AND VALIDATE TOTALS
-
-For every material:
-
-- Ensure vehicles is an array.
-- Ignore vehicles with a quantity of zero.
-- Convert numeric values using Number.
-- Recalculate each vehicle’s totalTons.
-- Recalculate material totalVehicles.
-- Recalculate material totalTons.
-- Recalculate full-request totals.
-
-Do not trust the displayed totals alone.
-
-The backend will validate again later.
-
-SUBMISSION STATES
-
-Support:
-
-- Idle
-- Validating
-- Submitting
-- Submission success
-- Submission error
+Support idle, validating, submitting, success, and error states.
 
 During submission:
 
-- Disable navigation-sensitive actions
-- Disable the submit button
-- Change the label to:
-  “Submitting Rate Request...”
-- Show an inline loading indicator
+- Disable navigation-sensitive actions.
+- Disable the submit button.
+- Show an inline loader.
+- Change label to “Submitting Rate Request...”
 
-On API error:
+On error:
 
-- Display the error message in a visible red error card
-- Keep all buyer-entered fields and selected materials
-- Allow retry
-
-Do not clear the draft after an error.
+- Show a visible red error card.
+- Preserve materials and buyer-entered fields.
+- Allow retry.
+- Do not clear the draft.
 
 SUCCESS POPUP
 
-After a successful API response, display a premium success popup.
-
-The popup must show:
+After success, show:
 
 - Green success symbol
-- Heading:
-  “Rate Request Submitted”
-- Generated request ID from:
-  createdRequest?.publicRequestId
-- Current status:
-  “Checking sellers”
-- Supporting text:
-  “StoneRate has started checking material-wise rates and transport availability.”
+- “Rate Request Submitted”
+- createdRequest?.publicRequestId
+- Status: “Checking sellers”
+- Text: “StoneRate has started checking material-wise rates and transport availability.”
 - Done button
 
-The Done button must call:
+Done must call:
 
 goToPage7();
 
-Do not navigate to Page 7 before the buyer taps Done.
+Do not navigate before Done is tapped.
 
-If the current application redirects Done to Recent Orders through App.js, preserve that callback behavior.
+EMPTY STATE
 
-EMPTY OR MISSING DRAFT STATE
+If no valid materials exist, show:
 
-If orderDraft is missing or contains no valid materials, do not render a broken confirmation screen.
-
-Display a polished empty state:
-
-- Heading:
-  “No materials selected”
-- Message:
-  “Return to Today’s Materials and add at least one sample to your request.”
+- “No materials selected”
+- “Return to Today’s Materials and add at least one sample to your request.”
 - Button calling goToPage5
 
 Do not allow submission.
 
-DRAFT RESTORATION
+NAVIGATION AND RESTORATION
 
-When the buyer returns from Page 6 to Page 5:
+- Calling goToPage5 must not clear orderDraft.
+- Preserve Page 6 field state while mounted.
+- Allow App.js to pass the completed draft back if supported.
+- Do not use localStorage or sessionStorage.
 
-- Call goToPage5
-- Do not clear orderDraft
-- Preserve delivery fields in local Page 6 state while the component remains mounted
-- Ensure the complete draft can later be passed back through App.js if that navigation supports it
-
-Do not use localStorage or sessionStorage.
-
-ACCESSIBILITY
+ACCESSIBILITY AND PERFORMANCE
 
 Include:
 
 - type="button" on buttons
-- alt text for every image
-- aria-label for icon-only actions
-- aria-modal on dialogs
+- Image alt text
+- Icon-button aria-label
+- aria-modal dialogs
+- Proper field labels
+- Keyboard interaction
 - Visible focus states
-- Proper labels for every form field
-- Sufficient color contrast
-- Keyboard-accessible buttons
+- Sufficient contrast
 - Reduced-motion support
-
-PERFORMANCE
-
-Use:
-
-- loading="lazy" for selected thumbnails
-- Full image loading only when preview opens
 - useMemo for normalized materials and totals
-- No network fetching inside Page 6
+- No fetching inside Page 6
 - No base64 images
 - No duplicate full-resolution images
 
-HELPER COMPONENTS
-
-Use helper components in the same file where useful, such as:
+Keep helper components in the same file, such as:
 
 - SelectedMaterialCard
 - VehicleBreakdown
@@ -567,31 +386,6 @@ Use helper components in the same file where useful, such as:
 - EmptyDraftState
 - SuccessPopup
 
-Keep all helpers inside Page6.js.
+OUTPUT
 
-Do not create additional files.
-
-DO NOT REMOVE EXISTING BUSINESS BEHAVIOR
-
-The current Page 6 already imports and calls createRateRequest.
-
-Preserve:
-
-- createRateRequest integration
-- submitted state
-- isSubmitting state
-- submitError state
-- createdRequest state
-- generated public request ID display
-- confirmation checkbox behavior
-- success popup
-- goToPage5 navigation
-- goToPage7 callback
-- no-payment notice
-
-Improve the structure and appearance without breaking those behaviors.
-
-OUTPUT REQUIREMENT
-
-Return only the complete Page6.js code.
-
+Return only the complete Page6.js code. Do not add explanations, partial snippets, ellipses, or references to existing styles. Include every helper, style, CSS rule, validation, and working behavior required for compilation.
