@@ -1,3 +1,22 @@
+TECHNOLOGY AND CODE REQUIREMENTS
+
+Build the page using React with JavaScript and JSX. Do not use TypeScript.
+
+Use functional React components and React Hooks such as useState, useEffect, and useMemo where appropriate.
+
+Write the complete page as production-ready frontend code that can be copied directly into a React project. Keep the code clean, readable, well-organized, and easy to connect to backend APIs later.
+
+Use plain CSS, a separate CSS file, CSS modules, or well-organized React inline styles, depending on the existing project structure. Do not require Tailwind CSS or any additional UI library unless specifically requested.
+
+The page component should be exported as:
+
+export default function AdminDashboard() {
+  // Complete page implementation
+}
+
+Use demonstration data only for the initial dashboard preview. Keep dashboard statistics, attention items, menu entries, and navigation actions in reusable arrays or objects so they can later be replaced with live backend API data.
+
+The generated interface text should be written in clear professional English.
 Create a modern, mobile-first Admin Dashboard page for a construction-material ordering platform called StoneRate.
 
 The page should use a light, attractive theme and feel high-tech, polished, premium, and visually stunning. Use clean typography, subtle gradients, soft shadows, refined cards, tasteful animations, and professional icons. The interface should remain easy to understand and comfortable to use on mobile devices. Avoid making the page overly crowded.
