@@ -1,115 +1,240 @@
-Create a complete production-ready React component for src/pages/Page6.js for StoneRate’s final rate-request confirmation page.
+Create a modern, mobile-first Admin Dashboard page for a construction-material ordering platform called StoneRate.
 
-Return only the full Page6.js code. Use JavaScript, React hooks, JSX, inline style objects, and an internal globalCss string. No TypeScript, external UI libraries, package installation, partial snippets, placeholders, HTML entities, or extra files. It must compile in StackBlitz.
+The page should use a light, attractive theme and feel high-tech, polished, premium, and visually stunning. Use clean typography, subtle gradients, soft shadows, refined cards, tasteful animations, and professional icons. The interface should remain easy to understand and comfortable to use on mobile devices. Avoid making the page overly crowded.
 
-Preserve:
+TOP ADMIN AREA
 
-import { createRateRequest } from "../api/orderApi";
+At the top of the page, display a personalized admin greeting such as:
 
-Use exactly:
+“Hi, Alok”
 
-export default function OrderConfirmationPage({
-  orderDraft,
-  goToPage5,
-  goToPage7,
-}) {
-}
+Include a short supporting message such as:
 
-Page 5 passes:
+“Here’s what’s happening with StoneRate operations today.”
 
-{
-  materials: [{
-    materialName,
-    sampleId,
-    sampleCode,
-    sampleImageUrl,
-    sampleSourceArea,
-    sampleUploadedAt,
-    sampleExpiresAt,
-    sampleAdminNote,
-    vehicles: [{
-      vehicleId,
-      vehicleName,
-      capacityTons,
-      quantity,
-      totalTons
-    }],
-    totalVehicles,
-    totalTons
-  }],
-  totalMaterials,
-  totalVehicles,
-  totalTons,
-  createdAt
-}
+The header should also include:
+
+- A three-line hamburger menu button
+- A notification bell with an unread indicator when alerts are available
+- A refresh action or last-updated indicator
+- A professional StoneRate Admin identity
+- A clean and premium visual treatment suitable for an operations dashboard
+
+THREE-LINE HAMBURGER MENU
+
+When the admin taps the three-line menu, open an attractive side drawer or overlay menu.
+
+The menu should contain:
+
+1. Dashboard
+   - Returns to the main admin dashboard
+
+2. Users & Partners
+   - Opens account-management options
+   - Include Buyers, Sellers, and Transporters
+   - Each user category should later support filters for registrations during the past 7 days, 1 month, 3 months, and all time
+   - Allow future search by name, phone number, account ID, city, or verification status
+
+3. Support & Issues
+   - Opens buyer complaints, material-quality issues, delivery problems, account issues, and transporter concerns
+
+4. Reports & Analytics
+   - Opens reports for request volume, material demand, quotation activity, delivery performance, user registrations, and operational trends
+
+5. Notifications
+   - Opens all system and operational alerts
+
+6. Activity Log
+   - Opens a history of important admin actions, including sample uploads, quotation publishing, assignments, and status changes
+
+7. Settings
+   - Opens administrative settings for material categories, vehicle types, quotation validity, sample visibility, image retention, support information, and access control
+
+8. Admin Profile
+   - Opens the signed-in administrator’s profile and account settings
+
+9. Logout
+   - Signs the administrator out after an appropriate confirmation
+
+The side menu should be attractive, smooth, responsive, and easy to close. Clearly highlight the currently selected page.
+
+DASHBOARD SUMMARY
+
+The homepage should act as a true operational dashboard. Show concise, live summary information without creating duplicate categories.
+
+Include these three main dashboard statistics:
+
+1. Samples Uploaded Today
+   - Show the number of material-reference samples uploaded today
+   - This count should later come from the backend
+
+2. Rate Requests
+   - Show the total number of relevant rate requests
+   - Include a smaller indicator for requests that currently require admin action
+   - Do not create separate “New Requests” and “Rate Pending” summary cards because those belong to the same Rate Requests workflow
+
+3. Active Orders
+   - Show the total number of active delivery orders
+   - Include a smaller indicator for orders requiring assignment or status updates
+   - Do not create separate “Confirmed Orders” and “Active Orders” cards because confirmed orders are part of the active-order workflow
+
+Do not include Delivered Today as a main dashboard statistic.
+
+The summary cards should be visually distinct, interactive, and easy to scan. Tapping a summary card should open the corresponding operational page with a relevant filter applied.
+
+ATTENTION REQUIRED
+
+Add an “Attention Required” section below the summary.
+
+This section should display only operational items that currently need action. Possible examples include:
+
+- Rate requests waiting for material-wise rates
+- Material samples expiring soon
+- Active orders waiting for seller or vehicle assignment
+- Delivery statuses that have not been updated on time
+- Quotations that will expire soon
+- Support issues requiring an admin response
+
+Each attention item should:
+
+- Clearly explain the required action
+- Use an appropriate visual indicator
+- Include a View or Resolve action
+- Open the relevant page with the correct filter applied
+
+Use color carefully:
+
+- Amber for actions required soon
+- Red for overdue or urgent issues
+- Blue for informational updates
+- Green for cleared or completed conditions
+
+If there is nothing requiring attention, show a positive empty state such as:
+
+“No urgent actions right now.”
+
+MANAGE OPERATIONS
+
+The main dashboard should provide only three prominent operational buttons:
+
+1. Daily Material Samples
+   Supporting text:
+   “Upload and manage material reference samples.”
+
+   This will later open a page where the admin can:
+   - Upload material images
+   - Select material categories
+   - Add sample codes
+   - Add source areas
+   - Add reference notes
+   - Set availability
+   - View active samples
+   - View samples expiring soon
+   - View expired samples
+   - Preview reference images
+
+2. Rate Requests
+   Supporting text:
+   “Review buyer requests and publish material-wise rates.”
+
+   This will later open a page where the admin can:
+   - View submitted buyer requests
+   - Filter by request status
+   - View each selected material reference
+   - Review quantities and vehicle requirements
+   - Enter a separate rate for every material
+   - Specify whether transport is included
+   - Add material-specific remarks
+   - Set quotation validity
+   - Publish the quotation
+
+3. Active Orders
+   Supporting text:
+   “Manage assignments, loading, transit, and delivery.”
+
+   This will later open a page where the admin can:
+   - Filter orders by Confirmed, Loading, In Transit, Delivered, or Cancelled
+   - Assign sellers
+   - Assign transporters, vehicles, and drivers
+   - Update loading progress
+   - Mark vehicles as dispatched
+   - Change delivery status
+   - Review selected material-reference images
+   - Complete delivery operations
+
+Do not place Users & Partners among these homepage operation buttons. Users & Partners should be available only through the three-line menu.
+
+BOTTOM NAVIGATION
+
+Add a persistent mobile bottom navigation bar with exactly three items:
+
+1. Home
+   - Opens the Admin Dashboard
+
+2. Orders
+   - Opens the Rate Requests and Active Orders workspace
+   - The Orders section may use internal tabs or filters for Rate Requests and Active Orders
+
+3. Samples
+   - Opens Daily Material Samples
+
+Clearly highlight the currently active navigation item. Use professional icons and short labels. The bottom navigation should be visually integrated with the light dashboard theme and remain accessible while scrolling.
+
+VISUAL DIRECTION
+
+The overall visual style should be:
+
+- Light and attractive
+- High-tech and modern
+- Premium and polished
+- Mobile-first and responsive
+- Visually stunning without becoming cluttered
+- Suitable for fast daily operational use
+- Consistent with a construction-material marketplace
+- Professional rather than playful
 
 Use:
 
-const orderItems = Array.isArray(orderDraft?.materials)
-  ? orderDraft.materials
-  : [];
+- Clean white or warm-light surfaces
+- Subtle amber, orange, blue, and green accents
+- Soft shadows and refined borders
+- Modern icons
+- Smooth menu and card interactions
+- Clear status indicators
+- Strong visual hierarchy
+- Accessible text contrast
+- Touch-friendly buttons
+- Elegant loading and empty states
 
-Safely normalize materials without mutating orderDraft. Ensure vehicles is an array, convert numeric fields with Number, exclude zero quantities, recalculate each vehicle totalTons, material totals, and request totals. Preserve all sample fields and the backend vehicle structure.
+Avoid:
 
-Create states for requestedArrivalDate, contactNumber, deliveryAddress, orderNotes, confirmed, submitted, isSubmitting, submitError, createdRequest, previewItem, and validationErrors. Restore existing delivery values from orderDraft.
+- Dark-heavy styling
+- Excessive decorative elements
+- Duplicate dashboard metrics
+- Too many homepage buttons
+- Large blocks of unnecessary text
+- Hard-coded operational values
+- Overcrowded cards
+- Repeating Users & Partners on both the homepage and menu
+- Repeating Rate Requests as separate New Requests and Rate Pending metrics
+- Repeating Active Orders as separate Confirmed and Active metrics
 
-Delivery fields:
-- Date: required, not past, India current date as min, readable formatted date, parse YYYY-MM-DD by splitting values to avoid timezone errors.
-- Contact: required, fixed +91 prefix, digits only, exactly 10 digits, maxLength 10.
-- Address: required, multiline, 10 to 1,000 characters, location icon, helper text: “Use the exact location where the vehicles should deliver the material.”
-- Notes: optional, multiline, maximum 2,000 characters, live counter, placeholder: “Add access instructions, preferred calling time or site directions.”
+FUNCTIONAL EXPECTATIONS
 
-Design a premium high-tech mobile checkout using dark graphite and charcoal, amber and gold accents, metallic borders, subtle grids and glows, glass panels, high contrast, compact typography, touch-friendly controls, and restrained animations. No table or generic white form.
+Prepare the dashboard so all statistics and attention items can later receive live backend data.
 
-Use useViewport() and createStyles(viewport). At 700px or wider, center a 390 × 844 phone frame. On mobile use the full viewport, safe-area insets, no horizontal overflow, a scrollable main area, and an accessible fixed or sticky submission area.
+Use reusable components for:
 
-Header:
-- Back and Edit buttons call goToPage5.
-- Badge: “FINAL REVIEW”
-- Title: “Confirm Your Request”
-- Subtitle: “Review selected quality references and add delivery details.”
-- Recalculated materials, vehicles, and tons summary.
+- Summary cards
+- Attention items
+- Operation buttons
+- Notification indicators
+- Side-menu items
+- Bottom-navigation items
+- Loading states
+- Empty states
+- Error states
 
-Render one premium card per material with a lazy-loaded thumbnail, material name, sample code, source area, upload time, fresh or expired state, vehicle and ton totals, vehicle breakdown, optional admin note, View image, and Edit selection. Never show seller identity.
+For the initial frontend version, demonstration data may be used, but clearly structure the code so demonstration values can be replaced with API responses later.
 
-Image preview must be a full-screen dark accessible dialog with full image, close control, material details, admin note, and this disclaimer:
-
-“This image is a visual material reference. Natural variation, lighting, moisture and dust may affect final appearance.”
-
-If sampleExpiresAt is missing, do not crash. If expired, display a red warning, disable submission, show “This daily sample has expired. Return to the material gallery and select a fresh reference.” and provide a goToPage5 button. Never submit an expired sample.
-
-Include compact sections for:
-- Materials, vehicles, tons, and visual-reference totals.
-- “Rate enquiry only” notice explaining no payment is required and submission does not confirm delivery.
-- Three steps: Request submitted; StoneRate checks material-wise rates; Buyer reviews and confirms rates.
-- Confirmation checkbox: “I confirm that the selected material references, vehicle quantities, requested delivery date, contact number and delivery address are correct.”
-
-Submit is disabled unless materials exist, samples are unexpired, date/contact/address are valid, consent is checked, and submission is idle.
-
-Before submission create:
-
-const completeOrderDraft = {
-  ...orderDraft,
-  materials: normalizedMaterials,
-  totalMaterials,
-  totalVehicles,
-  totalTons,
-  requestedArrivalDate,
-  contactNumber,
-  deliveryAddress,
-  notes: orderNotes.trim(),
-};
-
-Then call:
-
-const result = await createRateRequest(completeOrderDraft);
-
-During submission disable navigation-sensitive controls, show an inline loader, and label the button “Submitting Rate Request...”. On error show a red retryable error card without clearing data.
-
-After success show an accessible premium popup with a green success symbol, “Rate Request Submitted”, createdRequest?.publicRequestId, “Checking sellers”, supporting text “StoneRate has started checking material-wise rates and transport availability.”, and a Done button that calls goToPage7(). Do not navigate before Done.
-
-If no valid materials exist, show a polished empty state with “No materials selected”, “Return to Today’s Materials and add at least one sample to your request.”, and a goToPage5 button.
-
-Do not use localStorage, sessionStorage, or network fetching. Include button types, labels, alt text, aria-modal, keyboard support, visible focus, reduced-motion CSS, lazy thumbnails, full image only in preview, useMemo normalization/totals, and helper components in the same file such as SelectedMaterialCard, VehicleBreakdown, ImagePreview, DeliveryField, SummaryMetric, EmptyDraftState, and SuccessPopup.
-
-Return only complete compilable Page6.js code with every helper, style, validation, and behavior included.
+The final result should feel like a sophisticated operational command center for StoneRate, with immediate access to daily samples, rate requests, and active orders, while secondary administrative functions remain organized inside the three-line menu.
