@@ -1,0 +1,151 @@
+import React, { useEffect, useMemo, useState } from "react";
+
+const Icon = ({ name, size = 20, strokeWidth = 1.8 }) => {
+  const paths = {
+    menu: <><path d="M4 7h16M4 12h16M4 17h16" /></>,
+    close: <><path d="m6 6 12 12M18 6 6 18" /></>,
+    refresh: <><path d="M20 7v5h-5"/><path d="M19 12a7 7 0 1 1-2-5"/></>,
+    bell: <><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></>,
+    sample: <><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h5M8 16h3"/></>,
+    rate: <><path d="M4 6h16v12H4z"/><path d="M8 10h8M8 14h5"/></>,
+    order: <><path d="M6 3h12l2 5v11H4V8z"/><path d="M4 8h16M9 12h6"/></>,
+    arrow: <><path d="M5 12h14M14 7l5 5-5 5"/></>,
+    chevron: <><path d="m9 6 6 6-6 6"/></>,
+    home: <><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/></>,
+    users: <><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6M17 14a5 5 0 0 1 4 5"/></>,
+    support: <><path d="M4 13a8 8 0 0 1 16 0"/><path d="M4 13v5h4v-6H4M20 13v5h-4v-6h4M16 18c0 2-2 3-4 3"/></>,
+    chart: <><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></>,
+    activity: <><path d="M3 12h4l2-6 4 12 2-6h6"/></>,
+    settings: <><circle cx="12" cy="12" r="3"/><path d="M19 13.5v-3l-2-.7-.7-1.8.9-1.9-2.1-2.1-1.9.9-1.8-.7L10.5 2h-3l-.7 2.2-1.8.7-1.9-.9L1 6.1 2 8l-.8 1.8L-1 10.5v3l2.2.7L2 16l-1 1.9L3.1 20l1.9-1 1.8.8.7 2.2h3l.7-2.2L13 19l1.9 1 2.1-2.1-1-1.9.8-1.8z" transform="translate(2) scale(.83)"/></>,
+    profile: <><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></>,
+    logout: <><path d="M10 4H4v16h6M14 8l4 4-4 4M8 12h10"/></>,
+    check: <><path d="m5 12 4 4L19 6"/></>,
+    clock: <><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></>,
+    alert: <><path d="M12 3 2 20h20z"/><path d="M12 9v4M12 17h.01"/></>,
+    truck: <><path d="M3 6h11v11H3zM14 10h4l3 4v3h-7z"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></>,
+    eye: <><path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="2.5"/></>
+  };
+  return <svg aria-hidden="true" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">{paths[name] || paths.home}</svg>;
+};
+
+const ButtonIcon = ({ label, icon, onClick, badge }) => <button className="sr-icon-btn" aria-label={label} onClick={onClick}><Icon name={icon} size={19}/>{badge ? <span className="sr-badge">{badge}</span> : null}</button>;
+
+export default function AdminDashboard() {
+  const [drawer, setDrawer] = useState(false);
+  const [notifications, setNotifications] = useState(false);
+  const [logout, setLogout] = useState(false);
+  const [activeNav, setActiveNav] = useState("Home");
+  const [activeMenu, setActiveMenu] = useState("Dashboard");
+  const [toast, setToast] = useState("");
+  const [updated, setUpdated] = useState(new Date());
+  const [refreshing, setRefreshing] = useState(false);
+  const [unread, setUnread] = useState(3);
+
+  const overlayOpen = drawer || notifications || logout;
+  useEffect(() => {
+    document.body.style.overflow = overlayOpen ? "hidden" : "";
+    const escape = e => { if (e.key === "Escape") { setDrawer(false); setNotifications(false); setLogout(false); } };
+    window.addEventListener("keydown", escape);
+    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", escape); };
+  }, [overlayOpen]);
+  useEffect(() => {
+    if (!toast) return;
+    const id = setTimeout(() => setToast(""), 2400);
+    return () => clearTimeout(id);
+  }, [toast]);
+
+  const timeText = useMemo(() => updated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), [updated]);
+  const showToast = text => setToast(text);
+  const refresh = () => {
+    if (refreshing) return;
+    setRefreshing(true);
+    setTimeout(() => { setUpdated(new Date()); setRefreshing(false); showToast("Dashboard refreshed"); }, 700);
+  };
+  const openNotifications = () => { setNotifications(true); setUnread(0); };
+
+  const stats = [
+    { icon: "sample", value: 12, label: "Samples Today", detail: "3 expiring soon", short: "3 expiring", color: "#d97706" },
+    { icon: "rate", value: 8, label: "Rate Requests", detail: "2 require action", short: "2 actions", color: "#2563eb" },
+    { icon: "order", value: 6, label: "Active Orders", detail: "1 needs assignment", short: "1 assign", color: "#059669" }
+  ];
+  const attention = [
+    { type: "urgent", icon: "alert", title: "Rates pending", sub: "2 requests need material-wise rates", action: "Resolve", target: "Rate Requests" },
+    { type: "amber", icon: "clock", title: "Samples expiring", sub: "3 references expire within 24 hours", action: "View", target: "Daily Material Samples" },
+    { type: "blue", icon: "truck", title: "Assignment required", sub: "Order #SR-2408 is awaiting a transporter", action: "Resolve", target: "Active Orders" },
+    { type: "green", icon: "check", title: "Delivery updates current", sub: "All in-transit orders were updated", action: "View", target: "Delivery Statuses" },
+    { type: "amber", icon: "clock", title: "Quotation nearing expiry", sub: "Quotation #QT-118 expires this evening", action: "View", target: "Quotation QT-118" }
+  ];
+  const operations = [
+    { icon: "sample", title: "Daily Material Samples", text: "Upload and manage material reference samples.", color: "orange" },
+    { icon: "rate", title: "Rate Requests", text: "Review buyer requests and publish material-wise rates.", color: "blue" },
+    { icon: "order", title: "Active Orders", text: "Manage assignments, loading, transit, and delivery.", color: "green" }
+  ];
+  const menu = [
+    ["Dashboard", "Operations overview", "home"], ["Users & Partners", "Buyers, sellers, and transporters", "users"], ["Support & Issues", "Complaints and operational concerns", "support"], ["Reports & Analytics", "Business and delivery performance", "chart"], ["Notifications", "System and operational alerts", "bell"], ["Activity Log", "Admin action history", "activity"], ["Settings", "Materials, vehicles, quotation validity, sample expiry, image retention, and access control", "settings"], ["Admin Profile", "Account and access settings", "profile"], ["Logout", "Sign out of StoneRate Admin", "logout"]
+  ];
+  const notices = [
+    ["New rate request received", "M-Sand request from BuildCore, 8 minutes ago", true, "rate"],
+    ["Material samples expiring soon", "Three aggregate references expire tomorrow", true, "sample"],
+    ["Active order requires assignment", "Order #SR-2408 needs a transporter", true, "truck"],
+    ["Delivery status updated", "Order #SR-2391 is now in transit", false, "check"]
+  ];
+
+  const menuClick = label => {
+    if (label === "Logout") { setLogout(true); return; }
+    if (label === "Notifications") { setDrawer(false); setNotifications(true); setUnread(0); return; }
+    setActiveMenu(label); setDrawer(false);
+    label === "Dashboard" ? setActiveNav("Home") : showToast(`Opening ${label}`);
+  };
+  const navClick = label => {
+    setActiveNav(label);
+    if (label === "Home") setActiveMenu("Dashboard");
+    else showToast(label === "Orders" ? "Opening Orders workspace" : "Opening Daily Material Samples");
+  };
+
+  return <div className="sr-admin">
+    <style>{`
+      .sr-admin{--ink:#172033;--muted:#687386;--line:#e9e9e5;--brand:#e87915;--paper:#fffdfa;--blue:#2563eb;--green:#059669;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);min-height:100vh;background:radial-gradient(circle at 8% 0%,rgba(249,177,72,.13),transparent 27%),radial-gradient(circle at 92% 12%,rgba(59,130,246,.08),transparent 25%),#f7f8f8;box-sizing:border-box;overflow-x:hidden;padding-bottom:78px}
+      .sr-admin *{box-sizing:border-box}.sr-admin button{font:inherit}.sr-shell{width:min(100%,1120px);margin:auto;padding:0 14px}.sr-header{position:relative;padding:12px 0 10px}.sr-topbar{display:flex;align-items:center;gap:9px}.sr-brand{min-width:0;flex:1}.sr-brand strong{display:block;font-size:17px;line-height:1.05;letter-spacing:-.35px}.sr-brand strong span{color:var(--brand)}.sr-brand small{display:block;margin-top:3px;color:var(--muted);font-size:10px;letter-spacing:.7px;text-transform:uppercase}.sr-actions{display:flex;gap:7px}.sr-icon-btn{position:relative;width:37px;height:37px;border:1px solid rgba(42,48,59,.09);border-radius:12px;background:rgba(255,255,255,.82);color:#344054;display:grid;place-items:center;cursor:pointer;box-shadow:0 5px 18px rgba(20,30,50,.05);transition:.2s}.sr-icon-btn:hover{border-color:#f1b66f;color:var(--brand);transform:translateY(-1px)}.sr-icon-btn:active{transform:scale(.94)}.sr-badge{position:absolute;right:-3px;top:-4px;min-width:17px;height:17px;border:2px solid #fff;border-radius:10px;background:#e5484d;color:#fff;font-size:9px;font-weight:800;display:grid;place-items:center}.sr-greeting{margin-top:12px;display:flex;align-items:flex-end;justify-content:space-between;gap:10px}.sr-greeting h1{font-size:22px;letter-spacing:-.65px;line-height:1;margin:0 0 5px}.sr-greeting p{font-size:12px;color:var(--muted);line-height:1.4;margin:0;max-width:550px}.sr-updated{white-space:nowrap;color:#7a8494;font-size:9px;display:flex;align-items:center;gap:4px;margin-bottom:2px}.sr-pulse{width:6px;height:6px;border-radius:50%;background:#16a36a;box-shadow:0 0 0 4px rgba(22,163,106,.09)}
+      .sr-section{margin-top:13px}.sr-section-head{display:flex;align-items:center;justify-content:space-between;margin:0 2px 8px}.sr-section-head h2{font-size:12px;text-transform:uppercase;letter-spacing:.75px;margin:0;color:#455064}.sr-section-head span{font-size:10px;color:#8992a2}.sr-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.sr-stat{position:relative;min-width:0;border:1px solid rgba(38,45,58,.08);border-radius:14px;padding:9px 8px 8px;background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(255,252,246,.83));box-shadow:0 7px 24px rgba(33,40,52,.045);cursor:pointer;text-align:left;color:inherit;overflow:hidden;transition:.2s}.sr-stat:before{content:"";position:absolute;inset:0 auto 0 0;width:2px;background:var(--accent)}.sr-stat:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(33,40,52,.08)}.sr-stat-top{display:flex;align-items:center;justify-content:space-between;gap:3px}.sr-stat-icon{width:25px;height:25px;border-radius:8px;display:grid;place-items:center;color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,white)}.sr-stat-value{font-size:20px;font-weight:760;letter-spacing:-.7px}.sr-stat-label{display:block;margin-top:6px;font-size:10px;line-height:1.15;font-weight:700;min-height:23px}.sr-stat-detail{display:block;margin-top:3px;color:var(--muted);font-size:8.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sr-short{display:none}
+      .sr-panel{border:1px solid rgba(33,40,52,.08);background:rgba(255,255,255,.78);border-radius:16px;box-shadow:0 8px 30px rgba(33,40,52,.045);overflow:hidden;backdrop-filter:blur(12px)}.sr-alert{display:grid;grid-template-columns:29px minmax(0,1fr) auto;align-items:center;gap:9px;padding:9px 10px;border-bottom:1px solid #efefec}.sr-alert:last-child{border-bottom:0}.sr-alert-icon{width:29px;height:29px;border-radius:9px;display:grid;place-items:center}.sr-alert.urgent .sr-alert-icon{color:#d33c42;background:#fff0f0}.sr-alert.amber .sr-alert-icon{color:#bb6a08;background:#fff7e7}.sr-alert.blue .sr-alert-icon{color:#2563eb;background:#edf5ff}.sr-alert.green .sr-alert-icon{color:#07875c;background:#ecfaf4}.sr-alert h3{font-size:11px;margin:0 0 2px;line-height:1.15}.sr-alert p{font-size:9.5px;color:var(--muted);margin:0;line-height:1.25}.sr-mini-action{border:1px solid #e5e7eb;background:#fff;border-radius:8px;padding:5px 7px;font-size:9px;font-weight:750;color:#445065;cursor:pointer}.sr-mini-action:hover{color:var(--brand);border-color:#f3c089}
+      .sr-operations{display:grid;gap:8px}.sr-operation{width:100%;display:grid;grid-template-columns:38px minmax(0,1fr) 24px;align-items:center;gap:10px;text-align:left;padding:10px;border:1px solid rgba(33,40,52,.08);border-radius:15px;background:linear-gradient(110deg,#fff,rgba(255,255,255,.72));box-shadow:0 7px 24px rgba(33,40,52,.04);cursor:pointer;color:inherit;transition:.2s}.sr-operation:hover{transform:translateX(2px);border-color:#d9dde4}.sr-op-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center}.sr-operation.orange .sr-op-icon{color:#c76809;background:linear-gradient(145deg,#fff2d8,#fffbf3)}.sr-operation.blue .sr-op-icon{color:#2563eb;background:linear-gradient(145deg,#e9f2ff,#f8fbff)}.sr-operation.green .sr-op-icon{color:#07875c;background:linear-gradient(145deg,#e4f8ef,#f8fffb)}.sr-operation h3{font-size:12px;margin:0 0 3px}.sr-operation p{font-size:9.5px;line-height:1.3;color:var(--muted);margin:0}.sr-op-arrow{color:#a4acb8;display:grid;place-items:center}
+      .sr-bottom{position:fixed;z-index:30;bottom:9px;left:50%;transform:translateX(-50%);width:min(calc(100% - 20px),430px);height:58px;display:grid;grid-template-columns:repeat(3,1fr);padding:5px;border:1px solid rgba(35,42,54,.1);border-radius:18px;background:rgba(255,255,255,.92);box-shadow:0 12px 38px rgba(26,34,48,.16);backdrop-filter:blur(18px)}.sr-nav-item{border:0;background:transparent;border-radius:13px;color:#7a8494;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:9px;font-weight:650;cursor:pointer;transition:.2s}.sr-nav-item.active{color:#c96308;background:linear-gradient(150deg,#fff5e7,#fffaf4);box-shadow:inset 0 0 0 1px #f7dfc2}.sr-nav-item:active{transform:scale(.95)}
+      .sr-backdrop{position:fixed;inset:0;z-index:50;background:rgba(23,32,51,.28);backdrop-filter:blur(3px);animation:srFade .2s ease}.sr-drawer{position:fixed;z-index:55;top:0;bottom:0;left:0;width:min(88vw,360px);max-width:100%;background:#fbfbfa;box-shadow:20px 0 60px rgba(21,31,48,.18);display:flex;flex-direction:column;overflow:hidden;animation:srSlide .25s ease}.sr-drawer-head{flex:0 0 auto;padding:18px 15px 13px;background:radial-gradient(circle at 10% 0,#fff0d9,transparent 44%),#fff;border-bottom:1px solid #ecece9;display:grid;grid-template-columns:42px minmax(0,1fr) 37px;align-items:center;gap:10px}.sr-avatar{width:42px;height:42px;border-radius:13px;background:linear-gradient(145deg,#fca640,#df6810);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:800;box-shadow:0 7px 18px rgba(232,121,21,.23)}.sr-drawer-head h2{font-size:14px;margin:0 0 3px}.sr-drawer-head p{font-size:10px;margin:0;color:var(--muted)}.sr-menu{padding:8px;overflow-y:auto;overflow-x:hidden;min-height:0}.sr-menu-item{width:100%;border:0;background:transparent;border-radius:12px;padding:8px;display:grid;grid-template-columns:32px minmax(0,1fr);align-items:start;gap:9px;text-align:left;color:#3d475a;cursor:pointer;margin-bottom:2px}.sr-menu-item:hover{background:#f3f4f4}.sr-menu-item.active{background:linear-gradient(100deg,#fff0da,#fff9f1);color:#b95808;box-shadow:inset 0 0 0 1px #f2d7b5}.sr-menu-item.logout{color:#be3f45;margin-top:5px;border-top:1px solid #ececea;border-radius:0 0 12px 12px}.sr-menu-icon{width:32px;height:32px;border-radius:9px;background:#f0f2f3;display:grid;place-items:center}.sr-menu-item.active .sr-menu-icon{background:#fff}.sr-menu-copy{min-width:0}.sr-menu-copy strong{display:block;font-size:11px;line-height:1.25;white-space:normal;overflow-wrap:anywhere}.sr-menu-copy span{display:block;font-size:9px;color:#7b8595;line-height:1.35;margin-top:2px;white-space:normal;overflow-wrap:anywhere}
+      .sr-sheet{position:fixed;z-index:55;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,560px);max-height:min(76vh,620px);border-radius:22px 22px 0 0;background:#fbfbfa;box-shadow:0 -18px 60px rgba(21,31,48,.18);display:flex;flex-direction:column;overflow:hidden;animation:srUp .25s ease}.sr-sheet-head{padding:14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ececea;background:#fff}.sr-sheet-head h2{font-size:15px;margin:0}.sr-sheet-head p{font-size:9px;color:var(--muted);margin:3px 0 0}.sr-notice-list{padding:8px;overflow-y:auto;overflow-x:hidden}.sr-notice{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;padding:10px;border-radius:13px;position:relative;margin-bottom:5px}.sr-notice.unread{background:#fff5e8;border:1px solid #f7dfc1}.sr-notice:not(.unread){border:1px solid #ececea;background:#fff}.sr-notice-icon{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#fff;color:#d16a0c}.sr-notice h3{font-size:11px;margin:0 0 3px}.sr-notice p{font-size:9.5px;color:var(--muted);line-height:1.35;margin:0}.sr-unread-dot{position:absolute;right:9px;top:9px;width:6px;height:6px;background:#e87915;border-radius:50%}
+      .sr-modal-wrap{position:fixed;z-index:60;inset:0;display:grid;place-items:center;padding:18px}.sr-modal{width:min(100%,360px);border-radius:18px;background:#fff;padding:18px;box-shadow:0 24px 70px rgba(22,30,45,.25);animation:srPop .2s ease}.sr-modal-icon{width:42px;height:42px;border-radius:13px;background:#fff0f0;color:#d33c42;display:grid;place-items:center}.sr-modal h2{font-size:17px;margin:12px 0 5px}.sr-modal p{font-size:11px;line-height:1.5;color:var(--muted);margin:0}.sr-modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}.sr-btn{border-radius:10px;padding:9px;border:1px solid #e4e6e8;background:#fff;font-size:11px;font-weight:750;cursor:pointer}.sr-btn.danger{border-color:#d33c42;background:#d33c42;color:#fff}.sr-toast{position:fixed;z-index:80;left:50%;bottom:78px;transform:translateX(-50%);max-width:calc(100% - 28px);padding:9px 12px;border-radius:11px;background:#202a3a;color:#fff;font-size:10px;font-weight:650;box-shadow:0 10px 30px rgba(20,28,42,.2);animation:srToast .24s ease;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sr-spin{animation:srSpin .7s linear infinite}
+      @keyframes srFade{from{opacity:0}}@keyframes srSlide{from{transform:translateX(-100%)}}@keyframes srUp{from{transform:translate(-50%,100%)}}@keyframes srPop{from{opacity:0;transform:scale(.94)}}@keyframes srToast{from{opacity:0;transform:translate(-50%,8px)}}@keyframes srSpin{to{transform:rotate(360deg)}}
+      @media(max-width:350px){.sr-shell{padding:0 9px}.sr-stats{gap:4px}.sr-stat{padding:8px 5px 7px}.sr-stat-value{font-size:18px}.sr-stat-label{font-size:8.8px}.sr-full{display:none}.sr-short{display:block}.sr-greeting p{font-size:10.5px}.sr-updated{display:none}.sr-alert{gap:6px;padding:8px 7px}.sr-alert p{font-size:8.8px}}
+      @media(min-width:700px){.sr-shell{padding:0 22px}.sr-header{padding-top:18px}.sr-content-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;align-items:start}.sr-section{margin-top:16px}.sr-stats{gap:10px}.sr-stat{padding:12px}.sr-stat-label{font-size:11px}.sr-stat-detail{font-size:9px}.sr-alert{padding:10px 12px}.sr-operations{gap:10px}.sr-bottom{bottom:14px}.sr-greeting h1{font-size:25px}}
+      @media(min-width:980px){.sr-content-grid{grid-template-columns:1.2fr .8fr}.sr-operations{grid-template-columns:1fr}.sr-main-left .sr-panel{max-height:420px}.sr-admin{padding-bottom:88px}}
+      @media(prefers-reduced-motion:reduce){.sr-admin *{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+    `}</style>
+
+    <header className="sr-header"><div className="sr-shell">
+      <div className="sr-topbar">
+        <ButtonIcon label="Open menu" icon="menu" onClick={() => setDrawer(true)}/>
+        <div className="sr-brand"><strong>Stone<span>Rate</span> Admin</strong><small>Operations Dashboard</small></div>
+        <div className="sr-actions"><ButtonIcon label="Refresh dashboard" icon="refresh" onClick={refresh}/><ButtonIcon label="Open notifications" icon="bell" badge={unread || null} onClick={openNotifications}/></div>
+      </div>
+      <div className="sr-greeting"><div><h1>Hi, Alok</h1><p>Here is what is happening with StoneRate operations today.</p></div><span className="sr-updated"><i className="sr-pulse"/>{refreshing ? "Refreshing..." : `Updated ${timeText}`}</span></div>
+    </div></header>
+
+    <main className="sr-shell">
+      <section className="sr-section"><div className="sr-section-head"><h2>Today’s Overview</h2><span>Live operations</span></div>
+        <div className="sr-stats">{stats.map(s => <button key={s.label} className="sr-stat" style={{"--accent":s.color}} onClick={() => showToast(`Opening ${s.label}`)}><span className="sr-stat-top"><span className="sr-stat-icon"><Icon name={s.icon} size={14}/></span><strong className="sr-stat-value">{s.value}</strong></span><span className="sr-stat-label">{s.label}</span><span className="sr-stat-detail sr-full">{s.detail}</span><span className="sr-stat-detail sr-short">{s.short}</span></button>)}</div>
+      </section>
+      <div className="sr-content-grid">
+        <div className="sr-main-left"><section className="sr-section"><div className="sr-section-head"><h2>Attention Required</h2><span>{attention.length} items</span></div><div className="sr-panel">{attention.length ? attention.map(a => <div className={`sr-alert ${a.type}`} key={a.title}><span className="sr-alert-icon"><Icon name={a.icon} size={15}/></span><div><h3>{a.title}</h3><p>{a.sub}</p></div><button className="sr-mini-action" onClick={() => showToast(`Opening ${a.target}`)}>{a.action}</button></div>) : <div className="sr-alert green"><span className="sr-alert-icon"><Icon name="check" size={15}/></span><div><h3>No urgent actions right now.</h3><p>StoneRate operations are running smoothly.</p></div></div>}</div></section></div>
+        <section className="sr-section"><div className="sr-section-head"><h2>Manage Operations</h2><span>Quick access</span></div><div className="sr-operations">{operations.map(o => <button key={o.title} className={`sr-operation ${o.color}`} onClick={() => showToast(`Opening ${o.title}`)}><span className="sr-op-icon"><Icon name={o.icon}/></span><span><h3>{o.title}</h3><p>{o.text}</p></span><span className="sr-op-arrow"><Icon name="chevron" size={17}/></span></button>)}</div></section>
+      </div>
+    </main>
+
+    <nav className="sr-bottom" aria-label="Primary navigation">{[["Home","home"],["Orders","order"],["Samples","sample"]].map(([label,icon]) => <button key={label} className={`sr-nav-item ${activeNav===label?"active":""}`} onClick={() => navClick(label)}><Icon name={icon} size={18}/><span>{label}</span></button>)}</nav>
+
+    {drawer && <><div className="sr-backdrop" onClick={() => setDrawer(false)}/><aside className="sr-drawer" role="dialog" aria-modal="true" aria-label="Admin menu"><div className="sr-drawer-head"><span className="sr-avatar">AK</span><div><h2>Alok</h2><p>StoneRate Administrator</p></div><ButtonIcon label="Close menu" icon="close" onClick={() => setDrawer(false)}/></div><div className="sr-menu">{menu.map(([label,desc,icon]) => <button key={label} className={`sr-menu-item ${activeMenu===label?"active":""} ${label==="Logout"?"logout":""}`} onClick={() => menuClick(label)}><span className="sr-menu-icon"><Icon name={icon} size={17}/></span><span className="sr-menu-copy"><strong>{label}</strong><span>{desc}</span></span></button>)}</div></aside></>}
+
+    {notifications && <><div className="sr-backdrop" onClick={() => setNotifications(false)}/><section className="sr-sheet" role="dialog" aria-modal="true" aria-label="Notifications"><div className="sr-sheet-head"><div><h2>Notifications</h2><p>Recent StoneRate operational alerts</p></div><ButtonIcon label="Close notifications" icon="close" onClick={() => setNotifications(false)}/></div><div className="sr-notice-list">{notices.map(([title,text,isUnread,icon]) => <button className={`sr-notice ${isUnread?"unread":""}`} key={title} style={{width:"100%",textAlign:"left",cursor:"pointer"}} onClick={() => showToast(`Opening ${title}`)}><span className="sr-notice-icon"><Icon name={icon} size={17}/></span><span><h3>{title}</h3><p>{text}</p></span>{isUnread && <i className="sr-unread-dot"/>}</button>)}</div></section></>}
+
+    {logout && <><div className="sr-backdrop" onClick={() => setLogout(false)}/><div className="sr-modal-wrap"><div className="sr-modal" role="alertdialog" aria-modal="true" aria-labelledby="logout-title"><span className="sr-modal-icon"><Icon name="logout"/></span><h2 id="logout-title">Sign out of StoneRate?</h2><p>You will need to sign in again to access the operations dashboard.</p><div className="sr-modal-actions"><button className="sr-btn" onClick={() => setLogout(false)}>Cancel</button><button className="sr-btn danger" onClick={() => { setLogout(false); setDrawer(false); showToast("Logout confirmed (demo)"); }}>Sign out</button></div></div></div></>}
+    {toast && <div className="sr-toast" role="status">{toast}</div>}
+  </div>;
+}
