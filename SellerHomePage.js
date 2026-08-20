@@ -974,7 +974,7 @@ export default function SellerHomePage({
         <div className="seller-scroll" onScroll={handleScroll}>
           <div className="seller-content">
             <RateTicker />
-            <SellerAdvantageCard onExplore={() => navigate("samples")} />
+            
             <FeatureDeck />
             <QuickActions onNavigate={navigate} />
             <MarketRates onViewAll={() => navigate("samples")} />
