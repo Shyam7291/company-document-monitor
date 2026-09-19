@@ -1,119 +1,724 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
-  Bell, Menu, X, Home, Gavel, Images, PackageCheck, UserRound,
-  Sparkles, SquarePen, Truck, Phone, MapPin, ShieldCheck, Clock3,
-  CheckCircle2, ChevronRight, Building2, LogOut,
-  BadgeCheck, Hash, ReceiptText, Search, Trash2, Plus, Save, Mountain
+  Bell, Menu, X, Home, Gavel, Images, PackageCheck, UserRound, Sparkles,
+  SquarePen, Truck, Phone, MapPin, ShieldCheck, Clock3, CheckCircle2, ChevronRight,
+  Building2, LogOut, BadgeCheck, Hash, ReceiptText, Search, Trash2, Plus, Minus,
+  Mountain, Camera, RefreshCw, AlertCircle, Fingerprint, CalendarDays, LockKeyhole,
+  ArrowRight, Star,
 } from "lucide-react";
 
-/* Transporter Profile: frontend-only temporary data */
-const INITIAL_PROFILE={
-  transporterName:"Ramesh Kumar",
-  organisationName:"Ramesh Transport Company",
-  primaryPhone:"9876543210",
-  alternatePhone:"9123456780",
-  gstin:"09ABCDE1234F1Z5",
-  transporterId:"TR-260916-625",
-  joinedAt:"2026-07-18",
-  aadhaarVerified:true,
-  adminVerified:false,
-  trucks:[
-    {type:"14 Tyre",count:8},
-    {type:"12 Tyre",count:7},
-    {type:"16 Tyre",count:5}
-  ],
-  registrations:["Jaunpur","Sultanpur","Lucknow","Prayagraj","Varanasi","Ayodhya"]
-};
-const digits=v=>String(v||"").replace(/\D/g,"").slice(0,10);
-const initials=name=>String(name||"").trim().split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase();
-const dateLabel=value=>new Intl.DateTimeFormat("en-IN",{day:"2-digit",month:"long",year:"numeric"}).format(new Date(value));
-const totalTrucks=trucks=>trucks.reduce((n,x)=>n+Number(x.count||0),0);
-const cx=(...v)=>v.filter(Boolean).join(" ");
+/**
+ * StoneRateTransporterProfile — FRONTEND-ONLY edition.
+ *
+ * Built on the SandSellerProfilePage layout (hero, details, verification,
+ * edit sheet, photo upload sheet, sign-out sheet, toast) with transporter
+ * fields instead of plant fields:
+ *   Transporter owner name · Transport agency name · Mobile number ·
+ *   Alternate mobile number · Aadhaar card · GSTIN · Address
+ * plus two transporter-only sections:
+ *   • Trucks you have   — e.g. "12 Tyre × 2, 14 Tyre × 1", add / adjust / remove
+ *   • City registration — add and delete the cities you are registered in
+ *
+ * No bucket information and no backend calls. All data lives in component
+ * state (seeded from INITIAL_PROFILE or the `transporter` prop). Every change
+ * is reported through the optional onProfileUpdated(profile) callback so a
+ * parent can persist it later.
+ *
+ * Header and bottom navigation are taken unchanged from the previous
+ * transporter profile page (shared Samples / Bidding / Home / Orders / Profile).
+ */
 
-// Shared transporter navigation (identical across Samples / Bidding / Home / Orders / Profile)
+/* ───────────────────────── Seed data (frontend only) ───────────────────────── */
+const INITIAL_PROFILE = {
+  ownerName: "Ramesh Kumar",
+  agencyName: "Ramesh Transport Company",
+  transporterId: "TR-260916-625",
+  primaryPhone: "9876543210",
+  alternatePhone: "9123456780",
+  aadhaarNumber: "234567891234",
+  gstin: "09ABCDE1234F1Z5",
+  address: "Plot 14, Transport Nagar, NH-31",
+  city: "Jaunpur",
+  state: "Uttar Pradesh",
+  pincode: "222001",
+  joinedAt: "2026-07-18",
+  aadhaarVerified: true,
+  adminVerified: false,
+  photoUrl: "",
+  photoZoom: 1,
+  photoX: 50,
+  photoY: 50,
+  trucks: [
+    { id: "t1", type: "12 Tyre", count: 2 },
+    { id: "t2", type: "14 Tyre", count: 1 },
+  ],
+  cities: ["Jaunpur", "Sultanpur", "Lucknow", "Prayagraj", "Varanasi", "Ayodhya"],
+};
+
+const TRUCK_TYPES = ["6 Tyre", "10 Tyre", "12 Tyre", "14 Tyre", "16 Tyre", "18 Tyre", "22 Tyre"];
+const MAX_TRUCKS_PER_TYPE = 999;
+
+/* Shared transporter navigation (identical across Samples / Bidding / Home / Orders / Profile) */
 const NAV_ITEMS = [
   { label: "Samples", icon: Images },
   { label: "Bidding", icon: Gavel },
   { label: "Home", icon: Home },
   { label: "Orders", icon: PackageCheck },
-  { label: "Profile", icon: UserRound }
+  { label: "Profile", icon: UserRound },
 ];
 const NAV_ICON_SIZE = 19;
 const NAV_ICON_ACTIVE = 20;
 
-function Brand(){return <div className="ssp-brand"><i><Sparkles size={14}/></i><span>Stone</span><b>Rate</b></div>}
-function Badge({verified,children}){const Icon=verified?CheckCircle2:Clock3;return <span className={`ssp-badge ${verified?"is-verified":"is-pending"}`}><Icon size={13}/>{children}</span>}
-function Detail({icon:Icon,label,value,hint,tone="indigo",full=false,children}){return <div className={`ssp-detail is-${tone} ${full?"ssp-full":""}`}><i><Icon size={19}/></i><div><dt>{label}</dt><dd>{value||"Not provided"}</dd>{hint&&<small>{hint}</small>}{children}</div></div>}
-function Stat({icon:Icon,value,label}){return <div className="ssp-stat"><i><Icon size={15}/></i><div><b>{value}</b><span>{label}</span></div></div>}
-function Ring({value=0,children}){const size=108,stroke=3.5,r=(size-stroke)/2,c=2*Math.PI*r,o=c*(1-Math.min(100,value)/100);return <div className="ssp-ring is-light" style={{width:size,height:size}}><svg width={size} height={size}><circle className="ssp-ring-track" cx="54" cy="54" r={r} strokeWidth={stroke}/><circle className="ssp-ring-fill" cx="54" cy="54" r={r} strokeWidth={stroke} strokeDasharray={c} strokeDashoffset={o} transform="rotate(-90 54 54)"/></svg><div className="ssp-ring-inner">{children}</div></div>}
-function Sheet({title,subtitle,onClose,children,footer}){return <div className="ssp-overlay" onMouseDown={e=>e.target===e.currentTarget&&onClose()}><section className="ssp-sheet" role="dialog" aria-modal="true"><i className="ssp-handle"/><header className="ssp-sheet-head"><div><h2>{title}</h2>{subtitle&&<p>{subtitle}</p>}</div><button className="ssp-icon" onClick={onClose}><X size={20}/></button></header><div className="ssp-sheet-body">{children}</div>{footer&&<footer className="ssp-sheet-foot">{footer}</footer>}</section></div>}
+/* ───────────────────────────── Helpers ───────────────────────────── */
+const cx = (...values) => values.filter(Boolean).join(" ");
+const digits = value => String(value ?? "").replace(/\D/g, "");
+const cleanPhone = value => digits(value).slice(0, 10);
+const cleanAadhaar = value => digits(value).slice(0, 12);
+const phoneValue = value => {
+  const phone = digits(value);
+  return phone.length === 12 && phone.startsWith("91") ? phone.slice(2) : phone;
+};
+const maskAadhaar = value => {
+  const number = digits(value);
+  return number.length === 12 ? `•••• •••• ${number.slice(-4)}` : "";
+};
+const formatAadhaar = value => digits(value).slice(0, 12).replace(/(\d{4})(?=\d)/g, "$1 ");
+const initials = name => String(name || "").trim().split(/\s+/).filter(Boolean)
+  .slice(0, 2).map(part => part[0]).join("").toUpperCase();
+const numberInRange = (value, fallback, min, max) => {
+  const parsed = Number(value ?? fallback);
+  return Number.isFinite(parsed) ? Math.min(max, Math.max(min, parsed)) : fallback;
+};
+const uid = () => `t${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
+const totalTrucks = trucks => trucks.reduce((sum, truck) => sum + Number(truck.count || 0), 0);
+const titleCase = value => String(value || "").trim().replace(/\s+/g, " ")
+  .replace(/\w\S*/g, word => word[0].toUpperCase() + word.slice(1).toLowerCase());
 
+function normaliseTrucks(list) {
+  if (!Array.isArray(list)) return [];
+  return list
+    .map(truck => ({
+      id: String(truck?.id || uid()),
+      type: String(truck?.type || "").trim(),
+      count: numberInRange(truck?.count, 0, 0, MAX_TRUCKS_PER_TYPE),
+    }))
+    .filter(truck => truck.type);
+}
+
+function normaliseCities(list) {
+  if (!Array.isArray(list)) return [];
+  const seen = new Set();
+  return list.map(city => titleCase(city)).filter(city => {
+    const key = city.toLowerCase();
+    if (!city || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+/** Merge whatever the parent passes as `transporter` on top of the seed data. */
+function mapProfile(record = {}, fallback = INITIAL_PROFILE) {
+  const s = record || {};
+  return {
+    ...INITIAL_PROFILE,
+    ...fallback,
+    ownerName: String(s.ownerName ?? s.transporterName ?? s.name ?? fallback.ownerName ?? ""),
+    agencyName: String(s.agencyName ?? s.organisationName ?? s.companyName ?? fallback.agencyName ?? ""),
+    transporterId: String(s.transporterId ?? s.publicId ?? fallback.transporterId ?? ""),
+    primaryPhone: phoneValue(s.phone ?? s.primaryPhone ?? fallback.primaryPhone),
+    alternatePhone: phoneValue(s.alternatePhone ?? fallback.alternatePhone),
+    aadhaarNumber: cleanAadhaar(s.aadhaarNumber ?? s.aadhaar ?? fallback.aadhaarNumber),
+    gstin: String(s.gstin ?? s.gstNumber ?? fallback.gstin ?? "").toUpperCase(),
+    address: String(s.address ?? fallback.address ?? ""),
+    city: String(s.city ?? fallback.city ?? ""),
+    state: String(s.state ?? fallback.state ?? ""),
+    pincode: String(s.pincode ?? fallback.pincode ?? ""),
+    joinedAt: String(s.joinedAt ?? s.createdAt ?? fallback.joinedAt ?? ""),
+    aadhaarVerified: typeof s.aadhaarVerified === "boolean" ? s.aadhaarVerified : fallback.aadhaarVerified === true,
+    adminVerified: typeof s.adminVerified === "boolean" ? s.adminVerified : fallback.adminVerified === true,
+    photoUrl: String(s.profilePhotoUrl ?? s.photoUrl ?? fallback.photoUrl ?? ""),
+    photoZoom: numberInRange(s.photoZoom ?? fallback.photoZoom, 1, 1, 2.2),
+    photoX: numberInRange(s.photoX ?? fallback.photoX, 50, 0, 100),
+    photoY: numberInRange(s.photoY ?? fallback.photoY, 50, 0, 100),
+    trucks: normaliseTrucks(s.trucks ?? fallback.trucks),
+    cities: normaliseCities(s.cities ?? s.registrations ?? fallback.cities),
+  };
+}
+
+function validateProfile(profile) {
+  const errors = {};
+  if (!profile.ownerName.trim()) errors.ownerName = "Enter the transporter owner name.";
+  if (!profile.agencyName.trim()) errors.agencyName = "Enter your transport agency name.";
+  if (!/^\d{10}$/.test(phoneValue(profile.primaryPhone))) {
+    errors.primaryPhone = "Enter a valid 10-digit mobile number.";
+  }
+  if (profile.alternatePhone && !/^\d{10}$/.test(phoneValue(profile.alternatePhone))) {
+    errors.alternatePhone = "Enter a valid 10-digit alternate number.";
+  } else if (profile.alternatePhone && phoneValue(profile.alternatePhone) === phoneValue(profile.primaryPhone)) {
+    errors.alternatePhone = "Use a number different from your primary mobile.";
+  }
+  if (profile.aadhaarNumber && !/^\d{12}$/.test(digits(profile.aadhaarNumber))) {
+    errors.aadhaarNumber = "Aadhaar number must be exactly 12 digits.";
+  }
+  if (profile.gstin && !/^\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/.test(profile.gstin.trim().toUpperCase())) {
+    errors.gstin = "Enter a valid 15-character GSTIN.";
+  }
+  if (!profile.address.trim()) errors.address = "Enter your agency's complete address.";
+  if (profile.pincode && !/^\d{6}$/.test(profile.pincode)) errors.pincode = "Enter a 6-digit PIN code.";
+  return errors;
+}
+
+function formatJoiningDate(value) {
+  if (!value) return "Not available";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return new Intl.DateTimeFormat("en-IN", { day: "2-digit", month: "long", year: "numeric" }).format(date);
+}
+
+function completeness(profile) {
+  const checks = [
+    profile.ownerName, profile.agencyName, profile.primaryPhone, profile.alternatePhone,
+    profile.aadhaarNumber, profile.gstin, profile.address, profile.photoUrl,
+    profile.trucks.length ? "yes" : "", profile.cities.length ? "yes" : "",
+  ];
+  const filled = checks.filter(value => String(value || "").trim()).length;
+  return Math.round((filled / checks.length) * 100);
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("The selected image could not be read."));
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ───────────────────────── Presentational pieces ───────────────────────── */
+function Brand() {
+  return <div className="ssp-brand"><i><Sparkles size={14}/></i><span>Stone</span><b>Rate</b></div>;
+}
+
+function Badge({ verified, children, light = false }) {
+  const Icon = verified ? CheckCircle2 : Clock3;
+  return <span className={`ssp-badge ${verified ? "is-verified" : "is-pending"} ${light ? "is-light" : ""}`}>
+    <Icon size={13}/>{children}
+  </span>;
+}
+
+function Ring({ value, size = 104, stroke = 4, light = false, children }) {
+  const radius = (size - stroke) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const clamped = Math.min(100, Math.max(0, Number(value) || 0));
+  const offset = circumference * (1 - clamped / 100);
+  const center = size / 2;
+  return <div className={`ssp-ring ${light ? "is-light" : ""}`} style={{ width: size, height: size }}>
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true">
+      <circle className="ssp-ring-track" cx={center} cy={center} r={radius} strokeWidth={stroke}/>
+      <circle className="ssp-ring-fill" cx={center} cy={center} r={radius} strokeWidth={stroke} style={{ "--circ": circumference }}
+        strokeDasharray={circumference} strokeDashoffset={offset} transform={`rotate(-90 ${center} ${center})`}/>
+    </svg>
+    <div className="ssp-ring-inner">{children}</div>
+  </div>;
+}
+
+function Detail({ icon: Icon, label, value, hint, tone = "indigo", full = false }) {
+  return <div className={`ssp-detail is-${tone} ${full ? "ssp-full" : ""} ${value ? "" : "is-empty"}`}>
+    <i><Icon size={19}/></i>
+    <div><dt>{label}</dt><dd>{value || "Not provided"}</dd>{hint && <small>{hint}</small>}</div>
+  </div>;
+}
+
+function Stat({ icon: Icon, value, label }) {
+  return <div className="ssp-stat"><i><Icon size={15}/></i><div><b>{value}</b><span>{label}</span></div></div>;
+}
+
+function Field({ name, label, error, note, full = false, children }) {
+  return <div className={`ssp-field ${full ? "ssp-full" : ""} ${error ? "has-error" : ""}`}>
+    <label htmlFor={`tp-${name}`}>{label}</label>{children}
+    {error ? <small id={`tp-${name}-error`} className="ssp-field-error"><AlertCircle size={12}/>{error}</small>
+      : note ? <small id={`tp-${name}-note`} className="ssp-field-note">{note}</small> : null}
+  </div>;
+}
+
+function Sheet({ title, subtitle, onClose, busy = false, children, footer }) {
+  const ref = useRef(null);
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+  useEffect(() => {
+    const previousFocus = document.activeElement;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    ref.current?.focus();
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      if (previousFocus?.isConnected) previousFocus.focus?.();
+    };
+  }, []);
+  const handleKeyDown = event => {
+    if (event.key === "Escape" && !busy) {
+      event.preventDefault();
+      closeRef.current();
+    }
+    if (event.key !== "Tab") return;
+    const focusable = Array.from(ref.current.querySelectorAll(
+      'button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex="0"]'
+    )).filter(element => element.getClientRects().length > 0);
+    const first = focusable[0], last = focusable[focusable.length - 1];
+    if (!first) { event.preventDefault(); return; }
+    if (event.shiftKey && (document.activeElement === first || document.activeElement === ref.current)) {
+      event.preventDefault(); last.focus();
+    } else if (!event.shiftKey && (document.activeElement === last || document.activeElement === ref.current)) {
+      event.preventDefault(); first.focus();
+    }
+  };
+  return <div className="ssp-overlay" onMouseDown={event => { if (event.target === event.currentTarget && !busy) onClose(); }}>
+    <section ref={ref} className="ssp-sheet" role="dialog" aria-modal="true" aria-label={title} aria-busy={busy} tabIndex={-1} onKeyDown={handleKeyDown}>
+      <i className="ssp-handle"/>
+      <header className="ssp-sheet-head"><div><h2>{title}</h2>{subtitle && <p>{subtitle}</p>}</div>
+        <button type="button" className="ssp-icon" disabled={busy} onClick={onClose} aria-label="Close dialog"><X size={20}/></button>
+      </header>
+      <div className="ssp-sheet-body">{children}</div>
+      {footer && <footer className="ssp-sheet-foot">{footer}</footer>}
+    </section>
+  </div>;
+}
+
+/* ───────────────────────────── Page ───────────────────────────── */
 export default function StoneRateTransporterProfile({
-  transporter={name:"Ramesh"},unreadNotifications=2,
-  onNavigation=()=>{},onMenu=()=>{},onNotifications=()=>{},onRefresh=()=>{},onSignOut=()=>{}
-}){
-  const [profile,setProfile]=useState(INITIAL_PROFILE);
-  const [draft,setDraft]=useState(INITIAL_PROFILE);
-  const [sheet,setSheet]=useState(null);
-  const [citySearch,setCitySearch]=useState("");
-  const [newCity,setNewCity]=useState("");
-  const [toast,setToast]=useState("");
-  const total=totalTrucks(profile.trucks);
-  const completed=Number(profile.aadhaarVerified)+Number(profile.adminVerified);
-  const verified=completed===2;
-  const completeness=92;
-  const visibleCities=profile.registrations.filter(c=>c.toLowerCase().includes(citySearch.toLowerCase()));
-  const registrationPreview=profile.registrations.slice(0,3);
-  const more=Math.max(0,profile.registrations.length-3);
-  const notify=message=>{setToast(message);window.setTimeout(()=>setToast(""),2600)};
-  const openEdit=()=>{setDraft(JSON.parse(JSON.stringify(profile)));setSheet("edit")};
-  const saveProfile=()=>{setProfile(draft);setSheet(null);notify("Transporter profile updated.")};
-  const deleteCity=city=>setProfile(p=>({...p,registrations:p.registrations.filter(x=>x!==city)}));
-  const addCity=()=>{const city=newCity.trim();if(!city||profile.registrations.some(x=>x.toLowerCase()===city.toLowerCase()))return;setProfile(p=>({...p,registrations:[...p.registrations,city]}));setNewCity("")};
-  const navTo=label=>onNavigation(label);
-  return <div className="sand-seller-profile transporter-profile"><style>{CSS}</style>
-    <div className="ssp-orb ssp-orb-one"/><div className="ssp-orb ssp-orb-two"/>
+  transporter = null, unreadNotifications = 2,
+  onNavigation = () => {}, onMenu = () => {}, onNotifications = () => {},
+  onSignOut = () => {}, onProfileUpdated, onVerifyAadhaar,
+}) {
+  const [profile, setProfile] = useState(() => mapProfile(transporter));
+  const [draft, setDraft] = useState(profile);
+  const [sheet, setSheet] = useState(null);
+  const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [busy, setBusy] = useState(false);
+  const [toast, setToast] = useState("");
+  const [photoFile, setPhotoFile] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState("");
+  const [photoSettings, setPhotoSettings] = useState({ zoom: 1, x: 50, y: 50 });
+  const [truckType, setTruckType] = useState(TRUCK_TYPES[2]);
+  const [customTruckType, setCustomTruckType] = useState("");
+  const [truckCount, setTruckCount] = useState("1");
+  const [truckError, setTruckError] = useState("");
+  const [citySearch, setCitySearch] = useState("");
+  const [newCity, setNewCity] = useState("");
+  const [cityError, setCityError] = useState("");
+  const profileRef = useRef(profile);
+  const callbackRef = useRef(onProfileUpdated);
+  const mountedRef = useRef(true);
+  const operationRef = useRef(false);
+  const toastTimer = useRef(null);
+  const photoInput = useRef(null);
+  callbackRef.current = onProfileUpdated;
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => { mountedRef.current = false; clearTimeout(toastTimer.current); };
+  }, []);
+  useEffect(() => {
+    if (!photoFile) { setPhotoPreview(""); return undefined; }
+    const url = URL.createObjectURL(photoFile);
+    setPhotoPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [photoFile]);
+  const externalId = transporter?.transporterId || transporter?.publicId || "";
+  useEffect(() => {
+    if (!transporter) return;
+    const next = mapProfile(transporter, profileRef.current);
+    profileRef.current = next;
+    setProfile(next);
+    setDraft(next);
+  }, [externalId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const notify = useCallback(message => {
+    if (!mountedRef.current) return;
+    clearTimeout(toastTimer.current);
+    setToast(message);
+    toastTimer.current = setTimeout(() => { if (mountedRef.current) setToast(""); }, 4000);
+  }, []);
+  /** Single place where the profile changes; also informs the parent. */
+  const commit = useCallback((updater, message) => {
+    const next = typeof updater === "function" ? updater(profileRef.current) : { ...profileRef.current, ...updater };
+    profileRef.current = next;
+    setProfile(next);
+    setDraft(next);
+    try { callbackRef.current?.(next); } catch { /* parent refresh is optional */ }
+    if (message) notify(message);
+    return next;
+  }, [notify]);
+
+  const beginOperation = () => {
+    if (operationRef.current) return false;
+    operationRef.current = true;
+    setBusy(true);
+    setError("");
+    return true;
+  };
+  const endOperation = () => {
+    operationRef.current = false;
+    if (mountedRef.current) setBusy(false);
+  };
+  const closeSheet = () => {
+    if (operationRef.current) return;
+    setSheet(null); setError(""); setPhotoFile(null);
+  };
+  const openEdit = () => { setDraft(profile); setFieldErrors({}); setError(""); setSheet("edit"); };
+  const updateDraft = (key, value) => {
+    setDraft(previous => ({ ...previous, [key]: value }));
+    setFieldErrors(previous => ({ ...previous, [key]: "" }));
+    setError("");
+  };
+
+  /* ── Edit profile ── */
+  const saveProfile = event => {
+    event?.preventDefault();
+    const errors = validateProfile(draft);
+    setFieldErrors(errors);
+    if (Object.keys(errors).length) return;
+    commit(previous => ({
+      ...previous,
+      ownerName: draft.ownerName.trim(),
+      agencyName: draft.agencyName.trim(),
+      primaryPhone: phoneValue(draft.primaryPhone),
+      alternatePhone: phoneValue(draft.alternatePhone),
+      aadhaarNumber: cleanAadhaar(draft.aadhaarNumber),
+      gstin: draft.gstin.trim().toUpperCase(),
+      address: draft.address.trim(),
+      city: draft.city.trim(),
+      state: draft.state.trim(),
+      pincode: draft.pincode.trim(),
+    }), "Your transporter profile has been updated.");
+    setSheet(null);
+  };
+
+  /* ── Trucks you have ── */
+  const addTruck = event => {
+    event?.preventDefault();
+    const type = titleCase(truckType === "Other" ? customTruckType : truckType);
+    const count = Number(truckCount);
+    if (!type) { setTruckError("Enter the truck type, e.g. 12 Tyre."); return; }
+    if (!Number.isInteger(count) || count < 1 || count > MAX_TRUCKS_PER_TYPE) {
+      setTruckError(`Enter a whole number of trucks between 1 and ${MAX_TRUCKS_PER_TYPE}.`); return;
+    }
+    const existing = profile.trucks.find(truck => truck.type.toLowerCase() === type.toLowerCase());
+    commit(previous => ({
+      ...previous,
+      trucks: existing
+        ? previous.trucks.map(truck => truck.id === existing.id
+          ? { ...truck, count: Math.min(MAX_TRUCKS_PER_TYPE, truck.count + count) } : truck)
+        : [...previous.trucks, { id: uid(), type, count }],
+    }), existing ? `${type} count updated.` : `${type} added to your fleet.`);
+    setTruckError(""); setTruckCount("1"); setCustomTruckType("");
+  };
+  const changeTruckCount = (id, delta) => commit(previous => ({
+    ...previous,
+    trucks: previous.trucks.map(truck => truck.id === id
+      ? { ...truck, count: numberInRange(truck.count + delta, 0, 0, MAX_TRUCKS_PER_TYPE) } : truck),
+  }));
+  const setTruckCountValue = (id, value) => commit(previous => ({
+    ...previous,
+    trucks: previous.trucks.map(truck => truck.id === id
+      ? { ...truck, count: numberInRange(digits(value) === "" ? 0 : Number(digits(value)), 0, 0, MAX_TRUCKS_PER_TYPE) } : truck),
+  }));
+  const removeTruck = truck => commit(previous => ({
+    ...previous, trucks: previous.trucks.filter(item => item.id !== truck.id),
+  }), `${truck.type} removed from your fleet.`);
+
+  /* ── City registration ── */
+  const addCity = event => {
+    event?.preventDefault();
+    const city = titleCase(newCity);
+    if (!city) { setCityError("Enter a city name."); return; }
+    if (profile.cities.some(item => item.toLowerCase() === city.toLowerCase())) {
+      setCityError(`${city} is already registered.`); return;
+    }
+    commit(previous => ({ ...previous, cities: [...previous.cities, city] }), `${city} added to your registrations.`);
+    setNewCity(""); setCityError(""); setCitySearch("");
+  };
+  const deleteCity = city => commit(previous => ({
+    ...previous, cities: previous.cities.filter(item => item !== city),
+  }), `${city} removed from your registrations.`);
+
+  /* ── Profile photo (stored as a data URL in state) ── */
+  const choosePhoto = event => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 15 * 1024 * 1024) {
+      notify("Choose a JPG, PNG or WEBP image up to 15 MB."); return;
+    }
+    setPhotoFile(file); setPhotoSettings({ zoom: 1, x: 50, y: 50 }); setError(""); setSheet("photo");
+  };
+  const savePhoto = async () => {
+    if (!photoFile || !beginOperation()) return;
+    try {
+      const dataUrl = await readFileAsDataUrl(photoFile);
+      if (!mountedRef.current) return;
+      commit({ photoUrl: dataUrl, photoZoom: photoSettings.zoom, photoX: photoSettings.x, photoY: photoSettings.y }, "Profile photo updated.");
+      setPhotoFile(null); setSheet(null);
+    } catch (photoFailure) {
+      if (mountedRef.current) setError(photoFailure.message || "Unable to use this photo.");
+    } finally { endOperation(); }
+  };
+  const removePhoto = () => {
+    commit({ photoUrl: "", photoZoom: 1, photoX: 50, photoY: 50 }, "Profile photo removed.");
+    setPhotoFile(null); setSheet(null);
+  };
+
+  /* ── Aadhaar verification (optional parent hook, no backend here) ── */
+  const startAadhaarVerification = async () => {
+    if (profile.aadhaarVerified || !beginOperation()) return;
+    try {
+      if (typeof onVerifyAadhaar !== "function") {
+        throw new Error("Aadhaar verification is not connected yet. Your verification status has not been changed.");
+      }
+      const result = await onVerifyAadhaar({ transporterId: profile.transporterId, aadhaarNumber: profile.aadhaarNumber });
+      if (!mountedRef.current) return;
+      if (result?.aadhaarVerified === true) {
+        commit({ aadhaarVerified: true }, "Aadhaar verification completed.");
+        setSheet(null);
+      } else {
+        setSheet(null); notify("Verification status unchanged.");
+      }
+    } catch (verificationFailure) {
+      if (mountedRef.current) setError(verificationFailure.message || "Unable to open Aadhaar verification.");
+    } finally { endOperation(); }
+  };
+
+  const signOut = async () => {
+    if (!beginOperation()) return;
+    try {
+      await onSignOut();
+      if (mountedRef.current) { setSheet(null); notify("Signed out successfully."); }
+    } catch (signoutFailure) {
+      if (mountedRef.current) setError(signoutFailure.message || "Unable to sign out.");
+    } finally { endOperation(); }
+  };
+
+  const navTo = label => onNavigation(label);
+  const verified = profile.aadhaarVerified && profile.adminVerified;
+  const completed = Number(profile.aadhaarVerified) + Number(profile.adminVerified);
+  const percent = completeness(profile);
+  const total = totalTrucks(profile.trucks);
+  const location = [profile.city, profile.state, profile.pincode].filter(Boolean).join(" · ");
+  const fleetSummary = profile.trucks.map(truck => `${truck.type} × ${truck.count}`).join(" · ");
+  const visibleCities = profile.cities.filter(city => city.toLowerCase().includes(citySearch.trim().toLowerCase()));
+  const describedBy = name => fieldErrors[name] ? `tp-${name}-error` : undefined;
+  const inputProps = name => ({
+    id: `tp-${name}`, name, value: draft[name], disabled: busy,
+    onChange: event => updateDraft(name, event.target.value),
+    "aria-invalid": Boolean(fieldErrors[name]), "aria-describedby": describedBy(name),
+  });
+  const sheetError = error ? <div className="ssp-alert" role="alert"><AlertCircle size={17}/><span>{error}</span></div> : null;
+  const photoStyle = {
+    objectPosition: `${profile.photoX}% ${profile.photoY}%`, transform: `scale(${profile.photoZoom})`,
+    transformOrigin: `${profile.photoX}% ${profile.photoY}%`,
+  };
+
+  return <div className="sand-seller-profile transporter-profile">
+    <style>{CSS}</style>
+    <svg width="0" height="0" aria-hidden="true" style={{ position: "absolute" }}>
+      <defs><linearGradient id="ssp-ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#5b6cff"/><stop offset="55%" stopColor="#8b5cf6"/><stop offset="100%" stopColor="#22c1ee"/>
+      </linearGradient></defs>
+    </svg>
+    <div className="ssp-orb ssp-orb-one" aria-hidden="true"/>
+    <div className="ssp-orb ssp-orb-two" aria-hidden="true"/>
+
+    {/* ─── Header (unchanged from the transporter pages) ─── */}
     <header className="bd-header"><div className="bd-shell bd-header-inner">
       <button type="button" className="bd-icon-btn" aria-label="Open menu" onClick={onMenu}><Menu size={19}/></button>
-      <div className="bd-greeting"><strong>Hi, {transporter?.name||profile.transporterName||"Transporter"}</strong><small>Manage your transporter profile</small></div>
+      <div className="bd-greeting"><strong>Hi, {transporter?.name || profile.ownerName || "Transporter"}</strong><small>Manage your transporter profile</small></div>
       <div className="bd-logo" aria-label="StoneRate"><span className="bd-logo-mark"><Mountain size={17}/></span><span>Stone<span className="bd-logo-rate">Rate</span></span></div>
       <nav className="bd-desktop-nav" aria-label="Desktop navigation">
         {NAV_ITEMS.map(item => <button type="button" key={item.label} className={item.label === "Profile" ? "active" : ""} onClick={() => navTo(item.label)}>{item.label}</button>)}
       </nav>
       <button type="button" className="bd-icon-btn" aria-label={`Notifications, ${unreadNotifications} unread`} onClick={onNotifications}><Bell size={19}/>{unreadNotifications > 0 && <span className="bd-notify-dot"/>}</button>
     </div></header>
+
     <main className="ssp-content">
-      <section className="ssp-hero ssp-reveal">
-        <div className="ssp-hero-mesh"/><div className="ssp-hero-glow ssp-glow-a"/><div className="ssp-hero-art"><Truck/></div>
-        <div className="ssp-hero-top"><span className="ssp-eyebrow"><Sparkles size={10}/>YOUR TRANSPORTER ACCOUNT</span><span className={`ssp-badge ${verified?"is-verified":"is-pending"} is-light`}>{verified?<CheckCircle2 size={13}/>:<Clock3 size={13}/>} {verified?"Verified transporter":"Verification pending"}</span></div>
-        <div className="ssp-identity"><div className="ssp-avatar-wrap"><Ring value={completeness}><div className="ssp-avatar"><span>{initials(profile.transporterName)}</span></div></Ring>{verified&&<i className="ssp-avatar-check"><BadgeCheck size={16}/></i>}</div><div className="ssp-hero-name"><span>Transport organisation</span><h1>{profile.organisationName}</h1><p><UserRound size={14}/>{profile.transporterName}</p><small><Hash size={10}/>Transporter ID <b>{profile.transporterId}</b></small></div></div>
-        <div className="ssp-stats"><Stat icon={Truck} value={total} label="Total trucks"/><Stat icon={MapPin} value={profile.registrations.length} label="Registered cities"/></div>
-        <div className="ssp-hero-bottom"><p><ShieldCheck size={16}/>{verified?"Your transporter account is fully verified.":"Complete verification to earn the verified badge."}</p><button className="ssp-hero-edit" onClick={openEdit}><SquarePen size={15}/>Edit profile</button></div>
+      {/* ─── Hero ─── */}
+      <section className="ssp-hero ssp-reveal" aria-labelledby="tp-profile-title">
+        <div className="ssp-hero-mesh" aria-hidden="true"/>
+        <div className="ssp-hero-glow ssp-glow-a" aria-hidden="true"/>
+        <div className="ssp-hero-glow ssp-glow-b" aria-hidden="true"/>
+        <div className="ssp-hero-art" aria-hidden="true"><Truck/><div className="ssp-art-ring"/><div className="ssp-art-ring ssp-art-ring-two"/></div>
+
+        <div className="ssp-hero-top ssp-hero-in" style={{ "--d": "120ms" }}>
+          <span className="ssp-eyebrow"><Star size={10} className="ssp-twinkle"/>YOUR TRANSPORTER ACCOUNT</span>
+          <Badge verified={verified} light>{verified ? "Verified transporter" : "Verification pending"}</Badge>
+        </div>
+
+        <div className="ssp-identity ssp-hero-in" style={{ "--d": "220ms" }}>
+          <div className="ssp-avatar-wrap">
+            <span className="ssp-avatar-halo" aria-hidden="true"/>
+            <Ring value={percent} size={108} stroke={3.5} light>
+              <div className="ssp-avatar">
+                {profile.photoUrl ? <img src={profile.photoUrl} alt="Transporter profile" style={photoStyle}/>
+                  : initials(profile.ownerName) ? <span>{initials(profile.ownerName)}</span> : <UserRound size={32}/>}
+              </div>
+            </Ring>
+            <button type="button" className="ssp-camera" onClick={() => photoInput.current?.click()} disabled={busy} aria-label="Change profile photo"><Camera size={14}/></button>
+            {verified && <i className="ssp-avatar-check" aria-hidden="true"><BadgeCheck size={16}/></i>}
+          </div>
+          <div className="ssp-hero-name">
+            <span>Transport agency</span>
+            <h1 id="tp-profile-title">{profile.agencyName || "Your transport agency"}</h1>
+            <p><UserRound size={14}/>{profile.ownerName || "Add the owner name"}</p>
+            {profile.transporterId && <small><Hash size={10}/>Transporter ID <b>{profile.transporterId}</b></small>}
+          </div>
+        </div>
+
+        <div className="ssp-stats ssp-hero-in" style={{ "--d": "340ms" }}>
+          <Stat icon={Truck} value={total} label="Total trucks"/>
+          <Stat icon={MapPin} value={profile.cities.length} label="Registered cities"/>
+          <Stat icon={Sparkles} value={`${percent}%`} label="Profile complete"/>
+        </div>
+
+        <div className="ssp-hero-bottom ssp-hero-in" style={{ "--d": "440ms" }}>
+          <p><ShieldCheck size={16}/>{verified ? "Your transporter account is fully verified." : "Complete verification to unlock a verified badge."}</p>
+          <button type="button" className="ssp-hero-edit" disabled={busy} onClick={openEdit}><SquarePen size={15}/>Edit profile</button>
+        </div>
       </section>
+      <input ref={photoInput} type="file" hidden accept="image/jpeg,image/png,image/webp" onChange={choosePhoto}/>
+
       <div className="ssp-layout">
-        <section className="ssp-card ssp-details ssp-reveal">
-          <div className="ssp-section-head"><div><span className="ssp-kicker">THE DETAILS</span><h2>Transporter & company details</h2><p>Your business and fleet information.</p></div><button className="ssp-edit-link" onClick={openEdit}><SquarePen size={15}/><span>Edit</span></button></div>
+        {/* ─── Details ─── */}
+        <section className="ssp-card ssp-details ssp-reveal" style={{ "--delay": "140ms" }} aria-labelledby="tp-details-title">
+          <div className="ssp-section-head">
+            <div><span className="ssp-kicker">THE DETAILS</span><h2 id="tp-details-title">Transporter & agency details</h2><p>Your business, all in one place.</p></div>
+            <button type="button" className="ssp-edit-link" onClick={openEdit} disabled={busy} aria-label="Edit transporter and agency details"><SquarePen size={15}/><span>Edit</span></button>
+          </div>
           <dl className="ssp-detail-grid">
-            <Detail icon={UserRound} label="Transporter name" value={profile.transporterName} tone="violet" full/>
-            <Detail icon={Building2} label="Organisation / company" value={profile.organisationName} full/>
-            <Detail icon={Truck} label="Trucks you have" value={`${total} trucks`} hint={profile.trucks.map(x=>`${x.type}: ${x.count}`).join(" · ")} tone="cyan" full/>
-            <Detail icon={MapPin} label="Registrations you have" value={<span className="tp-city-line">{registrationPreview.join(", ")}{more>0?` +${more} more`:""}</span>} hint={`${profile.registrations.length} service cities`} tone="map" full><button className="tp-see-all" onClick={()=>setSheet("cities")}>See all <ChevronRight size={14}/></button></Detail>
-            <Detail icon={Phone} label="Mobile number" value={`+91 ${profile.primaryPhone}`} hint="Primary contact"/>
-            <Detail icon={Phone} label="Alternate mobile" value={`+91 ${profile.alternatePhone}`} hint="Additional contact" tone="violet"/>
-            <Detail icon={ReceiptText} label="GST number" value={profile.gstin} tone="violet"/>
-            <Detail icon={Clock3} label="Joining date" value={dateLabel(profile.joinedAt)} hint="StoneRate registration" tone="cyan"/>
+            <Detail icon={UserRound} label="Transporter owner name" value={profile.ownerName} tone="violet" full/>
+            <Detail icon={Building2} label="Transport agency name" value={profile.agencyName} tone="indigo" full/>
+            <Detail icon={Phone} label="Mobile number" value={profile.primaryPhone ? `+91 ${profile.primaryPhone}` : ""} hint="Primary contact" tone="indigo"/>
+            <Detail icon={Phone} label="Alternate mobile number" value={profile.alternatePhone ? `+91 ${profile.alternatePhone}` : ""} hint="Additional contact" tone="violet"/>
+            <Detail icon={Fingerprint} label="Aadhaar card" value={maskAadhaar(profile.aadhaarNumber)} hint={profile.aadhaarVerified ? "Verified identity" : "Verification pending"} tone="cyan"/>
+            <Detail icon={ReceiptText} label="GSTIN" value={profile.gstin} hint="Goods and Services Tax ID" tone="violet"/>
+            <Detail icon={CalendarDays} label="Joining date" value={formatJoiningDate(profile.joinedAt)} hint="StoneRate registration" tone="cyan"/>
+            <Detail icon={MapPin} label="Address" value={profile.address} hint={location} tone="map" full/>
           </dl>
+          <div className="ssp-secure-note"><i><LockKeyhole size={15}/></i><span>Your Aadhaar number is shown masked. Only the last four digits are ever displayed on this page.</span></div>
         </section>
-        <section className="ssp-card ssp-verification ssp-reveal">
-          <div className="ssp-section-head"><div><span className="ssp-kicker">BUILD TRUST</span><h2>Verification</h2><p>A clear status for your transporter account.</p></div><i className="ssp-section-icon"><ShieldCheck size={22}/></i></div>
-          <div className={`ssp-verification-progress ${verified?"is-complete":""}`}><div className="tp-vring"><b>{completed}<small>/2</small></b></div><div className="ssp-progress-copy"><b>{verified?"You're all verified":"Your verification journey"}</b><span>{2-completed} verification step{2-completed===1?"":"s"} remaining.</span><div className="ssp-progress-track"><i style={{width:`${completed*50}%`}}/></div></div></div>
-          <ol className="ssp-timeline"><li className={`ssp-step ${profile.aadhaarVerified?"is-complete":"is-active"}`}><div className="ssp-step-icon"><UserRound size={23}/><small>{profile.aadhaarVerified?<CheckCircle2 size={11}/>:"01"}</small></div><div className="ssp-step-copy"><div className="ssp-step-title"><h3>Identity verification</h3><Badge verified={profile.aadhaarVerified}>{profile.aadhaarVerified?"Verified":"Pending"}</Badge></div><p>Confirms the identity attached to this transporter account.</p></div></li><li className={`ssp-step ssp-step-admin ${profile.adminVerified?"is-complete":""}`}><div className="ssp-step-icon"><ShieldCheck size={23}/><small>{profile.adminVerified?<CheckCircle2 size={11}/>:"02"}</small></div><div className="ssp-step-copy"><div className="ssp-step-title"><h3>Admin verification</h3><Badge verified={profile.adminVerified}>{profile.adminVerified?"Verified":"Yet to verify"}</Badge></div><p>The StoneRate team reviews company, GST, fleet, and registration details.</p></div></li></ol>
-          <div className="ssp-admin-note"><i><ShieldCheck size={15}/></i><span>Admin verification is updated by the StoneRate team.</span></div>
+
+        {/* ─── Trucks you have ─── */}
+        <section className="ssp-card tp-fleet-card ssp-reveal" style={{ "--delay": "170ms" }} aria-labelledby="tp-fleet-title">
+          <div className="ssp-section-head">
+            <div><span className="ssp-kicker">YOUR FLEET</span><h2 id="tp-fleet-title">Trucks you have</h2><p>{total ? `${total} truck${total === 1 ? "" : "s"} across ${profile.trucks.length} type${profile.trucks.length === 1 ? "" : "s"}` : "Add the trucks you operate."}</p></div>
+            <i className="ssp-section-icon"><Truck size={22}/></i>
+          </div>
+          {profile.trucks.length ? <ul className="tp-truck-list">
+            {profile.trucks.map(truck => <li key={truck.id} className="tp-truck-row">
+              <i><Truck size={18}/></i>
+              <div className="tp-truck-name"><b>{truck.type}</b><span>{truck.count} truck{truck.count === 1 ? "" : "s"}</span></div>
+              <div className="tp-counter" role="group" aria-label={`${truck.type} count`}>
+                <button type="button" onClick={() => changeTruckCount(truck.id, -1)} disabled={busy || truck.count <= 0} aria-label={`Decrease ${truck.type}`}><Minus size={14}/></button>
+                <input type="text" inputMode="numeric" value={truck.count} disabled={busy} aria-label={`${truck.type} trucks`} onChange={event => setTruckCountValue(truck.id, event.target.value)}/>
+                <button type="button" onClick={() => changeTruckCount(truck.id, 1)} disabled={busy || truck.count >= MAX_TRUCKS_PER_TYPE} aria-label={`Increase ${truck.type}`}><Plus size={14}/></button>
+              </div>
+              <button type="button" className="tp-remove" onClick={() => removeTruck(truck)} disabled={busy} aria-label={`Remove ${truck.type}`}><Trash2 size={15}/></button>
+            </li>)}
+          </ul> : <p className="tp-empty">No trucks added yet. Add your first truck type below.</p>}
+          <form className="tp-add-truck" onSubmit={addTruck} noValidate>
+            <div className="tp-add-truck-head"><b>Add truck type</b><span>{fleetSummary || "e.g. 12 Tyre × 2 · 14 Tyre × 1"}</span></div>
+            <div className="tp-add-truck-row">
+              <label className="tp-select">
+                <span>Truck type</span>
+                <select value={truckType} disabled={busy} onChange={event => { setTruckType(event.target.value); setTruckError(""); }}>
+                  {TRUCK_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
+                  <option value="Other">Other…</option>
+                </select>
+              </label>
+              {truckType === "Other" && <label className="tp-custom">
+                <span>Custom type</span>
+                <input type="text" value={customTruckType} disabled={busy} placeholder="e.g. 10 Tyre Tipper" maxLength={32}
+                  onChange={event => { setCustomTruckType(event.target.value); setTruckError(""); }}/>
+              </label>}
+              <label className="tp-count">
+                <span>How many</span>
+                <input type="text" inputMode="numeric" value={truckCount} disabled={busy} maxLength={3}
+                  onChange={event => { setTruckCount(digits(event.target.value).slice(0, 3)); setTruckError(""); }}/>
+              </label>
+              <button type="submit" className="tp-add-button" disabled={busy}><Plus size={16}/>Add</button>
+            </div>
+            {truckError && <small className="ssp-field-error"><AlertCircle size={12}/>{truckError}</small>}
+          </form>
+        </section>
+
+        {/* ─── City registration ─── */}
+        <section className="ssp-card tp-city-card ssp-reveal" style={{ "--delay": "200ms" }} aria-labelledby="tp-city-title">
+          <div className="ssp-section-head">
+            <div><span className="ssp-kicker">SERVICE AREA</span><h2 id="tp-city-title">City registration</h2><p>{profile.cities.length ? `Registered in ${profile.cities.length} cit${profile.cities.length === 1 ? "y" : "ies"}` : "Add the cities you are registered in."}</p></div>
+            <i className="ssp-section-icon"><MapPin size={22}/></i>
+          </div>
+          <form className="tp-add-city" onSubmit={addCity} noValidate>
+            <MapPin size={17}/>
+            <input type="text" value={newCity} disabled={busy} placeholder="Add a city, e.g. Kanpur" maxLength={48} aria-label="City to add"
+              onChange={event => { setNewCity(event.target.value); setCityError(""); }}/>
+            <button type="submit" disabled={busy}><Plus size={16}/>Add</button>
+          </form>
+          {cityError && <small className="ssp-field-error"><AlertCircle size={12}/>{cityError}</small>}
+          {profile.cities.length > 4 && <div className="tp-search"><Search size={17}/>
+            <input type="search" value={citySearch} onChange={event => setCitySearch(event.target.value)} placeholder="Search registered cities" aria-label="Search registered cities"/>
+          </div>}
+          <ul className="tp-city-list">
+            {visibleCities.length ? visibleCities.map(city => <li key={city}>
+              <span><MapPin size={15}/><b>{city}</b></span>
+              <button type="button" onClick={() => deleteCity(city)} disabled={busy} aria-label={`Delete ${city}`}><Trash2 size={15}/></button>
+            </li>) : <li className="tp-empty-row">{profile.cities.length ? "No registered city matches this search." : "No cities registered yet."}</li>}
+          </ul>
+          <div className="ssp-secure-note"><i><ShieldCheck size={15}/></i><span>Only cities listed here appear as your service area to sellers and buyers.</span></div>
+        </section>
+
+        {/* ─── Verification ─── */}
+        <section className="ssp-card ssp-verification ssp-reveal" style={{ "--delay": "230ms" }} aria-labelledby="tp-verification-title">
+          <div className="ssp-section-head">
+            <div><span className="ssp-kicker">BUILD TRUST</span><h2 id="tp-verification-title">Verification</h2><p>A clear status, every step of the way.</p></div>
+            <i className="ssp-section-icon"><ShieldCheck size={22}/></i>
+          </div>
+          <div className={`ssp-verification-progress ${verified ? "is-complete" : ""}`}>
+            <Ring value={completed * 50} size={72} stroke={5}><b>{completed}<small>/2</small></b></Ring>
+            <div className="ssp-progress-copy">
+              <b>{verified ? "You're all verified" : "Your verification journey"}</b>
+              <span>{verified ? "Both checks are complete. Sellers and buyers can trust your agency." : `${2 - completed} step${completed === 1 ? "" : "s"} remaining to earn the verified badge.`}</span>
+              <div className="ssp-progress-track" role="progressbar" aria-label="Verification steps completed" aria-valuemin={0} aria-valuemax={2} aria-valuenow={completed}>
+                <i style={{ width: `${completed * 50}%` }}/></div>
+            </div>
+          </div>
+          <ol className="ssp-timeline">
+            <li className={`ssp-step ${profile.aadhaarVerified ? "is-complete" : "is-active"}`}>
+              <div className="ssp-step-icon"><Fingerprint size={23}/><small>{profile.aadhaarVerified ? <CheckCircle2 size={11}/> : "01"}</small></div>
+              <div className="ssp-step-copy">
+                <div className="ssp-step-title"><h3>Aadhaar verification</h3><Badge verified={profile.aadhaarVerified}>{profile.aadhaarVerified ? "Verified" : "Pending"}</Badge></div>
+                <p>{profile.aadhaarVerified ? "Your identity has been verified securely." : "Verify your identity through the secure Aadhaar flow."}</p>
+                {!profile.aadhaarVerified && <button type="button" className="ssp-verify-button" disabled={busy}
+                  onClick={() => { setError(""); setSheet("aadhaar"); }}>Verify now<ArrowRight size={15}/></button>}
+              </div>
+            </li>
+            <li className={`ssp-step ssp-step-admin ${profile.adminVerified ? "is-complete" : ""}`}>
+              <div className="ssp-step-icon"><ShieldCheck size={23}/><small>{profile.adminVerified ? <CheckCircle2 size={11}/> : "02"}</small></div>
+              <div className="ssp-step-copy">
+                <div className="ssp-step-title"><h3>Admin verification</h3><Badge verified={profile.adminVerified}>{profile.adminVerified ? "Verified" : "Yet to verify"}</Badge></div>
+                <p>{profile.adminVerified ? "Your agency has been approved by the StoneRate admin team." : "The StoneRate team reviews your agency, GSTIN, fleet and city registrations."}</p>
+              </div>
+            </li>
+          </ol>
+          <div className="ssp-admin-note"><i><LockKeyhole size={14}/></i><span>Admin verification is updated by the StoneRate team. No action is needed here.</span></div>
         </section>
       </div>
-      <button className="ssp-signout" onClick={()=>setSheet("signout")}><i><LogOut size={17}/></i><div><b>Sign out</b><span>End this transporter session securely</span></div><ChevronRight size={17}/></button>
+
+      <button type="button" className="ssp-signout ssp-reveal" style={{ "--delay": "260ms" }} onClick={() => { setError(""); setSheet("signout"); }}>
+        <i><LogOut size={17}/></i><div><b>Sign out</b><span>End this transporter session securely</span></div><ChevronRight size={17}/>
+      </button>
       <footer className="ssp-footer"><Brand/><span>TRANSPORTER CONSOLE</span></footer>
     </main>
+
+    {/* ─── Bottom navigation (unchanged from the transporter pages) ─── */}
     <nav className="bd-bottom" aria-label="Mobile navigation">
       {NAV_ITEMS.map(item => { const Icon = item.icon; const active = item.label === "Profile"; const badge = ({ Orders: unreadNotifications })[item.label] || 0;
         return <button type="button" key={item.label} className={cx("bd-nav-item", active && "active")} aria-current={active ? "page" : undefined} onClick={() => navTo(item.label)}>
@@ -122,22 +727,68 @@ export default function StoneRateTransporterProfile({
           <span>{item.label}</span>
         </button>; })}
     </nav>
-    <div className={`ssp-toast ${toast?"is-visible":""}`}>{toast}</div>
+    <div className={`ssp-toast ${toast ? "is-visible" : ""}`} role="status" aria-live="polite">{toast}</div>
 
-    {sheet==="cities"&&<Sheet title="Registered cities" subtitle="Search or remove transporter registration locations." onClose={()=>setSheet(null)}>
-      <div className="tp-search"><Search size={17}/><input value={citySearch} onChange={e=>setCitySearch(e.target.value)} placeholder="Search registered city" autoFocus/></div>
-      <div className="tp-add-city"><input value={newCity} onChange={e=>setNewCity(e.target.value)} placeholder="Add another city"/><button onClick={addCity}><Plus size={16}/>Add</button></div>
-      <div className="tp-city-list">{visibleCities.length?visibleCities.map(city=><div key={city}><span><MapPin size={15}/><b>{city}</b></span><button onClick={()=>deleteCity(city)} aria-label={`Delete ${city}`}><Trash2 size={15}/></button></div>):<p>No registered city matches this search.</p>}</div>
+    {sheet === "edit" && <Sheet title="Edit your profile" subtitle="Keep your agency and contact details up to date." busy={busy} onClose={closeSheet}
+      footer={<><button type="button" className="ssp-secondary" disabled={busy} onClick={closeSheet}>Cancel</button>
+        <button type="submit" form="tp-edit-form" className="ssp-primary" disabled={busy}><CheckCircle2 size={16}/>Save changes</button></>}>
+      <form id="tp-edit-form" onSubmit={saveProfile} noValidate><fieldset className="ssp-form-grid" disabled={busy}>
+        <Field name="ownerName" label="Transporter owner name" error={fieldErrors.ownerName} full><input {...inputProps("ownerName")} autoComplete="name" required/></Field>
+        <Field name="agencyName" label="Transport agency name" error={fieldErrors.agencyName} full><input {...inputProps("agencyName")} autoComplete="organization" required/></Field>
+        <Field name="primaryPhone" label="Mobile number" error={fieldErrors.primaryPhone}>
+          <div className="ssp-phone-input"><span>+91</span><input {...inputProps("primaryPhone")} type="tel" inputMode="numeric" maxLength={10} autoComplete="tel-national" required
+            onChange={event => updateDraft("primaryPhone", cleanPhone(event.target.value))}/></div></Field>
+        <Field name="alternatePhone" label="Alternate mobile number" error={fieldErrors.alternatePhone}>
+          <div className="ssp-phone-input"><span>+91</span><input {...inputProps("alternatePhone")} type="tel" inputMode="numeric" maxLength={10}
+            onChange={event => updateDraft("alternatePhone", cleanPhone(event.target.value))}/></div></Field>
+        <Field name="aadhaarNumber" label="Aadhaar card number" error={fieldErrors.aadhaarNumber} note="12-digit Aadhaar number. Shown masked on your profile." full>
+          <input {...inputProps("aadhaarNumber")} value={formatAadhaar(draft.aadhaarNumber)} type="text" inputMode="numeric" maxLength={14} autoComplete="off" placeholder="0000 0000 0000"
+            onChange={event => updateDraft("aadhaarNumber", cleanAadhaar(event.target.value))}/></Field>
+        <Field name="gstin" label="GSTIN" error={fieldErrors.gstin} note="15-character Goods and Services Tax Identification Number." full>
+          <input {...inputProps("gstin")} type="text" maxLength={15} autoComplete="off" placeholder="22AAAAA0000A1Z5" style={{ textTransform: "uppercase" }}
+            onChange={event => updateDraft("gstin", event.target.value.toUpperCase().replace(/[^0-9A-Z]/g, "").slice(0, 15))}/></Field>
+        <Field name="address" label="Address" error={fieldErrors.address} full><textarea {...inputProps("address")} rows={3} autoComplete="street-address" required placeholder="Plot / building, road and locality"/></Field>
+        <Field name="city" label="City (optional)"><input {...inputProps("city")} autoComplete="address-level2"/></Field>
+        <Field name="state" label="State (optional)"><input {...inputProps("state")} autoComplete="address-level1"/></Field>
+        <Field name="pincode" label="PIN code (optional)" error={fieldErrors.pincode} full><input {...inputProps("pincode")} inputMode="numeric" maxLength={6} autoComplete="postal-code"
+          onChange={event => updateDraft("pincode", digits(event.target.value).slice(0, 6))}/></Field>
+      </fieldset>{sheetError}<div className="ssp-form-note"><ShieldCheck size={15}/>Your verification status cannot be changed from this form. Trucks and cities are managed on the profile page.</div></form>
     </Sheet>}
-    {sheet==="edit"&&<Sheet title="Edit transporter profile" subtitle="Update company, contact, fleet, and GST details." onClose={()=>setSheet(null)} footer={<><button className="ssp-secondary" onClick={()=>setSheet(null)}>Cancel</button><button className="ssp-primary" onClick={saveProfile}><Save size={16}/>Save changes</button></>}>
-      <div className="tp-form"><label>Transporter name<input value={draft.transporterName} onChange={e=>setDraft({...draft,transporterName:e.target.value})}/></label><label>Organisation / company name<input value={draft.organisationName} onChange={e=>setDraft({...draft,organisationName:e.target.value})}/></label><label>Mobile number<input value={draft.primaryPhone} onChange={e=>setDraft({...draft,primaryPhone:digits(e.target.value)})}/></label><label>Alternate mobile<input value={draft.alternatePhone} onChange={e=>setDraft({...draft,alternatePhone:digits(e.target.value)})}/></label><label className="tp-full">GST number<input value={draft.gstin} onChange={e=>setDraft({...draft,gstin:e.target.value.toUpperCase()})}/></label><div className="tp-full tp-truck-edit"><b>Truck fleet</b>{draft.trucks.map((truck,index)=><label key={truck.type}><span>{truck.type}</span><input type="number" min="0" value={truck.count} onChange={e=>setDraft({...draft,trucks:draft.trucks.map((x,i)=>i===index?{...x,count:Number(e.target.value)}:x)})}/></label>)}</div></div>
+
+    {sheet === "aadhaar" && <Sheet title="Aadhaar verification" subtitle="Verify your identity with the secure verification flow." busy={busy} onClose={closeSheet}
+      footer={<><button type="button" className="ssp-secondary" disabled={busy} onClick={closeSheet}>Not now</button><button type="button" className="ssp-primary" disabled={busy} onClick={startAadhaarVerification}>
+        {busy ? <RefreshCw size={16} className="ssp-spin"/> : <ArrowRight size={16}/>}{busy ? "Opening…" : "Continue"}</button></>}>
+      <div className="ssp-verification-intro"><i><Fingerprint size={40}/></i><h3>Your identity. Securely verified.</h3><p>Continue to the connected Aadhaar verification service. This page only keeps your Aadhaar number masked and never sends it anywhere by itself.</p></div>
+      <div className="ssp-secure-note"><i><LockKeyhole size={15}/></i><span>Only a successful verification response updates your status. Admin approval is a separate step.</span></div>{sheetError}
     </Sheet>}
-    {sheet==="signout"&&<Sheet title="Sign out?" subtitle="End this transporter session securely." onClose={()=>setSheet(null)} footer={<><button className="ssp-secondary" onClick={()=>setSheet(null)}>Cancel</button><button className="ssp-danger" onClick={onSignOut}>Sign out</button></>}><div className="ssp-signout-intro"><i><LogOut size={30}/></i><p className="ssp-signout-copy">You will need to sign in again to access your transporter account.</p></div></Sheet>}
-  </div>
+
+    {sheet === "photo" && <Sheet title="Your profile photo" subtitle="Adjust the circular preview before saving." busy={busy} onClose={closeSheet}
+      footer={<><button type="button" className="ssp-secondary" disabled={busy} onClick={closeSheet}>Cancel</button>
+        {profile.photoUrl && <button type="button" className="ssp-secondary" disabled={busy} onClick={removePhoto}><Trash2 size={15}/>Remove</button>}
+        <button type="button" className="ssp-primary" disabled={busy || !photoFile} onClick={savePhoto}>
+        {busy ? <RefreshCw size={16} className="ssp-spin"/> : <Camera size={16}/>}{busy ? "Saving…" : "Save photo"}</button></>}>
+      <div className="ssp-photo-stage"><div>{photoPreview && <img src={photoPreview} alt="Profile photo preview" style={{
+        objectPosition: `${photoSettings.x}% ${photoSettings.y}%`, transform: `scale(${photoSettings.zoom})`,
+        transformOrigin: `${photoSettings.x}% ${photoSettings.y}%`,
+      }}/>}</div></div>
+      <div className="ssp-photo-controls">{[
+        { key: "zoom", label: "Zoom", min: 1, max: 2.2, step: 0.05 },
+        { key: "x", label: "Horizontal position", min: 0, max: 100, step: 1 },
+        { key: "y", label: "Vertical position", min: 0, max: 100, step: 1 },
+      ].map(control => <label key={control.key}><span>{control.label}<b>{control.key === "zoom" ? `${photoSettings.zoom.toFixed(2)}×` : `${photoSettings[control.key]}%`}</b></span><input type="range" min={control.min} max={control.max} step={control.step}
+        value={photoSettings[control.key]} disabled={busy} onChange={event => setPhotoSettings(previous => ({ ...previous, [control.key]: Number(event.target.value) }))}/></label>)}</div>
+      <p className="ssp-otp-help">The photo is kept in this page only. These adjustments control its circular display.</p>{sheetError}
+    </Sheet>}
+
+    {sheet === "signout" && <Sheet title="Sign out?" subtitle="End this transporter session securely." busy={busy} onClose={closeSheet}
+      footer={<><button type="button" className="ssp-secondary" disabled={busy} onClick={closeSheet}>Cancel</button>
+        <button type="button" className="ssp-danger" disabled={busy} onClick={signOut}>{busy ? "Signing out…" : "Sign out"}</button></>}>
+      <div className="ssp-signout-intro"><i><LogOut size={30}/></i><p className="ssp-signout-copy">You will need to sign in again to access your transporter account.</p></div>{sheetError}
+    </Sheet>}
+  </div>;
 }
 
-const CSS=`
-
+const CSS = `
 .sand-seller-profile {
   --ssp-ink:#1b2340; --ssp-muted:#6b7590; --ssp-line:rgba(120,135,180,.16);
   --ssp-indigo:#5b6cff; --ssp-violet:#8b5cf6; --ssp-cyan:#22c1ee; --ssp-green:#16b981;
@@ -333,21 +984,6 @@ const CSS=`
 .ssp-footer .ssp-brand { font-size:15px; }
 .ssp-footer .ssp-brand i { width:19px; height:19px; border-radius:6px; }
 .ssp-footer>span { font-size:8px; color:var(--ssp-muted); font-weight:700; letter-spacing:2.2px; }
-
-/* Same floating five-tab navigation treatment as StoneRateSandSellerHome. */
-.ssp-bottom-nav { position:fixed; left:0; right:0; bottom:0; z-index:45; padding:0 14px calc(8px + env(safe-area-inset-bottom,0px)); pointer-events:none; }
-.ssp-nav-pill { pointer-events:auto; position:relative; max-width:520px; margin:auto; display:grid; grid-template-columns:repeat(5,1fr); align-items:end; padding:4px 6px 3px; border-radius:22px; background:rgba(255,255,255,.78); backdrop-filter:blur(24px) saturate(170%); -webkit-backdrop-filter:blur(24px) saturate(170%); border:1px solid rgba(255,255,255,.95); box-shadow:0 18px 44px rgba(64,84,150,.20),0 1px 0 rgba(255,255,255,.9) inset; }
-.ssp-nav-pill button { position:relative; display:grid; justify-items:center; gap:1px; padding:3px 2px; border:0; background:transparent; color:#7a83a3; border-radius:16px; }
-.ssp-nav-pill button span { width:30px; height:30px; display:grid; place-items:center; border-radius:11px; }
-.ssp-nav-pill button svg { width:18px; height:18px; }
-.ssp-nav-pill button small { font-size:9px; font-weight:700; letter-spacing:.2px; line-height:1.1; }
-.ssp-nav-pill button:hover { color:var(--ssp-indigo); }
-.ssp-nav-pill button:hover span { background:rgba(91,108,255,.10); }
-.ssp-nav-pill button.active { color:var(--ssp-indigo); }
-.ssp-nav-pill button.active span { width:44px; height:44px; margin-top:-22px; border-radius:16px; background:var(--ssp-grad); color:#fff; border:3px solid #eceffd; box-shadow:0 12px 24px rgba(91,108,255,.45); }
-.ssp-nav-pill button.active svg { width:20px; height:20px; }
-.ssp-nav-pill button.active small { font-weight:800; }
-.ssp-nav-pill button.active::after { content:""; position:absolute; bottom:-1px; width:16px; height:3px; border-radius:99px; background:var(--ssp-grad); }
 
 /* Sheets & forms */
 .ssp-overlay { position:fixed; inset:0; z-index:80; display:flex; align-items:flex-end; justify-content:center; background:rgba(27,35,64,.42); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); animation:ssp-fade .2s ease; }
@@ -620,14 +1256,13 @@ const CSS=`
 .ssp-orb,.ssp-hero-glow,.ssp-otp-hero-glow { filter:none; }
 
 @media(max-width:759px) {
-  .ssp-top,.ssp-card,.ssp-nav-pill,.ssp-overlay,.ssp-badge.is-light.is-pending,
+  .ssp-top,.ssp-card,.ssp-overlay,.ssp-badge.is-light.is-pending,
   .ssp-badge.is-light.is-verified,.ssp-signout,.ssp-otp-shield {
     backdrop-filter:none;
     -webkit-backdrop-filter:none;
   }
   .ssp-top { background:rgba(255,255,255,.94); }
   .ssp-card { background:rgba(255,255,255,.94); }
-  .ssp-nav-pill { background:rgba(255,255,255,.94); }
   .ssp-overlay { background:rgba(27,35,64,.48); }
   .ssp-orb { display:none; }
   .ssp-hero { box-shadow:0 12px 28px rgba(91,108,255,.24); }
@@ -636,10 +1271,54 @@ const CSS=`
   .ssp-sheet-body { padding-top:12px; padding-bottom:14px; }
   .ssp-otp-card { margin-top:9px; padding:12px; }
   .ssp-otp-boxes { margin-top:10px; gap:6px; }
-}.ssp-bucket-card{grid-column:1/-1;padding:0;overflow:hidden}.ssp-bucket-summary{width:100%;display:flex;align-items:center;gap:13px;padding:18px 20px;border:0;background:transparent;color:var(--ssp-ink);text-align:left}.ssp-bucket-summary>i{width:44px;height:44px;flex:none;display:grid;place-items:center;border-radius:14px;background:var(--ssp-grad);color:#fff;box-shadow:0 10px 22px rgba(91,108,255,.25)}.ssp-bucket-summary>div{flex:1;min-width:0}.ssp-bucket-summary h2{margin:0;font-size:18px}.ssp-bucket-summary p{margin:4px 0 0;color:var(--ssp-muted);font-size:11px}.ssp-bucket-summary-action{display:flex;align-items:center;gap:5px;color:var(--ssp-indigo);font-size:11px;font-weight:800}.ssp-bucket-summary[aria-expanded=true] .ssp-bucket-summary-action svg{transform:rotate(180deg)}.ssp-bucket-expand{padding:0 20px 20px;border-top:1px solid var(--ssp-line);animation:ssp-up .25s ease}.ssp-bucket-selected,.ssp-bucket-add{display:grid;gap:10px;padding-top:17px}.ssp-bucket-add{margin-top:4px;padding-top:17px;border-top:1px dashed var(--ssp-line)}.ssp-bucket-subhead{display:flex;justify-content:space-between;align-items:center}.ssp-bucket-subhead b{font-size:12px}.ssp-bucket-subhead span{font-size:9px;color:var(--ssp-muted);font-weight:700}.ssp-bucket-row,.ssp-bucket-setup{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--ssp-line);border-radius:15px;background:#fafbff}.ssp-bucket-row.is-configured{border-color:rgba(22,185,129,.22);background:#effbf5}.ssp-bucket-name{min-width:0}.ssp-bucket-name b,.ssp-bucket-name span{display:block}.ssp-bucket-name b{font-size:12px}.ssp-bucket-name span{margin-top:3px;font-size:9.5px;color:var(--ssp-muted)}.ssp-bucket-input{display:flex;min-width:190px;overflow:hidden;border:1px solid #dfe4f1;border-radius:11px;background:#fff}.ssp-bucket-input input{width:100px;min-width:0;padding:9px 10px;border:0;outline:0;font-weight:800}.ssp-bucket-input span{padding:9px 7px;background:#f4f6fb;color:var(--ssp-muted);font-size:9px;white-space:nowrap}.ssp-bucket-input button{width:38px;flex:none;border:0;background:var(--ssp-grad);color:#fff;display:grid;place-items:center}.ssp-bucket-search{display:flex;align-items:center;gap:8px;padding:0 12px;border:1px solid #dfe4f1;border-radius:13px;background:#fff;color:var(--ssp-muted)}.ssp-bucket-search:focus-within{border-color:#919df3;box-shadow:0 0 0 4px rgba(91,108,255,.10)}.ssp-bucket-search input{width:100%;padding:11px 0;border:0;outline:0;background:transparent}.ssp-bucket-results{display:grid;gap:6px;max-height:190px;overflow:auto}.ssp-bucket-results button{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--ssp-line);border-radius:12px;background:#fff;color:var(--ssp-ink);font-size:11px;font-weight:750}.ssp-bucket-results button:hover{border-color:rgba(91,108,255,.3);background:#f3f5ff;color:var(--ssp-indigo)}.ssp-bucket-results p{margin:2px 0;padding:13px;text-align:center;color:var(--ssp-muted);font-size:10px}.ssp-bucket-setup{position:relative;align-items:flex-end;background:#f7f8ff}.ssp-bucket-back{position:absolute;right:10px;top:8px;border:0;background:transparent;color:var(--ssp-indigo);font-size:9px;font-weight:800}.ssp-bucket-setup .ssp-bucket-name{padding-top:13px}.ssp-bucket-input.is-wide{min-width:220px}@media(max-width:600px){.ssp-bucket-summary{padding:16px}.ssp-bucket-summary-action{font-size:0}.ssp-bucket-expand{padding:0 16px 16px}.ssp-bucket-row,.ssp-bucket-setup{align-items:stretch;flex-direction:column}.ssp-bucket-input,.ssp-bucket-input.is-wide{width:100%;min-width:0}.ssp-bucket-input input{width:100%;flex:1}}
+}
 
+/* ==== Transporter-only additions ==== */
+.transporter-profile .ssp-hero-art>svg{width:190px;height:190px;right:18px;bottom:25px;stroke-width:.9}
+.transporter-profile .ssp-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+.transporter-profile .ssp-phone-input>span{line-height:46px}
+.tp-fleet-card,.tp-city-card{grid-column:1/-1}
+.tp-empty{margin:0;padding:14px;border:1px dashed var(--ssp-line);border-radius:14px;text-align:center;color:var(--ssp-muted);font-size:11px}
+.tp-truck-list{display:grid;gap:9px;margin:0;padding:0;list-style:none}
+.tp-truck-row{display:flex;align-items:center;gap:11px;padding:11px 12px;border:1px solid var(--ssp-line);border-radius:16px;background:rgba(249,250,255,.85);transition:border-color .22s,box-shadow .22s}
+.tp-truck-row:hover{border-color:rgba(91,108,255,.22);box-shadow:0 8px 20px rgba(64,84,150,.08)}
+.tp-truck-row>i{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:12px;color:#fff;background:var(--ssp-grad);box-shadow:0 8px 16px rgba(91,108,255,.24)}
+.tp-truck-name{flex:1;min-width:0}
+.tp-truck-name b,.tp-truck-name span{display:block}
+.tp-truck-name b{font-size:13px;font-weight:800;letter-spacing:-.2px}
+.tp-truck-name span{margin-top:2px;font-size:10px;color:var(--ssp-muted);font-weight:600}
+.tp-counter{display:flex;align-items:center;flex:none;overflow:hidden;border:1px solid #dfe4f1;border-radius:11px;background:#fff}
+.tp-counter button{width:32px;height:36px;display:grid;place-items:center;border:0;background:#f4f6fd;color:#5666d4}
+.tp-counter button:hover:not(:disabled){background:var(--ssp-grad);color:#fff}
+.tp-counter input{width:46px;height:36px;padding:0;border:0;outline:0;text-align:center;font-size:13px;font-weight:800;color:var(--ssp-ink);background:#fff}
+.tp-remove,.tp-city-list li>button{flex:none;width:36px;height:36px;display:grid;place-items:center;padding:0;border:0;border-radius:11px;background:#ffecef;color:#c84062}
+.tp-remove:hover:not(:disabled),.tp-city-list li>button:hover:not(:disabled){background:#c84062;color:#fff}
+.tp-add-truck{display:grid;gap:10px;margin-top:14px;padding:13px;border:1px dashed rgba(91,108,255,.28);border-radius:16px;background:linear-gradient(135deg,#f5f6ff,#f7f3ff)}
+.tp-add-truck-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.tp-add-truck-head b{font-size:12px;font-weight:800}
+.tp-add-truck-head span{font-size:9.5px;color:var(--ssp-muted);font-weight:700;overflow-wrap:anywhere}
+.tp-add-truck-row{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,.8fr) auto;gap:8px;align-items:end}
+.tp-add-truck-row label{display:grid;gap:5px;min-width:0;font-size:10px;font-weight:750;color:#46516e}
+.tp-add-truck-row select,.tp-add-truck-row input{width:100%;min-width:0;height:42px;padding:0 11px;border:1px solid #dfe4f1;border-radius:12px;background:#fff;color:var(--ssp-ink);font-size:13px;font-weight:700}
+.tp-add-truck-row select:focus,.tp-add-truck-row input:focus{outline:none;border-color:#919df3;box-shadow:0 0 0 4px rgba(91,108,255,.10)}
+.tp-add-truck-row .tp-custom{grid-column:1/-1}
+.tp-add-button,.tp-add-city>button{display:flex;align-items:center;justify-content:center;gap:5px;height:42px;padding:0 14px;border:0;border-radius:12px;background:var(--ssp-grad);color:#fff;font-size:11px!important;font-weight:800!important;box-shadow:0 8px 18px rgba(91,108,255,.26);white-space:nowrap}
+.tp-add-button:hover:not(:disabled),.tp-add-city>button:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 12px 24px rgba(91,108,255,.34)}
+.tp-add-city,.tp-search{display:flex;align-items:center;gap:8px;padding:0 5px 0 12px;border:1px solid #dfe4f1;border-radius:13px;background:#fff;color:var(--ssp-muted);transition:border-color .2s,box-shadow .2s}
+.tp-add-city:focus-within,.tp-search:focus-within{border-color:#919df3;box-shadow:0 0 0 4px rgba(91,108,255,.10)}
+.tp-add-city input,.tp-search input{flex:1;min-width:0;height:46px;padding:0;border:0;outline:0;background:transparent;color:var(--ssp-ink);font-size:13px;font-weight:600}
+.tp-add-city>button{height:36px;padding:0 12px;border-radius:10px}
+.tp-search{margin-top:10px;padding-right:12px}
+.tp-city-card .ssp-field-error,.tp-fleet-card .ssp-field-error{margin-top:8px}
+.tp-city-list{display:grid;gap:8px;margin:14px 0 0;padding:0;list-style:none}
+.tp-city-list li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 9px 9px 12px;border:1px solid var(--ssp-line);border-radius:14px;background:rgba(249,250,255,.85);transition:border-color .22s,box-shadow .22s}
+.tp-city-list li:hover{border-color:rgba(34,193,238,.3);box-shadow:0 8px 20px rgba(64,84,150,.08)}
+.tp-city-list li>span{display:flex;align-items:center;gap:8px;min-width:0;color:#1f9ec4}
+.tp-city-list li b{font-size:12.5px;font-weight:800;color:var(--ssp-ink);overflow-wrap:anywhere}
+.tp-city-list li.tp-empty-row{justify-content:center;border-style:dashed;color:var(--ssp-muted);font-size:11px;background:transparent}
+@media(min-width:760px){.tp-city-list{grid-template-columns:1fr 1fr}.tp-city-list li.tp-empty-row{grid-column:1/-1}}
+@media(max-width:540px){.tp-add-truck-row{grid-template-columns:minmax(0,1fr) 84px}.tp-add-button{grid-column:1/-1;width:100%}.tp-truck-row{flex-wrap:wrap}.tp-truck-name{flex-basis:calc(100% - 50px)}.tp-counter{margin-left:auto}}
 
-.transporter-profile .ssp-hero-art>svg{width:190px;height:190px;right:18px;bottom:25px;stroke-width:.9}.tp-see-all{display:inline-flex;align-items:center;gap:3px;margin-top:8px;padding:6px 10px;border:1px solid rgba(91,108,255,.18);border-radius:10px;background:#fff;color:#5666d4;font-size:10px;font-weight:800}.tp-city-line{white-space:normal}.tp-vring{width:72px;height:72px;display:grid;place-items:center;border:5px solid #8b75ef;border-radius:50%;background:#fff}.tp-vring b{font-size:19px}.tp-vring small{font-size:10px;color:var(--ssp-muted)}.tp-search,.tp-add-city{display:flex;align-items:center;gap:8px;padding:0 12px;border:1px solid #dfe4f1;border-radius:13px;background:#fff;color:var(--ssp-muted)}.tp-search input,.tp-add-city input{width:100%;padding:12px 0;border:0;outline:0}.tp-add-city{margin-top:10px;padding-right:5px}.tp-add-city button{display:flex;align-items:center;gap:4px;padding:8px 12px;border:0;border-radius:10px;background:var(--ssp-grad);color:#fff;font-size:10px;font-weight:800}.tp-city-list{display:grid;gap:8px;margin-top:15px}.tp-city-list>div{display:flex;align-items:center;justify-content:space-between;padding:11px 12px;border:1px solid var(--ssp-line);border-radius:14px;background:#fafbff}.tp-city-list span{display:flex;align-items:center;gap:8px}.tp-city-list b{font-size:12px}.tp-city-list button{width:34px;height:34px;border:0;border-radius:10px;background:#ffecef;color:#c84062;display:grid;place-items:center}.tp-city-list p{text-align:center;color:var(--ssp-muted);font-size:11px}.tp-form{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px}.tp-form>label{display:grid;gap:7px;color:#46516e;font-size:11px;font-weight:750}.tp-form input{width:100%;padding:12px 13px;border:1px solid #dfe4f1;border-radius:13px;background:#fff}.tp-full{grid-column:1/-1}.tp-truck-edit{display:grid;gap:8px;padding:13px;border:1px solid var(--ssp-line);border-radius:16px;background:#fafbff}.tp-truck-edit>label{display:grid;grid-template-columns:1fr 100px;align-items:center;gap:10px}.tp-truck-edit span{font-size:11px;font-weight:700}.tp-truck-edit input{text-align:center}@media(max-width:540px){.tp-form{grid-template-columns:1fr}.tp-full{grid-column:auto}.transporter-profile .ssp-detail-grid{grid-template-columns:1fr}.transporter-profile .ssp-full{grid-column:auto}}
 /* ==== Shared StoneRate transporter navigation (reference: Bidding page) ==== */
 .transporter-profile .bd-shell{width:min(100% - 28px,1120px);max-width:100%;margin:auto}
 .transporter-profile .bd-header{position:sticky;top:0;z-index:40;border-bottom:1px solid rgba(218,222,239,.72);background:rgba(255,255,255,.82);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
@@ -672,5 +1351,4 @@ const CSS=`
 @media(min-width:980px){.transporter-profile .bd-header-inner{min-height:72px;grid-template-columns:auto auto 1fr auto auto}.transporter-profile .bd-desktop-nav{display:flex;align-items:center;justify-content:center;gap:4px}.transporter-profile .bd-desktop-nav button{border:0;background:transparent;padding:9px 12px;color:#69718c;font-size:12px;font-weight:800;border-radius:10px;cursor:pointer}.transporter-profile .bd-desktop-nav button.active,.transporter-profile .bd-desktop-nav button:hover{color:#4f5ed4;background:#eef0ff}.transporter-profile .bd-logo{position:absolute;left:50%;transform:translateX(-50%)}.transporter-profile .bd-bottom{display:none}}
 /* ==== end shared navigation ==== */
 @media(min-width:980px){.transporter-profile{padding-bottom:35px}}
-
 `;
